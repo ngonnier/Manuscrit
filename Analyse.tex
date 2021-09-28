@@ -1,0 +1,66 @@
+\chapter{Analyser l'organisation : une approche par variables aléatoires}
+
+Justifier l'approche nouvelle en analysant les réponses, par rapport a l'analyse classique des cartes de Kohonen
+\section{Cas d'utilisation : les entrées multimodales}
+
+\section{Représentation des entrées}
+
+
+\section{Information apprise par une carte}
+
+Une idée est de déterminer si une carte a gagné de l'information sur le modèle générant les entrées. Dans le cas simple, ce modèle peut être entièrement reprénté par $U$; chaque carte peut être représentée par son BMU, considéré comme la seule sortie de la carte. 
+En tracant $U$ en fonction de $\Pi$, le BMU d'une carte, on observe directement si une carte a été capable de lever l'ambiguité sur le modèle en distinguant les entrées selon leur variable cachée $U$. Cette ambiguité est levée si $U$ est une fonction de $\Pi$. Cette fonction est observée dans le cas des cartes jointes.
+
+Cette propriété, dans le cas 1D, peut être calculée par l'information mutuelle entre $U$ et $\Pi$. Plus précisément, par $\frac{I(U,\Pi)}{H(U)}$, avec $H(U)$ l'entropie de $U$. 
+En effet, dans le meilleurs des cas, $U$ est une fonction parfaite de $\Pi$ et donc $H(U|\Pi ) = 0$ : en connaissant $\Pi$, on connait totalement $U$. Alors, $I(U,\Pi) = H(U) - H(U| \Pi) = H(U)$. 
+Notre indicateur vaut alors 1 lorsque $U$ est une fonction parfaite de $\Pi$.
+De plus $\Pi$ est forcément une fonction de $U$ car l'algorithme est déterministe: à une entrée correspond une sortie, toujours la même, donc $(I(U, \Pi) = H(\Pi)$. Notre indicateur estimant l'information portée par le BMU d'une carte sur la variable cachée du modèle U est donc $$\frac{H(\Pi)}{H(U)}$$.
+
+Cet indicateur doit être estimé en discrétisant les variables, donnant une entropie nécessairement positive et strictement supérieure à 0.
+L'évolution de l'indicateur au cours de l'apprentissage est donnée en figure \ref{fig:im}. Cet indicateur est calculé en moyenne pour 100 réalisations de l'apprentissage, avec des poids initiaux différents. 
+
+\begin{figure}
+\centering
+\includegraphics[width = \textwidth]{XU_YU.pdf}
+\caption{Pour l'échantillon de test, valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes. On voit que $U$ est une fonction du BMU dans chaque carte, contrairement au cas ou les cartes apprendraient indépendamment sur les mêmes entrées, voir figure \ref{fig:piu_indep}.}
+\label{fig:piu}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width = \textwidth]{xu_yu_unco.pdf}
+\caption{Pour l'échantillon de test, entrée sur un cercle, valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes, lorsque les cartes $M_x$ et $M_y$ ne sont pas connectée. Chacune des cartes n'a aucune information de plus que celle portée par son entrée sur l'état global du système $U$, et $\Pi$ n'est donc pas une fonction de $U$ dans chaque carte. }
+\label{fig:piu_indep}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{mutual_info_evol.pdf}
+\caption{Evolution de l'indicateur relatif à l'information mutuelle entre $\Pi$ et $U$ dans chaque carte au cours de l'apprentissage. Cet indicateur est comparé à celui calculé dans le cas ou les cartes apprennent séparément.}
+\label{fig:im} 
+\end{figure}
+
+\textcolor{red}{
+\paragraph{Choses à faire}
+\begin{itemize}
+\item Cette valeur est uniquement calculée pour un modèle connu, et en 1 dimension forcément. Peut on avoir des équivalents en plus de dimension ? 
+\item Il existe des quantités mesurant l'information portée par un symbole sur une variable, une sorte d'info mutuelle locale. On sait que $I(U,\Pi) = H(\Pi)$, et on veut que $I(U,\Pi) = H(U)$, mais comment est elle répartie entre les BMUs ? Est-ce pertinent de se pencher sur ces quantités ? 
+\end{itemize}
+}
+
+
+\section{Représenter une carte au sein d'une architecture}
+
+Représentation des poids, des entrées, des BMU - analyse
+
+\section{Prédiction d'entrée}
+
+Prédction sur des données jouets
+
+Prédiction sur drone
+
+
+
+Bien se placer dans le contexte “on va chercher a omprendre ce système dynamique”.
+
+Formaliser le problème en terme de variables aléatoires
