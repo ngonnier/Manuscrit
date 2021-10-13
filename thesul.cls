@@ -123,19 +123,20 @@
 \else
   \RequirePackage[utf8]{inputenc}
 \fi
-\newcommand{\@DFD}{\'Ecole doctorale IAEM Lorraine}
+\newcommand{\@DFD}{
+\includegraphics[width=0.2\textwidth]{IAEM}}
 \newcommand{\DFD}[1]{\renewcommand\@DFD{#1}}
 \newcommand{\@TUL@cmn@head}{\vskip1mm\noindent\hrulefill\\}
 
 \newcommand{\@ULhe@d}{{\UseEntryFont{ThesisFirstPageHead}\noindent
-    \centerline{{\setbox0=\hbox{$\raise1.5cm\hbox{\ULLogo}$}%
+    \centerline{{\setbox0=\hbox{$\raise1.5cm\hbox{\CSLogo}$}%
                      \ht0=\baselineskip\box0}\hfill\@DFD}}%
     \@TUL@cmn@head\par
     }
 \newtoks\@lab@tok
 \newtoks\@lab@tokii
 \@lab@tok={Laboratoire Lorrain de Recherche en Informatique et
-                             ses Applications --- UMR 7503}
+                             ses Applications \includegraphics[width=0.3\textwidth]{tulloria}}
 \newcommand{\SetLab}[1]{%
     \@lab@tok={#1}%
     }
@@ -178,9 +179,11 @@
   {\renewcommand{\@ThesisInOrderToGet}{{\UseEntryFont{ThesisInOrderToGet}#1}}}
 \newcommand{\@ThesisDomain}{mention informatique}
 \newcommand\ThesisDomain[1]{\renewcommand{\@ThesisDomain}{#1}}
+
+
 \newcommand\ThesisUL{\renewcommand{\@ThesisFirstPageHead}{\@ULhe@d}%
                          \ThesisDiploma{{\UseEntryFont{ThesisDiploma}%
-                Doctorat de l'Universit\'e de Lorraine\\[3mm]
+                Doctorat CentraleSupelec\\[3mm]
             {\UseEntryFont{ThesisSpecialty}(\@ThesisDomain)}}}}
 \newcommand\HdrUL{\ThesisInOrderToGet{pour l'obtention d'une}%
                   \renewcommand{\@ThesisFirstPageHead}{\@ULhe@d}%
@@ -192,6 +195,8 @@
                          \ThesisDiploma{{\UseEntryFont{ThesisDiploma}%
                 Master de l'Universit\'e de Lorraine\\[3mm]
             {\UseEntryFont{ThesisSpecialty}(\@ThesisDomain)}}}}
+            
+            
 \newcommand{\@ThesisDiploma}%
          {\fbox{Choisir {\tt\char`\\ThesisUL}, {\tt\char`\\HDRUL} ou {\tt\char`\\MasterUL}}}
 \newcommand\ThesisDiploma[1]%
@@ -212,8 +217,8 @@
     \vtop to0pt{%
       \hbox{}\hbox to0pt{\includegraphics[scale=.2]{tulloria}\hss}\vss}%
                     }
-\newcommand\ULLogo{%
-    \vtop to0pt{\hbox{}\hbox to0pt{\includegraphics[scale=1]{tulul}\hss}\vss}%
+\newcommand\CSLogo{%
+    \vtop to0pt{\hbox{}\hbox to0pt{\includegraphics[width=0.2\textwidth]{CS}\hss}\vss}%
                     }
 \newif\if@logos@
 \newif\if@logo@ul@
@@ -1696,13 +1701,13 @@
      }
 \newcommand{\TUL}{{\normalfont\textsf{thesul}}}
 \errorcontextlines5
-\newcommand\@removefromreset[2]{\let\@tempb\@elt
-   \def\@tempa#1{@&#1}\expandafter\let\csname @*#1*\endcsname\@tempa
-   \def\@elt##1{\expandafter\ifx\csname @*##1*\endcsname\@tempa\else
-                \noexpand\@elt{##1}\fi}%
-   \expandafter\xdef\csname cl@#2\endcsname{\csname cl@#2\endcsname}%
-   \let\@elt\@tempb
-   \expandafter\let\csname @*#1*\endcsname\@undefined}
+%\newcommand\@removefromreset[2]{\let\@tempb\@elt
+%   \def\@tempa#1{@&#1}\expandafter\let\csname @*#1*\endcsname\@tempa
+%   \def\@elt##1{\expandafter\ifx\csname @*##1*\endcsname\@tempa\else
+%                \noexpand\@elt{##1}\fi}%
+%   \expandafter\xdef\csname cl@#2\endcsname{\csname cl@#2\endcsname}%
+%   \let\@elt\@tempb
+%   \expandafter\let\csname @*#1*\endcsname\@undefined}
 \newcommand\ResetChaptersAtParts{%
     \@addtoreset{chapter}{part}%
     \@addtoreset{annex}{part}%
