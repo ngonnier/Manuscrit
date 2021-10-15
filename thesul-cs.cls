@@ -1,5 +1,5 @@
 %%
-%% This is file `thesul.cls',
+%% This is file `thesul-cs.cls',
 %% generated with the docstrip utility.
 %%
 %% The original source files were:
@@ -41,7 +41,7 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
-\ProvidesClass{thesul}[\filedate\space
+\ProvidesClass{thesul-cs}[\filedate\space
            LaTeX2e document class^^J
 \space\space\space\space\space\space\space\space
 \space\space\space\space\space\space\space\space\space
