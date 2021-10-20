@@ -66,26 +66,7 @@ Notre algorithme présente donc deux modifications principales :
 
 La description du modèle CxSOM est détaillée en figure~\ref{fig:one_map}, dans un cas ou une carte reçoit deux connexions, et l'algorithme explicité en~\ref{algo:cxsom}.
 
-\begin{algorithm}
-  \DontPrintSemicolon 
-  \SetKwComment{Comment}{}{}
-  \caption{Learning iteration with relaxation process}\label{algo:cxsom}
-  \KwInput{$\inpx\m{1}, ... , \inpx\m{K} \leftarrow (o^1, \cdots , o^K)\in \mathcal{D}^1 \times \cdot \times \mathcal{D}^K$}
-   $t \leftarrow 0$ \;
-   $\forall i , \bmu\m{i} \leftarrow \argmax_p a\ext(\inpx\m{i},p)$\;
-  \While {$\mathbf{\bmu}(t) \neq \mathbf{ \bmu}(t-1)$}{
-  \ForAll{Map $i$}{
-  $\inpc\m{i}_1,...\inpc\m{i}_k \leftarrow$ BMUs from connected maps \;
-  Computation of $a_g^i$ (equation~\ref{activity}) \;
-  $p\star\m{i} \leftarrow \argmax_p a_g^i(p)$ \;
-  $\bmu\m{i} \leftarrow \bmu\m{i} + min(\Delta, \lvert p\star\m{i} - \bmu\m{i} \rvert) \times \sign(p\star\m{i} - \bmu\m{i})$ \;
-  }
-  $t \leftarrow t+1$ \;
-  }
-  $\forall i, \w\ext\m{i}(p) \leftarrow \w\ext\m{i}(p) + H\ext(\bmu\m{i}, p)(\w\ext\m{i}(p) - \inpx\m{i})$\;
-  $\forall i, \forall k, \w_{ck}\m{i}(p) \leftarrow \w_{ck}\m{i}(p) + H\cont(\bmu\m{i},p)(\w_{ck}\m{i}(p) - \inpc\m{i})$
-\end{algorithm}
- 
+
 \subsubsection{Gestion des entrées externes et contextuelles}
 
 A un pas d'apprentissage $t$, une carte $M$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles} notées $\inpc_{0t},\cdots,\inpc_{Kt}$, qui sont les BMU $\bmu$ des cartes qui lui sont connectées. La carte possède donc $k+1$ couches de poids. $\w_e$ correspond à l'entrée externe et $\w_{c0}, \cdots, \w_{cK}$ aux entrées contextuelles. On calcule une activité séparément sur chaque couche de poids selon la formule suivante : 
@@ -100,6 +81,7 @@ Les activités externes et contextuelles sont enfin fusionnées en une activité
 a_g(p,\inpx_t,\mathbf{\inpc_t}) = \sqrt{a_e(p,\inpx_t)(\beta a_e(p,\inpx_t) + (1-\beta) a_c(p, \mathbf{\inpc_t})}
 \end{equation}
 
+Une convolution est appliquée sur cette activité globale. Cela évite les effets de plateau.
 Cette activation globale est utilisée pour déterminer le BMU de la carte. 
 
 \subsubsection{Gestion des rétroactions dans l'architecture}
@@ -144,6 +126,29 @@ Les poids sont mis à jour par rapport à leurs entrées respectives suivant l'�
 
 Les expériences faites sur l'architecture se décomposent en une phases d'apprentissage et phases de test. Pendant les tests, la mise à jour des poids des cartes est gelée et seuls le calcul des activités et le processus dynamique de sélection du BMU sont effectués.
 
+\subsubsection{Récapitulatif}
+
+\begin{algorithm}
+  \DontPrintSemicolon 
+  \SetKwComment{Comment}{}{}
+  \caption{Learning iteration with relaxation process}\label{algo:cxsom}
+  \KwInput{$\inpx\m{1}, ... , \inpx\m{K} \leftarrow (o^1, \cdots , o^K)\in \mathcal{D}^1 \times \cdot \times \mathcal{D}^K$}
+   $t \leftarrow 0$ \;
+   $\forall i , \bmu\m{i} \leftarrow \argmax_p a\ext(\inpx\m{i},p)$\;
+  \While {$\mathbf{\bmu}(t) \neq \mathbf{ \bmu}(t-1)$}{
+  \ForAll{Map $i$}{
+  $\inpc\m{i}_1,...\inpc\m{i}_k \leftarrow$ BMUs from connected maps \;
+  Computation of $a_g^i$ (equation~\ref{activity}) \;
+  $p\star\m{i} \leftarrow \argmax_p a_g^i(p)$ \;
+  $\bmu\m{i} \leftarrow \bmu\m{i} + min(\Delta, \lvert p\star\m{i} - \bmu\m{i} \rvert) \times \sign(p\star\m{i} - \bmu\m{i})$ \;
+  }
+  $t \leftarrow t+1$ \;
+  }
+  $\forall i, \w\ext\m{i}(p) \leftarrow \w\ext\m{i}(p) + H\ext(\bmu\m{i}, p)(\w\ext\m{i}(p) - \inpx\m{i})$\;
+  $\forall i, \forall k, \w_{ck}\m{i}(p) \leftarrow \w_{ck}\m{i}(p) + H\cont(\bmu\m{i},p)(\w_{ck}\m{i}(p) - \inpc\m{i})$
+\end{algorithm}
+ 
+
 \section{Choix des paramètres}
 
 \subsection{Influence des rayons de voisinage}
@@ -163,6 +168,7 @@ L'apprentissage conjoint des cartes repose sur la relaxation au sein d'une itér
 \subsection{Limitations et possibilités en grande dimension}
 
 \section{Implémentation}
-L'histoire de la recherche de consensus dans le graphe de cartes, permet que ce soit vraiment décentralisé
+
+L'implémentation des expériences a été réalisée via l'environnement CxSOM \cite{cxsom}.
 
 \section{Perspectives d'évolutions}
