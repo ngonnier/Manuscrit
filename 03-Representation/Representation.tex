@@ -4,7 +4,13 @@
 \minitoc
 \section{Problématique}
 
-Les cartes de Kohonen sont généralement associées à une facilité de représentation et de visualisation. En effet, leur nombre réduit de prototypes et leur aspect topologique permet d'en tracer une représentation visuselle facilement interprétable. Cette facilité d'interprétation, cependant, est limitée à un domaine d'utilisation : celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un pendant graphique directement interprétable à l'oeil humain. Dans un cas plus général de cartes auto-organisatrices, telles que celles agissant dans CxSOM, l'apprentissage repose sur des calculs d'activités et un processus de relaxation. Ces activités n'ont pas forcément un pendant graphique. De ce fait, leur représentation graphique mérite une analyse plus approfondie que dans le cas de cartes classiques. 
+La problématique de la représentation d'un algorithme d'apprentissage est un défi posé depuis quelques années pour, par exemple, les algorithmes de deep learning. Autant de nombreuses métriques existent pour qualifier la qualité d'un apprentissage supervisé, autant le problème est largement ouvert quand il s'agit de comprendre les mécanismes d'apprentissage. Cette question de représentation est notamment soulevée dans l'étude de l'explicabilité de l'intelligence artificielle. 
+
+Les cartes de Kohonen,de leur coté, sont généralement associées à une facilité de représentation et de visualisation. En effet, leur nombre réduit de prototypes et leur aspect topologique permet d'en tracer une représentation visuelle facilement interprétable. Cette facilité d'interprétation, cependant, est limitée à un domaine d'utilisation : celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un pendant graphique directement interprétable à l'oeil humain.
+
+Dans un cas plus général de cartes auto-organisatrices, telles que celles agissant dans CxSOM, l'apprentissage repose sur des calculs d'activités et un processus de relaxation. Ces activités n'ont pas forcément un pendant graphique. De ce fait, leur représentation graphique mérite une analyse plus approfondie que dans le cas de cartes classiques. 
+
+Enfin , "Est ce que les prototypes ont extrait une information pertinente des données" n'a en fait que des réponses partielles dans la littérature. Il s'agit d'abord de déterminer ce qu'on cherche à apprendre dans un cas spécifique. Nous nous poserons ainsi cette question pour l'architecture CxSOM. 
 
 \subsection{Représentation classique des cartes de Kohonen}
 
@@ -88,12 +94,129 @@ Notons par contre que la plus petite dimension possible de $U$ dépend du degré
 \caption{Exemples de paramétrisations du cercle. La paramétrisation qui traduit le plus facilement le modèle est naturellement celle dans laquelle $U$ est à valeurs réelles. Le modèle auxquelles appartiennent les modalités $X^0$ et $X^1$ est donc représenté par la variable cachée $U$.}
 \end{figure}
 
+Cette façon de représenter les entrées est-elle générale ? 
+
+
 \subsection{Représentation des éléments des cartes}
 
+Comme dans de nombreux algorithmes d'apprentissages, on peut décomposer le jeu de données d'entrée en jeu d'apprentissage et jeu de tests. Lors de la phase de test, seul le processus de recherche de la best matching unit est réalisé et la partie mise à jour des cartes de Kohonen n'est plus opérée. Dans le cadre des variables aléatoires, chaque itération est alors un tirage indépendant. Les éléments des cartes peuvent donc être considérés comme des variables aléatoire et une itération de test comme la réalisation de celles-ci. La phase de test peut être réalisée après n'importe quelle itération de l'algorithme d'apprentissage. Le processus d'apprentissage et de tests est décrit en figure~\ref{fig:flowchart}.
+
+Nous considérerons alors plusieurs éléments des cartes en tant que variables aléatoires, notamment :  
+\begin{itemize}
+\item Les positions des BMUs $\bmu^0, \cdots, \bmu^N$ dans chaque carte
+\item Les poids externes des BMUs $\w_e^0(\bmu^0), \cdots, \w_e^N(\bmu^N)$
+\end{itemize}
+Notons que tout élément d'une carte pourrait être vu de cette manière. 
+Une phase de test est donc un grand nombre de réalisations d'une variable aléatoire jointe : 
+$$(\inpx^0, \cdots, \inpx^N, \bmu^0, \cdots, \bmu^N, \w_e^0(\bmu^0), \cdots, \w_e^N(\bmu^N))$$
+Les composantes de cette variable jointe ne sont pas indépendantes. Les représentations et indicateurs présentés ensuite chercheront à détecter et comprendre au mieux ces dépendances statistiques.
+
+Ainsi, dans ce formalisme par variable aléatoires, à chaque pas d'apprentissage peut-être associé un ensemble de réalisations de variables aléatoires. Ceci permet alors d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture. Cette approche ne se limite pas à l'architecture CxSOM : 
+%la théorie de l'information semble être un élément intéressant à explorer pour comprendre le fonctionnement d'algorithmes non-supervisés. -> La théorie de l'information est utilisée pour comprendre des architectures informatiques, biologiques, en neuroscience .... Exemples cités dans le papier Timme2013
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{learning_tests.pdf}
+\caption{Schéma descriptif de l'apprentissage et des tests.}
+\label{fig:flowchart}
+\end{figure}
 
 
 \section{Représentations graphiques}
 
-\section{Indicateurs}
+\emph{Qu'est ce qu'une carte a appris des données ? }
+
+Que cherche t-on à représenter dans les représentations classiques des poids des cartes de Kohonen, que ce soit sous la forme d'un tableau de prototypes ou d'une projection dans l'espace d'entrée ? On cherche en fait à visualiser comment les poids sont répartis en fonction de leur \emph{position} dans la carte. En d'autres termes, on cherche à comprendre si les positions de la carte correspondent à tous les éléments de l'espace d'entrée, si une continuité est réalisée. 
+D'une façon similaire, on peut faire le choix de représenter le poids de la best matching unit par rapport à sa position. Cela donne la même représentation que le fait de tracer le poids de chaque prototype par rapport à sa position dans la carte; à la seule différence qu'elle fera la distinction entre les \emph{unités mortes de la cartes}, c'est à dire les unités qui ne sont jamais best matching unit et qui ne seront donc pas affichée dans la représentation des tests, et les autres.
+Cette représentation prend en compte la façon de calculer le BMU, donc le coeur de l'algorithme.
+
+La question de la répartition des valeurs d'une carte par rapport à la position de leur BMU va plus loin que les poids : il est intéressant d'étudier la répartition de n'importe quel élément d'une carte de cette façon, afin de comprendre 
+De façon plus générale, on peut représenter, à partir d'un échantillon test, la dépendance de n'importe quelle variable par rapport à la position de la best matching unit correspondante. Nous détaillerons dans cette partie quelques représentations qui paraissent pertinentes.
+
+
+\subsection{Représenter les entrées par rapport à une carte}
+
+Représentation des entrées de test sur les poids de la carte
+
+\subsection{Représentation de U par rapport au BMU}
+\emph{Chercher à apprendre des relations entre les données}
+
+Un des objectifs principaux de l'architecture CxSOM est d'encoder les relatations entre les données d'entrée. Il nous faut donc tracer des valeurs qui expriment cette relation. 
+Expliquer mieux comment $U$ est choisi : il s'agit d'une transformation non linéaire des données sur un autre espace, dans lequel $U$.
+
+TODO : cas des cartes 2D, cas des entrées 
+
+
+\subsection{Représentation des cartes sous forme de "distortion" (trouver un mot)}
+
+Lors
+
+
+\section{Information mutuelle comme indicateur statistique}
+
+De nombreuses valeurs ont été développées en théorie de l'information, depuis Shannon en 1948 (citer), pour mesurer des dépendances entre variables.
+Lister les spécificités des mesures et dans quel cas on peut les utiliser: 
+Mesure proba / estimation ( estimation en grande dimensions, etc)
+Est ce que les distributions doivent etre connues ...
+
+Exemple de domaines d'application de ces mesures
+
+Ces mesures s'appuient sur des variables : elles ne dépendent pas du modèle. 
+
+\subsection{Information mutuelle et entropie}
+
+Les notions d'\emph{entropie} et les valeurs qui en sont dérivées, telle que l'\emph{information mutuelle} entre des distributions, sont des notions fondamentales de la théorie de l'information de Shannon. Ces quantités donnent des informations concernant la distribution d'une variable aléatoire.
+Les formules indiquées dans ce paragraphe concernent des variables aléatoire discrètes. 
+L'entropie de Shannon d'une variable aléatoire $X$, de distribution $p(X)$, est notée $H(X)$ et définie par la formule : 
+$$ - \sum_{x \in X}{p(x)\textrm{log}(p(x))}$$
+Elle se mesure en $bit/symbole$ lorsque le le logarithme est en base 2, ce qui est généralement utilisé. 
+L'entropie est une mesure de la quantité d'incertitude, ou de surprise, sur la valeur de la variable aléatoire $X$. Si la la distribution de probabilité de $X$ est concentrée autour d'un point, l'entropie est faible : lors d'une réalisation de $X$, l'observateur est \emph{plutôt certain} du résultat. En revanche, l'entropie est maximale lorsque lorsque $X$ suit une distribution de probabilité uniforme.
+L'entropie s'interpète également comme la quantité moyenne d'information à fournir, en bits, pour coder la valeur que prend la variable $X$.
+De la même manière, on peut définir l'entropie conjointe de deux variables, qui est l'entropie de leur distribution jointe, et l'entropie conditionnelle, qui est l'entropie de leurs distributions conditionnelles.
+
+Outre les entropies jointes et conditionnelles, les relations statistques entre deux variables aléatoires peuvent être mesurées par \emph{l'information mutuelle}. Elle se définit formellement par : 
+$$ I(X,Y) = \sum_{x,y \in X,Y}{p(x,y)\textrm{log}(\frac{p(x,y)}{p(x)p(y)})}$$
+Cette valeur mesure la quantité d'information moyenne apportée par une réalisation de $X$ sur la réalisation de $Y$. L'information mutuelle possède notamment les propriété suivantes: 
+$$I(X,Y) = 0 \Leftrightarrow \textrm{X et Y sont indépendantes}$$
+Cette propriété se comprend dans la définition de $I$: si $X$ et $Y$ sont indépendantes, $p(x,y)=p(x)p(y)$ et terme $\textrm{log}(\frac{p(x,y)}{p(x)p(y)}$ est nul pour toute les valeurs de $x$ et $y$. Inversement, $I(X,Y) =0$ ssi tous les termes (positifs) de la somme sont nuls, donc si $(p(x,y)=p(x)p(y)$ pour toutes les valeurs de $X$ et $Y$. L'information mutuelle est donc aussi une mesure de la distance entre la distribution jointe de $(X,Y)$ et leur indépendance.
+
+
+Elle s'exprime à partir de l'entropie : $$I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$$
+
+Elle est symétrique : $$I(X,Y) = I(Y,X)$$
+
+Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y)$. L'égalité est atteinte ssi $f$ est \emph{bijective}. (proof?)
+
+rapporter a la corrélation -> le taux de corrélation mesure les dépendances linéaires, info mutuelle tout type de dépendance statistique.
+
+\subsection{Indicateur}
+
+Lors de l'analyse de CxSOM, on souhaite comprendre l'information que portent les positions des BMUs d'une carte sur le modèle d'entrées. Nous avons défini les éléments de la carte en terme de variables aléatoire; l'information mutuelle peut alors être une représentation pertinente de l'information portée par le BMU d'une carte sur le modèle. Le modèle est représenté par la variable $(X,Y,Z)$, mais aussi par $U$. Dans ce sens, $I(\bmu, U)$ est l'information que porte le BMU d'une carte sur $U$, donc sur le modèle. 
+
+On souhaite cependant avoir un indicateur absolu, qui permettrait, sur une échelle de 0 à 1, de quantifier à quel point un BMU porte de l'information sur $U$. On va donc normaliser l'information mutuelle $I(\bmu,U)$ par la valeur maximale qu'elle peut prendre dans notre carte.
+\begin{propriete}
+La valeur maximale atteinte par $I(\bmu,U)$ est $H(U)$, atteinte lorsque $U$ est fonction de $\bmu$.
+\end{propriete}
+
+\begin{proof}
+Par construction, $\Pi$ est une fonction de $U$ dans une carte de Kohonen. En effet, notre algorithme est déterministe, et défini pour toute valeur de U. 
+Par propriété de l'information mutuelle, pour toute fonction $f$ et variable $X,Y$, $I(X,f(Y)) \leq I(X,Y) $.
+Donc, $I(U,\bmu) \leq I(U,U) = H(U)$
+Cette valeur est atteinte si et seulement si $U$ et $\bmu$ sont en bijection, autrement dit, ssi $U$ est aussi une fonction de $\bmu$.
+\end{proof}
+
+Nous définissons donc un indicateur de la relation entre $U$ et un BMU comme :
+\begin{equation}
+UC(\bmu;U) = \frac{I(\bmu,U}{H(U)}
+\end{equation}
+Ce coefficient n'est pas symétrique, et mesure donc l'information portée par le premier terme sur le second, relativement à la valeur maximale qu'elle peut prendre. Dans le cas des cartes CxSOM, $UC \in [0,1]$. 
+
+\subsection{Estimation}
+
+
+
+\subsection{Expériences et Résultats}
+
+
 
 
