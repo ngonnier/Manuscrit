@@ -70,7 +70,7 @@ En effet, le choix du BMU se fait suivant plusieurs activités, et plus encore, 
 \end{figure}
 De plus, la représentation visuelle des cartes d'une architecture est limitée par la dimension des entrées et la dimension des cartes. Ici s'ajoute à la dimension des entrées la dimension d'une carte et le nombre de carte. Il sera difficile de représenter graphiquement des architectures de plus de trois cartes, et encore plus lorsque les entrées sont en grande dimension. Cette difficulté de représentation soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, calculables en grande dimension.
 
-Mais, qu'est ce qu'une carte \emph{qui fonctionne ?}. L'intéret de CxSOM réside dans la communication entre cartes. Représenter les cartes une à une laisse donc de coté leur connexion. Il est donc nécessaire de trouver un moyen de représenter l'architecture comme un tout.
+Mais, qu'est ce qu'une carte \emph{qui fonctionne ?}. L'intéret de CxSOM réside dans la communication entre cartes. Représenter les cartes une à une laisse donc de coté leur connexion. Il est donc nécessaire de trouver un moyen de représenter l'architecture comme un tout. On s'intéressera notamment à comment l'architecture de carte est capable de représenter les relations entre les entrées multimodales.
 
 Ce chapitre questionne donc la façon de représenter une carte de Kohonen, et plus particulièrement la façon de représenter une carte au sein d'une architecture. Nous présenterons donc en premier lieu un formalisme pour la carte et les entrées multimodales associées, et à partir de ce formalisme nous proposerons plusieurs représentations et indicateurs cherchant à comprendre ce que l'architecture apprend sur les données d'entrée, et de quelle façon. 
 
@@ -159,20 +159,53 @@ De façon plus générale, on peut représenter, à partir d'un échantillon tes
 
 \subsection{Représenter les entrées par rapport à une carte}
 
-Représentation des entrées de test sur les poids de la carte
+Une première représentation d'une carte est de tracer la valeur de son entrée $\inpx\m{i}$ par rapport à la position du BMU. Cette représentation permet d'analyser la quantification des entrées par la carte. Ces tracés sont réalisables pour des cartes une et deux dimensions, et pour des entrées quelconques, que ce soient des réels ou des entrées de plus grandes dimension comme des images.
+Pour mieux comprendre les relations entre entrées, on peut tracer sur une même figure les entrées de toutes les cartes selon la position du BMU d'une des cartes. 
+
+\begin{figure}
+\centering\includegraphics[width=0.6\textwidth]{weights_2SOM}
+\label{fig:2som}
+\caption{A gauche, les poids externes et contextuels dans une architecture de deux cartes connectées réciproquement. Chaque carte a donc un poids externe et un poids contextuel. A droite, on a tracé en supplément la valeur de l'entrée (scalaire) de la première carte, en fonction de la position du BMU correspondant. Cette représentation fait apparaître les unités mortes de la carte et la façon dont les entrées sont projetées sur les poids.}
+\end{figure}
 
 \subsection{Représentation de U par rapport au BMU}
 \emph{Chercher à apprendre des relations entre les données}
 
-Un des objectifs principaux de l'architecture CxSOM est d'encoder les relatations entre les données d'entrée. Il nous faut donc tracer des valeurs qui expriment cette relation. 
-Expliquer mieux comment $U$ est choisi : il s'agit d'une transformation non linéaire des données sur un autre espace, dans lequel $U$.
+Pour une, deux, trois entrées, les relations entre entrées se déduisent assez directement. Lorsqu'on augmente la dimension, il paraît pertinent de dégager des nouvelles valeurs qui représentent le modèle: il s'agit ici de la variable $U$. Cette variable cachée est en fait une représentation du modèle en dimension plus faible, par une transformation non linéaire. On peut alors tracer $U$ en fonction de la position $\bmu$ du BMU d'une carte. 
 
-TODO : cas des cartes 2D, cas des entrées 
+\begin{figure}
+\centering
+\includegraphics[width = 0.6\textwidth]{XU_YU.pdf}
+\caption{Pour l'échantillon de test, valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes. On voit que $U$ est une fonction du BMU dans chaque carte, contrairement au cas ou les cartes apprendraient indépendamment sur les mêmes entrées, voir figure \ref{fig:piu_indep}.}
+\label{fig:piu}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width = 0.6\textwidth]{xu_yu_unco.pdf}
+\caption{Pour l'échantillon de test, entrée sur un cercle, valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes, lorsque les cartes $M_x$ et $M_y$ ne sont pas connectée. Chacune des cartes n'a aucune information de plus que celle portée par son entrée sur l'état global du système $U$, et $\Pi$ n'est donc pas une fonction de $U$ dans chaque carte. }
+\label{fig:piu_indep}
+\end{figure}
 
 
-\subsection{Représentation des cartes sous forme de "distortion" (trouver un mot)}
+\subsection{Dépliement d'une carte en plusieurs dimensions}
 
+Nous proposons dans cette thèse une façon de représenter les poids d'une carte de Kohonen au sein d'une architecture. Cette représentation est crée à partir des échantillons de test. Il s'agit de tracer les poids des BMUs $(\w_e(\bmu\m{1}),\cdots,\w_e(\bmu\m{k}))$ dans l'espace en $k$ dimensions correspondant - $k$ correspondant ici à 2 ou 3 dimensions. Les échantillons sont ensuites reliés suivant l'ordre des positions dans \emph{une des cartes}. On obtient ainsi le \emph{dépliement} d'une carte de l'architecture dans l'espace multimodal à plusieurs dimensions. Un exemple de carte ainsi dépliée est présenté en figure~\ref{fig:distortion}.
+\begin{figure}
+\begin{minipage}{0.5\textwidth}
+\centering\includegraphics[width=0.8\textwidth]{unco3som}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\centering\includegraphics[width=0.8\textwidth]{disto_Mx}
+\end{minipage}
+\caption{Représentation des poids finaux de trois cartes prenant en entrée $X$,$Y$ et $Z$, reliés selon les positions de la carte $X$. A gauche, les cartes de l'architecture ont appris séparément sur les données. A droite, disposition lorsque les cartes ont été connectées au sein d'une architecture. Un échantillon de 1000 points a été utilisé pour les tracés.}
+\label{fig:distortion}
+\end{figure}
 
+Ces figures sont équivalentes à tracer une carte dans l'espace de ses entrées: les poids des BMUs de l'échantillon sont les prototypes des cartes; seuls les poids des unités mortes ne sont pas représentés.
+Cette représentation est limitée par la dimension des entrées, ces dernières devant représenter au total moins de trois dimensions. Cette représentation peut malgré tout être étendue : il est possible de tracer le dépliement de la carte selon un \emph{élement} de chacune des modalités.
+Par ailleurs, l'étude du comportement de cartes sur des données 3D s'inscrit dans la démarche de construction d'un modèle que nous suivons dans cette thèse. Leur visualisation est alors un élément clé dans la compréhension des comportements possibles de l'architecture. A partir de cette visualisation, on peut envisager de construire des indicateurs permettant l'analyse de l'architecture en dimension supérieure. 
+Le second avantage de ces tracés est qu'il est possible de représenter graphiquement une carte qui ne prend pas d'entrée externe, ou de représenter une carte dans l'espace des poids d'autres cartes.
 
 \section{Information mutuelle comme indicateur statistique}
 
@@ -257,5 +290,13 @@ Limitation de l'estimateur : en transformant la densité continue en discrète, 
 
 
 \section{Expériences et résultats}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{mutual_info_evol.pdf}
+\caption{Evolution de l'indicateur relatif à l'information mutuelle entre $\Pi$ et $U$ dans chaque carte au cours de l'apprentissage. Cet indicateur est comparé à celui calculé dans le cas ou les cartes apprennent séparément.}
+\label{fig:im} 
+\end{figure}
+
 
 chap suivant ? 
