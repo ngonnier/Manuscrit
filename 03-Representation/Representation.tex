@@ -4,7 +4,7 @@
 \minitoc
 \section{Représentation et explicabilité des cartes de Kohonen}
 
-Les algorithmes d'apprentissage sont généralement composés de structures complexes. Leur règles d'évolution et leur structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état - c'est bien la le rôle d'un algorithme. Cet état doit alors être étudié et observé au même titre qu'un processus observé dans la nature. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. 
+Les algorithmes d'apprentissage sont généralement composés de structures complexes. Leur règles d'évolution et leur structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état, ce qui est naturellement le rôle d'un tel algorithme. Cet état doit alors être étudié et observé au même titre qu'un processus observé dans la nature. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. S'intéresser à une compréhension et une représentation fine des mécanismes impliqués dans un algorithme d'apprentissage est important pour une transparence de l'algorithme, mais aussi pour permettre une amélioration de ces algorithmes. \cite{Bengio2013RepresentationLA}. Dans la mesure ou cette thèse cherche à construire un réseau de neurones, il semble important de poser des métriques claires pour l'analyse de l'apprentissage et permettre un développement futur. 
 
 Lorsqu'on s'intéresse à des algorithmes supervisés, dans lesquels l'évolution dépend d'une fonction de coût et d'un objectifs, des métriques assez évidentes existent, en s'intéressant à l'erreur de prédiction. Mais même en situation supervisée, le problème est largement ouvert quand il s'agit de comprendre les mécanismes d'apprentissage à l'oeuvre dans la structure. Cette question de représentation est notamment soulevée dans l'étude de l'explicabilité de l'intelligence artificielle. Quand on s'intéresse aux algorithmes non-supervisés, la question de représentation de l'algorithme devient centrale: \emph{Que cherche-t-on à représenter et comment déterminer si on en a extrait une bonne représentation ?}
 
@@ -36,22 +36,22 @@ La manière la plus utilisée de représenter une carte de Kohonen est de tracer
 \caption{Représentations possible des poids d'une carte de Kohonen classiques, dans le cas d'entrées sous forme d'imagettes ou de points en deux dimensions.}
 \end{figure}
 
-On parle cependant ici d'interprétation visuelle humaine. Pour l'oeil humain, cette facilité d'interprétation est limitée à un domaine d'utilisation : celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un aspect graphique facilement interprétable. Essayez par exemple de vous représenter des distances dans un espace non-euclidien, comme en figure~\ref{fig:non_eucl}. Savoir quels points sont les plus proches nécessite alors un effort mental important et non une seule intuition; finalement la façon la plus simple de le savoir est de faire le calcul. 
+On parle cependant ici d'interprétation visuelle humaine. Pour l'oeil humain, cette facilité d'interprétation est limitée à un domaine d'utilisation : celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un aspect graphique facilement interprétable. Essayez par exemple de vous représenter des distances dans un espace non-euclidien. Savoir quels points sont les plus proches nécessite alors un effort mental important et non une seule intuition; finalement la façon la plus simple de le savoir est de faire le calcul. 
 La représentation d'une carte cherche à répondre à la question: "est-ce que la carte est bien dépliée sur toutes les données ? Est-ce qu'un prototype représente correctement une donnée ?". Y répondre en visualisant ses prototypes revient au processus intellectuel suivant: l'observateur imagine une donnée, par exemple une imagette d'un chiffre à main levée, et reproduit le processus de sélection du BMU qui a eu lieu lors de l'apprentissage de la carte pour trouver le poids qui lui correspond le mieux. Via ce processus mental, on est capable d'évaluer si une carte est dépliée sur les données. 
 Imaginons à présent que les distances considérées entre les éléments d'une carte ne soient plus euclidiennes: cette évaluation du dépliement de la carte repose maintenant sur soit une capacité d'abstraction phénoménale de l'observateur, soit des calculs de distances entre les points. La représentation de la carte doit ainsi être ajustée en fonction du processus d'organisation.
 
 Finalement, pour représenter un algorithme d'apprentissage non-supervisé et en particulier une carte de Kohonen, on doit d'abord bien poser ce qu'on cherche à évaluer; ensuite, cette représentation doit être adaptée aux règles de calcul de l'algorithme, ici de l'espace de la carte. 
 
-\begin{figure}
-\begin{minipage}{0.5\textwidth}
-\centering\includegraphics[width=0.5\textwidth]{sphere.png}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\centering\includegraphics[width=0.7\textwidth]{norm.png}
-\end{minipage}
-\label{fig:non_eucl}
-\caption{Appréhender les distances et les formes en géometrie sphérique n'est pas intuitif pour l'oeil humain. Le triangle de la figure à gauche possède trois angles droits. La figure de droite présente les cercles unités en deux dimensions par rapport à plusieurs normes.}
-\end{figure}
+%\begin{figure}
+%\begin{minipage}{0.5\textwidth}
+%\centering\includegraphics[width=0.5\textwidth]{sphere.png}
+%\end{minipage}
+%\begin{minipage}{0.5\textwidth}
+%\centering\includegraphics[width=0.7\textwidth]{norm.png}
+%\end{minipage}
+%\label{fig:non_eucl}
+%\caption{Appréhender les distances et les formes en géometrie sphérique n'est pas intuitif pour l'oeil humain. Le triangle de la figure à gauche possède trois angles droits. La figure de droite présente les cercles unités en deux dimensions par rapport à plusieurs normes.}
+%\end{figure}
 
 
 
@@ -244,9 +244,10 @@ Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y)$. L'égalité est atteinte ssi $f
 
 \subsection{Indicateur: coefficient d'incertitude.}
 
-Lors de l'analyse de CxSOM, on souhaite comprendre l'information que portent les positions des BMUs d'une carte sur le modèle d'entrées. Nous avons défini les éléments de la carte en terme de variables aléatoire; l'information mutuelle peut alors être une représentation pertinente de l'information portée par le BMU d'une carte sur le modèle. Le modèle est représenté par la variable $(X,Y,Z)$, mais aussi par $U$. Dans ce sens, $I(\bmu, U)$ est l'information que porte le BMU d'une carte sur $U$, donc sur le modèle. 
+Lors de l'analyse de CxSOM, l'information que portent les positions des BMUs d'une carte sur le modèle d'entrées est une valeur intéressante. Les éléments de la carte ont été définis en terme de variables aléatoire l'information mutuelle peut alors être une représentation pertinente de l'information portée par le BMU d'une carte sur le modèle. Le modèle est représenté par la variable $(X,Y,Z)$, mais aussi par $U$. Dans ce sens, $I(\bmu, U)$ est l'information moyenne que le BMU d'une carte porte sur $U$ et $U$ sur le BMU.
 
-On souhaite cependant avoir un indicateur absolu, qui permettrait, sur une échelle de 0 à 1, de quantifier à quel point un BMU porte de l'information sur $U$. On va donc normaliser l'information mutuelle $I(\bmu,U)$ par la valeur maximale qu'elle peut prendre dans notre carte.
+On souhaite cependant avoir un indicateur normalisé, qui permettrait, sur une échelle de 0 à 1, de quantifier à quel point un BMU porte de l'information sur $U$. On va donc normaliser l'information mutuelle $I(\bmu,U)$ par la valeur maximale qu'elle peut prendre dans notre carte.
+
 \begin{propriete}
 La valeur maximale atteinte par $I(\bmu,U)$ est $H(U)$, atteinte lorsque $U$ est fonction de $\bmu$.
 \end{propriete}
@@ -256,6 +257,7 @@ Par construction, $\Pi$ est une fonction de $U$ dans une carte de Kohonen. En ef
 Par propriété de l'information mutuelle, pour toute fonction $f$ et variable $X,Y$, $I(X,f(Y)) \leq I(X,Y) $.
 Donc, $I(U,\bmu) \leq I(U,U) = H(U)$
 Cette valeur est atteinte si et seulement si $U$ et $\bmu$ sont en bijection, autrement dit, ssi $U$ est aussi une fonction de $\bmu$.
+
 \end{proof}
 
 Nous définissons donc un indicateur de la relation entre $U$ et un BMU comme:
@@ -269,7 +271,12 @@ Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer U
 \subsection{Estimation}
 
 L'information mutuelle et l'entropie sont des grandeurs probabilistes. Elles sont définies à partir de la distribution des variables aléatoire. Lorsque qu'on ne connait pas les distributions, il est nécessaire d'estimer ces valeurs autrement. 
-Dans le cas d'étude, les variables considérées sont 1D, et le nombre d'échantillon disponible est grand. On estime donc la distribution des variables en réalisant du \emph{binning}, et les indicateurs sont calculés à partir de cette estimation.
+Dans le cas d'étude, les variables considérées sont 1D, et le nombre d'échantillon disponible est grand. On estime donc la distribution des variables en réalisant du \emph{binning}, et les indicateurs sont calculés à partir de cette estimation. 
+
+Faire attention à : 
+pour comparer des éléments issus de plusieurs sets, il nous faut prendre la même taille de bins. 
+Besoin d'un grand nombre d'entrées pour que l'estimation soit fiable
+
 
 Limitations de cette estimation:
 \begin{itemize}
@@ -279,12 +286,16 @@ Limitations de cette estimation:
 
 Limitation de l'estimateur : en transformant la densité continue en discrète, on perd la notion de proximité entre les valeurs de $U$ et entre les positions. Ainsi, des données dispersées autour d'un point à la position $p$ seront considérées de la même façon que si elles sont dispersée autour de deux points séparés. On a donc intérêt à trouver un indicateur qui prend en compte la proximité ...
 
+
+
 \begin{figure}
 \centering
 \includegraphics[width=0.3\textwidth]{boxes}
 \caption{Procédé de binning pour estimer les distributions des variables $\bmu$ et $U$}
 \label{fig:binning} 
 \end{figure}
+
+Perspectives: estimation possible en plus grande dimension par des procédés plus développés que le binning : ex \cite{Belghazi2018MutualIN}. ( regarder citations de leur papier pour plus d'exemples). 
 
 \section{Correlation ration}
 
@@ -299,4 +310,6 @@ Limitation de l'estimateur : en transformant la densité continue en discrète, 
 \end{figure}
 
 
-chap suivant ? 
+\section{Prédiction d'entrée}
+
+Au sein d'une architecture de cartes, il est possible de ne pas présenter à une ou plusieurs cartes de l'architecture leur entrée externe $\inpx\m{i}$. Dans ce cas, une best matching unit peut quand même être calculée par leurs entrées contextuelles. Le poids de cette best matching unit peut alors être vu comme une prédiction de l'entrée manquante. Cette capacité de prédiction peut être à la fois vue comme une application possible de l'architecture, mais aussi comme une façon de représenter \emph{ce que les autre cartes connaissent d'une autre}. Tracer les prédictions d'une carte est donc un indicateur de la façon dont une architecture a appris des relations. 
