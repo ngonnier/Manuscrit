@@ -262,18 +262,22 @@ Cette valeur est atteinte si et seulement si $U$ et $\bmu$ sont en bijection, au
 
 Nous définissons donc un indicateur de la relation entre $U$ et un BMU comme:
 \begin{equation}
-UC(\bmu;U) = \frac{I(\bmu,U)}{H(U)}
+UC(\bmu|U) = \frac{I(\bmu,U)}{H(U)}
 \end{equation}
 Ce coefficient n'est pas symétrique, et mesure donc l'information portée par le premier terme sur le second, relativement à la valeur maximale qu'elle peut prendre. Dans le cas des cartes CxSOM, $UC \in [0,1]$. 
 
-Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer UC(($\bmu^1,\bmu^2,\bmu^3),U)$ pour 3 cartes, en considérant la variable jointe $(\bmu^1,\bmu^2,\bmu^3)$.
+Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer $UC(\bmu^1,\bmu^2,\bmu^3|U)$ pour 3 cartes, en considérant la variable jointe $(\bmu^1,\bmu^2,\bmu^3)$. PLus largement, pour prouver qu'on a bien appris un modèle, on souhaite que $UC(\bmu\m{1},\cdots,\bmu\m{k}|U)$ soit le plus proche possible de 1.
 
 \subsection{Estimation}
 
 L'information mutuelle et l'entropie sont des grandeurs probabilistes. Elles sont définies à partir de la distribution des variables aléatoire. Lorsque qu'on ne connait pas les distributions, il est nécessaire d'estimer ces valeurs autrement. 
-Dans le cas d'étude, les variables considérées sont 1D, et le nombre d'échantillon disponible est grand. On estime donc la distribution des variables en réalisant du \emph{binning}, et les indicateurs sont calculés à partir de cette estimation. 
+Dans le cas d'étude, les variables considérées sont 1D, et le nombre d'échantillon disponible est grand. On estime donc la distribution des variables en réalisant du \emph{binning}, et les indicateurs sont calculés à partir de cette estimation.
 
-Faire attention à : 
+Un meilleur estimateur que le binning est l'estimation par noyaux de Kraskov \cite{2004kraskov}. Ell s'appuie sur des méthode de recherche de voisinages pour estimer les distributions. Nous l'utiliserons  
+par la suite. 
+
+
+Faire attention à: 
 pour comparer des éléments issus de plusieurs sets, il nous faut prendre la même taille de bins. 
 Besoin d'un grand nombre d'entrées pour que l'estimation soit fiable
 
@@ -297,10 +301,6 @@ Limitation de l'estimateur : en transformant la densité continue en discrète, 
 
 Perspectives: estimation possible en plus grande dimension par des procédés plus développés que le binning : ex \cite{Belghazi2018MutualIN}. ( regarder citations de leur papier pour plus d'exemples). 
 
-\section{Correlation ration}
-
-
-\section{Expériences et résultats}
 
 \begin{figure}
 \centering
