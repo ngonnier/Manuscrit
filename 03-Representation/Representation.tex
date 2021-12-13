@@ -4,23 +4,23 @@
 \minitoc
 \section{Représentation et explicabilité des cartes de Kohonen}
 
-Les algorithmes d'apprentissage sont généralement composés de structures complexes. Leur règles d'évolution et leur structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état, ce qui est naturellement le rôle d'un tel algorithme. Cet état doit alors être étudié et observé au même titre qu'un processus observé dans la nature. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. S'intéresser à une compréhension et une représentation fine des mécanismes impliqués dans un algorithme d'apprentissage est important pour une transparence de l'algorithme, mais aussi pour permettre une amélioration de ces algorithmes. \cite{Bengio2013RepresentationLA}. Dans la mesure ou cette thèse cherche à construire un réseau de neurones, il semble important de poser des métriques claires pour l'analyse de l'apprentissage et permettre un développement futur. 
+Les algorithmes d'apprentissage sont composés de structures complexes. Leurs règles d'évolution et leurs structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état. Celui-ci doit alors être étudié, observé et mesuré afin de pouvoir utiliser le système pour des tâches d'apprentissages. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. S'intéresser à une compréhension et une représentation fine des mécanismes impliqués dans un algorithme d'apprentissage est important pour une transparence de l'algorithme, mais aussi pour permettre une amélioration de ces algorithmes. Dans la mesure ou cette thèse cherche à construire un réseau de neurones, il semble important de poser des métriques claires pour l'analyse de l'apprentissage et permettre un développement futur. 
+\cite{Bengio2013RepresentationLA}
 
 Lorsqu'on s'intéresse à des algorithmes supervisés, dans lesquels l'évolution dépend d'une fonction de coût et d'un objectifs, des métriques assez évidentes existent, en s'intéressant à l'erreur de prédiction. Mais même en situation supervisée, le problème est largement ouvert quand il s'agit de comprendre les mécanismes d'apprentissage à l'oeuvre dans la structure. Cette question de représentation est notamment soulevée dans l'étude de l'explicabilité de l'intelligence artificielle. Quand on s'intéresse aux algorithmes non-supervisés, la question de représentation de l'algorithme devient centrale: \emph{Que cherche-t-on à représenter et comment déterminer si on en a extrait une bonne représentation ?}
 
-En particulier, les  "Est ce que les prototypes ont extrait une information pertinente des données" n'a en fait que des réponses partielles dans la littérature. Il s'agit d'abord de déterminer ce qu'on cherche à apprendre dans un cas spécifique. Nous nous poserons ainsi cette question pour l'architecture CxSOM. 
+En particulier, "Est ce que les prototypes ont extrait une information pertinente des données" n'a en fait que des réponses partielles dans la littérature. Il s'agit d'abord de déterminer ce qu'on cherche à apprendre dans un cas spécifique. Nous nous poserons ainsi cette question pour l'architecture CxSOM. 
 %
 %Dans un cas plus général de cartes auto-organisatrices, telles que celles agissant dans CxSOM, l'apprentissage repose sur des calculs d'activités et un processus de relaxation. Ces activités n'ont pas forcément un pendant graphique. De ce fait, leur représentation graphique mérite une analyse plus approfondie que dans le cas de cartes classiques. 
 
 
-
 \subsection{Représentation classique des cartes de Kohonen}
 
-Les cartes de Kohonen sont un algorithme d'apprentissage certes non-supervisé, mais sont particulièrement associées à une facilité de représentation et de visualisation. En effet, leur nombre réduit de prototypes et leur aspect topologique permet d'en tracer une représentation visuelle interprétable.
+Les cartes de Kohonen sont un algorithme d'apprentissage non-supervisé, mais sont particulièrement associées à une facilité de représentation et de visualisation. En effet, leur nombre réduit de prototypes et leur aspect topologique permet d'en tracer une représentation visuelle interprétable.
 La manière la plus utilisée de représenter une carte de Kohonen est de tracer les poids de ses prototypes, disposés dans le graphe qu'est la carte. En fonction des dimensions des entrées, cette représentation prennent plusieurs formes. Deux exemples courants de représentation sont les suivants: 
 \begin{itemize}
 \item Le graphe qu'est la carte de Kohonen est représenté dans l'espace de ses positions (la grille d'indices $(i,j)$, ou une ligne indexée par $i$. Sur chaque noeud est tracé le poids correspondant. C'est le cas sur l'exemple de gauche en figure~\ref{fig:representation} dans lequel les poids des prototypes, qui sont des imagettes, sont affichés en chaque point de la grille. Si la dimension d'un poids est trop grande pour être représentée graphiquement, il est également courant de labeliser chaque prototype et d'afficher ces labels sur les noeuds de la carte, en tant que représentation.
-\item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace $R^2$ ou $R^3$. Ces poids sont alors reliés en fonction des positions des noeuds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation}.
+\item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace $\mathbb{R}^2$ ou $\\mathbb{R}^3$. Ces poids sont alors reliés en fonction des positions des noeuds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation}.
 \end{itemize}
 
 \begin{figure}
@@ -36,9 +36,12 @@ La manière la plus utilisée de représenter une carte de Kohonen est de tracer
 \caption{Représentations possible des poids d'une carte de Kohonen classiques, dans le cas d'entrées sous forme d'imagettes ou de points en deux dimensions.}
 \end{figure}
 
-On parle cependant ici d'interprétation visuelle humaine. Pour l'oeil humain, cette facilité d'interprétation est limitée à un domaine d'utilisation : celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un aspect graphique facilement interprétable. Essayez par exemple de vous représenter des distances dans un espace non-euclidien. Savoir quels points sont les plus proches nécessite alors un effort mental important et non une seule intuition; finalement la façon la plus simple de le savoir est de faire le calcul. 
+On parle ici d'interprétation visuelle humaine. Pour l'oeil humain, cette facilité d'interprétation est limitée à un domaine d'utilisation: celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un aspect graphique facilement interprétable. Essayez par exemple de vous représenter des distances dans un espace non-euclidien, ou des distances . Savoir quels points sont les plus proches nécessite alors un effort mental important et non une seule intuition; finalement la façon la plus simple de le savoir est de faire le calcul.
+ 
 La représentation d'une carte cherche à répondre à la question: "est-ce que la carte est bien dépliée sur toutes les données ? Est-ce qu'un prototype représente correctement une donnée ?". Y répondre en visualisant ses prototypes revient au processus intellectuel suivant: l'observateur imagine une donnée, par exemple une imagette d'un chiffre à main levée, et reproduit le processus de sélection du BMU qui a eu lieu lors de l'apprentissage de la carte pour trouver le poids qui lui correspond le mieux. Via ce processus mental, on est capable d'évaluer si une carte est dépliée sur les données. 
 Imaginons à présent que les distances considérées entre les éléments d'une carte ne soient plus euclidiennes: cette évaluation du dépliement de la carte repose maintenant sur soit une capacité d'abstraction phénoménale de l'observateur, soit des calculs de distances entre les points. La représentation de la carte doit ainsi être ajustée en fonction du processus d'organisation.
+
+% Ajouter ref : mesures usuelles des cartes de Kohonen ? Pourquoi ne les utilise ton pas ? 
 
 Finalement, pour représenter un algorithme d'apprentissage non-supervisé et en particulier une carte de Kohonen, on doit d'abord bien poser ce qu'on cherche à évaluer; ensuite, cette représentation doit être adaptée aux règles de calcul de l'algorithme, ici de l'espace de la carte. 
 
@@ -54,21 +57,21 @@ Finalement, pour représenter un algorithme d'apprentissage non-supervisé et en
 %\end{figure}
 
 
-
-
 \subsection{Que cherche t-on à représenter dans CxSOM ?}
 
 Pour pouvoir étudier le comportement d'une architecture de cartes, il nous faut donc répondre à ces deux questions de représentation. 
 
 La représentation des prototypes dans chaque carte n'est plus un bonne représentation de l'architecture.
 En effet, le choix du BMU se fait suivant plusieurs activités, et plus encore, suivant un processus de relaxation. Il est bien entendu possible de tracer les poids d'une carte après apprentissage, comme représenté en figure~\ref{fig:weights}. Cependant, le processus intellectuel menant à la représentation mentale d'une carte, en regardant les poids, n'est plus possible. En imaginant une donnée, on ne pourra pas trouver le BMU selectionné. La simulation du processus d'activité et relaxation est nécessaire pour la représentation compréhensible par l'humain d'une carte au sein de CxSOM. Par ailleurs, chaque unité d'une carte a plusieurs poids. Il est donc compliqué de comprendre directement le rôle de ces poids en regardant leur valeur.
+
+
 \begin{figure}
 \centering
 \includegraphics[width=0.7\textwidth]{weights_2.pdf}
 \label{fig:weights}
 \caption{Représentation des valeurs des poids d'une carte au sein de CxSOM. La seule représentation de ces poids ne suffit pas à savoir comment la carte se comporte. }
 \end{figure}
-De plus, la représentation visuelle des cartes d'une architecture est limitée par la dimension des entrées et la dimension des cartes. Ici s'ajoute à la dimension des entrées la dimension d'une carte et le nombre de carte. Il sera difficile de représenter graphiquement des architectures de plus de trois cartes, et encore plus lorsque les entrées sont en grande dimension. Cette difficulté de représentation soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, calculables en grande dimension.
+De plus, la représentation visuelle des cartes d'une architecture est limitée par la dimension des entrées et la dimension des cartes. Ici s'ajoutent à la dimension des entrées la dimension d'une carte et le nombre de carte. Il sera difficile de représenter graphiquement des architectures de plus de trois cartes, et encore plus lorsque les entrées sont en grande dimension. Cette difficulté de représentation soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, calculables en grande dimension.
 
 Mais, qu'est ce qu'une carte \emph{qui fonctionne ?}. L'intéret de CxSOM réside dans la communication entre cartes. Représenter les cartes une à une laisse donc de coté leur connexion. Il est donc nécessaire de trouver un moyen de représenter l'architecture comme un tout. On s'intéressera notamment à comment l'architecture de carte est capable de représenter les relations entre les entrées multimodales.
 
@@ -81,8 +84,8 @@ Nous introduisons dans cette section un formalisme traitant les éléments des c
 \subsection{Représentation des entrées}
 
 Les observations multimodales que l'on cherchera à apprendre par l'architecture de cartes sont notées ${X^i, i = 0 \cdots N}$ où $N$ est le nombre de modalités considérées. Lors de l'apprentissage et du test, elles sont échantillonnées; ainsi, à chaque pas de temps, l'architecture se voit présentée un vecteur $(X^0_t, \cdots, X^N_t)$.
-Lorsqu'elles sont considérées en tant que \emph{entrée externe} d'une carte, on les notera plutôt ${\inpx^i, i=0 \cdots N} $, avec $i$ l'indice de la carte dont $\inpx^i$ est l'entrée.
-Pour tout $i$, $X^i$ et $\inpx^i$ sont des variables aléatoires, et $\mathbf{X} = (X^0, \cdots, X^N)$ et $\mathbf{\inpx} = (\inpx^0, \cdots , \inpx^N)$ sont les vecteurs aléatoires correspondants.
+Lorsqu'elles sont considérées en tant que \emph{entrée externe} d'une carte, on les notera plutôt ${\inpx\m{i}, i=0 \cdots N} $, avec $i$ l'indice de la carte dont $\inpx\m{i}$ est l'entrée.
+Pour tout $i$, $X^i$ et $\inpx\m{i}$ sont des variables aléatoires, et $\mathbf{X} = (X^0, \cdots, X^N)$ et $\mathbf{\inpx} = (\inpx\m{0}, \cdots , \inpx\m{N})$ sont les vecteurs aléatoires correspondants.
 
 Pour les entrées CxSOM, on s'intéresse à l'apprentissage de relations entre entrées. Les variables $X^i$ ne sont a priori donc pas des variables indépendantes. Afin de mieux comprendre comment les cartes apprennent des relations entre les entrées, on introduit une autre variable aléatoire $U$. Cette variable est multidimensionnelle et est choisie de façon à ce que chaque variable $X^i$ soit une fonction quelconque de la variable aléatoire $U$, et uniquement de cette variable. Il s'agit en fait d'une réduction de dimension:
 
@@ -117,7 +120,7 @@ Notons par contre que la plus petite dimension possible de $U$ dépend du degré
 \caption{Exemples de paramétrisations du cercle. La paramétrisation qui traduit le plus facilement le modèle est naturellement celle dans laquelle $U$ est à valeurs réelles. Le modèle auxquelles appartiennent les modalités $X^0$ et $X^1$ est donc représenté par la variable cachée $U$.}
 \end{figure}
 
-Cette façon de représenter les entrées est-elle générale ? 
+%Cette façon de représenter les entrées est-elle générale ? 
 
 
 \subsection{Représentation des éléments des cartes}
@@ -126,12 +129,12 @@ Comme dans de nombreux algorithmes d'apprentissages, on peut décomposer le jeu 
 
 Nous considérerons alors plusieurs éléments des cartes en tant que variables aléatoires, notamment :  
 \begin{itemize}
-\item Les positions des BMUs $\bmu^0, \cdots, \bmu^N$ dans chaque carte
-\item Les poids externes des BMUs $\w_e^0(\bmu^0), \cdots, \w_e^N(\bmu^N)$
+\item Les positions des BMUs $\bmu\m{0}, \cdots, \bmu\m{N}$ dans chaque carte
+\item Les poids externes des BMUs $\w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{N}(\bmu\m{N})$
 \end{itemize}
 Notons que tout élément d'une carte pourrait être vu de cette manière. 
 Une phase de test est donc un grand nombre de réalisations d'une variable aléatoire jointe : 
-$$(\inpx^0, \cdots, \inpx^N, \bmu^0, \cdots, \bmu^N, \w_e^0(\bmu^0), \cdots, \w_e^N(\bmu^N))$$
+$$(\inpx\m{0}, \cdots, \inpx\m{N}, \bmu\m{0}, \cdots, \bmu\m{N}, \w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{N}(\bmu\m{N}))$$
 Les composantes de cette variable jointe ne sont pas indépendantes. Les représentations et indicateurs présentés ensuite chercheront à détecter et comprendre au mieux ces dépendances statistiques.
 
 Ainsi, dans ce formalisme par variable aléatoires, à chaque pas d'apprentissage peut-être associé un ensemble de réalisations de variables aléatoires. Ceci permet alors d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture. Cette approche ne se limite pas à l'architecture CxSOM : 
@@ -209,14 +212,26 @@ Le second avantage de ces tracés est qu'il est possible de représenter graphiq
 
 \section{Information mutuelle comme indicateur statistique}
 
-De nombreuses valeurs ont été développées en théorie de l'information, depuis Shannon en 1948 (citer), pour mesurer des dépendances entre variables.
-Lister les spécificités des mesures et dans quel cas on peut les utiliser: 
-Mesure proba / estimation ( estimation en grande dimensions, etc)
-Est ce que les distributions doivent etre connues ...
+L'étude de tout processus physique s'effectue par un ensemble signaux issus de capteurs. La théorie de l'information de Shannon \cite{Shannon1948AMT} apporte un modèle mathématique qui abstrait ces signaux et permet de les manipuler, les encoder, les décoder et quantifier l'apport ou perte d'information entre eux, en les utilisant en tant que distributions de probabilités.
+Ce modèle mathématique puissant permet de s'abstraire de la nature des signaux pour s'intéresser à leurs relations. Comme son nom l'indique, la théorie de l'information s'appuie sur la notion fondamentale d'information portée par un symbole. Ensuite, cette information se décline en quantités qu'on calcule en fonction de ce qu'on veut mesurer: l'entropie d'une variable, comme l'information apportée par l'observation de la variable seule; l'entropie conditionnelle entre deux variables,l'information mutuelle entre deux variables ou un plus grand nombre. Ces mesures définissent une dépendance statistique générale, et ne dépendent pas du type de modèle ou de relation.
 
-Exemple de domaines d'application de ces mesures
+La théorie de l'information est non seulement applicable, mais en fait profondondément liée aux algorithmes l'apprentissage automatique~\cite{mackay2003information}. L'informatique prend sa source dans les travaux de recherche en la théorie de l'information au XXème siècle. L'apprentissage automatique en est un aspect.
+Ces algorithmes cherchent en effet à apprendre un modèle, un signal liant des entrées à des sorties, ou des entrées entre elle. Ce modèle est un encodage du signal d'entrée. 
+De son coté, la théorie de l'information apporte un langage fondamental pour quantifier la dépendance entre signaux, les encoder et les décoder. Les algorithmes d'apprentissage étant fondamentalement des encodeurs et des décodeurs, les quantités issues de la théorie de l'information ont donc une traduction directe dans les modèles d'apprentissage, et inversement.
+D'ailleurs, de nombreux modèles d'apprentissage automatique se reposent directement sur des règles de calcul d'information pour encoder le signal d'entrée. On pense notamment aux approches bayésiennes de l'apprentissage qui estiment des distributions, et passent par des calculs d'information pour les estimer.
+ 
+L'analyse d'un système d'apprentissage via la théorie de l'information peut donc avoir deux approches: 
 
-Ces mesures s'appuient sur des variables : elles ne dépendent pas du modèle. 
+\begin{itemize}
+\item Utiliser des quantités estimables pour quantifier les relations entre entrées et sorties, et ainsi en tirer des conclusions en terme d'encodage et de pertes. Par exemple, si l'information portée par la sortie sur l'entrée est élevée, l'encodage est bien réalisé.
+\item Abstraire le système d'apprentissage dans le modèle mathématique de la théorie de l'information.
+\end{itemize}
+
+Nous investiguerons dans cette partie la première approche, soit, comment quantifier le système apprenant par des outils d'information. Bien que cette théorie soit un outil mathématique puissant, il s'agit d'un modèle s'appuyant sur les probabilités. L'estimation à partir de données est donc un élément clé et parfois limitant lorsqu'on cherche à utiliser des valeurs telles que l'entropie pour quantifier l'information au sein d'un système. Nous répondrons donc à ces questions : 
+\begin{itemize}
+\item Quelle quantité cherche-t-on à mesurer dans l'architecture de cartes ? Cette quantité dépend de la fonction qu'on cherche à réaliser.
+\item Peut-on l'estimer, et comment ? 
+\end{itemize}
 
 \subsection{Information mutuelle et entropie}
 
@@ -224,23 +239,20 @@ Les notions d'\emph{entropie} et les valeurs qui en sont dérivées, telle que l
 Les formules indiquées dans ce paragraphe concernent des variables aléatoire discrètes. 
 L'entropie de Shannon d'une variable aléatoire $X$, de distribution $p(X)$, est notée $H(X)$ et définie par la formule : 
 $$ H(X) = - \sum_{x \in X}{p(x)\textrm{log}(p(x))}$$
-Elle se mesure en $bit/symbole$ lorsque le le logarithme est en base 2, ce qui est généralement utilisé. 
+Elle se mesure en $bit/symbole$ lorsque le logarithme est en base 2, ce qui est généralement utilisé. 
 L'entropie est une mesure de la quantité d'incertitude, ou de surprise, sur la valeur de la variable aléatoire $X$. Si la la distribution de probabilité de $X$ est concentrée autour d'un point, l'entropie est faible : lors d'une réalisation de $X$, l'observateur est \emph{plutôt certain} du résultat. En revanche, l'entropie est maximale lorsque lorsque $X$ suit une distribution de probabilité uniforme.
 L'entropie s'interpète également comme la quantité moyenne d'information à fournir, en bits, pour coder la valeur que prend la variable $X$.
 De la même manière, on peut définir l'entropie conjointe de deux variables, qui est l'entropie de leur distribution jointe, et l'entropie conditionnelle, qui est l'entropie de leurs distributions conditionnelles.
 
 Outre les entropies jointes et conditionnelles, les relations statistques entre deux variables aléatoires peuvent être mesurées par \emph{l'information mutuelle}. Elle se définit formellement par : 
 $$ I(X,Y) = \sum_{x,y \in X,Y}{p(x,y)\textrm{log}(\frac{p(x,y)}{p(x)p(y)})}$$
-Cette valeur mesure la quantité d'information moyenne apportée par une réalisation de $X$ sur la réalisation de $Y$. L'information mutuelle possède notamment les propriété suivantes: 
+Cette valeur mesure la quantité d'information moyenne apportée par une réalisation de $X$ sur la réalisation de $Y$. L'information mutuelle possède notamment les propriété suivantes:
+
 $$I(X,Y) = 0 \Leftrightarrow \textrm{X et Y sont indépendantes}$$
-Cette propriété se comprend dans la définition de $I$: si $X$ et $Y$ sont indépendantes, $p(x,y)=p(x)p(y)$ et terme $\textrm{log}(\frac{p(x,y)}{p(x)p(y)}$ est nul pour toute les valeurs de $x$ et $y$. Inversement, $I(X,Y) =0$ ssi tous les termes (positifs) de la somme sont nuls, donc si $(p(x,y)=p(x)p(y)$ pour toutes les valeurs de $X$ et $Y$. L'information mutuelle est donc aussi une mesure de la distance entre la distribution jointe de $(X,Y)$ et leur indépendance.
-
-
-Elle s'exprime à partir de l'entropie : $$I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$$
-
-Elle est symétrique : $$I(X,Y) = I(Y,X)$$
-
-Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y)$. L'égalité est atteinte ssi $f$ est \emph{bijective}. (proof?)
+L'information mutuelle est donc une mesure de la distance entre la distribution jointe de $(X,Y)$ et leur indépendance.\\
+Elle s'exprime à partir de l'entropie : $$I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$$\\
+Elle est symétrique : $$I(X,Y) = I(Y,X)$$\\
+Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y)$. L'égalité est atteinte ssi $f$ est \emph{bijective}.
 
 \subsection{Indicateur: coefficient d'incertitude.}
 
@@ -262,45 +274,49 @@ Cette valeur est atteinte si et seulement si $U$ et $\bmu$ sont en bijection, au
 
 Nous définissons donc un indicateur de la relation entre $U$ et un BMU comme:
 \begin{equation}
-UC(\bmu|U) = \frac{I(\bmu,U)}{H(U)}
+UC(U|\bmu) = \frac{I(\bmu,U)}{H(U)}
 \end{equation}
 Ce coefficient n'est pas symétrique, et mesure donc l'information portée par le premier terme sur le second, relativement à la valeur maximale qu'elle peut prendre. Dans le cas des cartes CxSOM, $UC \in [0,1]$. 
 
-Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer $UC(\bmu^1,\bmu^2,\bmu^3|U)$ pour 3 cartes, en considérant la variable jointe $(\bmu^1,\bmu^2,\bmu^3)$. PLus largement, pour prouver qu'on a bien appris un modèle, on souhaite que $UC(\bmu\m{1},\cdots,\bmu\m{k}|U)$ soit le plus proche possible de 1.
+%TODO : développer ce point : iformation portée par plus de variables ! 
+Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer $UC(U | (\bmu\m{1},\bmu\m{2},\bmu\m{3}))$ pour 3 cartes, en considérant la variable jointe $(\bmu\m{1},\bmu\m{2},\bmu\m{3})$. Plus largement, pour prouver qu'on a bien appris un modèle, on souhaite que $UC(U|\bmu\m{1},\cdots,\bmu\m{k})$ soit le plus proche possible de 1.
 
 \subsection{Estimation}
-
+%TODO
+%- Limitations : biais, variance (definition mathématique ?)
+%- Traduction de ces limitations concrètement, notamment pour le calcul du rapport info/entropie : a quoi doit on faire attention ?
 L'information mutuelle et l'entropie sont des grandeurs probabilistes. Elles sont définies à partir de la distribution des variables aléatoire. Lorsque qu'on ne connait pas les distributions, il est nécessaire d'estimer ces valeurs autrement. 
-Dans le cas d'étude, les variables considérées sont 1D, et le nombre d'échantillon disponible est grand. On estime donc la distribution des variables en réalisant du \emph{binning}, et les indicateurs sont calculés à partir de cette estimation.
+Une première façon d'estimer l'entropie et l'information mutuelle entre $X$ et $Y$ est d'estimer la distribution des variables $X$,$Y$ et leur distribution jointe $Z = (X,Y)$ en discrétisant l'espace par \emph{binning}, représenté en figure~\ref{fig:binning}. Les variables X et Y sont donc discrétisées en \emph{boîtes} de centres $x_k$ et $y_k$. La distribution de X est alors estimée par: 
+$$P(X = x_i) = \frac{n_{xi}}{N} $$, où $n_{xi}$ est le nombre d'échantillons de X tombant dans la boîte de valeur $x_i$ et $N$ le nombre de points. Le même procédé est réalisé pour $Y$ et $Z = (X,Y)$.
+L'information mutuelle par binning est calculée à partir de ces distributions discrètes.
+Lorsque la dimension des variables est faible (typiquement 1D), l'estimateur est ?? (fiable ?? comment) . Des terme de corrections peuvent éventuellement être apportés. La précision de l'estimation peut être améliorée en choisissant des tailles de boîtes variables. Cependant, lorsque la dimension augmente, le nombre d'échantillon disponibles doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient théoriquement du en contenir; l'estimation de la probabilité en ce point sera donc nulle, et l'indicateur faussé. 
 
-Un meilleur estimateur que le binning est l'estimation par noyaux de Kraskov \cite{2004kraskov}. Ell s'appuie sur des méthode de recherche de voisinages pour estimer les distributions. Nous l'utiliserons  
-par la suite. 
+Un autre estimateur que le binning est l'estimation par noyaux de Kraskov \cite{2004kraskov}. Cet estimeur passe par une estimation diecte de l'entropie au lieu des densités de probabilités. Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer la somme de logarithmes par la fonction digamma : 
+$$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$
+Cette information mutuelle locale est ensuite moyennée sur l'ensemble des points: 
+$$\hat{I}(X,Y) = \psi(k) - \langle\psi(n_{x_j} + 1) + \psi(n_{y_j} +1)\rangle + \psi(N)$$
+Cet estimateur est meilleur que le binning, car il ?? 
+Il permet également d'éviter les boîtes vides du binning, car on n'explorera que l'espace des points. Il est donc préférable d'utiliser cet estimateur en plus grande dimension. Nous utiliserons cet estimateur par la suite.
 
+L'estimation de $UC(X|Y)$ nécessite d'estimer $I(X,Y)$ et $H(Y)$.
 
-Faire attention à: 
-pour comparer des éléments issus de plusieurs sets, il nous faut prendre la même taille de bins. 
-Besoin d'un grand nombre d'entrées pour que l'estimation soit fiable
-
-
-Limitations de cette estimation:
-\begin{itemize}
-\item La taille des boites doit être sélectionnée manuellement pour le moment, donc dans le cas ou on veut utiliser cet indicateur, a savoir avec $U$, $\bmu$ de plus grande dimension ou des cartes 2D, il faut un processus qui permet de choisir une bonne taille de boites.
-\item En parlant plus grande dimension, on est limité dans le binning par les boites vides: la taille de l'échantillon devrait augmenter exponentiellement en fonction de la dimension pour que l'approximation d'une densité soit toujours valide. Sinon, on a trop de boites vides qui ne le snot que parce que les données sont trop éparses. Donc il faut penser à d'autres méthodes d'estimations, telles que Kraskov. Cette estimation est un problème difficile a résoudre ...
-\end{itemize}
-
-Limitation de l'estimateur : en transformant la densité continue en discrète, on perd la notion de proximité entre les valeurs de $U$ et entre les positions. Ainsi, des données dispersées autour d'un point à la position $p$ seront considérées de la même façon que si elles sont dispersée autour de deux points séparés. On a donc intérêt à trouver un indicateur qui prend en compte la proximité ...
-
-
+L'information mutuelle et l'entropie étant des quantités fondamentales en théorie de l'information, il existe de nombreuses méthodes d'estimations de ces valeurs malgré la difficulté qu'elle pose. On peut notamment citer~\cite{Belghazi2018MutualIN}, qui utilise une approche neuronale pour estimer l'information mutuelle. Ainsi, l'utilisation du coefficient d'incertitude comme indicateur semble réutilisable pour des données de plus grande dimension ou pour plus de cartes, quitte à utiliser des méthode d'estimations plus élaborées. 
 
 \begin{figure}
+\begin{minipage}{0.45\textwidth}
 \centering
-\includegraphics[width=0.3\textwidth]{boxes}
-\caption{Procédé de binning pour estimer les distributions des variables $\bmu$ et $U$}
+\includegraphics[width=0.9\textwidth]{boxes}
+\caption{Procédé de binning pour estimer les distributions des variables $X$ et $Y$. Les distributions sont estimées à partir de $n_{xj}$, $n_{yi}$ et $n_z{ij}$, puis les valeurs de $H$ et $I$ calculées.}
 \label{fig:binning} 
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+\includegraphics[width=0.7\textwidth]{kraskov}
+\caption{Découpage en KNN de Kraskov pour estimer l'entropie et l'information mutuelle des variables $X$ et $Y$. Les plus proches voisins du point rouge sont trouvés, en vert, et le processus est répété sur tous les points. Les valeurs de $n_x$ et $n_y$ permettent d'estimer directement l'entropie.}
+\label{fig:kraskov}
+\end{minipage}
 \end{figure}
-
-Perspectives: estimation possible en plus grande dimension par des procédés plus développés que le binning : ex \cite{Belghazi2018MutualIN}. ( regarder citations de leur papier pour plus d'exemples). 
-
 
 \begin{figure}
 \centering
@@ -308,6 +324,25 @@ Perspectives: estimation possible en plus grande dimension par des procédés pl
 \caption{Evolution de l'indicateur relatif à l'information mutuelle entre $\Pi$ et $U$ dans chaque carte au cours de l'apprentissage. Cet indicateur est comparé à celui calculé dans le cas ou les cartes apprennent séparément.}
 \label{fig:im} 
 \end{figure}
+
+\subsection{Perspectives}
+
+\subsubsection{Erreurs sur les données bruitées}
+
+Le coefficient d'incertitude mesure une forte relation statistique entre les données. Cela mesure bien ce qu'on apprend entre cartes; cependant, il ne prend pas en compte l'aspect continu des variables. Ainsi, prenons une distribution $X$ quelconque et deux distributions $Y_1$ et $Y_2$, telles que représentées en figure~\ref{fig:exemple-limite}.$Y_1$ et $X$ ne sont pas en bijection, mais ont une forte dépendance statistique: lorsqu'on connait la valeur de $X$, seules deux valeurs sont possibles pour $Y_1$.
+$Y_2$ et $X$ ne sont pas en bijection, mais en sont proches: leur relation est en fait une bijection, mais avec du bruit. Lorsqu'on analyse des données de CxSOM, les entrées sont généralement bruitées, tout comme les sorties. Par contre, on voudrait privilégier l'existence d'une dépendance forte entre entrées et sorties qui ne tiennent pas compte de ce bruit. Or, dans l'exemple cité, $UC(Y_1|X) = 0.6$ et $UC(Y_2|X) = 0.4$. L'indicateur n'est donc pas complètement approprié dans le cas de variables avec bruit.
+
+\subsubsection{Discussion}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{exemple_limite.pdf}
+\caption{Pour ces deux distributions $X$ et $Y$, le coefficient d'incertitude mesure une meilleure dépendance statistique dans le premier cas que le second. On voudrait au contraire privilégier le score de la seconde relation.}
+\label{fig:exemple-limite}
+\end{figure}
+
+
+\subsubsection{Correlation Ratio}
 
 
 \section{Prédiction d'entrée}
