@@ -4,12 +4,11 @@
 \minitoc
 \section{Représentation et explicabilité des cartes de Kohonen}
 
-Les algorithmes d'apprentissage sont composés de structures complexes. Leurs règles d'évolution et leurs structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état. Celui-ci doit alors être étudié, observé et mesuré afin de pouvoir utiliser le système pour des tâches d'apprentissages. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. S'intéresser à une compréhension et une représentation fine des mécanismes impliqués dans un algorithme d'apprentissage est important pour une transparence de l'algorithme, mais aussi pour permettre une amélioration de ces algorithmes. Dans la mesure ou cette thèse cherche à construire un réseau de neurones, il semble important de poser des métriques claires pour l'analyse de l'apprentissage et permettre un développement futur. 
-\cite{Bengio2013RepresentationLA}
+Les algorithmes d'apprentissage sont composés de structures complexes. Leurs règles d'évolution et leurs structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état. Celui-ci doit alors être étudié, observé et mesuré afin de pouvoir utiliser le système pour des tâches d'apprentissages. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. S'intéresser à une compréhension et une représentation fine des mécanismes impliqués dans un algorithme d'apprentissage est important pour une transparence de l'algorithme, mais aussi pour permettre une amélioration de ces algorithmes. Dans la mesure ou cette thèse cherche à construire un réseau de neurones, il semble important de poser des métriques claires pour analyser l'apprentissage et envisager des perspectives de développement. 
+%\cite{Bengio2013RepresentationLA}
 
 Lorsqu'on s'intéresse à des algorithmes supervisés, dans lesquels l'évolution dépend d'une fonction de coût et d'un objectifs, des métriques assez évidentes existent, en s'intéressant à l'erreur de prédiction. Mais même en situation supervisée, le problème est largement ouvert quand il s'agit de comprendre les mécanismes d'apprentissage à l'oeuvre dans la structure. Cette question de représentation est notamment soulevée dans l'étude de l'explicabilité de l'intelligence artificielle. Quand on s'intéresse aux algorithmes non-supervisés, la question de représentation de l'algorithme devient centrale: \emph{Que cherche-t-on à représenter et comment déterminer si on en a extrait une bonne représentation ?}
 
-En particulier, "Est ce que les prototypes ont extrait une information pertinente des données" n'a en fait que des réponses partielles dans la littérature. Il s'agit d'abord de déterminer ce qu'on cherche à apprendre dans un cas spécifique. Nous nous poserons ainsi cette question pour l'architecture CxSOM. 
 %
 %Dans un cas plus général de cartes auto-organisatrices, telles que celles agissant dans CxSOM, l'apprentissage repose sur des calculs d'activités et un processus de relaxation. Ces activités n'ont pas forcément un pendant graphique. De ce fait, leur représentation graphique mérite une analyse plus approfondie que dans le cas de cartes classiques. 
 
@@ -20,7 +19,7 @@ Les cartes de Kohonen sont un algorithme d'apprentissage non-supervisé, mais so
 La manière la plus utilisée de représenter une carte de Kohonen est de tracer les poids de ses prototypes, disposés dans le graphe qu'est la carte. En fonction des dimensions des entrées, cette représentation prennent plusieurs formes. Deux exemples courants de représentation sont les suivants: 
 \begin{itemize}
 \item Le graphe qu'est la carte de Kohonen est représenté dans l'espace de ses positions (la grille d'indices $(i,j)$, ou une ligne indexée par $i$. Sur chaque noeud est tracé le poids correspondant. C'est le cas sur l'exemple de gauche en figure~\ref{fig:representation} dans lequel les poids des prototypes, qui sont des imagettes, sont affichés en chaque point de la grille. Si la dimension d'un poids est trop grande pour être représentée graphiquement, il est également courant de labeliser chaque prototype et d'afficher ces labels sur les noeuds de la carte, en tant que représentation.
-\item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace $\mathbb{R}^2$ ou $\\mathbb{R}^3$. Ces poids sont alors reliés en fonction des positions des noeuds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation}.
+\item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace $\mathbb{R}^2$ ou $\mathbb{R}^3$. Ces poids sont alors reliés en fonction des positions des noeuds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation}.
 \end{itemize}
 
 \begin{figure}
@@ -39,43 +38,41 @@ La manière la plus utilisée de représenter une carte de Kohonen est de tracer
 On parle ici d'interprétation visuelle humaine. Pour l'oeil humain, cette facilité d'interprétation est limitée à un domaine d'utilisation: celui dans lequel les éléments qui nous intéressent sont les distances euclidiennes entre les données, ou plus généralement dans lequel la distance considérée pour la mise a jour des cartes possède un aspect graphique facilement interprétable. Essayez par exemple de vous représenter des distances dans un espace non-euclidien, ou des distances . Savoir quels points sont les plus proches nécessite alors un effort mental important et non une seule intuition; finalement la façon la plus simple de le savoir est de faire le calcul.
  
 La représentation d'une carte cherche à répondre à la question: "est-ce que la carte est bien dépliée sur toutes les données ? Est-ce qu'un prototype représente correctement une donnée ?". Y répondre en visualisant ses prototypes revient au processus intellectuel suivant: l'observateur imagine une donnée, par exemple une imagette d'un chiffre à main levée, et reproduit le processus de sélection du BMU qui a eu lieu lors de l'apprentissage de la carte pour trouver le poids qui lui correspond le mieux. Via ce processus mental, on est capable d'évaluer si une carte est dépliée sur les données. 
-Imaginons à présent que les distances considérées entre les éléments d'une carte ne soient plus euclidiennes: cette évaluation du dépliement de la carte repose maintenant sur soit une capacité d'abstraction phénoménale de l'observateur, soit des calculs de distances entre les points. La représentation de la carte doit ainsi être ajustée en fonction du processus d'organisation.
+Imaginons à présent que les distances considérées entre les éléments d'une carte ne soient plus euclidiennes: cette évaluation du dépliement de la carte repose maintenant sur soit une capacité d'abstraction phénoménale de l'observateur. Un exemple est donné en figure~\ref{fig:non_eucl}: l'observateur humain visualise un distance euclidienne($L^2$), éventuellement une distance de Manhattan. Mais si les distance sont calculées autrement, l'observateur préferera les nombres à la représentaiton graphique, ou une représentation dans un espace qui lui est familier. La représentation de la carte doit ainsi être adaptée au processus d'organisation.
+% Ajouter ref : mesures usuelles des cartes de Kohonen ? Pourquoi ne les utilise ton pas ?
 
-% Ajouter ref : mesures usuelles des cartes de Kohonen ? Pourquoi ne les utilise ton pas ? 
+ 
+Ainsi, pour représenter un algorithme d'apprentissage non-supervisé et en particulier une carte de Kohonen, on doit d'abord bien poser ce qu'on cherche à évaluer : l'entrée de l'algorithme est bien définie, sa sortie correspond à tous les éléments présents dans la carte. Un choix de représentation est donc à réaliser. Ensuite, cette représentation doit être adaptée aux règles de calcul de l'algorithme, ici de l'espace de la carte. 
 
-Finalement, pour représenter un algorithme d'apprentissage non-supervisé et en particulier une carte de Kohonen, on doit d'abord bien poser ce qu'on cherche à évaluer; ensuite, cette représentation doit être adaptée aux règles de calcul de l'algorithme, ici de l'espace de la carte. 
-
-%\begin{figure}
-%\begin{minipage}{0.5\textwidth}
-%\centering\includegraphics[width=0.5\textwidth]{sphere.png}
-%\end{minipage}
-%\begin{minipage}{0.5\textwidth}
-%\centering\includegraphics[width=0.7\textwidth]{norm.png}
-%\end{minipage}
-%\label{fig:non_eucl}
-%\caption{Appréhender les distances et les formes en géometrie sphérique n'est pas intuitif pour l'oeil humain. Le triangle de la figure à gauche possède trois angles droits. La figure de droite présente les cercles unités en deux dimensions par rapport à plusieurs normes.}
-%\end{figure}
+\begin{figure}
+\begin{minipage}{0.5\textwidth}
+\centering\includegraphics[width=0.5\textwidth]{sphere.png}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\centering\includegraphics[width=0.7\textwidth]{norm.png}
+\end{minipage}
+\label{fig:non_eucl}
+\caption{Appréhender les distances et les formes en géometrie non euclidienne n'est pas intuitif pour l'oeil humain. Le triangle de la figure à gauche possède trois angles droits. La figure de droite présente les cercles unités en deux dimensions par rapport à plusieurs normes. La façon de calculer les distance doit influencer la représentation de la carte.}
+\end{figure}
 
 
 \subsection{Que cherche t-on à représenter dans CxSOM ?}
 
-Pour pouvoir étudier le comportement d'une architecture de cartes, il nous faut donc répondre à ces deux questions de représentation. 
+Pour pouvoir étudier le comportement d'une architecture de cartes, il est donc nécessaire de répondre à ces deux questions: quel comportement cherche t-on à évaluer et représenter ? Est-ce que cette représentation traduit le comportement des cartes ?
 
 La représentation des prototypes dans chaque carte n'est plus un bonne représentation de l'architecture.
-En effet, le choix du BMU se fait suivant plusieurs activités, et plus encore, suivant un processus de relaxation. Il est bien entendu possible de tracer les poids d'une carte après apprentissage, comme représenté en figure~\ref{fig:weights}. Cependant, le processus intellectuel menant à la représentation mentale d'une carte, en regardant les poids, n'est plus possible. En imaginant une donnée, on ne pourra pas trouver le BMU selectionné. La simulation du processus d'activité et relaxation est nécessaire pour la représentation compréhensible par l'humain d'une carte au sein de CxSOM. Par ailleurs, chaque unité d'une carte a plusieurs poids. Il est donc compliqué de comprendre directement le rôle de ces poids en regardant leur valeur.
-
+En effet, le choix du BMU se fait suivant plusieurs activités, et plus encore, suivant un processus de relaxation. Il est bien entendu possible de tracer les poids d'une carte après apprentissage, comme représenté en figure~\ref{fig:weights}. Cependant, le processus intellectuel menant à la représentation mentale d'une carte, en regardant les poids, n'est plus possible. En imaginant une donnée, on ne pourra pas trouver le BMU selectionné. La simulation du processus d'activité et relaxation est nécessaire pour la représentation compréhensible par l'humain d'une carte au sein de CxSOM. Par ailleurs, chaque unité d'une carte a plusieurs poids. Il est donc compliqué de comprendre directement le rôle de ces poids en regardant leur valeur. La représentation visuelle des cartes d'une architecture est limitée par la dimension des entrées et la dimension des cartes. Ici s'ajoutent à la dimension des entrées la dimension d'une carte et le nombre de carte. Il sera difficile de représenter graphiquement des architectures de plus de trois cartes, et encore plus lorsque les entrées sont en grande dimension. Cette difficulté de représentation soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, calculables en grande dimension.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.7\textwidth]{weights_2.pdf}
+\includegraphics[width=0.9\textwidth]{weights.pdf}
 \label{fig:weights}
 \caption{Représentation des valeurs des poids d'une carte au sein de CxSOM. La seule représentation de ces poids ne suffit pas à savoir comment la carte se comporte. }
 \end{figure}
-De plus, la représentation visuelle des cartes d'une architecture est limitée par la dimension des entrées et la dimension des cartes. Ici s'ajoutent à la dimension des entrées la dimension d'une carte et le nombre de carte. Il sera difficile de représenter graphiquement des architectures de plus de trois cartes, et encore plus lorsque les entrées sont en grande dimension. Cette difficulté de représentation soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, calculables en grande dimension.
 
-Mais, qu'est ce qu'une carte \emph{qui fonctionne ?}. L'intéret de CxSOM réside dans la communication entre cartes. Représenter les cartes une à une laisse donc de coté leur connexion. Il est donc nécessaire de trouver un moyen de représenter l'architecture comme un tout. On s'intéressera notamment à comment l'architecture de carte est capable de représenter les relations entre les entrées multimodales.
 
-Ce chapitre questionne donc la façon de représenter une carte de Kohonen, et plus particulièrement la façon de représenter une carte au sein d'une architecture. Nous présenterons donc en premier lieu un formalisme pour la carte et les entrées multimodales associées, et à partir de ce formalisme nous proposerons plusieurs représentations et indicateurs cherchant à comprendre ce que l'architecture apprend sur les données d'entrée, et de quelle façon. 
+Revenons à la première question: qu'est ce qu'une carte \emph{qui fonctionne ?}. L'intéret de CxSOM réside dans la communication entre cartes. Représenter les cartes une à une laisse donc de coté leur connexion. Il est donc nécessaire de trouver un moyen de représenter l'architecture comme un tout. La représentation cherchera notamment à montrer comment l'architecture de carte est capable d'apprendre les relations entre les entrées multimodales.
+Ce chapitre questionne donc la façon de représenter une carte de Kohonen, et plus particulièrement la façon de représenter une carte au sein d'une architecture. Nous présenterons donc en premier lieu un formalisme pour la carte et les entrées multimodales associées, et à partir de ce formalisme nous proposerons plusieurs représentations et indicateurs visant à comprendre ce que l'architecture apprend sur les données d'entrée, et de quelle façon. 
 
 \section{Formalisme: variables aléatoires}
 
@@ -87,14 +84,14 @@ Les observations multimodales que l'on cherchera à apprendre par l'architecture
 Lorsqu'elles sont considérées en tant que \emph{entrée externe} d'une carte, on les notera plutôt ${\inpx\m{i}, i=0 \cdots N} $, avec $i$ l'indice de la carte dont $\inpx\m{i}$ est l'entrée.
 Pour tout $i$, $X^i$ et $\inpx\m{i}$ sont des variables aléatoires, et $\mathbf{X} = (X^0, \cdots, X^N)$ et $\mathbf{\inpx} = (\inpx\m{0}, \cdots , \inpx\m{N})$ sont les vecteurs aléatoires correspondants.
 
-Pour les entrées CxSOM, on s'intéresse à l'apprentissage de relations entre entrées. Les variables $X^i$ ne sont a priori donc pas des variables indépendantes. Afin de mieux comprendre comment les cartes apprennent des relations entre les entrées, on introduit une autre variable aléatoire $U$. Cette variable est multidimensionnelle et est choisie de façon à ce que chaque variable $X^i$ soit une fonction quelconque de la variable aléatoire $U$, et uniquement de cette variable. Il s'agit en fait d'une réduction de dimension:
+Pour les entrées CxSOM, on s'intéresse à l'apprentissage de relations entre entrées. Les variables $X^i$ ne sont a priori donc pas des variables indépendantes. Cette dépendance est représentée par une autre variable aléatoire $U$. Cette variable est multidimensionnelle et est choisie de façon à ce que chaque variable $X^i$ soit une fonction quelconque de la variable aléatoire $U$, et uniquement de cette variable.
 
 \begin{equation}
 \forall t, \forall i, X^i_t = f^i_t(U_t)
 \label{eq:U}
 \end{equation}
+Il s'agit en fait d'une réduction de dimension qui traduit l'existence d'un modèle reliant les observations.
 
-Cette variable traduit l'existence d'un modèle reliant les observations.
 Prenons un exemple géométrique; considérons des points tirés sur un cercle quelconque dans l'espace en deux dimensions. $\mathbf{X} = (X^0,X^1)$, les coordonnées cartésiennes des points du cercle, est alors une vecteur aléatoire, dont les composantes sont les variables aléatoires $X^0,X^1$. En définissant une variable $U$ à valeurs réelles, chaque point du du cercle peut maintenant s'écrire, selon l'équation paramétrique du cercle: 
 $$
  \begin{cases}
@@ -102,11 +99,9 @@ $$
      X^1_t = r \sin(U_t)
     \end{cases}\,.
 $$
-$U$ représenterait ici l'angle du point sur le cercle. $U$ est une variable cachée qui \emph{réduit la dimension} du modèle. ELle contient toute l'information sur l'échantillon. 
-
+$U$ représenterait ici l'angle du point sur le cercle. $U$ est une variable cachée qui réduit la dimension du modèle. Et contient toute l'information sur l'échantillon. 
 $U$ et ${f^i}$ ne sont pas uniques. Elle sont choisies en fonction de ce qu'on cherche à traduire dans le modèle. Ainsi, pour le même ensemble de points sous forme de cercle, on peut aussi définir une variable $U$ en deux dimensions, une dimension à valeur réelles paramétrisant un demi cercle, l'autre à valeurs dans ${0,1}$ indiquant de quel coté de l'axe des abscisses on se situe.
-
-Notons par contre que la plus petite dimension possible de $U$ dépend du degré de liberté du modèle. Si toutes les observations se situent sur une courbe de dimension 1, alors il existe une variable $U$ en une dimension satisfaisant l'équation~\ref{eq:U}. Si les observations se situent sur une surface de dimension 2, alors, $U$ sera en deux dimensions, et ainsi de suite.
+Par contre que la plus petite dimension possible de $U$ dépend du degré de liberté du modèle. Si toutes les observations se situent sur une courbe de dimension 1, alors il existe une variable $U$ en une dimension satisfaisant l'équation~\ref{eq:U}. Si les observations se situent sur une surface de dimension 2, alors, $U$ sera en deux dimensions, et ainsi de suite.
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}
@@ -120,25 +115,26 @@ Notons par contre que la plus petite dimension possible de $U$ dépend du degré
 \caption{Exemples de paramétrisations du cercle. La paramétrisation qui traduit le plus facilement le modèle est naturellement celle dans laquelle $U$ est à valeurs réelles. Le modèle auxquelles appartiennent les modalités $X^0$ et $X^1$ est donc représenté par la variable cachée $U$.}
 \end{figure}
 
+Les exemples donnés sont scalaires, mais cette représentation est bien entendu générale à n'importe quel dimension et nombre d'entrées.
+
 %Cette façon de représenter les entrées est-elle générale ? 
 
 
 \subsection{Représentation des éléments des cartes}
 
-Comme dans de nombreux algorithmes d'apprentissages, on peut décomposer le jeu de données d'entrée en jeu d'apprentissage et jeu de tests. Lors de la phase de test, seul le processus de recherche de la best matching unit est réalisé et la partie mise à jour des cartes de Kohonen n'est plus opérée. Dans le cadre des variables aléatoires, chaque itération est alors un tirage indépendant. Les éléments des cartes peuvent donc être considérés comme des variables aléatoire et une itération de test comme la réalisation de celles-ci. La phase de test peut être réalisée après n'importe quelle itération de l'algorithme d'apprentissage. Le processus d'apprentissage et de tests est décrit en figure~\ref{fig:flowchart}.
+Comme dans de nombreux algorithmes d'apprentissages, le jeu de données d'entrée se décompose en jeu d'apprentissage et jeu de tests. Lors de la phase de test, seul le processus de recherche de la best matching unit est réalisé et la partie mise à jour des cartes de Kohonen n'est plus opérée. Dans le cadre des variables aléatoires, chaque itération est alors un tirage indépendant. Les éléments des cartes peuvent donc être considérés comme des variables aléatoire et une itération de test comme la réalisation de celles-ci. La phase de test peut être réalisée après n'importe quelle itération de l'algorithme d'apprentissage. Le processus d'apprentissage et de tests est décrit en figure~\ref{fig:flowchart}.
 
 Nous considérerons alors plusieurs éléments des cartes en tant que variables aléatoires, notamment :  
 \begin{itemize}
 \item Les positions des BMUs $\bmu\m{0}, \cdots, \bmu\m{N}$ dans chaque carte
 \item Les poids externes des BMUs $\w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{N}(\bmu\m{N})$
 \end{itemize}
-Notons que tout élément d'une carte pourrait être vu de cette manière. 
-Une phase de test est donc un grand nombre de réalisations d'une variable aléatoire jointe : 
+Tout autre élément d'une carte peut être vu de cette manière, telles que les activités. 
+Une phase de test est alors un ensemble de réalisations d'une variable aléatoire jointe : 
 $$(\inpx\m{0}, \cdots, \inpx\m{N}, \bmu\m{0}, \cdots, \bmu\m{N}, \w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{N}(\bmu\m{N}))$$
-Les composantes de cette variable jointe ne sont pas indépendantes. Les représentations et indicateurs présentés ensuite chercheront à détecter et comprendre au mieux ces dépendances statistiques.
+Les composantes de cette variable jointe ne sont pas indépendantes. Les représentations et indicateurs présentés ensuite chercheront à détecter et comprendre au mieux les dépendances statistiques.
 
-Ainsi, dans ce formalisme par variable aléatoires, à chaque pas d'apprentissage peut-être associé un ensemble de réalisations de variables aléatoires. Ceci permet alors d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture. Cette approche ne se limite pas à l'architecture CxSOM : 
-%la théorie de l'information semble être un élément intéressant à explorer pour comprendre le fonctionnement d'algorithmes non-supervisés. -> La théorie de l'information est utilisée pour comprendre des architectures informatiques, biologiques, en neuroscience .... Exemples cités dans le papier Timme2013
+Ainsi, dans ce formalisme par variable aléatoires, à chaque pas d'apprentissage peut-être associé un ensemble de réalisations de variables aléatoires. Ceci permet alors d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture. Cette approche ne se limite pas à l'architecture CxSOM: la théorie de l'information semble être un élément intéressant à explorer pour comprendre le fonctionnement d'algorithmes non-supervisés.
 
 \begin{figure}
 \centering
@@ -149,37 +145,43 @@ Ainsi, dans ce formalisme par variable aléatoires, à chaque pas d'apprentissag
 
 
 \section{Représentations graphiques}
-
-\emph{Qu'est ce qu'une carte a appris des données ?}
-
-Que cherche t-on à représenter dans les représentations classiques des poids des cartes de Kohonen, que ce soit sous la forme d'un tableau de prototypes ou d'une projection dans l'espace d'entrée ? On cherche en fait à visualiser comment les poids sont répartis en fonction de leur \emph{position} dans la carte. En d'autres termes, on cherche à comprendre si les positions de la carte correspondent à tous les éléments de l'espace d'entrée, si une continuité est réalisée. 
-D'une façon similaire, on peut faire le choix de représenter le poids de la best matching unit par rapport à sa position. Cela donne la même représentation que le fait de tracer le poids de chaque prototype par rapport à sa position dans la carte; à la seule différence qu'elle fera la distinction entre les \emph{unités mortes de la cartes}, c'est à dire les unités qui ne sont jamais best matching unit et qui ne seront donc pas affichée dans la représentation des tests, et les autres.
-Cette représentation prend en compte la façon de calculer le BMU, donc le coeur de l'algorithme.
+\emph{Qu'est ce qu'une carte a appris des données ?}\\
+Que cherche t-on à représenter dans les représentations classiques des poids des cartes de Kohonen, que ce soit sous la forme d'un tableau de prototypes ou d'une projection dans l'espace d'entrée ? Il s'agit de visualiser comment les poids sont répartis en fonction de leur \emph{position} dans la carte. Dans une représentation classique, on cherche à comprendre si les positions de la carte correspondent à tous les éléments de l'espace d'entrée et s'il existe une continuité en suivant les positions de la carte dans l'espace d'entrée. D'une façon similaire, on peut faire le choix de représenter le poids de la best matching unit par rapport à sa position. Cela donne une représentation similaire au tracé du poids de chaque prototype par rapport à sa position dans la carte. La seule différence qu'elle fera la distinction entre les \emph{unités mortes de la cartes}, c'est à dire les unités qui ne sont jamais best matching unit et qui ne seront donc pas affichée dans la représentation des tests, et les autres. Il s'agit d'une représentation qui prend en compte la façon de calculer le BMU.
 
 La question de la répartition des valeurs d'une carte par rapport à la position de leur BMU va plus loin que les poids : il est intéressant d'étudier la répartition de n'importe quel élément d'une carte de cette façon, afin de comprendre 
-De façon plus générale, on peut représenter, à partir d'un échantillon test, la dépendance de n'importe quelle variable par rapport à la position de la best matching unit correspondante. Nous détaillerons dans cette partie quelques représentations qui paraissent pertinentes.
+De façon plus générale, on peut représenter, à partir d'un échantillon test, la dépendance de n'importe quelle variable par rapport à la position de la best matching unit correspondante. Nous détaillerons donc dans cette partie les tracés qui paraissent pertinents pour la compréhension de l'architecture CxSOM. 
 
 
 \subsection{Représenter les entrées par rapport à une carte}
 
-Une première représentation d'une carte est de tracer la valeur de son entrée $\inpx\m{i}$ par rapport à la position du BMU. Cette représentation permet d'analyser la quantification des entrées par la carte. Ces tracés sont réalisables pour des cartes une et deux dimensions, et pour des entrées quelconques, que ce soient des réels ou des entrées de plus grandes dimension comme des images.
-Pour mieux comprendre les relations entre entrées, on peut tracer sur une même figure les entrées de toutes les cartes selon la position du BMU d'une des cartes. 
+Une première façon de représenter d'une carte est de tracer la valeur de son entrée $\inpx\m{i}$ par rapport à la position du BMU $\bmu\m{i}$. Cette représentation permet d'analyser la quantification des entrées par la carte. Ces tracés sont réalisables pour des cartes une et deux dimensions, et pour des entrées quelconques, que ce soient des réels ou des entrées de plus grandes dimension comme des images.
+Pour mieux comprendre les relations entre entrées et plusieurs cartes, on tracera sur une même figure les entrées de ces cartes selon la position du BMU d'une des cartes.
+
+Un exemple de tracé et de leur utilisation est présenté en figure~\ref{fig:inputs}, réalisés sur la même expérience que les poids de la figure~\ref{fig:weights}. Les entrées sont tirées sur un anneau en trois dimensions. Représenter les entrées selon les positions des BMUs montre par exemple que lorsque les cartes sont connectées, les deux points rouge et jaune ayant la même valeur de $X$ ont un BMU différent dans la carte $X$, alors que leurs BMU seraient identiques si les cartes étaient indépendante. On peut donc, par cette représentation, associer des entrées à leur BMU et comprendre comment elles sont représentées.
 
 \begin{figure}
-\centering\includegraphics[width=0.6\textwidth]{weights_2SOM}
-\label{fig:2som}
-\caption{A gauche, les poids externes et contextuels dans une architecture de deux cartes connectées réciproquement. Chaque carte a donc un poids externe et un poids contextuel. A droite, on a tracé en supplément la valeur de l'entrée (scalaire) de la première carte, en fonction de la position du BMU correspondant. Cette représentation fait apparaître les unités mortes de la carte et la façon dont les entrées sont projetées sur les poids.}
+\begin{minipage}{0.34\textwidth}
+\includegraphics[width=\textwidth]{inputs.pdf}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\includegraphics[width=\textwidth]{maps_unconnected.pdf}
+\end{minipage}
+\begin{minipage}{0.34\textwidth}
+\includegraphics[width=\textwidth]{maps_test0.pdf}
+\end{minipage}
+\label{fig:inputs}
+\caption{Représentation des entrées $X$,$Y$ et $Z$ d'une architecture trois cartes relativement au BMU de la carte $X$ après apprentissage. Ces tracés mettent en valeur l'organisation des cartes, différentes dans le cas ou les cartes apprennent indépendemment leurs entrées~(b) ou connectées~(c). Les entrées correspondantes sont en figure~(a). Les points rouge et jaune sont reportés sur les tracés.}
 \end{figure}
 
 \subsection{Représentation de U par rapport au BMU}
 \emph{Chercher à apprendre des relations entre les données}
 
-Pour une, deux, trois entrées, les relations entre entrées se déduisent assez directement. Lorsqu'on augmente la dimension, il paraît pertinent de dégager des nouvelles valeurs qui représentent le modèle: il s'agit ici de la variable $U$. Cette variable cachée est en fait une représentation du modèle en dimension plus faible, par une transformation non linéaire. On peut alors tracer $U$ en fonction de la position $\bmu$ du BMU d'une carte. 
+Pour une, deux, trois entrées, les relations entre entrées se déduisent assez directement. Lorsqu'on augmente la dimension, il paraît pertinent de dégager des nouvelles valeurs qui représentent le modèle: il s'agit ici de la variable $U$. Cette variable cachée est en fait une représentation du modèle en dimension plus faible, par une transformation non linéaire. On peut alors tracer $U$ en fonction de la position $\bmu$ du BMU d'une carte pour représenter comment la position du BMU traduit la relation entre entrées.
 
 \begin{figure}
 \centering
 \includegraphics[width = 0.6\textwidth]{XU_YU.pdf}
-\caption{Pour l'échantillon de test, valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes. On voit que $U$ est une fonction du BMU dans chaque carte, contrairement au cas ou les cartes apprendraient indépendamment sur les mêmes entrées, voir figure \ref{fig:piu_indep}.}
+\caption{Valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes. On voit que $U$ est une fonction du BMU dans chaque carte, contrairement au cas ou les cartes apprendraient indépendamment sur les mêmes entrées, voir figure \ref{fig:piu_indep}.}
 \label{fig:piu}
 \end{figure}
 
@@ -291,12 +293,12 @@ $$P(X = x_i) = \frac{n_{xi}}{N} $$, où $n_{xi}$ est le nombre d'échantillons d
 L'information mutuelle par binning est calculée à partir de ces distributions discrètes.
 Lorsque la dimension des variables est faible (typiquement 1D), l'estimateur est ?? (fiable ?? comment) . Des terme de corrections peuvent éventuellement être apportés. La précision de l'estimation peut être améliorée en choisissant des tailles de boîtes variables. Cependant, lorsque la dimension augmente, le nombre d'échantillon disponibles doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient théoriquement du en contenir; l'estimation de la probabilité en ce point sera donc nulle, et l'indicateur faussé. 
 
-Un autre estimateur que le binning est l'estimation par noyaux de Kraskov \cite{2004kraskov}. Cet estimeur passe par une estimation diecte de l'entropie au lieu des densités de probabilités. Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer la somme de logarithmes par la fonction digamma : 
+Un autre estimateur que le binning est l'estimation par noyaux de Kraskov \cite{2004kraskov}. Cet estimeur passe par une estimation diecte de l'entropie au lieu des densités de probabilités. Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
 $$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$
 Cette information mutuelle locale est ensuite moyennée sur l'ensemble des points: 
 $$\hat{I}(X,Y) = \psi(k) - \langle\psi(n_{x_j} + 1) + \psi(n_{y_j} +1)\rangle + \psi(N)$$
 Cet estimateur est meilleur que le binning, car il ?? 
-Il permet également d'éviter les boîtes vides du binning, car on n'explorera que l'espace des points. Il est donc préférable d'utiliser cet estimateur en plus grande dimension. Nous utiliserons cet estimateur par la suite.
+Il permet également d'éviter les boîtes vides du binning, car on n'explorera que l'espace des points. Il semble donc préférable d'utiliser cet estimateur en plus grande dimension.
 
 L'estimation de $UC(X|Y)$ nécessite d'estimer $I(X,Y)$ et $H(Y)$.
 
@@ -318,12 +320,12 @@ L'information mutuelle et l'entropie étant des quantités fondamentales en thé
 \end{minipage}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{mutual_info_evol.pdf}
-\caption{Evolution de l'indicateur relatif à l'information mutuelle entre $\Pi$ et $U$ dans chaque carte au cours de l'apprentissage. Cet indicateur est comparé à celui calculé dans le cas ou les cartes apprennent séparément.}
-\label{fig:im} 
-\end{figure}
+%\begin{figure}
+%\centering
+%\includegraphics[width=\textwidth]{mutual_info_evol.pdf}
+%\caption{Evolution de l'indicateur relatif à l'information mutuelle entre $\Pi$ et $U$ dans chaque carte au cours de l'apprentissage. Cet indicateur est comparé à celui calculé dans le cas ou les cartes apprennent séparément.}
+%\label{fig:im} 
+%\end{figure}
 
 \subsection{Perspectives}
 
@@ -332,8 +334,6 @@ L'information mutuelle et l'entropie étant des quantités fondamentales en thé
 Le coefficient d'incertitude mesure une forte relation statistique entre les données. Cela mesure bien ce qu'on apprend entre cartes; cependant, il ne prend pas en compte l'aspect continu des variables. Ainsi, prenons une distribution $X$ quelconque et deux distributions $Y_1$ et $Y_2$, telles que représentées en figure~\ref{fig:exemple-limite}.$Y_1$ et $X$ ne sont pas en bijection, mais ont une forte dépendance statistique: lorsqu'on connait la valeur de $X$, seules deux valeurs sont possibles pour $Y_1$.
 $Y_2$ et $X$ ne sont pas en bijection, mais en sont proches: leur relation est en fait une bijection, mais avec du bruit. Lorsqu'on analyse des données de CxSOM, les entrées sont généralement bruitées, tout comme les sorties. Par contre, on voudrait privilégier l'existence d'une dépendance forte entre entrées et sorties qui ne tiennent pas compte de ce bruit. Or, dans l'exemple cité, $UC(Y_1|X) = 0.6$ et $UC(Y_2|X) = 0.4$. L'indicateur n'est donc pas complètement approprié dans le cas de variables avec bruit.
 
-\subsubsection{Discussion}
-
 \begin{figure}
 \centering
 \includegraphics[width=0.7\textwidth]{exemple_limite.pdf}
@@ -341,9 +341,17 @@ $Y_2$ et $X$ ne sont pas en bijection, mais en sont proches: leur relation est e
 \label{fig:exemple-limite}
 \end{figure}
 
+\subsubsection{Perspectives d'amélioration}
+Correlation ration : mesure de dépendance fonctionnelle
+Débruitage de l'IM : répétition de l'expérience et moyenne ? 
 
-\subsubsection{Correlation Ratio}
+\subsubsection{Discussion}
 
+Le ration de corrélation traduit mieux que le coefficient d'incertitude la dépendance fonctionnelle entre le modèle et le BMU. Cependant, à l'inverse de l'information mutuelle, une relation non fonctionnelle mais précise (telle que l'exemple du cercle de la figure~\ref{fig:exemple-limite}) entre les variables aura un score très faible. Ce n'est pas non plus voulu. 
+
+Il semble que l'information mutuelle reste le moyen le plus prometteur et le plus général de mesurer la relation entre les éléments des cartes. Dans le cas une dimension, on observe qu'on veut tendre vers U fonction du BMU; on connait mal le comportement recherché en dimension plus grande (cartes 2D, entrées de grande dimension). L'information mutuelle laisse donc l'opportunité à plus d'états d'organisation des cartes de l'architecture d'avoir un bon score. La meilleure perspective serait donc de pouvoir calculer le coefficient d'incertitude sur des échantillons provenant de données non bruitées, ou de pouvoir séparer le bruit des données lors du calcul du coefficient.
+Dans cette optique, l'estimateur par binning permet de réduire l'effet du bruit, en choisissant correctement les tailles de boîtes. L'utilisation du binning versus Kraskov reste donc à discuter.
+Dans le cas ou le modèle d'entrée est connu, calculer les réponses des cartes sur des jeux de données non bruitées générées artificiellement, après apprentissage sur un jeu de données réelles et bruitée, est une solution. Si le modèle n'est pas connu, des méthodes statistique de réduction de bruit peuvent être imaginées. 
 
 \section{Prédiction d'entrée}
 
