@@ -1,8 +1,8 @@
-\chapter{Représentation des cartes de Kohonen}
+\chapter{Méthodes de représentation et d'analyse de l'architecture CxSOM}
 \graphicspath{{03-Representation/}}
 
 \minitoc
-\section{Représentation et explicabilité des cartes de Kohonen}
+\section{Représentation des cartes de Kohonen}
 
 Les algorithmes d'apprentissage sont composés de structures complexes. Leurs règles d'évolution et leurs structures sont certes connues et conçues par leur développeur, mais leur état au cours de l'apprentissage dépend de tellement de paramètres que le concepteur ne peut plus prévoir son état. Celui-ci doit alors être étudié, observé et mesuré afin de pouvoir utiliser le système pour des tâches d'apprentissages. La représentation d'un algorithme d'apprentissage est ainsi un défi posé depuis quelques années. S'intéresser à une compréhension et une représentation fine des mécanismes impliqués dans un algorithme d'apprentissage est important pour une transparence de l'algorithme, mais aussi pour permettre une amélioration de ces algorithmes. Dans la mesure ou cette thèse cherche à construire un réseau de neurones, il semble important de poser des métriques claires pour analyser l'apprentissage et envisager des perspectives de développement. 
 %\cite{Bengio2013RepresentationLA}
@@ -65,9 +65,9 @@ En effet, le choix du BMU se fait suivant plusieurs activités, et plus encore, 
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\textwidth]{weights.pdf}
+\includegraphics[width=0.9\textwidth]{weights_cercle1.pdf}
 \label{fig:weights}
-\caption{Représentation des valeurs des poids d'une carte au sein de CxSOM. La seule représentation de ces poids ne suffit pas à savoir comment la carte se comporte. }
+\caption{Représentation des valeurs des poids d'une carte au sein de CxSOM. La seule représentation de ces poids ne suffit pas à savoir comment la carte se comporte.}
 \end{figure}
 
 
@@ -160,14 +160,14 @@ Pour mieux comprendre les relations entre entrées et plusieurs cartes, on trace
 Un exemple de tracé et de leur utilisation est présenté en figure~\ref{fig:inputs}, réalisés sur la même expérience que les poids de la figure~\ref{fig:weights}. Les entrées sont tirées sur un anneau en trois dimensions. Représenter les entrées selon les positions des BMUs montre par exemple que lorsque les cartes sont connectées, les deux points rouge et jaune ayant la même valeur de $X$ ont un BMU différent dans la carte $X$, alors que leurs BMU seraient identiques si les cartes étaient indépendante. On peut donc, par cette représentation, associer des entrées à leur BMU et comprendre comment elles sont représentées.
 
 \begin{figure}
-\begin{minipage}{0.34\textwidth}
-\includegraphics[width=\textwidth]{inputs.pdf}
-\end{minipage}
-\begin{minipage}{0.3\textwidth}
-\includegraphics[width=\textwidth]{maps_unconnected.pdf}
+\begin{minipage}{0.27\textwidth}
+\includegraphics[width=\textwidth]{2som_inp.pdf}
 \end{minipage}
 \begin{minipage}{0.34\textwidth}
-\includegraphics[width=\textwidth]{maps_test0.pdf}
+\includegraphics[width=\textwidth]{weights_2som_unco.pdf}
+\end{minipage}
+\begin{minipage}{0.38\textwidth}
+\includegraphics[width=\textwidth]{weights_2som.pdf}
 \end{minipage}
 \label{fig:inputs}
 \caption{Représentation des entrées $X$,$Y$ et $Z$ d'une architecture trois cartes relativement au BMU de la carte $X$ après apprentissage. Ces tracés mettent en valeur l'organisation des cartes, différentes dans le cas ou les cartes apprennent indépendemment leurs entrées~(b) ou connectées~(c). Les entrées correspondantes sont en figure~(a). Les points rouge et jaune sont reportés sur les tracés.}
@@ -179,17 +179,19 @@ Un exemple de tracé et de leur utilisation est présenté en figure~\ref{fig:in
 Pour une, deux, trois entrées, les relations entre entrées se déduisent assez directement. Lorsqu'on augmente la dimension, il paraît pertinent de dégager des nouvelles valeurs qui représentent le modèle: il s'agit ici de la variable $U$. Cette variable cachée est en fait une représentation du modèle en dimension plus faible, par une transformation non linéaire. On peut alors tracer $U$ en fonction de la position $\bmu$ du BMU d'une carte pour représenter comment la position du BMU traduit la relation entre entrées.
 
 \begin{figure}
-\centering
-\includegraphics[width = 0.6\textwidth]{XU_YU.pdf}
+\begin{minipage}{0.45\textwidth}
+\includegraphics[width = \textwidth]{XU_YU.pdf}
 \caption{Valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes. On voit que $U$ est une fonction du BMU dans chaque carte, contrairement au cas ou les cartes apprendraient indépendamment sur les mêmes entrées, voir figure \ref{fig:piu_indep}.}
 \label{fig:piu}
-\end{figure}
-
-\begin{figure}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
 \centering
-\includegraphics[width = 0.6\textwidth]{xu_yu_unco.pdf}
+\includegraphics[width = \textwidth]{xu_yu_unco.pdf}
 \caption{Pour l'échantillon de test, entrée sur un cercle, valeur de $U$ en fonction des valeurs du BMU $\Pi$ dans chacune des cartes, lorsque les cartes $M_x$ et $M_y$ ne sont pas connectée. Chacune des cartes n'a aucune information de plus que celle portée par son entrée sur l'état global du système $U$, et $\Pi$ n'est donc pas une fonction de $U$ dans chaque carte. }
 \label{fig:piu_indep}
+\end{minipage}
+
 \end{figure}
 
 
@@ -254,11 +256,11 @@ $$I(X,Y) = 0 \Leftrightarrow \textrm{X et Y sont indépendantes}$$
 L'information mutuelle est donc une mesure de la distance entre la distribution jointe de $(X,Y)$ et leur indépendance.\\
 Elle s'exprime à partir de l'entropie : $$I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$$\\
 Elle est symétrique : $$I(X,Y) = I(Y,X)$$\\
-Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y)$. L'égalité est atteinte ssi $f$ est \emph{bijective}.
+Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y)$. L'égalité est atteinte si et seulement si $f$ est \emph{bijective}.
 
 \subsection{Indicateur: coefficient d'incertitude.}
 
-Lors de l'analyse de CxSOM, l'information que portent les positions des BMUs d'une carte sur le modèle d'entrées est une valeur intéressante. Les éléments de la carte ont été définis en terme de variables aléatoire l'information mutuelle peut alors être une représentation pertinente de l'information portée par le BMU d'une carte sur le modèle. Le modèle est représenté par la variable $(X,Y,Z)$, mais aussi par $U$. Dans ce sens, $I(\bmu, U)$ est l'information moyenne que le BMU d'une carte porte sur $U$ et $U$ sur le BMU.
+Lors de l'analyse de CxSOM, l'information que portent les positions des BMUs d'une carte sur le modèle d'entrées est une valeur intéressante. Les éléments de la carte ont été définis en terme de variables aléatoire; l'information mutuelle est alors une représentation pertinente de l'information portée par le BMU d'une carte sur le modèle. Le modèle est représenté par la variable $(X,Y,Z)$, mais aussi par $U$. $I(\bmu, U)$ est alors l'information moyenne que le BMU d'une carte porte sur $U$, donc sur le modèle, et $U$ sur le BMU.
 
 On souhaite cependant avoir un indicateur normalisé, qui permettrait, sur une échelle de 0 à 1, de quantifier à quel point un BMU porte de l'information sur $U$. On va donc normaliser l'information mutuelle $I(\bmu,U)$ par la valeur maximale qu'elle peut prendre dans notre carte.
 
@@ -271,7 +273,6 @@ Par construction, $\Pi$ est une fonction de $U$ dans une carte de Kohonen. En ef
 Par propriété de l'information mutuelle, pour toute fonction $f$ et variable $X,Y$, $I(X,f(Y)) \leq I(X,Y) $.
 Donc, $I(U,\bmu) \leq I(U,U) = H(U)$
 Cette valeur est atteinte si et seulement si $U$ et $\bmu$ sont en bijection, autrement dit, ssi $U$ est aussi une fonction de $\bmu$.
-
 \end{proof}
 
 Nous définissons donc un indicateur de la relation entre $U$ et un BMU comme:
@@ -299,8 +300,7 @@ Cette information mutuelle locale est ensuite moyennée sur l'ensemble des point
 $$\hat{I}(X,Y) = \psi(k) - \langle\psi(n_{x_j} + 1) + \psi(n_{y_j} +1)\rangle + \psi(N)$$
 Cet estimateur est meilleur que le binning, car il ?? 
 Il permet également d'éviter les boîtes vides du binning, car on n'explorera que l'espace des points. Il semble donc préférable d'utiliser cet estimateur en plus grande dimension.
-
-L'estimation de $UC(X|Y)$ nécessite d'estimer $I(X,Y)$ et $H(Y)$.
+L'estimation de $UC(X|Y)$ nécessite d'estimer $I(X,Y)$ et $H(Y)$ : leur estimation doit être réalisée dans les mêmes conditions.
 
 L'information mutuelle et l'entropie étant des quantités fondamentales en théorie de l'information, il existe de nombreuses méthodes d'estimations de ces valeurs malgré la difficulté qu'elle pose. On peut notamment citer~\cite{Belghazi2018MutualIN}, qui utilise une approche neuronale pour estimer l'information mutuelle. Ainsi, l'utilisation du coefficient d'incertitude comme indicateur semble réutilisable pour des données de plus grande dimension ou pour plus de cartes, quitte à utiliser des méthode d'estimations plus élaborées. 
 
