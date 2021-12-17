@@ -51,7 +51,7 @@ En figure~\ref{fig:3som_cercle}
 \end{figure}
 \begin{figure}
 \centering\includegraphics[width=0.8\textwidth]{3som_cercle_im}
-\caption{Valeurs de $UC$ entre les différents éléments des cartes. Pour un élément $i,j$ du tableau est indiqué $UC(i|j)$ (Mi correspond à $\Pi\m{i}$. Le tableau sera mis au propre s'il est pertinent. Estimation par la méthode de Kraskov, voisinage de 7. Ce voisinage est arbitraire, il produit une variance plus grande mais biais moins important. Il faudrait refaire l'expé sur de multiple echantillons pour avoir une valeur sure. }
+\caption{Valeurs de $UC$ entre les différents éléments des cartes pour des entrées sur un cercle. Pour un élément $i,j$ du tableau est indiqué $UC(i|j)$ (Mi correspond à $\Pi\m{i}$. Le tableau sera mis au propre s'il est pertinent. Estimation par la méthode de Kraskov, voisinage de 7. Ce voisinage est arbitraire, il produit une variance plus grande mais biais moins important. Il faudrait refaire l'expé sur de multiple echantillons pour avoir une valeur sure. }
 \label{fig:3som_cercle}
 \end{figure}
 
@@ -69,8 +69,26 @@ $$
 Cenpendant, on peut aussi considérer que le modèle n'est plus réductible en une seule dimension cachée.
 Il est donc intéressant de regarder comment les cartes considèrent le bruit : a-t-on toujours une quantification vectorielle du cercle, ou la carte se déplie t-elle autrement ? Autrement dit, une carte sépare t-elle le bruit de la forme des entrées ?
 
-Pour le vérifier, on peut, à partir des poids appris sur des données bruitées, réaliser les tests sur des données non bruitée, donc un cercle. 
-Dans ce cas, la prédiction est semblable au cas ou les cartes ont appris le cercle : la quantification est résistante au bruit.
+\begin{figure}
+\centering
+\includegraphics[width=0.4\textwidth]{inputs_anneau_cercle.png}
+\caption{Entrées d'apprentissage en bleu, entrées test en rouge}
+\label{fig:inputs_anneau_cercle}
+\end{figure}
+
+Pour le vérifier, on peut, à partir des poids appris sur des données bruitées, réaliser les tests sur des données non bruitée, donc un cercle, entrées présentées en figure~\ref{fig:inputs_anneau_cercle}.
+Dans ce cas, la prédiction et la répartition est semblable au cas ou les cartes ont appris le cercle : la quantification est résistante au bruit, comme présenté en figure~\ref{fig:anneau_cercle}. On regardera donc par la suite le comportement des cartes sur des données non bruitées. 
+
+\begin{figure}
+\begin{minipage}{0.5\textwidth}
+\includegraphics[width=\textwidth]{3som_anneau_cercle_w.pdf}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\includegraphics[width=\textwidth]{3som_anneau_cercle_pred.pdf}
+\end{minipage}
+\caption{L'apprentissage a été réalisé sur un cercle en 3D avec bruit, les tests sur le cercle. La répartition des entrées et poids et la prédiction est réalisée comme sur le cercle : la quantification vectorielle est résistante au bruit. }
+\label{fig:anneau_cercle}
+\end{figure}
 
 \section{Entrées dans un carré}
 
@@ -94,10 +112,12 @@ Prenons en entrée $(X,Y) \in [0,1]^2$, tirés selon une distribution uniforme. 
 \end{figure}
 
 Cette expérience montre que la disposition en vagues des cartes est un comportement lié à l'architecture et non aux données en elles même : quelles que soient les données, la carte effectuera toujours une séparation en indices primaires et secondaires. Ici, pour un X donné, on a toutes les valeurs possibles pour Y.
-Cependant, les poids sont un peu différent de l'expérience avec X,Y sur un cercle : les bmus au sein d'une zone secondaire sont répartis tout le long de cette zone, alors que pour un cercle ils sont centrés dans la zone, car peu de valeurs possibles.
+Cependant, les poids sont un peu différents de l'expérience avec X,Y sur un cercle : les bmus au sein d'une zone secondaire sont répartis tout le long de cette zone, alors que pour un cercle ils sont centrés dans la zone.
+C'est intéressant de voir que même si seuls les poids contextuels ne nous éclairent pas trop sur le comportement des cartes, leur forme traduit quand même un aspect du modèle. 
 
 
 \section{Entrées en clusters}
+
 On considère des entrées $X$, $Y$ distribuées dans $[0,1]^2$, telles que les points sont regroupés autour de 6 centres. Autour de ces centres, les points sont tirés aléatoirement dans un cercle. On a donc des clusters de points. La distribution de $(X,Y)$ peut être considérée comme fonction des centres des clusters.  A-t-on un regroupement des points des clusters dans la carte, ou la carte se déplie t-elle sans prendre en compte les regroupement ? Nous présentons ici deux expériences, chacune prenant des entrées distribuées selon des tailles différentes de clusters autour de leurs centres, tracées en figure~\ref{fig:cluster_in}.  $U$ est ici considéré comme l'indice (entre 0 et 1) du cluster.
 
 \begin{figure}[h!]
@@ -129,6 +149,8 @@ On considère des entrées $X$, $Y$ distribuées dans $[0,1]^2$, telles que les 
 \label{fig:cluster}
 \end{figure}
 
+La carte se déplie en suivant les clusters : un ensemble de BMU proche code pour un cluster. 
+
 \subsection{"gros" clusters}
 
 \begin{figure}[h!]
@@ -144,14 +166,17 @@ On considère des entrées $X$, $Y$ distribuées dans $[0,1]^2$, telles que les 
 \label{fig:cluster001}
 \end{figure}
 
+La carte sépare les éléments d'un même cluster en plusieurs zones. Par contre, un ensemble de BMU code pour une partie d'un cluster, mais ne correspond  
+
 
 \section{Influence de l'architecture sur des entrées}
 
 Sur des entrées identiques, on testera différentes architectures afin d'évaluer le rôle des connexions. On utilisera toujours comme entrée dans cette section un cercle en deux ou trois dimensions. 
-
+Comme on a vu dans les sections précédentes, l'architecture est robuste aux entrées bruitées; on utilise donc ici des entrées sans bruit. 
 
 \subsection{Cartes intermédiaires}
 mettre line 4 som, etc. 
+
 information mutuelle dans ce cas :) comparer a la version une carte intermédiare. 
 Tableau info mutuelle : faire les comparaisons. Comparaison des entrées, ce sont a peu près les mêmes donc on doit avoir les memes valeurs ok, donc ce qui nous intéresse c'est la comparaison entre M1 M2 M3 M4 etc. 
 
@@ -234,16 +259,70 @@ On peut donc imaginer utiliser des cartes centrales dans ce genre d'architecture
 \subsection{Boucle vs rétroaction à trois cartes}
 On a vu avec les cartes intermédiaires que les connexions lointaines semblent jouer un role moins important dans la dynamique que les connexions directe. Ainsi, on peut regarder comment se comporte une architecture de trois cartes connectées en boucle.
 
+\begin{figure}
+\begin{minipage}{0.5\textwidth}
+\includegraphics[width=\textwidth]{3som_loop_w.pdf}
+
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\includegraphics[width=\textwidth]{3som_loop_pred.pdf}
+\end{minipage}
+\caption{Poids et prédiction de trois cartes connectées en boucle (1-> 2 -> 3 -> 1). L'organisation des poids est semblable à la version en rétroaction, mais la prédiction est plus mauvaise.}
+\label{fig:3som_loop}
+\end{figure}
+
+\begin{figure}
+\begin{minipage}{0.45\textwidth}
+\includegraphics[width=\textwidth]{3som_cercle_im}
+\caption{Coefficients d'incertitude lorque les cartes sont connectées rétroactivement, entrées sur un cercle}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{3som_loop_im.png}
+\caption{Coefficient d'incertitude (colonne|ligne) lorsque les cartes sont connectées en boucle, entrées sur un cercle}
+\end{minipage}
+\end{figure}
+
 
 \subsection{Conclusion et perspectives: influence de l'architecture}
-
 
 \section{Influence des paramètres des cartes}
 
 \subsection{rayons de voisinage}
+Le rayon de voisinage des cartes, et principalement la différence entre rayons de voisinage externe et contextuel des cartes joue un gros rôle dans l'organisation. C'est cette différence de rayon de voisinage permet la séparation en indices primaires et secondaires. Lorsque les voisinages sont égaux, cette répartition ne se fait pas; mais également, les poids ne peuvent pas se stabiliser. Prendre $r_c < r_e$ permet donc une organisation stable, une séparation d'indices et une prédiction. Les paramètres sont indiqués en tableau~\ref{tab:rcre_params}.
+
+\emph{vidéo rcre}
+\begin{table}
+\begin{tabular}{ l c c c }
+ name & re & rc & delta\\ 
+ rcre0 & 0.2 & 0.1 & 0.1\\  
+ rcre1 & 0.2 & 0.07 & 0.1 \\
+ rcre2 & 0.2 & 0.05 & 0.1 \\
+ rcre3 & 0.2 & 0.01 & 0.1 \\
+ rcre4 & 0.2 & 0.005 & 0.1
+\end{tabular}
+\caption{Paramètres de rayon de voisinage utilisés dans les expériences de comparaison}
+\label{tab:rcre_params}
+\end{table}
+
+\subsection{Taille de la carte}
+
+Carte grande taille, même comportement qu'avec 500 noeuds; pas d'améloriation significative.
+Carte petite taille (20 noeuds) :on n'a pas assez d'unités pour faire les séparations. On a donc 8 unités qui seront bmus, mais pas de prédiction possible ou de différenciation de U par exemple. (voir figures).
+Ainsi, le comportement auquel on s"intéresse, à savoir la capacité de différentiation des BMU selon le modèle, n'est plus possible. Cela pose question  :
+\begin{itemize}
+\item Si on veut faire des cartes 2D, on devra donc avoir des grandes cartes (100 par 100 au moins)! 
+\item Même sur 500 points, on a seulement ~20 régions d'une carte qui sont utilisées, et parmi elle peu de BMU. On perd beaucoup de noeuds.
+\item Si les entrées sont trop complexes (beaucoup de cartes, donc beaucoup de valeurs possible pour U), pourra t on toujours effectuer une différencitation des entrées ? 
+\end{itemize}
+
+
 
 \subsection{Combinaison des activités externes et contextuelles par moyenne ou moyenne géométrique}
 
 \subsection{Influence de la relaxtion}
+
+Il semble que la relaxation ne soit même plus utile lorsque 
 
 \section{Conclusion des expériences, perspectives et limites}
