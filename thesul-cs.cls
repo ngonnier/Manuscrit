@@ -134,6 +134,7 @@
     \@TUL@cmn@head\par
     }
 \newtoks\@lab@tok
+
 \newtoks\@lab@tokii
 \@lab@tok={Laboratoire Lorrain de Recherche en Informatique et
                              ses Applications \includegraphics[width=0.3\textwidth]{tulloria}}

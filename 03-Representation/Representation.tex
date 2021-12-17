@@ -268,13 +268,19 @@ Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer $
 
 \subsection{Estimation}
 %TODO
-%- Limitations : biais, variance (definition mathématique ?)
-%- Traduction de ces limitations concrètement, notamment pour le calcul du rapport info/entropie : a quoi doit on faire attention ?
+
+\comment{ TODO :
+Limitations : biais, variance (definition mathématique ?)
+Traduction de ces limitations concrètement, notamment pour le calcul du rapport info/entropie : a quoi doit on faire attention ?
+}
+
+
 L'information mutuelle et l'entropie sont des grandeurs probabilistes. Elles sont définies à partir de la distribution des variables aléatoire. Lorsque qu'on ne connait pas les distributions, il est nécessaire d'estimer ces valeurs autrement. 
 Une première façon d'estimer l'entropie et l'information mutuelle entre $X$ et $Y$ est d'estimer la distribution des variables $X$,$Y$ et leur distribution jointe $Z = (X,Y)$ en discrétisant l'espace par \emph{binning}, représenté en figure~\ref{fig:binning}. Les variables X et Y sont donc discrétisées en \emph{boîtes} de centres $x_k$ et $y_k$. La distribution de X est alors estimée par: 
 $$P(X = x_i) = \frac{n_{xi}}{N} $$, où $n_{xi}$ est le nombre d'échantillons de X tombant dans la boîte de valeur $x_i$ et $N$ le nombre de points. Le même procédé est réalisé pour $Y$ et $Z = (X,Y)$.
 L'information mutuelle par binning est calculée à partir de ces distributions discrètes.
-Lorsque la dimension des variables est faible (typiquement 1D), l'estimateur est ?? (fiable ?? comment) . Des terme de corrections peuvent éventuellement être apportés. La précision de l'estimation peut être améliorée en choisissant des tailles de boîtes variables. Cependant, lorsque la dimension augmente, le nombre d'échantillon disponibles doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient théoriquement du en contenir; l'estimation de la probabilité en ce point sera donc nulle, et l'indicateur faussé. 
+\draft{Lorsque la dimension des variables est faible (typiquement 1D), l'estimateur est ?? (fiable ?? comment)}
+Des termes de corrections peuvent être apportés. La précision de l'estimation peut être améliorée en choisissant des tailles de boîtes variables. Cependant, lorsque la dimension augmente, le nombre d'échantillon disponibles doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient théoriquement du en contenir; l'estimation de la probabilité en ce point sera donc nulle, et l'indicateur faussé. 
 
 Un autre estimateur que le binning est l'estimation par noyaux de Kraskov \cite{2004kraskov}. Cet estimeur passe par une estimation diecte de l'entropie au lieu des densités de probabilités. Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
 $$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$

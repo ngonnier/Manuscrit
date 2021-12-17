@@ -1,11 +1,9 @@
-%Documentclass thesul modifée pour mettre les logos CS : thesul-cs
+%Documentclass thesul modifée pour la page de garde : thesul-cs
 \documentclass[11pt]{thesul-cs}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
-
-
 
 %Fancy headers
 \usepackage{fancyhdr}
@@ -19,7 +17,7 @@
 \usepackage[french]{minitoc}
 
 \usepackage{amssymb}
-\usepackage{color} % où xcolor selon l'installation
+\usepackage{xcolor} % où xcolor selon l'installation
 \usepackage{mdframed}
 \usepackage{multirow} %% Pour mettre un texte sur plusieurs rangées
 \usepackage{multicol} %% Pour mettre un texte sur plusieurs colonnes
@@ -39,17 +37,35 @@
 \DeclareMathOperator{\sign}{sgn}
 \newtheorem{propriete}{Propriété}
 
+%draft/release options
+\newif\ifDraft
+\newcommand\comment[1]{\ifDraft {\itshape\color{red}{#1}} \fi} %text displayed in draft mode as comments
+\newcommand\draft[1]{\ifDraft #1 \fi} %text displayed in draft mode only.
 
-\newif\ifrelease
+\newif\ifReview
+
+%switch between draftmode and releasemode
+\ifdefined\draftmode
+  \Drafttrue
+  \Reviewtrue
+\fi
+
+\ifdefined\reviewmode
+  \Reviewtrue
+\fi
 
 
+%\Drafttrue %switch to false if you want to get the release version.
+%\Draftfalse %switch to true if you want to get the draft version.
+\ifReview \usepackage[lmargin=5cm]{geometry}\fi
 %def path for files
 \input{Notations.tex}
+
+
 \begin{document}
 \dominitoc
 \input{titlepage}
 \tableofcontents
-
 \input{00-Introduction/Introduction}
 \mainmatter
 \input{01-Modularite/Modularite}
@@ -58,7 +74,6 @@
 %\input{03-Algorithme/Algorithme}
 \input{04-Analyse/Analyse}
 \input{Conclusion}
-
 %Bibliography files
 \bibliography{01-Modularite/biblio_modularite.bib,03-Representation/biblio_representation.bib}
 
