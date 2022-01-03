@@ -1,7 +1,5 @@
 \chapter{Cartes de Kohonen et modèle d'architecture CxSOM}
 \graphicspath{{02-SOM/}}
-
-
 \comment{Idée du chapitre : 
 
 "Qu'est ce qu'on veut faire avec des cartes de Kohonen ?" 
@@ -16,42 +14,15 @@ bout le prendre ?
 →  Intérêt de la topologie de la carte. Dans une carte seule, est ce que c’est vraiment utile ?
 → Questionnement informatique : qu’est ce qui se passe en fait dedans, mais c’est quand même rigolo. }
 
-\section{De la biologie au calcul}
 
-\comment{De la biologie au calcul : patterns temporels des neurones impulsionnels vs SOM}
 
-\section{Algorithme Général}
+
+
+\section{Carte de Kohonen}
+
+\subsection{Algorithme et notations}
 \draft{Une carte de Kohonen est un graphe dans lequel chaque noeud possède un poids $\omega$ appartenant à l'espace des entrées. L'algorithme repose ensuite sur l'adaptation de ces poids, en prenant en compte les connexions dans le graphe, afin de représenter les données d'entrées. 
 Ainsi, n'importe quel graphe pourrait être considéré; le plus souvent, une grille 2D est utilisée.}
-
-\comment{Mettre ici algo }
-
-\section{Approche topologique des cartes de Kohonen}
-
-\draft{La notion de voisinage et de topologie est un élément clé des cartes de Kohonen. Le voisinage est en effet pris en compte lors de l'apprentissage et lors de l'interpretation des cartes. Cependant, ce voisinage est généralement défini, dans les applications des cartes, comme un bonus par rapport aux KMeans, une aide à la convergence et à la vitesse de dépliement. Pourtant c'est la l'essence même d'une carte de Kohonen: projeter des éléments sur un graphe, ce qui nous permet de faire des calculs sur des positions plutot que des données de grandes dimensions. 
-\begin{figure}
-\centering
-\includegraphics[width=0.4\textwidth]{digits002.pdf}
-\caption{Une carte de Kohonen s'organise en zones dont les poids sont proches dans l'espace des entrées. Chaque entrée présentée à la carte peut alors être représentée par la valeur de la position du BMU correspondant dans la carte. Les entrées sont projetées sur le carré $[0,1] \times [0,1]$.}
-\end{figure}
-
-}
-%\section{Travaux préliminaires sur les architectures de cartes de Kohonen}
-\section{Description de l'algorithme}
-
-Le but de cette thèse est de proposer un modèle permettant d'associer des cartes auto-organisatrices dans n'importe quel type d'architecture, comme une sorte de brique de base. En particulier, on cherchera à construire des architectures non-hiéarchiques de cartes, exemple en figure~\ref{fig:archi_non_hierarchique}.
-Nous nous placons donc dans le cadre de modules pré-établis, dont les entrées ont été connectées par avance. Les poids de chaque carte seront quant à eux appris, avec comme objectif que les cartes apprennent leurs entrées mais puissent également distinguer un état global de l'architecture.
-Pour les entrées, nous nous placons dans un cadre de multi-modalité, détaillé au chapitre suivant. Les différentes cartes prendront des données d'entrées sur différents espaces.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.6\textwidth]{architecture.pdf}
-\caption{Exemple d'architecture modulaire \emph{non-hiérarchique} de cartes de Kohonen. Les entrées sont $A,B,C,D,E$ quelconques. Chaque carte peut ou non prendre une entrée ; les connexions sont réciproques ou non.}
-\label{fig:archi_non_hierarchique}
-\end{figure}
-
-
-\subsection{Carte de Kohonen classique}
 
 Rappelons les notations concernant une carte de Kohonen standard. Prenons un ensemble de données d'entrées, dans lequel chaque élément est un vecteur d'un espace $D$. On a définit une distance $d$ sur $D$, généralement la distance euclidienne.
 La carte de Kohonon construite sur ces entrées est un graphe, généralement une ligne 1D ou une grille 2D de $N$ noeuds. Chaque noeud possède un poids associé $\w_e in D$ ou \emph{prototype}, du même espace que les entrées. et une \emph{position} $i$ dans la carte. Ces positions sont ensuite indexées entre $0$ et $1$ par $p= \frac{i}{N}$ pour l'homogénéité des calculs. 
@@ -80,10 +51,33 @@ Lors de l'étape 2 de l'algorithme, une activité peut être calculée, au lieu 
 \label{fig:one_map_not}
 \end{figure}
 
-\subsection{Modèle : CxSOM}
 
-Décrivons maintenant le modèle CxSOM étudié dans cette thèse. Dans ce modèle, l'algorithme original de Kohonen est modifié afin de connecter des cartes entre elles, et d'autoriser des connexions non-hiérarchiques.
-Définissons la connexion entre deux cartes. Une carte A est connectée à une carte B lorsque la carte B prend en entrée la position du BMU de la carte A. 
+\subsection{Approche topologique des cartes de Kohonen}
+
+\draft{La notion de voisinage et de topologie est un élément clé des cartes de Kohonen. Le voisinage est en effet pris en compte lors de l'apprentissage et lors de l'interpretation des cartes. Cependant, ce voisinage est généralement défini, dans les applications des cartes, comme un bonus par rapport aux KMeans, une aide à la convergence et à la vitesse de dépliement. Pourtant c'est la l'essence même d'une carte de Kohonen: projeter des éléments sur un graphe, ce qui nous permet de faire des calculs sur des positions plutot que des données de grandes dimensions. 
+\begin{figure}
+\centering
+\includegraphics[width=0.4\textwidth]{digits002.pdf}
+\caption{Une carte de Kohonen s'organise en zones dont les poids sont proches dans l'espace des entrées. Chaque entrée présentée à la carte peut alors être représentée par la valeur de la position du BMU correspondant dans la carte. Les entrées sont projetées sur le carré $[0,1] \times [0,1]$.}
+\end{figure}
+
+}
+%\section{Travaux préliminaires sur les architectures de cartes de Kohonen}
+\section{Modèle CxSOM}
+
+Le but de cette thèse est de proposer un modèle permettant d'associer des cartes auto-organisatrices dans n'importe quel type d'architecture, comme une sorte de brique de base. En particulier, on cherchera à construire des architectures non-hiéarchiques de cartes, exemple en figure~\ref{fig:archi_non_hierarchique}.
+Nous nous placons donc dans le cadre de modules pré-établis, dont les entrées ont été connectées par avance. Les poids de chaque carte seront quant à eux appris, avec comme objectif que les cartes apprennent leurs entrées mais puissent également distinguer un état global de l'architecture.
+Pour les entrées, nous nous placons dans un cadre de multi-modalité, détaillé au chapitre suivant. Les différentes cartes prendront des données d'entrées sur différents espaces.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{architecture.pdf}
+\caption{Exemple d'architecture modulaire \emph{non-hiérarchique} de cartes de Kohonen. Les entrées sont $A,B,C,D,E$ quelconques. Chaque carte peut ou non prendre une entrée ; les connexions sont réciproques ou non.}
+\label{fig:archi_non_hierarchique}
+\end{figure}
+
+Dans ce modèle, l'algorithme original de Kohonen est modifié afin de connecter des cartes entre elles, et d'autoriser des connexions non-hiérarchiques.
+La connexion entre une carte A et une carte B est réalisée lorsque la carte B prend comme entrée la position du Best Matching Unit de A. 
 Considérons G, le graphe de connexions des cartes. Ce graphe est \emph{orienté} et les \emph{boucles} sont autorisées. C'est ce qu'on appelera \emph{architecture non-hiérarchique} de cartes, par opposition à des architectures comme HSOM dans laquelle le BMU d'une carte A nourrit une carte B de façon unidirectionnelle. 
 Chaque carte aura ainsi plusieurs entrées : une entrée \emph{externes} dans un espace d'entrée, facultative, et $k$ entrées \emph{contextuelles} qui sont les positions des BMU des cartes qui lui sont connectées. Par ailleurs, la recherche du BMU doit être modifiée par rapport à l'originale : les rétroactions entre les cartes sont autorisées, la position du BMU de la carte A va donc influencer la position du BMU de la carte B, lequel modifie à nouveau le BMU de la carte A, etc. 
 Notre algorithme présente donc deux modifications principales : 
@@ -95,7 +89,7 @@ Notre algorithme présente donc deux modifications principales :
 La description du modèle CxSOM est détaillée en figure~\ref{fig:one_map}, dans un cas ou une carte reçoit deux connexions, et l'algorithme explicité en~\ref{algo:cxsom}.
 
 
-\subsubsection{Gestion des entrées externes et contextuelles}
+\subsection{Gestion des entrées externes et contextuelles}
 
 A un pas d'apprentissage $t$, une carte $M$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles} notées $\inpc_{0t},\cdots,\inpc_{Kt}$, qui sont les BMU $\bmu$ des cartes qui lui sont connectées. La carte possède donc $k+1$ couches de poids. $\w_e$ correspond à l'entrée externe et $\w_{c0}, \cdots, \w_{cK}$ aux entrées contextuelles. On calcule une activité séparément sur chaque couche de poids selon la formule suivante : 
 \begin{equation}
@@ -112,7 +106,7 @@ a_g(p,\inpx_t,\mathbf{\inpc_t}) = \sqrt{a_e(p,\inpx_t)(\beta a_e(p,\inpx_t) + (1
 Une convolution est appliquée sur cette activité globale. Cela évite les effets de plateau.
 Cette activation globale est utilisée pour déterminer le BMU de la carte. 
 
-\subsubsection{Gestion des rétroactions dans l'architecture}
+\subsection{Gestion des rétroactions dans l'architecture}
 
 Contrairement à une carte simple, on ne peut pas calculer tous les BMUs de l'architecture en prenant l'argmax de $a_g$ dans chaque carte. A cause des influences mutuelles entre cartes, calculer le BMU d'une des cartes modifie les entrées des autres cartes de l'architecture, et donc leur BMU. Cette recherche est donc réalisée par un processus dynamique que l'on appelera \emph{relaxation}, menant à un consensus entre cartes : on cherche le point, s'il existe, où chaque BMU maximise l'activité globale de chaque carte.
 
@@ -146,14 +140,13 @@ Il peut arriver que les positions se stabilisent sur un cycle limite. Dans ce ca
 \label{fig:one_map}
 \end{figure}
 
-\subsubsection{Mise à jour des poids}
+\subsection{Mise à jour des poids}
 
 Les poids sont mis à jour par rapport à leurs entrées respectives suivant l'équation \ref{eq:update}. Le BMU d'une carte est ainsi commun à toutes les couches. Les rayons de voisinage $h_e$ et $h_c$ ont des valeurs différentes ; celles-ci seront détaillée en partie suivante. 
 
-\subsubsection{Tests}
+\subsection{Tests}
 
 Les expériences faites sur l'architecture se décomposent en une phases d'apprentissage et phases de test. Pendant les tests, la mise à jour des poids des cartes est gelée et seuls le calcul des activités et le processus dynamique de sélection du BMU sont effectués.
 
-\draft{
-\section{A trier}
-}
+\subsection{Algorithme}
+
