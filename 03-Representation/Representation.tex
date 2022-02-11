@@ -84,9 +84,9 @@ Nous introduisons dans cette section un formalisme traitant les éléments des c
 
 \subsection{Représentation des entrées}
 
-Les observations multimodales que l'on cherche à apprendre par l'architecture de cartes sont notées ${\inpx\m{i}, i = 0 \cdots N}$ où $N$ est le nombre de modalités considérées. A chaque pas de temps, un vecteur $\mathbf{\inpx} = (\inpx\m{0}, \cdots , \inpx\m{N})$ est présenté à l'arfhcitecture, réalisation de la variable jointe.
+Les observations multimodales que l'on cherche à apprendre par l'architecture de cartes sont notées ${\inpx\m{i}, i = 0 \cdots N}$ où $N$ est le nombre de modalités considérées. A chaque pas de temps, un vecteur $\mathbf{\inpx} = (\inpx\m{0}, \cdots , \inpx\m{N})$ est présenté à l'architecture. Il s'gait d'une réalisation de la variable jointe.
 
-Dans CxSOM, on s'intéresse à l'apprentissage de relations entre entrées. Les variables $\inpx\m{i}$ ne sont a priori donc pas des variables indépendantes. On choisit de représenter cette dépendance par une autre variable aléatoire $U$. Cette variable est multidimensionnelle et choisie de façon à ce que chaque variable $\inpx\m{i}$ soit une fonction quelconque de la variable aléatoire $U$, et uniquement de cette variable.
+On s'intéressera notamment à l'apprentissage de relations entre entrées. Les variables $\inpx\m{i}$ ne sont a priori donc pas des variables indépendantes. On choisit donc de représenter cette dépendance par une autre variable aléatoire $U$. Cette variable est multidimensionnelle et choisie de façon à ce que chaque variable $\inpx\m{i}$ soit une fonction quelconque de la variable aléatoire $U$, et uniquement de cette variable.
 
 \begin{equation}
 \forall i, \inpx\m{i} = f\m{i}(U)
@@ -219,10 +219,10 @@ Le second avantage de ces tracés est qu'il est possible de représenter graphiq
 L'étude de tout processus physique s'effectue par un ensemble signaux issus de capteurs. La théorie de l'information de Shannon \cite{Shannon1948AMT} apporte un modèle mathématique qui abstrait ces signaux et permet de les manipuler, les encoder, les décoder et quantifier l'apport ou perte d'information entre eux, en les utilisant en tant que distributions de probabilités.
 Ce modèle mathématique puissant permet de s'abstraire de la nature des signaux pour s'intéresser à leurs relations. Comme son nom l'indique, la théorie de l'information s'appuie sur la notion fondamentale d'information portée par un symbole. Ensuite, cette information se décline en quantités qu'on calcule en fonction de ce qu'on veut mesurer: l'entropie d'une variable, comme l'information apportée par l'observation de la variable seule; l'entropie conditionnelle entre deux variables,l'information mutuelle entre deux variables ou un plus grand nombre. Ces mesures définissent une dépendance statistique générale, et ne dépendent pas du type de modèle ou de relation.
 
-La théorie de l'information est non seulement applicable, mais en fait profondondément liée aux algorithmes l'apprentissage automatique~\cite{mackay2003information}. L'informatique prend sa source dans les travaux de recherche en la théorie de l'information au XXème siècle. L'apprentissage automatique en est un aspect.
+\draft{La théorie de l'information est non seulement applicable, mais en fait profondondément liée aux algorithmes l'apprentissage automatique~\cite{mackay2003information}. L'informatique prend sa source dans les travaux de recherche en la théorie de l'information au XXème siècle. L'apprentissage automatique en est un aspect.
 Ces algorithmes cherchent en effet à apprendre un modèle, un signal liant des entrées à des sorties, ou des entrées entre elle. Ce modèle est un encodage du signal d'entrée. 
 De son coté, la théorie de l'information apporte un langage fondamental pour quantifier la dépendance entre signaux, les encoder et les décoder. Les algorithmes d'apprentissage étant fondamentalement des encodeurs et des décodeurs, les quantités issues de la théorie de l'information ont donc une traduction directe dans les modèles d'apprentissage, et inversement.
-D'ailleurs, de nombreux modèles d'apprentissage automatique se reposent directement sur des règles de calcul d'information pour encoder le signal d'entrée. On pense notamment aux approches bayésiennes de l'apprentissage qui estiment des distributions, et passent par des calculs d'information pour les estimer.
+D'ailleurs, de nombreux modèles d'apprentissage automatique se reposent directement sur des règles de calcul d'information pour encoder le signal d'entrée. On pense notamment aux approches bayésiennes de l'apprentissage qui estiment des distributions, et passent par des calculs d'information pour les estimer.}
 
 Nous investiguerons dans cette partie comment quantifier l'apprentissage de l'architecture de cartes par des outils d'information. Bien que cette théorie soit un outil mathématique puissant, il s'agit d'un modèle s'appuyant sur les probabilités. L'estimation à partir de données est donc un élément clé et parfois limitant lorsqu'on cherche à utiliser des valeurs telles que l'entropie pour quantifier l'information au sein d'un système. Nous définirons donc dans cette partie des quantités à mesurer dans l'architecture de cartes, et chercherons à l'estimer.
 
@@ -279,6 +279,11 @@ Ce coefficient peut être élargi à plus de variables. On peut ainsi calculer $
 \comment{ TODO :
 Limitations : biais, variance (definition mathématique ?)
 Traduction de ces limitations concrètement, notamment pour le calcul du rapport info/entropie : a quoi doit on faire attention ?
+}
+
+\comment{
+On veut expliquer comment on s'y prend pour estimer le coefficient d'incertitude. On a plusieurs méthodes possible : estimation par binning et estimations par noyaux, par exemple Kraskov. L'estimation par noyaux est plus précise et limite la variance et le biais de l'estimateur, et sera plus fiable en plus grandes dimensions. ( préciser la source ???)
+Si on trace l'évolution de l'info mutuelle pour 2 cartes connectées et non connectée, estimée en binning et Kraskov, on 
 }
 
 
@@ -356,3 +361,10 @@ Dans le cas ou le modèle d'entrée est connu, calculer les réponses des cartes
 \section{Prédiction d'entrée}
 
 Au sein d'une architecture de cartes, il est possible de ne pas présenter à une ou plusieurs cartes de l'architecture leur entrée externe $\inpx\m{i}$. Dans ce cas, une best matching unit peut quand même être calculée par leurs entrées contextuelles. Le poids de cette best matching unit peut alors être vu comme une prédiction de l'entrée manquante. Cette capacité de prédiction peut être à la fois vue comme une application possible de l'architecture, mais aussi comme une façon de représenter \emph{ce que les autre cartes connaissent d'une autre}. Tracer les prédictions d'une carte est donc un indicateur de la façon dont une architecture a appris des relations. 
+
+
+\comment{
+2 parties dans estimation/perspectives : 
+d'une part, questionnement sur l'estimation des données bruitées par exemple - pas besoin de proposer des solutions si elles ne sont pas testées ? 
+Et parler de l'estimation en grande dimension : ce n'est pas forcément le pb ici. Donc pas la peine...
+}
