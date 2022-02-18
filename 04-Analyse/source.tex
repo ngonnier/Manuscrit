@@ -122,13 +122,22 @@ On peut comparer ces tracés à ceux réalisés au début de l'apprentissage ($t
 \label{fig:w006}
 \end{figure}
 
+En figure \ref{fig:diff_relax} et \ref{diff_relax_t1}, nous représentons les valeurs $\lvert p\star\m{1} - p\m{1} \rvert$ et $\lvert p\star\m{2} - p\m{2}\rvert$ en fonction de $p\m{1},p\m{2} \in [0,1]$. On rappelle que $p\star\m{1}$ dépend de $p\m{2}$, et inversement.
+Le point fixe, s'il existe, est alors à une position $p\m{1},p\m{2}$ vérifiant:
+\begin{equation*}
+\begin{cases}
+p\star\m{1}(p\m{2}) = p\m{1}\\
+p\star\m{2}(p\m{1}) = p\m{2}\\
+\end{cases}
+\end{equation*}
+
+A la fin de l'apprentissage, ce qui est le cas en figure \ref{fig:diff_relax}, un point fixe semble exister.
 
 \subsection{Etude de l'unicité du point fixe}
 
-Considérons 
-On étudiera donc l'évolution de processus de relaxation lancés sur les mêmes poids, pour une entrée externe fixée, intialisés à des valeurs aléatoires de BMU dans chaque carte.
-Chacun de ces processus aboutit sur un point de convergence; on tracera donc la distance moyenne entre les différents points de convergence sur toutes les expériences. Si cette distance est nulle, alors le point de convergence est un point fixe qui ne dépend pas de l'initialisation. 
-Cette étude sera réalisée sur des cartes 1D et 2D, pour des architectures de 2 et trois cartes.
+Nous étudions dans cette partie l'évolution de processus de relaxation lancés sur les mêmes poids, pour une entrée externe fixée, mais avec $\mathbf{\bmu}_0$ intialisés à des valeurs aléatoires dans chaque carte.
+\draft{Chacun de ces processus aboutit sur un point de convergence; on tracera donc la distance moyenne entre les différents points de convergence sur toutes les expériences. Si cette distance est nulle, alors le point de convergence est un point fixe qui ne dépend pas de l'initialisation. 
+Cette étude sera réalisée sur des cartes 1D et 2D, pour des architectures de 2 et trois cartes.}
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}
@@ -159,13 +168,34 @@ Cette étude sera réalisée sur des cartes 1D et 2D, pour des architectures de 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{champ_006_t1.pdf}
+\caption{Champ de déplacements de $\bmu\m{1},\bmu\m{2}$ lorsque les poids sont encore aléatoires, à $t=0$. En fonction de la position initiale des BMUs, la relaxation évolue vers un point fixe ou un cycle limite.}
+\label{fig:champ_0}
 \end{figure}
 
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{champ_006.pdf}
+\caption{Champ de déplacements de $\bmu\m{1},\bmu\m{2}$ lorsque les poids sont organisés tels que représentés en figure \ref{fig:am_w_006}, à $t=9999$. La relaxation évolue vers un point fixe pour l'entrée considérée.}
+\label{fig:champ_9999}
 \end{figure}
+
+\subsection{Influence du pas de convergence}
+
+Dans les expériences précédentes, on a utilisé un pas de convergence $\delta=0.05$. On peut aussi ne pas utiliser de pas de relaxation, c'est à dire, à chaque itération, déplacer le BMU $\bmu\m{i}$ directement à la position ou l'activité globale est maximale, au lieu de le déplacer de $\delta$ vers cette position.
+L'évolution de la relaxation devient alors:
+\begin{equation}
+\forall i, \bmu\m{i}_{\tau+1} = p\star\m{i}_{\tau}
+\end{equation}
+L'apprentissage est alors similaire
+
+\draft{
+\begin{itemize}
+\item Convergence plus rapide quand ca converge
+\item Potentiellement plus de risque de non convergence ( ? )
+\item Même comportement d'apprentissage que sans relax = si point fixe, on tombe sur le même.
+\end{itemize}
+}
 
 \subsection{Discussion}
 
