@@ -1,63 +1,64 @@
-\chapter{Cartes de Kohonen et modèle d'architecture CxSOM}
+\chapter{Modèle d'architecture CxSOM}
 \graphicspath{{02-SOM/}}
 \minitoc
-\comment{Idée du chapitre : 
 
-"Qu'est ce qu'on veut faire avec des cartes de Kohonen ?" 
-" A quoi servent les cartes de Kohonen ?" ok on les utilise pour de la visualisation, de la réduction de dimension. La visualisation est bien pour un observateur humain, la réduction de dimension peut impliquer qu'on va utiliser un algorithme derrière. Mais les cartes de Kohonen vont plus loin dans l'apprentissage: on a une approximation de l'espace d'entrée par un graphe. Cela veut dire qu'une entrée est associée à un prototype dans la carte, mais inversement : un prototype est associé à un ensemble d'entrée continu ou contigu.
-Une entrée est alors représentée par notamment sa position dans la carte : un nombre donc, ou une paire. 
-Il est possible de faire du calcul sur ces positions au sein d'algoithmes. 
-Dans cette thèse, on a pensé à utiliser cette propriété pour construire un réseau de cartes auto-organisatrices. Par ce réseau, on peut exploiter les positions pour générer des dynamiques au sein de la carte qui permettront une prise de décision, ou des représentation de donnée différentes. 
-// Kohonen : il faut surprendre encore ! Par quel 
-bout le prendre ? 
-→ Appuyer sur les cartes 1D
-→ Comment ca se fait qu’on les utilise pas de ouf ? 
-→  Intérêt de la topologie de la carte. Dans une carte seule, est ce que c’est vraiment utile ?
-→ Questionnement informatique : qu’est ce qui se passe en fait dedans, mais c’est quand même rigolo. }
+En réponse à la problématique de construire des architectures décentralisées de cartes de Kohonen, nous proposons dans cette thèse une version légèrement modifiée de carte auto-organisatrices, CxSOM. L'algorithme classique est modifié pour permettre à une carte de prendre plusieurs entrées; la recherche du BMU est également transformée.
+Nous présentons dans cette partie l'algorithme CxSOM et les paramètres utilisés.
 
-
-\section{Carte de Kohonen}
+\section{Carte de Kohonen standard}
+L'algorithme CxSOM est directement dérivé de l'algorithme d'une carte de Kohonen classique. Le principe général d'une carte de Kohonen a été décrit dans le chapitre précédent; nous définissons ici plus précisément le modèle et les équations qui serviront de base pour la définition de l'algorithme CxSOM.
 
 \subsection{Algorithme et notations}
+Une carte de Kohonen est un graphe, généralement une ligne 1D ou une grille 2D de $N$ noeuds. Nous utiliserons principalement dans cette thèse des cartes en une et deux dimensions, c'est à dire des lignes et des grilles. Les notations présentées ici sont valables pour des cartes de dimension quelconque.
 
-Rappelons les notations concernant une carte de Kohonen standard. Prenons un ensemble de données d'entrées, dans lequel chaque élément est un vecteur d'un espace $D$, dans lequel est définie une distance $d$.
-La carte de Kohonon construite sur ces entrées est un graphe, généralement une ligne 1D ou une grille 2D de $N$ noeuds. Chaque noeud possède un poids associé $\w_e in D$ ou \emph{prototype}, du même espace que les entrées. et une \emph{position} $i$ dans la carte. Ces positions sont ensuite indexées entre $0$ et $1$ par $p= \frac{i}{N}$ pour l'homogénéité des calculs. 
-L'ensemble des poids est noté ${\w_e(p), p \in [0,1]}$. 
-L'algorithme se décompose de la façon suivante :
-
+L'algorithme et les notations sont résumés en figure~\ref{fig:one_map_not}
+Les entrées sont notées $\inpx$, tirées dans un espace d'entrée $D$. Le poids associé à un noeud est noté $\w_e \in D$. Sa \emph{position} dans la carte est indexée par $p$. Dans toute cette thèse, les positions seront indexées entre $0$ et $1$. L'ensemble des poids est noté ${\w_e(p), p \in [0,1]}$.
+Une étape $t$ de l'algorithme de mise à jour d'une carte de Kohonen est le suivant:
 \begin{enumerate}
-\item Une entrée $\inpx_t$ est présentée à la carte.
-\item L'unité ayant le poids le plus proche de $\inpx_t$ selon la distance $d$ est choisie comme \emph{Best Matching Unit} de la carte. Sa position est notée $\bmu$.
+\item\label{enum:inp} Une entrée $\inpx_t$ est présentée à la carte.
+\item\label{enum:act} Une \emph{activité} $a_e(\inpx_t,p)$ est calculée dans la carte. Cette étape est déjà une légère modification souvent utilisée de l'algorithme de Kohonen. On cherche alors l'index du maximum de l'activité au lieu du minimum des distances.
+\item L'unité ayant l'activité maximale est la \emph{Best Matching Unit} de la carte. Sa position est notée $\bmu$.
 \item Chaque poids $\w_e$ est déplacé vers l'entrées $\inpx$, en fonction de sa distance dans la carte à la best matching unit : 
 \begin{equation}
-\w_e(p,t+1) = \w_e(p,t) + \alpha h(\bmu,p)(\inpx - \w_e(p,t))
+\w_e(p,t+1) = \w_e(p,t) + \alpha h(\bmu,p)(\inpx_t - \w_e(p,t))
 \label{eq:update}
 \end{equation}
 \end{enumerate}
 
 $h(\bmu,p)$ est la \emph{fonction de voisinage}. Elle est maximale en $p = \bmu$ et décroissante autour de cette position. Dans notre étude, les fonctions de voisinage sont triangulaires, donc maximales en $\bmu$, décroissante sur le rayon de voisinage $h_e$ et nulle après.
-
-Lors de l'étape 2 de l'algorithme, une activité peut être calculée, au lieu d'une distance pour choisir le BMU. Ce dernier est alors choisi comme $\bmu = \argmax_p (a(\inpx,p)$. Nous utiliserons cette solution dans notre modèle. Les notations au sein d'une carte sont résumées en figure~\ref{fig:one_map_not}.
+La fonction d'activité présente à l'étape \ref{enum:act} est une activation gaussienne:
+\begin{equation}\label{eq:act}
+a_e(\inpx_t,p) = \exp{\frac{\lVert \inpx_t-\w\ext(p) \rVert ^2}{2\sigma^2}}
+\end{equation}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.6\textwidth]{one_map_one_layer.pdf}
+\includegraphics[width=\textwidth]{one_map_one_layer2.pdf}
 \caption{Notations utilisées dans une carte de Kohonen simple}
 \label{fig:one_map_not}
 \end{figure}
 
+\subsection{Paramètrage d'une carte de Kohonen}
+\subsubsection{Nombre de neurones d'une carte}
+Le nombre de neurones d'une carte définit le niveau de quantification qu'on souhaite effectuer. Pour des opérations de classification, on choisira un nombre de neurones plus élevé que le nombre de classes, afin de pouvoir avoir plusieurs prototypes par classe.
+Dans cette thèse, nous utilisons des cartes 1D comportant 500 noeuds. Le nombre de noeud est assez élevé pour pouvoir bien cartographier des ensembles de plus grande dimension. Ce nombre de noeud est proche de ce qu'on peut trouver dans la littérature; les cartes ont souvent entre 500 et 1000 noeuds.  
 
-\subsection{Approche topologique des cartes de Kohonen}
+\subsubsection{Taux d'apprentissage $\alpha$}
 
-\draft{La notion de voisinage et de topologie est un élément clé des cartes de Kohonen. Le voisinage est en effet pris en compte lors de l'apprentissage et lors de l'interpretation des cartes. Cependant, ce voisinage est généralement défini, dans les applications des cartes, comme un bonus par rapport aux KMeans, une aide à la convergence et à la vitesse de dépliement. Pourtant c'est la l'essence même d'une carte de Kohonen: projeter des éléments sur un graphe, ce qui nous permet de faire des calculs sur des positions plutot que des données de grandes dimensions. 
-\begin{figure}
-\centering
-\includegraphics[width=0.3\textwidth]{digits002.pdf}
-\caption{Une carte de Kohonen s'organise en zones dont les poids sont proches dans l'espace des entrées. Chaque entrée présentée à la carte peut alors être représentée par la valeur de la position du BMU correspondant dans la carte. Les entrées sont projetées sur le carré $[0,1] \times [0,1]$.}
-\end{figure}
+Le taux d'apprentissage $\alpha$ détermine la proportion dans laquelle chaque poids est déplacé vers l'entrée lors de sa mise à jour. Dans l'algorithme standard, le taux d'apprentissage décroit au cours de l'apprentissage. Au début de l'apprentissage, $\alpha$ est élevé, ce qui assure une organisation "grossière" rapide de la carte. $\alpha$ diminue ensuite de manière à cartographier plus localement les données. Cette décroissance assure principalement la convergence des poids de la carte au cours de l'apprentissage.
+Dans l'algorithme CxSOM, nous utiliserons un taux d'apprentissage constant au cours de l'apprentissage. L'organisation des poids sera initialement un peu plus lente qu'une carte classique, mais cela permet de garder les paramètres constant au cours de l'apprentissage.
+\comment{on n'aime pas les valeurs qui dépendent de $t$}.
+Nous observerons qu'en choisissant les bons paramètres, la convergence de la carte s'effectue correctement.
 
-}
-%\section{Travaux préliminaires sur les architectures de cartes de Kohonen}
+\subsubsection{Topologie de la carte}
+Les choix concernent la forme du graphe servant de structure à la carte : grille 1D, 2D, arbre. Ces éléments ont été décrits en section [ref].
+Le choix de la fonction de voisinage est déterminant dans la topologie de la carte, et en particulier le rayon de voisinage $h_e$ qui détermine l'elasticité de la carte.
+Cette valeur détermine quelles unités voisines du BMU seront affectées par le déplacement du BMU.
+Plus le rayon $h_e$ est grand, plus la partie de la carte déplacée vers l'entrée lors de la mise à jour est étendue. Un grand rayon d'apprentissage permet un dépliement plus rapide de la carte de Kohonen, mais l'apprentissage est peu précis. Les données apprises alors rapidement oubliées par le déplacement des poids.
+Un petit rayon d'apprentissage permet de déplacer les poids concentrés dans une petite région sans affecter toute la carte. Cela permet donc d'apprendre de nouvelles entrées sans oublier les parties déjà apprises. Par contre, utiliser un petit rayon de voisinage au début de l'apprentissage empêche une carte de bien se déplier et d'apprendre une structure globale des données. On doit donc trouver un compromis entre apprentissage de nouvelles données et mémoire des données déjà apprises.
+Dans l'algorithme classique, ce compromis est trouvé en faisant décroitre le rayon de voisinage au cours de l'apprentissage. Un grand rayon de voisinage permet à la carte de se déplier rapidement en apprenant une structure globale des données. Sa décroissance permet d'affiner l'apprentissage des données à un niveau plus fin. 
+Dans l'algorithme CxSOM, nous utiliserons un rayon de voisinage constant.
+
 \section{Modèle CxSOM}
 
 Le but de cette thèse est de proposer un modèle permettant d'associer des cartes auto-organisatrices dans n'importe quel type d'architecture. En particulier, on cherchera à construire des architectures non-hiérarchiques de cartes, par exemple en figure~\ref{fig:archi_non_hierarchique}.

@@ -2,20 +2,59 @@
 \graphicspath{{04-Analyse/}}
 \minitoc
 \section{Analyse de la relaxation}
-Le processus de relaxation utilisé dans l'algorithme CxSOM est une méthode originale pour construire des connexions bidirectionnelles entre cartes. Deux cartes connectées de cette façon jouent alors un rôle symétrique, contrairement à une connexion unidirectionnelle ou hiérarchique dans laquelle une carte joue le rôle d'entrée et une autre de sortie. Dans cette section, nous évaluons expérimentalement la méthode de relaxation en tant que moyen de trouver une best matching unit (BMU). On cherchera notamment à répondre aux questions suivantes :  
+
+Le processus de relaxation utilisé dans l'algorithme CxSOM est une méthode originale pour construire des connexions bidirectionnelles entre cartes. Deux cartes connectées de cette façon jouent alors un rôle symétrique, contrairement à une connexion unidirectionnelle ou hiérarchique dans laquelle une carte joue le rôle d'entrée et une autre de sortie. Dans cette section, nous évaluons expérimentalement la méthode de relaxation en tant que moyen de trouver une best matching unit (BMU). 
+
+La Best Matching Unit d'une carte de Kohonen correspond à la position où l'activité est maximale. Dans la situation d'une architecture de plusieurs cartes, ayant chacune un BMU, le vecteur de BMUs correspond à la positions ou chacune des activités est maximale. On est donc face à un problème d'optimisation multi-objectif dans lequel on cherche un seul point maximisant chacune des activités, mais dans lequel les activités dépendent les unes des autres. La relaxation est proposée comme heuristique pour trouver ce point, s'il existe. On cherchera donc à répondre aux questions suivantes:
 \begin{itemize}
 \item Est-ce que la méthode de relaxation converge ?
 \item Est-ce que que cette méthode permet de définir un unique BMU ?
 \item Quels sont les paramètres à prendre en compte dans l'algorithme de relaxation ?
 \end{itemize}
 
+\subsection{Etude de la convergence des BMUs lors de la relaxation}\label{sec:conv}
+
+\subsubsection{Méthode}
+
+La méthode de relaxation cherche un point de convergence des BMU $\bmu\m{i}$ de l'archchitecture. Nous avons réalisé 1000 itérations de test, à poids figés, à différents temps d'apprentissage, et comptons le nombre de pas nécessaires à la convergence de la relaxation. L'algorithme utilisé pour la relaxation s'arrête automatiquement si la relaxation dépasse $\tau_{max}= 1000$ itérations; on considérera que la relaxation n'a pas atteint un point de convergence si la relaxation atteint ces $\tau_{max}$ itérations.
+Pour cette expérience, les entrées sont des points pris sur un cercle en deux dimensions. $\inpx\m{1}$ est l'abscisse d'un point, $\inpx\m{2}$ l'ordonnée.
+Théoriquement, plusieurs situations se traduisent par une non-convergence de la relaxation:
+\begin{itemize}
+\item La relaxation évolue vers un point de convergence, mais trop lentement pour y arriver en moins de 1000 itérations
+\item La relaxation évolue vers un cycle limite composé d'un nombre limité d'unités étant alternativement best matching units
+\item La relaxation évolue sans répétition de motifs dans la carte : évolution chaotique.
+\end{itemize}
+Le premier cas est évité car la limite de 1000 itérations est assez grande par rapport à la taille de la carte, les cartes étant de taille 500. Le pas d'évolution de la relaxation est d'une dizaine d'unités. La convergence, si elle existe, est donc rapide. Les cas de non-convergence concernent alors la deuxième et la troisième situation.
+Nous observerons plus précisément les trajectoires dans la section suivante; on s'intéresse ici seulement à la question de la convergence.
+L'étude de la convergence sera réalisée dans des architectures de 2 et 3 cartes, pour des cartes une dimension et deux dimensions.
+
+\subsubsection{Résultats}
+La figure \ref{fig:conv_evolution} présente l'évolution du taux de convergence au cours de l'apprentissage d'une architecture de 2 cartes et 3 cartes. La figure \ref{fig:conv_evolution2D} trace  cette évolution dans le cas de cartes 2D. Pour tracer cette évolution, on effectue des étapes de tests à intervalles réguliers au cours de l'apprentissage, pendant lesquelles les poids ne sont pas mis à jour. Ces tests sont réalisés sur 1000 entrées externes $\inpx\m{1} = X, \inpx\m{2}=Y$ (et $\inpx\m{3}=Z$ pour trois cartes), prises aléatoirement dans l'espace d'entrée. On compte, pour chaque échantillon de test, le nombre de pas nécessaire à la relaxation. Si ce nombre est égal à $\tau_{max}$, on considère que la relaxation n'a pas convergé. On trace alors, en haut, le pourcentage d'échantillons de test pour lesquel la relaxation converge. En bas, on trace le nombre moyen de pas de relaxation nécessaires à la convergence.
+Dans chaque cas, on répètera 10 fois l'apprentissage complet et les tests, sur le même espace d'entrée mais des éléments différents. Les tracés des figures \ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} sont la moyenne et l'écart type des valeurs obtenues sur ces 10 répétitions.
+
+Au début de l'apprentissage, lorsque les poids sont initialisés aléatoirement, la relaxation atteint rarement un point de convergence. Lorsque les cartes se déplient, la relaxation évolue vers un point de convergence dans plus de $90 \%$ des cas. Cette évolution est similaire pour des architecture de deux et trois cartes. Les expériences avec des cartes en deux dimensions présentent la même évolution. Le taux de convergence en fin d'apprentissage est plutot situé entre $80 \%$ et $90 \%$.
+ 
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{1D_conv_evolution_total.pdf}
+\caption{En haut: évolution de la moyenne et l'écart-type du taux de convergence lors de la relaxation au cours de l'apprentissage sur deux et trois cartes 1D. En bas: évolution du nombre moyen de pas nécessaires à la convergence de la relaxation.
+Chaque point est calculé sur un échantillon de 1000 relaxations au temps t, évaluées sur des entrées différentes prises aléatoirement sur le cercle. La moyenne et l'écart-type sont réalisés sur 10 apprentissages séparés.}
+\label{fig:conv_evolution}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{2D_conv_evolution_total.pdf}
+\caption{En haut: évolution de la moyenne et écart type taux de convergence lors de la relaxation au cours de l'apprentissage sur deux et trois cartes 2D. Chaque point est calculé sur un échantillon de 1000 relaxations au temps t, évaluées sur des entrées différentes prises aléatoirement sur le cercle. Les moyennes et écart types sont calculés sur 10 apprentissages séparés.}
+\label{fig:conv_evolution2D}
+\end{figure}
+
 \subsection{Formalisation de l'algorithme de relaxation}
 
 La relaxation cherche à maximiser de façon \emph{commune} de l'activité globale de chaque carte de l'architecture. Notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{N}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
 La suite $(\mathbf{\bmu})_\tau$ est une suite définie par récurrence par $\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)$
 avec $\mathbf{f} = (f\m{0},\cdots,f\m{N}) : [0,1]^N \rightarrow [0,1]^N$ une application non linéaire transformant l'espace des positions des BMUs; $\mathbf{f}$ ne dépend pas de $\tau$. L'algorithme de relaxation est alors une recherche de point fixe de la fonction $\mathbf{f}$.
-
-
 Détaillons l'évolution de cette suite. Pour clarifier les notations, définissons pour chaque carte~$i$ $p\star\m{i}_\tau$, comme la position maximisant l'activité globale de la carte $i$:
 \begin{equation}
 \begin{gathered}
@@ -74,41 +113,6 @@ Nous chercherons, sur ce jeu de données, à vérifier si la relaxation converge
 \includegraphics[width=\textwidth]{archis}
 \caption{Architectures de deux et trois cartes utilisées dans cette section. Les cartes peuvent être en une ou deux dimensions. Dans le cas de cartes en deux dimensions, la position du BMU $\bmu$ est alors un vecteur 2D.}
 \label{fig:archis}
-\end{figure}
-
-\subsection{Etude de la convergence des BMUs lors de la relaxation}\label{sec:conv}
-
-La méthode de relaxation cherche un point de convergence des BMU $\bmu\m{i}$ de l'archchitecture. Nous avons réalisé 1000 itérations de test, à poids figés, à différents temps d'apprentissage, et comptons le nombre de pas nécessaires à la convergence de la relaxation. L'algorithme utilisé pour la relaxation s'arrête automatiquement si la relaxation dépasse $\tau_{max}= 1000$ itérations; on considérera que la relaxation n'a pas atteint un point de convergence si la relaxation atteint ces $\tau_{max}$ itérations.
-Pour cette expérience, les entrées sont des points pris sur un cercle en deux dimensions. $\inpx\m{1}$ est l'abscisse d'un point, $\inpx\m{2}$ l'ordonnée.
-Théoriquement, plusieurs situations se traduisent par une non-convergence de la relaxation:
-\begin{itemize}
-\item La relaxation évolue vers un point de convergence, mais trop lentement pour y arriver en moins de 1000 itérations
-\item La relaxation évolue vers un cycle limite composé d'un nombre limité d'unités étant alternativement best matching units
-\item La relaxation évolue sans répétition de motifs dans la carte : évolution chaotique.
-\end{itemize}
-Le premier cas est évité car la limite de 1000 itérations est assez grande par rapport à la taille de la carte, les cartes étant de taille 500. Le pas d'évolution de la relaxation est d'une dizaine d'unités. La convergence, si elle existe, est donc rapide. Les cas de non-convergence concernent alors la deuxième et la troisième situation.
-Nous observerons plus précisément les trajectoires dans la section suivante; on s'intéresse ici seulement à la question de la convergence.
-L'étude de la convergence sera réalisée dans des architectures de 2 et 3 cartes, pour des cartes une dimension et deux dimensions.
-
-La figure \ref{fig:conv_evolution} présente l'évolution du taux de convergence au cours de l'apprentissage d'une architecture de 2 cartes et 3 cartes. La figure \ref{fig:conv_evolution2D} trace  cette évolution dans le cas de cartes 2D. Pour tracer cette évolution, on effectue des étapes de tests à intervalles réguliers au cours de l'apprentissage, pendant lesquelles les poids ne sont pas mis à jour. Ces tests sont réalisés sur 1000 entrées externes $\inpx\m{1} = X, \inpx\m{2}=Y$ (et $\inpx\m{3}=Z$ pour trois cartes), prises aléatoirement dans l'espace d'entrée. On compte, pour chaque échantillon de test, le nombre de pas nécessaire à la relaxation. Si ce nombre est égal à $\tau_{max}$, on considère que la relaxation n'a pas convergé. On trace alors, en haut, le pourcentage d'échantillons de test pour lesquel la relaxation converge. En bas, on trace le nombre moyen de pas de relaxation nécessaires à la convergence.
-Dans chaque cas, on répètera 10 fois l'apprentissage complet et les tests, sur le même espace d'entrée mais des éléments différents. Les tracés des figures \ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} sont la moyenne et l'écart type des valeurs obtenues sur ces 10 répétitions.
-
-Au début de l'apprentissage, lorsque les poids sont initialisés aléatoirement, la relaxation atteint rarement un point de convergence. Lorsque les cartes se déplient, la relaxation évolue vers un point de convergence dans plus de $90 \%$ des cas. Cette évolution est similaire pour des architecture de deux et trois cartes. Les expériences avec des cartes en deux dimensions présentent la même évolution. Le taux de convergence en fin d'apprentissage est plutot situé entre $80 \%$ et $90 \%$.
- 
-\begin{figure}
-\centering
-\includegraphics[width=0.7\textwidth]{1D_conv_evolution_total.pdf}
-\caption{En haut: évolution de la moyenne et l'écart-type du taux de convergence lors de la relaxation au cours de l'apprentissage sur deux et trois cartes 1D. En bas: évolution du nombre moyen de pas nécessaires à la convergence de la relaxation.
-Chaque point est calculé sur un échantillon de 1000 relaxations au temps t, évaluées sur des entrées différentes prises aléatoirement sur le cercle. La moyenne et l'écart-type sont réalisés sur 10 apprentissages séparés.}
-\label{fig:conv_evolution}
-\end{figure}
-
-
-\begin{figure}
-\centering
-\includegraphics[width=0.7\textwidth]{2D_conv_evolution_total.pdf}
-\caption{En haut: évolution de la moyenne et écart type taux de convergence lors de la relaxation au cours de l'apprentissage sur deux et trois cartes 2D. Chaque point est calculé sur un échantillon de 1000 relaxations au temps t, évaluées sur des entrées différentes prises aléatoirement sur le cercle. Les moyennes et écart types sont calculés sur 10 apprentissages séparés.}
-\label{fig:conv_evolution2D}
 \end{figure}
 
 \subsection{Etude de l'influence de l'entrée contextuelle sur le BMU}\label{sec:cont}

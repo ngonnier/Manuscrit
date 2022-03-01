@@ -1,6 +1,5 @@
 \chapter{Approche modulaire des réseaux de neurones}
 \graphicspath{{01-Modularite/}}
-
 \minitoc
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,7 +22,6 @@
 De nombreux travaux de biologie observent des co-activations entre les zones du cerveaux. Le cortex cérébral est ainsi être considéré comme un reseaux de neurone modulaires, avec des régions s'activant entre elles. \cite{primate_cortex_91,mountcastle_columnar_1997,Harriger2012RichCO}
 
 Ces coactivations aient été observées expérimentalement. Plusieurs modèles en neurosciences computationnelles ont été proposés pour expliquer ce phénomènes. Les modèles les plus communs sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de réentrées de Edelmann \cite{Edelman1982GroupSA}.
-
 
  CDZ holds that specific cortical areas act as sets of pointers to other areas , and therefore connect several brain networks. The reentry theory hypothezise direct bidirectional exchanges between several brain areas. Those theories are a biological inspiration to create and connect modular networks.
 The models inspired by those theories are mostly based on spiking neural networks. Indeed, those networks are 
@@ -52,6 +50,101 @@ One is by combining activity calculation, such as RSOM, A-SOM.
 
 The last one is by transmitting a element from a map as an input to another one; it can be whole set of activities, such as voeglin, weights (MSOM), or the index of the best matching unit (dominey, SOMSD, CxSOM). The transmission of only the best matching unit index is particularly interesting, as it reduces the state of a map to a small-dimension vector (usually 2 dimensional), indifferently to the dimension of the map's weights. 
 }
+
+
+\section{Cartes auto-organisatrices}
+
+Dans cette thèse, nous nous intéressons particulièrement aux architectures de \emph{cartes auto-organisatrices}, abrégées par SOM (self-organizing maps). Le modèle de cartes auto-organisatrice a été initialement développé par Kohonen \cite{Kohonen1982}; le terme de cartes de Kohonen est ainsi utilisé pour désigner ce modèle initial. De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle initial, sur diverses applications. On décompte par exemple plus de 11000 travaux utilisant les cartes de Kohonen dans la littérature en 2010(citer biblio).
+Applications ?
+
+Au sein de cette zoologie de cartes de Kohonen, nous passerons en revue dans cette section deux familles de modèles de cartes auto-organisatrices dérivés des cartes de Kohonen: les cartes récurrentes traitant des données temporelles, et les modèles de cartes assemblées au sein d'une architecture ou d'un réseau de neurone multicouche.
+
+\subsection{Carte de Kohonen classique}
+
+Une carte de Kohonen est un algorithme de quantification vectorielle, cherchant à résumer un ensemble de données d'entrées issues d'un espace $D$ en un nombre fini de vecteurs représentatifs, des prototypes.  Dans l'algorithme de Kohonen, ces prototypes sont disposés sur les noeuds d'un graphe, en général une grille en deux dimensions. Ce graphe est appelé carte de Kohonen. Les noeuds du graphe possèdent donc chacun un prototype et sont \emph{indexés}. Une distance entre noeuds est ainsi définie.
+Au début de l'apprentissage, les prototypes ont une valeur aléatoires dans l'espace d'entrée. L'apprentissage est ensuite réalisé en trois étapes:
+\begin{enumerate}
+\item Une entrée $\inpx$ est présentée à la carte.
+\item Le noeud ayant le prototype le plus proche de $\inpx_t$ selon une distance $d$, généralement la distance euclidienne, est choisie comme \emph{Best Matching Unit} (BMU) de la carte. Son index est notée $\bmu$.
+\item Le prototype de la best matching unit est déplacé vers l'entrée $\inpx$, ainsi que les prototypes des noeuds voisins de $\bmu$ dans un rayon de voisinage défini à l'avance.
+\end{enumerate}
+
+L'algorithme de Kohonen repose donc sur à la fois un processus de compétition, avec la selection de la best matching unit de la carte, et un processus de coopération avec le déplacement des unités voisines de la Best Matching Unit. 
+Toutes les données d'entrées sont tirées dans un même espace $D$; par contre, la dimension de cet espace peut être quelconque.
+A la fin de l'apprentissage, la carte conserve la structure topologique des données:
+\begin{itemize}
+\item Elle conserve les distances: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une contiuité des valeurs des prototypes au sein de la carte
+\item Elle conserve les densités
+\end{itemize}
+Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension. Les cartes de Kohonen sont ainsi utilisées dans de nombreuses applications, notamment pour visualiser des données de grande dimension et faire du regroupement de données (clustering). 
+
+La carte de Kohonen est d'inspiration biologique. Le but premier de Kohonen était de développer un modèle informatique inspiré de l'organisation spatiale des neurones dans le cortex humain, dont un exemple est présenté en figure~\ref{fig:v1}. Il s'est notamment inspiré de l'organisation du cortex en colonnes corticales, ensemble de neurones réagissant à un même stimulus.
+
+\draft{
+(Kohonen book 1995)
+In an attempt to implement a learning principle that would
+work reliably in practice, effectively creating globally ordered maps of various
+sensory features onto a layered neural network, this author formalized the
+self-organizing process in 1981 and 1982 into an algorithmic form that is
+now being called the Self-Organizing (Feature) Map (SOM) [2.27 -29J. In the
+pure form, the SOM defines an "elastic net" of points (parameter, reference,
+or codebook vectors) that are fitted to the input signal space to approximate
+its density function in an ordered way. The main applications of the SOM
+are thus in the visualization of complex data in a two-dimensional display,
+and creation of abstractions like in many clustering techniques.
+
+Motivations de Kohonen: capacité des régions du cerveau à s'auto organiser. Note que certes il doit y avoir un prédetermination génétique, mais qu'on observe une réorganisation des mapping lors de déficiences par ex. 
+
+find abstract self-
+organizing processes in which maps resembling the brain maps are formed,
+whereas it is of less interest whether the maps are formed by evolution, post-
+natal growth, or learning.
+
+}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{digits.jpg}
+\caption{Représentation de la base de données MNIST, images de chiffres écrits à main levées, par une SOM en deux dimension. Une continuité est observée dans la forme des images lorsqu'on se déplace dans la carte: le $0$ se transforme en $6$, etc.}
+\label{fig:SOM}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{v1.jpg}
+\caption{Représentation des réponses du cortex visuel V1 à un stimulus visuel (batonnets d'orientation spatiale différentes). Les neurones répondant à une certaine orientation sont affichés de la même couleur. On observe une continuité entre les neurones proches dans le cortex et l'orientation à laquelle ils répondent. Cette propriété d'organisation est l'inspiration biologique des cartes de Kohonen. }
+\label{fig:v1}
+\end{figure}
+
+\subsection{Aspect topologique de la carte de Kohonen}
+
+\draft{La carte de Kohonen se distingue d'autres algorithmes de quantification vectoriel par la topologie introduite par la carte dans l'ensemble des prototypes. Cette topologie dépend du voisinage utilisé par l'algorithme et de la dimension du support de la carte.
+La plupart des algorithmes de SOM de la littérature utilisent comme support une grille en deux dimensions. L'indexation des noeuds est alors un ensemble de positions 2D. Le voisinage choisi est alors une distance en terme de nombre de noeuds de séparation (distance de Manhatthan) et est représenté sur différents supports en figure~\ref{fig:topo}. Une autre option est de considérer les distances euclidiennes entre positions des noeuds dans la carte.}
+
+En théorie, les cartes peuvent être une dimension (ligne), deux dimensions (grilles), ou de dimension plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. En pratique, les grilles deux dimension sont plus couramment utilisées. Elles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser sur un écran. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le cout de l'algorithme d'apprentissage dépend en effet du nombre de neurones, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen en plus de deux dimensions. Les calculs deviennent rapidement couteux, alors qu'un avantage de la carte de Kohonen est la simplicité et la rapidité de l'algorithme. Les cartes une dimension sont limitées en terme de représentation des données, et sont donc rarement utilisées en pratique. Cependant, elles se prêtent bien à la représentation graphique. Nous utiliserons donc principalement des cartes en une dimension dans cette thèse.
+De plus, les calculs et l'organisation générés par l'algorithme de Kohonen sont complexes même avec des cartes en une dimension. Leur description mathématique a été réalisée en \cite{cottrell_theoretical_2016,cottrell_theoretical_1998,fort_soms_2006}. La preuve de la convergence d'une carte a été réalisée seulement pour des cartes 1D et n'est pas généralisable directement au cas en deux dimensions. Les processus intervenant dans dans cartes 1D sont donc déjà mathématiquement difficiles à formaliser, difficulté qui augmente fortement avec les dimensions. Comme nous étudions dans cette thèse un nouveau modèle et cherchons à comprendre les mécanismes qui y interviennent, l'utilisation de cartes 1D réduit un peu la difficulté du problème. 
+Les cartes de forme autre que 1D ou 2D sont moins couramment utilisées, mais peuvent avoir des avantages. On peut observer par exemple des cartes structurées en arbre \cite{koikkalainen_self-organizing_1990}, permettant une recherche de BMU structurée. Certains modèles construisent une carte de Kohonen noeud à noeud, donnant au final une carte de Kohonen sous forme d'un graphe construit par l'algorithme, telle que \cite{alahakoon_dynamic_2000}. 
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{soms_topologies}
+\caption{Exemples de connexions dans le graphe support d'une SOM. Deux noeuds sont connectés s'il sont à une distance de une unité. Les SOM en deux dimensions sont les plus communément utilisées dans la littérature, sous forme d'une grille ou d'une grille hexagonale. Les SOM une dimension sont également utilisées.}
+\label{fig:topo}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{som2d}
+\caption{Dépliement d'une SOM 2D sur des données dans le plan $[0,1]^2$ [citation]}
+\label{fig:som2d}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{som1d}
+\caption{Dépliement d'une SOM 1D sur des données dans un triangle 2D [citation]}
+\label{fig:som1d}
+\end{figure}
 %
 %
 %
