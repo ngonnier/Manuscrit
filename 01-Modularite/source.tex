@@ -11,48 +11,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Définir la modularité}
+\section{Qu'appelle t-on architecture modulaire}
 
-\section{Avantages des systèmes modulaires}
+\section{Pourquoi développer une architecture modulaire}
 
 \section{Réseaux de neurones modulaires}
 
 \subsection{Réseaux bio-inspirés}
 
-De nombreux travaux de biologie observent des co-activations entre les zones du cerveaux. Le cortex cérébral est ainsi être considéré comme un reseaux de neurone modulaires, avec des régions s'activant entre elles. \cite{primate_cortex_91,mountcastle_columnar_1997,Harriger2012RichCO}
+\draft{De nombreux travaux de biologie observent des co-activations entre les zones du cerveaux. Le cortex cérébral est ainsi être considéré comme un reseaux de neurone modulaires, avec des régions s'activant entre elles. \cite{primate_cortex_91,mountcastle_columnar_1997,Harriger2012RichCO}
 
 Ces coactivations aient été observées expérimentalement. Plusieurs modèles en neurosciences computationnelles ont été proposés pour expliquer ce phénomènes. Les modèles les plus communs sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de réentrées de Edelmann \cite{Edelman1982GroupSA}.
 
  CDZ holds that specific cortical areas act as sets of pointers to other areas , and therefore connect several brain networks. The reentry theory hypothezise direct bidirectional exchanges between several brain areas. Those theories are a biological inspiration to create and connect modular networks.
 The models inspired by those theories are mostly based on spiking neural networks. Indeed, those networks are 
-Let us cite as example \cite{electronics9101605}
+Let us cite as example \cite{electronics9101605}}
 
-%TODO : 
-
-\subsection{Architectures de cartes auto-organisatrices}
-\draft{
-Contrairement aux réseaux impulsionnels qui utilisent des règles d'activation à l'échelle d'un neurone, les cartes auto-organisatrices (SOM) et de ses variantes (GSOM, Tree SOM) définissent des règles de calcul à l'échelle de la carte. Ces calculent s'appuient sur sur les distances et le voisinage, imitant les règles locales ; on parle donc de processus d'auto-organisation. Les motifs d'activation qu'ils développent sont alors similaires à ceux que l'on retrouve dans des zones cérébrales telles que le cortex visuel.
-Il est donc pertinent d'étudier comment plusieurs cartes peuvent être connectées pour réaliser un calcul décentralisé.
-De nombreux travaux utilisent des modèles incluant plusieurs cartes auto-organisatrices; mais la plupart de ces architectures sont conçues pour une application spécifique.
-On ne peut donc pas parler de modèles modulaires. Certains travaux ont cependant développé des modèles modulaires conçus en combinant les cartes comme un nouveau modèle générique et exploiter les communications.
-
-Dès que les SOMs ont été introduits, une version hiérarchique a été proposée, HSOM : \cite{lampinen_clustering_1992,koikkalainen_self-organizing_1990} . Dans HSOM, une carte apprend des données comme une première couche et transmet l'index de son BMU comme entrée à une deuxième carte. Les auteurs ont observé que la deuxième carte a une capacité de regroupement plus précise qu'une seule carte. Étonnamment, ce modèle n'est pas largement utilisé. Certaines variantes de HSOM ont été proposées par la suite, comme l'arbre d'architecture croissante soms [ref], où l'architecture hiérarchique est de plus en plus conçue pour s'adapter à l'ensemble des données. Dans ce cas, l'activité entière d'une carte est transmise en entrée aux couches supérieures. (Citons également [baruque])
-Ces architectures hiérarchiques : commentaire
-Dans \cite{dominey13}, les auteurs construisent des architectures hiérarchiques en transmettant les positions des BMU entre les cartes multimodales. L'inspiration est tirée du cadre CDZ.
-D'autre part, certains travaux visent à connecter les cartes entre elles de manière directe, en se rapprochant de la théorie de la rentrée d'Edelman. C'est le cas de A-SOM : combiner des cartes.
-
-Certains travaux développent des cartes modulaires où les connexions entre cartes sont créées neuronalement. C'est le cas de l'algorithme SOIMA \cite{SOIMA}, où les connexions entre neurones sont apprises avec une règle hébraïque alors que l'apprentissage se fait dans chaque carte : les neurones qui s'activent ensemble voient leur poids de connexion renforcé.}
-
-\subsection{Discussion}
-\draft{
-There are several way to connect maps together. 
-One is by combining activity calculation, such as RSOM, A-SOM.
-
-The last one is by transmitting a element from a map as an input to another one; it can be whole set of activities, such as voeglin, weights (MSOM), or the index of the best matching unit (dominey, SOMSD, CxSOM). The transmission of only the best matching unit index is particularly interesting, as it reduces the state of a map to a small-dimension vector (usually 2 dimensional), indifferently to the dimension of the map's weights. 
-}
-
-
-\section{Cartes auto-organisatrices}
+\section{Cartes auto-organisatrices}\ref{sec:som001}
 
 Dans cette thèse, nous nous intéressons particulièrement aux architectures de \emph{cartes auto-organisatrices}, abrégées par SOM (self-organizing maps). Le modèle de cartes auto-organisatrice a été initialement développé par Kohonen \cite{Kohonen1982}; le terme de cartes de Kohonen est ainsi utilisé pour désigner ce modèle initial. De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle initial, sur diverses applications. On décompte par exemple plus de 11000 travaux utilisant les cartes de Kohonen dans la littérature en 2010(citer biblio).
 Applications ?
@@ -66,15 +41,16 @@ Au début de l'apprentissage, les prototypes ont une valeur aléatoires dans l'e
 \begin{enumerate}
 \item Une entrée $\inpx$ est présentée à la carte.
 \item Le noeud ayant le prototype le plus proche de $\inpx_t$ selon une distance $d$, généralement la distance euclidienne, est choisie comme \emph{Best Matching Unit} (BMU) de la carte. Son index est notée $\bmu$.
-\item Le prototype de la best matching unit est déplacé vers l'entrée $\inpx$, ainsi que les prototypes des noeuds voisins de $\bmu$ dans un rayon de voisinage défini à l'avance.
+\item Le prototype de la best matching unit est déplacé vers l'entrée $\inpx$, ainsi que les prototypes des noeuds voisins de $\bmu$ dans un rayon de voisinage défini à l'avance. On peut voir cette étape comme le déplacement d'une zone de la carte centrée en $\bmu$.
 \end{enumerate}
 
-L'algorithme de Kohonen repose donc sur à la fois un processus de compétition, avec la selection de la best matching unit de la carte, et un processus de coopération avec le déplacement des unités voisines de la Best Matching Unit. 
+L'algorithme de Kohonen repose donc sur à la fois un processus de compétition, avec la selection de la BMU de la carte, et un processus de coopération avec le déplacement des unités voisines de la Best Matching Unit et non seulement de cette dernière.
 Toutes les données d'entrées sont tirées dans un même espace $D$; par contre, la dimension de cet espace peut être quelconque.
+L'apprentissage d'une carte de Kohonen se traduit par un rapprochement de tous les prototypes des données, de façon à ce que n'importe quel vecteur soit proche d'au moins un prototype. Visuellement, cela correspond à un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimension, se dépliant sur des données en deux dimensions. 
 A la fin de l'apprentissage, la carte conserve la structure topologique des données:
 \begin{itemize}
 \item Elle conserve les distances: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une contiuité des valeurs des prototypes au sein de la carte
-\item Elle conserve les densités
+\item Elle conserve les densités. Une zone de $D$ présentant plus de vecteurs aura plus d'unités la représentant dans la carte qu'une zone moins dense.
 \end{itemize}
 Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension. Les cartes de Kohonen sont ainsi utilisées dans de nombreuses applications, notamment pour visualiser des données de grande dimension et faire du regroupement de données (clustering). 
 
@@ -118,10 +94,13 @@ natal growth, or learning.
 
 \subsection{Aspect topologique de la carte de Kohonen}
 
-\draft{La carte de Kohonen se distingue d'autres algorithmes de quantification vectoriel par la topologie introduite par la carte dans l'ensemble des prototypes. Cette topologie dépend du voisinage utilisé par l'algorithme et de la dimension du support de la carte.
-La plupart des algorithmes de SOM de la littérature utilisent comme support une grille en deux dimensions. L'indexation des noeuds est alors un ensemble de positions 2D. Le voisinage choisi est alors une distance en terme de nombre de noeuds de séparation (distance de Manhatthan) et est représenté sur différents supports en figure~\ref{fig:topo}. Une autre option est de considérer les distances euclidiennes entre positions des noeuds dans la carte.}
+La carte de Kohonen se distingue d'autres algorithmes de quantification vectoriel par la topologie introduite par la carte dans l'ensemble des prototypes. Cette topologie dépend du voisinage utilisé par l'algorithme et de la dimension du support de la carte.
+La plupart des algorithmes de SOM de la littérature utilisent comme support une grille en deux dimensions. L'indexation des noeuds est alors un ensemble de positions 2D.
+
 
 En théorie, les cartes peuvent être une dimension (ligne), deux dimensions (grilles), ou de dimension plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. En pratique, les grilles deux dimension sont plus couramment utilisées. Elles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser sur un écran. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le cout de l'algorithme d'apprentissage dépend en effet du nombre de neurones, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen en plus de deux dimensions. Les calculs deviennent rapidement couteux, alors qu'un avantage de la carte de Kohonen est la simplicité et la rapidité de l'algorithme. Les cartes une dimension sont limitées en terme de représentation des données, et sont donc rarement utilisées en pratique. Cependant, elles se prêtent bien à la représentation graphique. Nous utiliserons donc principalement des cartes en une dimension dans cette thèse.
+
+
 De plus, les calculs et l'organisation générés par l'algorithme de Kohonen sont complexes même avec des cartes en une dimension. Leur description mathématique a été réalisée en \cite{cottrell_theoretical_2016,cottrell_theoretical_1998,fort_soms_2006}. La preuve de la convergence d'une carte a été réalisée seulement pour des cartes 1D et n'est pas généralisable directement au cas en deux dimensions. Les processus intervenant dans dans cartes 1D sont donc déjà mathématiquement difficiles à formaliser, difficulté qui augmente fortement avec les dimensions. Comme nous étudions dans cette thèse un nouveau modèle et cherchons à comprendre les mécanismes qui y interviennent, l'utilisation de cartes 1D réduit un peu la difficulté du problème. 
 Les cartes de forme autre que 1D ou 2D sont moins couramment utilisées, mais peuvent avoir des avantages. On peut observer par exemple des cartes structurées en arbre \cite{koikkalainen_self-organizing_1990}, permettant une recherche de BMU structurée. Certains modèles construisent une carte de Kohonen noeud à noeud, donnant au final une carte de Kohonen sous forme d'un graphe construit par l'algorithme, telle que \cite{alahakoon_dynamic_2000}. 
 \begin{figure}
@@ -145,6 +124,26 @@ Les cartes de forme autre que 1D ou 2D sont moins couramment utilisées, mais pe
 \caption{Dépliement d'une SOM 1D sur des données dans un triangle 2D [citation]}
 \label{fig:som1d}
 \end{figure}
+
+\subsection{Mémoire associative et SOM}
+
+
+\section{Architectures de cartes auto-organisatrices}
+\draft{
+Contrairement aux réseaux impulsionnels qui utilisent des règles d'activation à l'échelle d'un neurone, les cartes auto-organisatrices (SOM) et de ses variantes (GSOM, Tree SOM) définissent des règles de calcul à l'échelle de la carte. Ces calculent s'appuient sur sur les distances et le voisinage, imitant les règles locales ; on parle donc de processus d'auto-organisation. Les motifs d'activation qu'ils développent sont alors similaires à ceux que l'on retrouve dans des zones cérébrales telles que le cortex visuel.
+Il est donc pertinent d'étudier comment plusieurs cartes peuvent être connectées pour réaliser un calcul décentralisé.
+De nombreux travaux utilisent des modèles incluant plusieurs cartes auto-organisatrices; mais la plupart de ces architectures sont conçues pour une application spécifique.
+On ne peut donc pas parler de modèles modulaires. Certains travaux ont cependant développé des modèles modulaires conçus en combinant les cartes comme un nouveau modèle générique et exploiter les communications.
+
+Dès que les SOMs ont été introduits, une version hiérarchique a été proposée, HSOM : \cite{lampinen_clustering_1992,koikkalainen_self-organizing_1990} . Dans HSOM, une carte apprend des données comme une première couche et transmet l'index de son BMU comme entrée à une deuxième carte. Les auteurs ont observé que la deuxième carte a une capacité de regroupement plus précise qu'une seule carte. Étonnamment, ce modèle n'est pas largement utilisé. Certaines variantes de HSOM ont été proposées par la suite, comme l'arbre d'architecture croissante soms [ref], où l'architecture hiérarchique est de plus en plus conçue pour s'adapter à l'ensemble des données. Dans ce cas, l'activité entière d'une carte est transmise en entrée aux couches supérieures. (Citons également [baruque])
+Ces architectures hiérarchiques : commentaire
+Dans \cite{dominey13}, les auteurs construisent des architectures hiérarchiques en transmettant les positions des BMU entre les cartes multimodales. L'inspiration est tirée du cadre CDZ.
+D'autre part, certains travaux visent à connecter les cartes entre elles de manière directe, en se rapprochant de la théorie de la rentrée d'Edelman. C'est le cas de A-SOM : combiner des cartes.
+
+Certains travaux développent des cartes modulaires où les connexions entre cartes sont créées neuronalement. C'est le cas de l'algorithme SOIMA \cite{SOIMA}, où les connexions entre neurones sont apprise avce une regle hebbienne alors que l'apprentissage se fait dans chaque carte : les neurones qui s'activent ensemble voient leur poids de connexion renforcé.}
+
+\section{Cartes auto-organisatrices récurrentes}
+
 %
 %
 %
