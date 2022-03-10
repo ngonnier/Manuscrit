@@ -15,7 +15,7 @@ review:## create pdf output without comments and draft parts, but with extended 
 
 release:## create release version
 	pdflatex -jobname=these main.tex	
-	bibtex these.tex
+	bibtex these
 	pdflatex -jobname=these main.tex 
 	pdflatex -jobname=these main.tex 	
 clean:## Remove temporary files

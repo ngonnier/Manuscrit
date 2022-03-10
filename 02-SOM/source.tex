@@ -41,8 +41,6 @@ a_e(\inpx_t,p) = \exp{\frac{\lVert \inpx_t-\w\ext(p) \rVert ^2}{2\sigma^2}}
 
 \subsection{Paramètrage d'une carte de Kohonen}
 Le dépliement d'une carte de Kohonen est géré par plusieurs paramètres. Nous détaillons ici les choix de paramètres effectués. 
-
-
 \subsubsection{Taux d'apprentissage $\alpha$}
 
 Le taux d'apprentissage $\alpha$ détermine la proportion dans laquelle chaque poids est déplacé vers l'entrée lors de sa mise à jour. Dans l'algorithme standard, le taux d'apprentissage décroit au cours de l'apprentissage. Au début de l'apprentissage, $\alpha$ est élevé, ce qui assure une organisation "grossière" rapide de la carte. $\alpha$ diminue ensuite de manière à cartographier plus localement les données. Cette décroissance assure principalement la convergence des poids de la carte au cours de l'apprentissage.
@@ -70,6 +68,11 @@ Ces deux configurations sont les deux seules considérées comme un bon apprenti
 \label{fig:depliement}
 \end{figure}
 
+
+\subsubsection{Nombre de neurones d'une carte}
+Le nombre de neurones d'une carte définit le niveau de quantification qu'on souhaite effectuer. Pour des opérations de classification, on choisira un nombre de neurones plus élevé que le nombre de classes, afin de pouvoir avoir plusieurs prototypes par classe.
+Dans cette thèse, nous utilisons des cartes 1D comportant 500 noeuds. Le nombre de noeud est assez élevé pour pouvoir bien cartographier des ensembles de plus grande dimension. Ce nombre de noeud est proche de ce qu'on peut trouver dans la littérature.
+
 \subsubsection{Rayon de voisinage}
 Le choix de la fonction de voisinage est déterminant dans la topologie de la carte, et en particulier le rayon de voisinage $h_e$.
 Cette valeur détermine quelles unités voisines du BMU seront affectées par le déplacement du BMU.
@@ -79,13 +82,16 @@ Dans l'algorithme classique, ce compromis est trouvé en faisant décroitre le r
 Contrairement à la plupart des SOM classique, nous garderons des rayons de voisinage constants dans CxSOM. Ainsi, une étape de dépliement des cartes ne dépend pas de l'itération mais seulement de l'état précédent de la carte et de l'architecture.
 %TODO citer des papiers recherchant un bon ensemble de paramètres pour l'algorithme de cartes auto-organisatrices.
 \section{Modèle CxSOM}
-A partir du modèle de carte de Kohonen détaillé en section \ref{sec:kohonen}, nous proposons une version de carte auto-organisatrice servant de bloc de base pour construire des architectures non-hiérarchique de cartes. Nous présentons dans cette section le modèle CxSOM. Toutes les notations et l'algorithme sont résumés en figure \ref{fig:one_map} et \ref{algo:cxsom}.
+A partir du modèle de carte de Kohonen détaillé en section \ref{sec:kohonen}, nous proposons une version de carte auto-organisatrice servant de bloc de base pour construire des architectures non-hiérarchique de cartes. Nous présentons dans cette section le modèle CxSOM. Toutes les notations et l'algorithme sont résumés en figure \ref{fig:one_map} et \ref{algo:cxsom}. Nous présentons d'abord les entrées utilisées pour l'apprentissage d'une architecture, puis le modèle d'architecture. Nous détaillons ensuite l'algorithme d'apprentissage étape par étape. 
 
-\subsubsection{Nombre de neurones d'une carte}
-Le nombre de neurones d'une carte définit le niveau de quantification qu'on souhaite effectuer. Pour des opérations de classification, on choisira un nombre de neurones plus élevé que le nombre de classes, afin de pouvoir avoir plusieurs prototypes par classe.
-Dans cette thèse, nous utilisons des cartes 1D comportant 500 noeuds. Le nombre de noeud est assez élevé pour pouvoir bien cartographier des ensembles de plus grande dimension. Ce nombre de noeud est proche de ce qu'on peut trouver dans la littérature.
+\subsection{Entrées}
+L'architecture CxSOM a pour but de développer une mémoire \emph{associative} au sein d'une architetcure de cartes. On considère donc un ensemble d'espaces $\mathcal{D}\m{1}, \cdots , \mathcal{D}\m{n}$, différentes \emph{modalités} qu'on cherche à apprendre de façon associative. Les entrées présentées à une architecture de cartes seront $(\inpx\m{1}, \cdots, \inpx\m{n}) \in \mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$. Pour pouvoir développer une mémoire associative, on se place dans des cas où les modalités considérées ne sont pas indépendantes les unes des autres : les distributions marginales $\inpx\m{i}$ ne sont pas indépendantes. Lorsqu'on parlera de tirer une entrée pour la présenter à une carte, on tire une entrée jointe $(\inpx\m{1}, \cdots , \inpx\m{n})$, puis chaque composante est présentée à la carte qui lui correspond. 
 
-\subsection{Choix généraux de développement}
+Dans les exemples de cette thèse, on tire des entrées jointes en 3 dimensions, donc chaque composante 1D est présentée à une carte. Les modalités sont la coordonnée sur un des axes du point 3D tiré. Nous utiliserons par exemple, en tant qu'espace dont les modalités sont dépendantes, un ensemble de points sur un cercle en une dimension dans un espace en trois dimensions. Chaque coordonnée $X$, $Y$, $Z$ dépend alors des deux autres coordonnées. On évaluera comment l'architecture que nous présentons dans cette partie apprend les données mais surtout leurs relations. 
+
+Les exemples porteront sur des modalités en une dimension, mais les dimensions de chaque modalité peuvent être quelconque.
+
+\subsection{Description de l'Architecture}
 
 Le modèle CxSOM étudié dans cette thèse doit permettre de construire des architectures \emph{non-hiérarchiques}. On souhaite que ce modèle soit générique, applicable à n'importe quel type d'architecture, et pouvant intégrer des connexions récurrentes. De cette manière, on ne se place pas dans une optique d'application précise mais de nouveau type de calcul. De nombreux modèles pourront être développés à partir de cette méthode. 
 
@@ -196,9 +202,6 @@ Il faut noter que les poids contextuels cartographient l'espace des positions d'
 \end{minipage}
 \label{lig:maj}
 \end{figure}
-\subsection{Etape de test et prédiction d'entrée}
-
-\subsection{Résumé : Algorithme général}
 
 \begin{algorithm}\label{algo:relax}
 \caption{Pas d'apprentissage $t$}
@@ -223,21 +226,15 @@ Il faut noter que les poids contextuels cartographient l'espace des positions d'
   \lForEach{$k$}{$\w_{ck}\m{i}(p) \leftarrow \w_{ck}\m{i}(p) + H\cont(\bmu\m{i},p)(\w_{ck}\m{i}(p) - \inpc\m{i})$}
   }
  \end{algorithm}
- 
- \begin{algorithm}
-\caption{Etape de test}
-\SetAlgoLined
+\subsection{Etape de test}
 
- \end{algorithm}
- 
-  \begin{algorithm}
-\caption{Etape de Prédiction}
-\SetAlgoLined
-\KwData{$m$, indice de la carte servant à faire de la prédiction}
+Afin d'étudier le dépliement des cartes, on effectue des itérations de \emph{test} pendant l'apprentissage. Ces étapes consistent à effectuer les étapes de présentation d'entrée, calcul d'activité et recherche du BMU par relaxation, mais pas l'étape de mise à jour des poids. Les poids des cartes restent donc figés pendant un ensemble de tests. Les entrées des cartes sont alors les entrées externes $\inpx\m{i}$ de test et les sorties sont les BMUs $\bmu\m{i}$ des cartes de l'architecture. 
+Les entrées $\inpx\m{i}$ sont tirées du même espace que les entrées utilisées pendant l'apprentissage.
 
- \end{algorithm}
+\subsection{Prédiction d'entrée}
+Par construction, une carte de l'architecture CxSOM peut ne pas avoir d'entrée externe. Les activités considérées pour la recherche du BMU seront alors les activités contextuelles. On peut ainsi utiliser CxSOM pour des tâches de prédiction. Les données présentée à l'architecture sont $\inpx\m{1}, \cdots, \inpx\m{n}$, $n$ modalités. Ces modalités portent de l'information les unes sur les autres. 
+L'architecture de cartes peut être vue comme un système dynamique réagissant à des données d'entrées.
 
- 
 
 \section{Choix des paramètres}
 
