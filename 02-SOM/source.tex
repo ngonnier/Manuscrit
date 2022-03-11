@@ -134,8 +134,19 @@ Notre algorithme implémente donc deux modifications principales par rapport à 
 La description du modèle CxSOM est détaillée en figure~\ref{fig:one_map}, dans un cas ou une carte reçoit deux connexions, et l'algorithme explicité en~\ref{algo:cxsom}.
 
 \subsection{Structure d'une carte de l'architecture}
+
 Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \llbracket 0,n \rrbracket$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$. Pour faciliter la lecture, nous omettrons par abus de langage l'exposant $(i)$ dans les équations, car on se concentre sur une seule carte. $\inpx_t$ désigne donc $\inpx_t\m{i}$, $\w_e$ désigne $\w_e\m{i}$, etc.
 
+\paragraph{Exemple: carte prenant une entrée contextuelle}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{weights_2som.pdf}
+\caption{Structure d'une carte prenant une entrée externe $\inpx_t$ et une entrée contextuelle $\inpc_2$. $M\m{1}$ est connectée à seulement la carte $M\m{2}$ dans l'architecture. }
+\end{figure}
+
+
+\paragraph{Généralisation}
 
 Nous présentons dans cette partie la structure et les notations utilisées dans une carte; toutes ces notations sont retrouvables en figure~\ref{fig:activite}.
 A un pas d'apprentissage $t$, une carte $M\m{i}$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles} notées $\inpc_{i_1},\cdots,\inpc_{i_K}$, qui seront les positions des BMU $\bmu\m{i_k}$ des cartes d'indice $i_k$ qui lui sont connectées. La gestion des entrées contextuelles sera décrite avec le processus de relaxation en section suivante; notons pour le moment que les entrées contextuelles sont des positions 1D ou 2D dans des cartes. 
@@ -174,18 +185,31 @@ On remplace l'étape simple de calcul d'argmax par un processus global à l'arch
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{activite_layers.pdf}
-\caption{Calcul d'activité dans une SOM prenant plusieurs entrées au sein d'une architecture : une entrée externe et deux entrées contextuelles. L'indice $(1)$ permet de distinguer les objets relatif à cette carte. Les entrées externes sont $X\m{1}_t$. les deux entrées contextuelles sont $\inpc\m{1}_2$ et $\inpc\m{1}_3$. La carte possède trois couches de poids, permettant de calculer trois activités. L'activité globale prend en compte tout les couches d'activités afin de trouver un BMU commun pour toutes les couches de poids. Ce calcul favorise l'activité externe et est modulé par les activités contextuelles, ce qu'on observe sur la courbe du bas. Le maximum de l'activité globale est noté $\hat{p}$. A partir de l'activité globale, le BMU $\bmu\m{1}$ sera trouvé par le processus de relaxation décrit en partie suivante.}
+\caption{Calcul d'activité dans une SOM prenant plusieurs entrées au sein d'une architecture : une entrée externe et deux entrées contextuelles. L'indice $(1)$ permet de distinguer les objets relatif à cette carte. Les entrées externes sont $X\m{1}_t$. les deux entrées contextuelles sont $\inpc\m{1}_2$ et $\inpc\m{1}_3$. La carte possède trois couches de poids, permettant de calculer trois activités. L'activité globale prend en compte tout les couches d'activités afin de trouver un BMU commun pour toutes les couches de poids. Ce calcul favorise l'activité externe et est modulé par les activités contextuelles, ce qu'on observe sur la courbe du bas. Le maximum de l'activité globale est noté $\hat{p}$. A partir de l'activité globale, le BMU $\bmu\m{1}$ sera trouvé par le processus de relaxation décrit en partie~\ref{sec:relax}}
 \label{fig:activite}
 \end{figure}
 
-\subsection{Calcul du BMU par relaxation}
+\subsection{Calcul du BMU par relaxation}\label{sec:relax}
+
+\paragraph{Formulation du problème de recherche de BMU}
+Dans chaque carte $i$, l'entrée contextuelle $\inpc\m{i}_{i_k}$ est le BMU $\bmu\m{i_k}$  de la carte $i_k$. Le BMU $\bmu\m{i}$ dépend donc de ceux des autres cartes, qui dépendent eux-mêmes de $\bmu_m{i}$. Au lieu de chercher un maximum d'activité indépendamment dans chaque carte, on doit donc résoudre un problème d'optimisation global à  l'architecture. On cherche les positions $\mathbf{\bmu} = (\bmu\m{1}, \cdots, \bmu\m{n})$, si elles existent, telles que:
+\begin{equation}
+\forall i, \; \bmu\m{i} = \argmax_{p\m{i}} a_g\m{i}(\inpx\m{i}_t, \bmu\m{i_1}, \cdots, \bmu\m{i_K},p\m{i})
+\end{equation}
+$\bmu\m{i_1}, \cdots, \bmu\m{i_K}$ est un sous ensemble de $\mathbf{\bmu}$. On peut donc écrire $\bmu\m{i} = \argmax_{p\m{i}} a_g\m{i}(\inpx\m{i}_t, \mathbf{\bmu}, p\m{i})$
+Si cette position n'existe pas, on cherche le meilleur compromis, c'est à dire les positions $\bmu\m{i}$ telles que l'activité globale de chaque carte soit la plus élevée possible.
+
+
+Pour formuler le problème en terme d'optimisation, on cherche le vecteur $\mathbf{\bmu}$ minimisant, pour tout $i$, $\lvert \argmax_{p\m{i}} a_g\m{i}(\inpx\m{i}_t, \mathbf{\bmu}, p\m{i}) - \bmu\m{i} \rvert$
+
+\paragraph{Heuristique de recherche de BMU}
+Le processus de relaxation est une boucle imbriquée dans un pas d'apprentissage de l'architecture, indexée par $\tau$. Notons $\bmu\m{i}$ la position du BMU de la carte $i$, et $\mathbf{\bmu} = (\bmu\m{0}, \cdots , \bmu\m{n})$, avec $n$ le nombre de cartes de l'architecture.
 
 On cherche, dans chaque carte $i$, la position $\bmu\m{i}$ telle que $\forall i, a_g\m{i}(\bmu\m{i},\inpx\m{i},\bmu\m{i_0},\cdots,\bmu\m{i_k})$ soit maximale.
-Le processus de relaxation est une boucle imbriquée dans un pas d'apprentissage de l'architecture, indexée par $\tau$. Notons $\bmu\m{i}$ la position du BMU de la carte $i$, et $\mathbf{\bmu} = (\bmu\m{0}, \cdots , \bmu\m{n})$, avec $n$ le nombre de cartes de l'architecture.
 Au début d'un pas d'apprentissage, chaque carte est nourrie avec une entrée externe, donc $\inpx\m{i}_t$ les activités externes $a_e\m{i}(\inpx\m{i}_t,p)$ de chaque carte peuvent être calculées.
 La recherche du BMU suit le processus de relaxation suivant :
 \begin{enumerate}
-\item Dans chaque carte $i$, la position $\bmu\m{i}$ est initialisée à $\hat{p}\m{i}_0 = \argmax_{p\m{i}}(a_e\m{i}(\inpx\m{i}_t,p)$. Les entrées contextuelles de chaque carte peuvent ainsi être attribuées.
+\item Dans chaque carte $i$, la position $\bmu\m{i}$ est initialisée à $\hat{p}\m{i}_0 = \argmax_{p\m{i}}(a_e\m{i}(\inpx\m{i}_t,p)$. Dans chaque carte $i$, on assigne $\inpc_{i_k}\m{i} = \bmu\m{i_k}_\tau$
 \item Tant que toutes les positions $\bmu\m{i}$ ne sont pas stables, 
 	\begin{enumerate}
 	\item Dans chaque carte $i$, calculer les activités contextuelles et globales, définissant ainsi $\hat{p}\m{i}_\tau = \argmax_{p\m{i}}(a_g\m{i}(p\m{i},\inpx\m{i}, \bmu\m{i_0}_\tau,\cdots,\bmu\m{i_k},_\tau)$, avec $i_0, \cdots, i_k$ les indices des cartes connectées à $i$ dans l'architecture.
