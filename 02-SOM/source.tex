@@ -99,7 +99,8 @@ Un petit rayon d'apprentissage permet de déplacer les poids concentrés dans un
 Dans l'algorithme classique, ce compromis est trouvé en faisant décroitre le rayon de voisinage au cours de l'apprentissage. Un grand rayon de voisinage permet à la carte de se déplier rapidement en apprenant une structure globale des données. Sa décroissance permet d'affiner l'apprentissage des données à un niveau plus fin. 
 Contrairement à la plupart des SOM classique, nous garderons des rayons de voisinage constants dans CxSOM. Ainsi, une étape de dépliement des cartes ne dépend pas de l'itération mais seulement de l'état précédent de la carte et de l'architecture.
 %TODO citer des papiers recherchant un bon ensemble de paramètres pour l'algorithme de cartes auto-organisatrices.
-\section{Modèle CxSOM}
+
+\section{Motivations du modèle CxSOM}
 A partir du modèle de carte de Kohonen détaillé en section \ref{sec:kohonen}, nous proposons une version de carte auto-organisatrice servant de bloc de base pour construire des architectures non-hiérarchique de cartes. Nous présentons dans cette section le modèle CxSOM. Toutes les notations et l'algorithme sont résumés en figure \ref{fig:one_map} et \ref{algo:cxsom}. Nous présentons d'abord les entrées utilisées pour l'apprentissage d'une architecture, puis le modèle d'architecture. Nous détaillons ensuite l'algorithme d'apprentissage étape par étape. 
 
 \subsection{Entrées}
@@ -133,21 +134,36 @@ Notre algorithme implémente donc deux modifications principales par rapport à 
 
 La description du modèle CxSOM est détaillée en figure~\ref{fig:one_map}, dans un cas ou une carte reçoit deux connexions, et l'algorithme explicité en~\ref{algo:cxsom}.
 
-\subsection{Structure d'une carte de l'architecture}
-
-Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \llbracket 0,n \rrbracket$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$. Pour faciliter la lecture, nous omettrons par abus de langage l'exposant $(i)$ dans les équations, car on se concentre sur une seule carte. $\inpx_t$ désigne donc $\inpx_t\m{i}$, $\w_e$ désigne $\w_e\m{i}$, etc.
-
-\paragraph{Exemple: carte prenant une entrée contextuelle}
+\section{Description de CxSOM sur l'exemple d'une architecture de deux cartes}
+Avant de présenter le modèle général de CxSOM sur une architecture quelconque, présentons le fonctionnement de l'architecture la plus simple qui soit: deux cartes $M\m{1}$ et $M\m{2}$, connectées réciproquement.
+La carte $M\m{1}$ prend comme entrée externe $\inpx\m{1}$ et comme entrée contextuelle $\inpc\m{1} = \bmu\m{2}$.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.7\textwidth]{weights_2som.pdf}
-\caption{Structure d'une carte prenant une entrée externe $\inpx_t$ et une entrée contextuelle $\inpc_2$. $M\m{1}$ est connectée à seulement la carte $M\m{2}$ dans l'architecture. }
+\includegraphics[width=0.6\textwidth]{archi_2som}
+\caption{Architecture la plus simple possible de deux cartes. Le BMU $\bmu\m{1}$ de la carte $M\m{1}$ est utilisé en entrée de $M\m{2}$, et le BMU $\bmu\m{2}$ de $M\m{2}$ en entrée de $M\m{1}$.}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{weights_2som.pdf}
+\caption{Représentation des poids de $M\m{1}$. L'entrée externe $\inpx_t$ présentée à l'itération $t$, tirée d'un espace d'entrée 1D $[0,1]$, est indiquée en bleu sur le graphique. L'entrée contextuelle  est $\inpc\m{1}_2$, le BMU de la carte $M\m{2}$. Sa valeur est indiquée en jaune; il s'agit d'une position 1D dans la carte $M\m{2}$, à valeur entre 0 et 1. }
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{map_2layers.pdf}
+\caption{Description d'une carte au sein d'une architecture CxSOM. La carte recoit deux connexions de cartes voisines, et possède donc deux couches contextuelles}
+\label{fig:one_map}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{relaxation.pdf}
+\label{fig:relax}
+\caption{description d'une étape de la relaxation dans l'architecture, aboutissant à un consensus entre cartes. Au sein d'une même itération $t$, les position des BMU $\bmu$ sont légèrement déplacées jusqu'à ce que toutes les positions $\bmu$ des cartes de l'architecture soient stable. Ces positions maximisent collectivement les activités globales de chaque carte. }
 \end{figure}
 
+\section{Formalisation: cas pour $n$ cartes}
 
-\paragraph{Généralisation}
-
+Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \llbracket 0,n \rrbracket$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$. Pour faciliter la lecture, nous omettrons par abus de langage l'exposant $(i)$ dans les équations, car on se concentre sur une seule carte. $\inpx_t$ désigne donc $\inpx_t\m{i}$, $\w_e$ désigne $\w_e\m{i}$, etc.
 Nous présentons dans cette partie la structure et les notations utilisées dans une carte; toutes ces notations sont retrouvables en figure~\ref{fig:activite}.
 A un pas d'apprentissage $t$, une carte $M\m{i}$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles} notées $\inpc_{i_1},\cdots,\inpc_{i_K}$, qui seront les positions des BMU $\bmu\m{i_k}$ des cartes d'indice $i_k$ qui lui sont connectées. La gestion des entrées contextuelles sera décrite avec le processus de relaxation en section suivante; notons pour le moment que les entrées contextuelles sont des positions 1D ou 2D dans des cartes. 
 La carte possède donc $K+1$ couches de poids. On  note $\w_e(p)$ la couche de poids correspondant à l'entrée externe, les \emph{poids externes} et $\w_{ci_1}(p), \cdots, \w_{ci_K}(p)$ les poids correspondant aux entrées contextuelles, les \emph{poids contextuels}. Les poids externes sont à valeur dans $\mathcal{D}\m{i}$, la modalité associée à la carte $i$. Les poids contextuels sont à valeur dans l'espace des positions d'une cartes, soit $[0,1]$ en 1D ou $[0,1]^2$ en 2D.
@@ -220,19 +236,6 @@ La recherche du BMU suit le processus de relaxation suivant :
 
 Il peut arriver que les positions se stabilisent sur un cycle limite. Dans ce cas, on arrêtera la relaxation arbitrairement; ce phénomène étant ponctuel, il n'influence pas l'apprentissage. Les paramètres des cartes de l'architecture sont choisis pour éviter de telles situations.
 
-\begin{figure}
-\centering
-\includegraphics[width=0.6\textwidth]{relaxation.pdf}
-\label{fig:relax}
-\caption{description d'une étape de la relaxation dans l'architecture, aboutissant à un consensus entre cartes. Au sein d'une même itération $t$, les position des BMU $\bmu$ sont légèrement déplacées jusqu'à ce que toutes les positions $\bmu$ des cartes de l'architecture soient stable. Ces positions maximisent collectivement les activités globales de chaque carte. }
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{map_2layers.pdf}
-\caption{Description d'une carte au sein d'une architecture CxSOM. La carte recoit deux connexions de cartes voisines, et possède donc deux couches contextuelles}
-\label{fig:one_map}
-\end{figure}
 
 \subsection{Mise à jour des poids}
 
