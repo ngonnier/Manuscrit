@@ -104,17 +104,22 @@ Contrairement à la plupart des SOM classique, nous garderons des rayons de vois
 A partir du modèle de carte de Kohonen détaillé en section \ref{sec:kohonen}, nous proposons une version de carte auto-organisatrice servant de bloc de base pour construire des architectures non-hiérarchique de cartes. Nous présentons dans cette section le modèle CxSOM. Toutes les notations et l'algorithme sont résumés en figure \ref{fig:one_map} et \ref{algo:cxsom}. Nous présentons d'abord les entrées utilisées pour l'apprentissage d'une architecture, puis le modèle d'architecture. Nous détaillons ensuite l'algorithme d'apprentissage étape par étape. 
 
 \subsection{Entrées}
-L'architecture CxSOM a pour but de développer une mémoire \emph{associative} au sein d'une architetcure de cartes. On considère donc un ensemble d'espaces $\mathcal{D}\m{1}, \cdots , \mathcal{D}\m{n}$, différentes \emph{modalités} qu'on cherche à apprendre de façon associative. Les entrées présentées à une architecture de cartes seront $(\inpx\m{1}, \cdots, \inpx\m{n}) \in \mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$. Pour pouvoir développer une mémoire associative, on se place dans des cas où les modalités considérées ne sont pas indépendantes les unes des autres : les distributions marginales $\inpx\m{i}$ ne sont pas indépendantes. Lorsqu'on tire une entrée pour la présenter à une carte, on tire une entrée jointe $(\inpx\m{1}, \cdots , \inpx\m{n})$, puis chaque composante est présentée à la carte qui lui correspond. Pour respecter l'homogénéité des entrées necessaires à l'apprentissage d'une carte auto-organisatrice, on normalise les espaces $\mathcal{D}\m{i}$ pour que toutes les entrées soient à valeur dans $[0,1]^x$, $x$ la dimension de $\mathcal{D}\m{i}$.
+L'architecture CxSOM a pour but de développer une mémoire \emph{associative} au sein d'une architecture de cartes. On considère donc un ensemble d'espaces $\mathcal{D}\m{1}, \cdots , \mathcal{D}\m{n}$, différentes \emph{modalités} qu'on cherche à apprendre de façon associative. Les entrées présentées à une architecture de cartes seront $(\inpx\m{1}, \cdots, \inpx\m{n}) \in \mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$. Pour pouvoir développer une mémoire associative, on se place dans des cas où les modalités considérées ne sont pas indépendantes les unes des autres : les distributions marginales $\inpx\m{i}$ ne sont pas indépendantes. Lorsqu'on tire une entrée pour la présenter à une carte, on tire une entrée jointe $(\inpx\m{1}, \cdots , \inpx\m{n})$, puis chaque composante est présentée à la carte qui lui correspond. Pour respecter l'homogénéité des entrées necessaires à l'apprentissage d'une carte auto-organisatrice, on normalise les espaces $\mathcal{D}\m{i}$ pour que toutes les entrées soient à valeur dans $[0,1]^x$, $x$ la dimension de $\mathcal{D}\m{i}$.
 
 Dans les exemples de cette thèse, on tire des entrées jointes en 3 dimensions, donc chaque composante 1D est présentée à une carte. Les modalités sont la coordonnée sur un des axes du point 3D tiré. Nous utiliserons par exemple, en tant qu'espace dont les modalités sont dépendantes, un ensemble de points sur un cercle en une dimension dans un espace en trois dimensions. Chaque coordonnée $X$, $Y$, $Z$ dépend alors des deux autres coordonnées. On évaluera comment l'architecture que nous présentons dans cette partie apprend les données mais surtout leurs relations. 
 
 Les exemples porteront sur des modalités en une dimension, mais les dimensions de chaque modalité peuvent être quelconque.
 
-\subsection{Description de l'Architecture}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{inputs_3som}
+\caption{Exemple de disposition d'entrées. Les modalités associées à différentes cartes sont les coordonnées $x,y,z$ de chaque point. Dans une telle disposition, les modalités dépendent les unes des autres: développer une mémoire associative signifie apprendre le modèle de relation existant etre $x,y$ et $z$, c'est à dire le cercle.}
+\end{figure}
 
+\subsection{Description de l'architecture}
 Nous avons vu au chapitre précédent la notion de contexte transmise entre cartes. Dans CxSOM, on choisit de se placer dans le paradigme de transmission de la position du BMU entre cartes: on connecte une carte B à une carte A en donnant la position du BMU de B en entrée à la carte A. 
-Ce paradigme de partage de positions a été utilisé dans le modèle hiérarchique HSOM~\cite{lampinen_clustering_1992}, et dans les modèles de cartes récurrentes s'appuyant sur SOMSD \cite{hammer_recursive_2004,hagenbuchner_self-organizing_2003,fix20}. 
- Contrairement aux cartes hiérarchiques HSOM dans lesquelle la position du BMU est la seule entrée d'une carte de plus haut niveau, chaque carte de l'architecture peut posséder une entrée principale propre issue d'une modalité $\inpx\m{i}$, l'entrée \emph{externe}. L'entrée ou les entrées correspondant aux positions des BMUs d'autres cartes sont considérées comme une entrées supplémentaires d'une carte. Les cartes auto-organisatrices dans le modèle CxSOM prennent donc un nombre arbitraire d'entrées, dont certaines sont les BMUs d'autres cartes. On appelle ces entrées internes à l'architecture les entrées \emph{contextuelles} d'une carte.
+Ce paradigme de partage de positions rappelle à la fois le modèle hiérarchique HSOM~\cite{lampinen_clustering_1992}, et les modèles de cartes récurrentes s'appuyant sur SOMSD \cite{hammer_recursive_2004,hagenbuchner_self-organizing_2003,fix20}.
+Contrairement aux cartes hiérarchiques HSOM dans lesquelle la position du BMU est la seule entrée d'une carte de plus haut niveau, chaque carte de l'architecture peut posséder une entrée principale propre issue d'une modalité $\inpx\m{i}$, l'entrée \emph{externe}. L'entrée ou les entrées correspondant aux positions des BMUs d'autres cartes sont considérées comme une entrées supplémentaires d'une carte. Les cartes auto-organisatrices dans le modèle CxSOM prennent donc un nombre arbitraire d'entrées, dont certaines sont les BMUs d'autres cartes. On appelle ces entrées internes à l'architecture les entrées \emph{contextuelles} d'une carte.
 L'algorithme d'apprentissage d'une telle carte auto-organisatrice est le même qu'une carte classique, comprenant:
 \begin{enumerate}
 \item\label{etape:entree} Présentation de son entrée à la carte 
@@ -132,39 +137,93 @@ Notre algorithme implémente donc deux modifications principales par rapport à 
 \item La recherche du BMU est modifiée afin de gérer les rétroactions entre cartes.
 \end{itemize}
 
-La description du modèle CxSOM est détaillée en figure~\ref{fig:one_map}, dans un cas ou une carte reçoit deux connexions, et l'algorithme explicité en~\ref{algo:cxsom}.
+L'algorithme CxSOM est détaillé en~\ref{algo:cxsom}; les parties suivantes expliquent et illustrent le modèle.
 
 \section{Description de CxSOM sur l'exemple d'une architecture de deux cartes}
-Avant de présenter le modèle général de CxSOM sur une architecture quelconque, présentons le fonctionnement de l'architecture la plus simple qui soit: deux cartes $M\m{1}$ et $M\m{2}$, connectées réciproquement.
-La carte $M\m{1}$ prend comme entrée externe $\inpx\m{1}$ et comme entrée contextuelle $\inpc\m{1} = \bmu\m{2}$.
+Avant de présenter le modèle général de CxSOM sur une architecture quelconque, présentons le fonctionnement de l'architecture la plus simple qui soit: deux cartes $M\m{1}$ et $M\m{2}$, connectées réciproquement, présentée en figure~\ref{fig:2som_archi}. Toutes les équations seront formalisées dans le cas général en section~\ref{sec:formalisme}.
 
+
+On prend dans cet exemple des cartes en une dimensions, indexées par $p \in [0,1]$.
+La carte $M\m{1}$ prend comme entrée externe $\inpx\m{1}$ et comme entrée contextuelle $\inpc\m{1} = \bmu\m{2}$. Les entrées externes $\inpx\m{1}$ et $\inpx\m{2}$ sont deux modalités interdépendantes; par exemple, les coordonnées $x$ et $y$ d'un point sur un cercle. 
+La structure de chaque carte de l'architecture est adaptée du modèle classique de SOM pour prendre deux entrées. On indicera les élements des cartes par $(1)$ et $(2)$ pour désigner les éléments appartenant à la carte $M\m{1}$ et $M\m{2}$.
+Une carte possède donc maintenant deux couches de poids: les poids \emph{externes} $\w_e\m{i}$, qui de déplient sur les entrées $\inpx\m{(i)}$, et les poids contextuels $w_c\m{i}$, qui se déplient sur l'espace des positions en une dimension de l'autre carte. Les deux couches de poids sont représentées en figure~\ref{fig:2som_weights}.
+
+L'activité de la carte résulte alors de la combinaison entre l'activité \emph{externe} et l'activité \emph{contextuelle}. Ces deux activités sont calculées comme dans le modèle classique, équation~\ref{eq:act1som} et tracées en figure~\ref{fig:2som_activite}; l'activité externe compare les poids externe à l'entrée externe, et l'activité contextuelle les poids contextuels à l'entrée contextuelle. 
+La connexion entre les deux cartes est effectuée en utilisant la position du BMU de $M\m{2}$, $\bmu\m{2}$ comme entrée contextuelle de $M\m{1}$, et $\bmu\m{1}$ comme entrée contextuelle de $M\m{2}$. 
+Pour la carte $M\m{1}$, au pas de temps $t$:
+\begin{equation}
+\label{eq:activite}
+\begin{cases}
+a_e\m{1}(\inpx_t,p) = \exp\frac{-\lVert \w_e\m{1}(p)-\inpx\m{1}_t \rVert^2}{2\sigma^2} \\
+a_c\m{1}(\bmu\m{2},p) = \exp\frac{-\lVert \w_c\m{1}(p)-\bmu\m{2} \rVert ^2}{2\sigma^2}, \\
+\end{cases}
+\end{equation}
+$a_c$ et $a_e$ sont combinées en une activité globale:
+\begin{equation}
+a_g(p,\inpx\m{1},\bmu\m{1},\bmu\m{2}) = \sqrt{a_e(\inpx_t,p)(\beta a_e(\inpx_t,p) + (1-\beta) a_c(\bmu\m{2},p)}, \; \beta=0.5
+\end{equation}
+Par la différence de contribution de $a_c$ et $a_e$ au sein de l'activité globale -- $a_c$ ne contribue qu'à la puissance $\frac{1}{2}$ -- on assure que l'activité contextuelle vient seulement moduler l'activité externe. On peut observer cette modulation sur la courbe noire de la figure~\ref{fig:2som_activite}: l'activité globale suit la même progression que l'activité externe, mais est localement modifiée par les variations de l'activité contextuelle. De cette façon, les entrées contextuelles ne viennent pas donner d'hallucinations à la carte: elle apprend en priorité ses entrées, conditionnées aux entrées contextuelles.
 \begin{figure}
 \centering
 \includegraphics[width=0.6\textwidth]{archi_2som}
-\caption{Architecture la plus simple possible de deux cartes. Le BMU $\bmu\m{1}$ de la carte $M\m{1}$ est utilisé en entrée de $M\m{2}$, et le BMU $\bmu\m{2}$ de $M\m{2}$ en entrée de $M\m{1}$.}
+\caption{Architecture la plus simple possible de deux cartes. Le BMU $\bmu\m{1}$ de la carte $M\m{1}$ est utilisé en entrée de $M\m{2}$, et le BMU $\bmu\m{2}$ de $M\m{2}$ en entrée de $M\m{1}$. Chaque carte possède donc deux couches de poids. \label{fig:2som_archi}}
 \end{figure}
 \begin{figure}
 \centering
 \includegraphics[width=0.6\textwidth]{weights_2som.pdf}
-\caption{Représentation des poids de $M\m{1}$. L'entrée externe $\inpx_t$ présentée à l'itération $t$, tirée d'un espace d'entrée 1D $[0,1]$, est indiquée en bleu sur le graphique. L'entrée contextuelle  est $\inpc\m{1}_2$, le BMU de la carte $M\m{2}$. Sa valeur est indiquée en jaune; il s'agit d'une position 1D dans la carte $M\m{2}$, à valeur entre 0 et 1. }
+\caption{Représentation des poids de $M\m{1}$. L'entrée externe $\inpx_t$ présentée à l'itération $t$, tirée d'un espace d'entrée 1D $[0,1]$, est indiquée en bleu sur le graphique. L'entrée contextuelle  est $\inpc\m{1}$, le BMU de la carte $M\m{2}$. Sa valeur est indiquée en jaune; il s'agit d'une position 1D dans la carte $M\m{2}$, à valeur entre 0 et 1. L'exemple de disposition des poids est pris au cours du dépliement d'une structure de deux cartes sur un cercle. \label{fig:2som_weights}}
 \end{figure}
+
+Le calcul de $\bmu\m{1}$ dépend donc de $\bmu\m{2}$ et inversement. A cause de cette rétroaction, on effectue une recherche de BMU par petits déplacements dans la carte. Cette recherche est une boucle imbriquée dans un pas d'apprentissage $t$, indexée par $\tau$ et appelée relaxation. Cette boucle définit une suite de BMUs intermédaires, $(\bmu\m{1}_\tau , \bmu\m{2}_\tau)$, $\tau$ variant de $0$ à un nombre d'itération maximum fixé pour assurer une fin de la boucle. Le processus de relaxation est le suivant:
+\begin{enumerate}
+\item Les entrées externes sont présentées au début de la boucle, donc $a_e$ peut être calculée; $\bmu\m{1}_0$ et $\bmu\m{2}_0$ sont initialisées à la position où les activités externes sont maximales dans chaque carte. 
+\item On effectue des petits déplacements de $\bmu\m{1}$ et $\bmu\m{2}$ dans chaque carte. Tant que la suite de positions $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ n'a pas atteint un point de convergence:
+	\begin{enumerate}
+	\item Dans chaque carte, calculer les activités contextuelles et globales, définissant ainsi $\hat{p}\m{1}_\tau = \argmax_{p\m{1}}(a_g\m{1}(p\m{1},\inpx\m{1}, \bmu\m{2})$, de même pour $\hat{p}\m{2}$.
+	\item Déplacer $\bmu\m{1}$ vers $\hat{p}\m{1}$ et $\bmu\m{2}$ vers $\hat{p}\m{2}$ d'un pas $\Delta$: $\bmu\m{1}_{\tau+1} = \bmu\m{1}_{\tau} \pm \Delta$.
+	Si une des valeurs est plus proche de $\hat{p}$ que $\Delta$, on déplacera $\bmu$ directement sur $\hat{p}$ pour éviter les oscillations autour du point. Cette étape est illustrée en figure~\ref{fig:relax}.
+	\end{enumerate}
+\item Le BMU de chaque carte est pris comme la valeur finale stable de ce processus dynamique. Cette valeur est utilisée pour les mise a jour des poids. Si la relaxation n'atteint pas de point stable, on fixe tout de même un nombre d'itérations maximum après lequel on arrête la relaxation.
+\end{enumerate}
+
+Enfin, chaque couche de poids $\w\ext\m{i}$, $\w_c\m{i}$ est mise à jour indépendamment, selon le même BMU $\bmu\m{i}$, dans chaque carte. 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{map_2layers.pdf}
-\caption{Description d'une carte au sein d'une architecture CxSOM. La carte recoit deux connexions de cartes voisines, et possède donc deux couches contextuelles}
-\label{fig:one_map}
-\end{figure}
-\begin{figure}
-\centering
-\includegraphics[width=0.6\textwidth]{relaxation.pdf}
+\includegraphics[width=\textwidth]{relaxation_2maps.pdf}
 \label{fig:relax}
 \caption{description d'une étape de la relaxation dans l'architecture, aboutissant à un consensus entre cartes. Au sein d'une même itération $t$, les position des BMU $\bmu$ sont légèrement déplacées jusqu'à ce que toutes les positions $\bmu$ des cartes de l'architecture soient stable. Ces positions maximisent collectivement les activités globales de chaque carte. }
 \end{figure}
 
-\section{Formalisation: cas pour $n$ cartes}
+\begin{figure}
+\begin{minipage}{0.6\textwidth}
+\centering
+\includegraphics[width=\textwidth]{activite_layers_2maps.pdf}
+\end{minipage}
+\hfill
+\begin{minipage}{0.35\textwidth}
+\caption{Calcul d'activité dans une SOM au sein d'une architecture de deux cartes. La carte prend une entrée externe et une entrées contextuelle. L'indice $(1)$ permet de distinguer les objets relatif à cette carte. L'entrée externe est $X\m{1}_t$. La carte possède deux couches de poids, permettant de calculer deux activités. L'activité globale prend en compte tout les couches d'activités afin de trouver un BMU commun pour toutes les couches de poids. Ce calcul favorise l'activité externe et est modulé par l' activité contextuelle, ce qu'on observe sur la courbe du bas. Le maximum de l'activité globale est noté $\hat{p}$. A partir de l'activité globale, le BMU $\bmu\m{1}$ sera trouvé par le processus de relaxation décrit en partie~\ref{sec:relax}}
+\end{minipage}
+\label{fig:2som_activite}
+\end{figure}
 
-Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \llbracket 0,n \rrbracket$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$. Pour faciliter la lecture, nous omettrons par abus de langage l'exposant $(i)$ dans les équations, car on se concentre sur une seule carte. $\inpx_t$ désigne donc $\inpx_t\m{i}$, $\w_e$ désigne $\w_e\m{i}$, etc.
+\begin{figure}
+\begin{minipage}[c]{0.6\textwidth}
+\includegraphics[width=\textwidth]{maj_2som.pdf}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.35\textwidth}
+\caption{Mise à jour de chaque couche de poids indépendamment, relativement au BMU commun $\bmu\m{1}$, calculé par relaxation. Par définition de la relaxation, la position $\bmu\m{1}$ est proche de la position $\hat{p}\m{1}$ à la fin de la relaxation. Le rayon de voisinage $h_e$ est utilisé pour mettre à jour les poids externes, le rayon $h_c$ pour mettre à jour les poids contextuels. On choisit $h_e > h_c$. Cette différence permet une différence d'échelle d'apprentissage entre couches de poids. Elle est détaillée en section suivante.}
+\end{minipage}
+\label{lig:maj}
+\end{figure}
+
+\section{Formalisation: cas pour $n$ cartes}
+Nous présentons dans cette partie un formalisme pour l'algorithme général pour une architecture quelconque de $n$ cartes. La seule différence dans ce cas est que qu'une carte peut prendre plusieurs entrées contextuelles, qui sont les BMUs de toutes les cartes qui lui sont connectées dans l'architecture, au lieu d'une dans le cas de deux cartes. 
+
+Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \{1,\cdots,n\}$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$. Pour faciliter la lecture, nous omettrons par abus de langage l'exposant $(i)$ dans les équations, car on se concentre sur une seule carte. $\inpx_t$ désigne donc $\inpx_t\m{i}$, $\w_e$ désigne $\w_e\m{i}$, etc.
 Nous présentons dans cette partie la structure et les notations utilisées dans une carte; toutes ces notations sont retrouvables en figure~\ref{fig:activite}.
+
+\subsection{Entrées et calcul d'activité}
 A un pas d'apprentissage $t$, une carte $M\m{i}$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles} notées $\inpc_{i_1},\cdots,\inpc_{i_K}$, qui seront les positions des BMU $\bmu\m{i_k}$ des cartes d'indice $i_k$ qui lui sont connectées. La gestion des entrées contextuelles sera décrite avec le processus de relaxation en section suivante; notons pour le moment que les entrées contextuelles sont des positions 1D ou 2D dans des cartes. 
 La carte possède donc $K+1$ couches de poids. On  note $\w_e(p)$ la couche de poids correspondant à l'entrée externe, les \emph{poids externes} et $\w_{ci_1}(p), \cdots, \w_{ci_K}(p)$ les poids correspondant aux entrées contextuelles, les \emph{poids contextuels}. Les poids externes sont à valeur dans $\mathcal{D}\m{i}$, la modalité associée à la carte $i$. Les poids contextuels sont à valeur dans l'espace des positions d'une cartes, soit $[0,1]$ en 1D ou $[0,1]^2$ en 2D.
 
@@ -174,7 +233,7 @@ Elle s'exprime à partir des activités externes et contextuelles, calculées s�
 \label{eq:activite}
 \begin{cases}
 a_e(\inpx_t,p) = \exp\frac{-\lVert \w_e(p)-\inpx_t \rVert^2}{2\sigma^2} \\
-a_{ci_k}(\inpc_{i_k},p) = \exp\frac{-\lVert \w_{ci_k}(p)-\inpx_t \rVert ^2}{2\sigma^2}, \\
+a_{ci_k}(\inpc_{i_k},p) = \exp\frac{-\lVert \w_{ci_k}(p)-\inpc_{i_k} \rVert ^2}{2\sigma^2}, \\
 i_1, \cdots, i_K\: \text{indices des cartes connectées à $i$ dans l'architecture}
 \end{cases}
 \end{equation}
@@ -198,12 +257,7 @@ On note $\hat{p}$ la position du maximum de l'activité globale:
 Contrairement à une carte simple, on ne peut pas calculer tous les BMUs de l'architecture un par un en prenant $\hat{p}$, l'argmax de $a_g$, comme BMU dans chaque carte. Des boucles de rétroactions sont introduites par le fait de prendre le BMU d'une carte comme entrée contextuelle d'une autre, tout en autorisant les boucles. Calculer le BMU d'une des cartes modifie les entrées contextuelles des autres cartes de l'architecture, et de ce fait leur BMU. 
 On remplace l'étape simple de calcul d'argmax par un processus global à l'architecture de recherche de BMU. Cette recherche est réalisée par un processus dynamique que l'on appelera \emph{relaxation}, menant à un consensus entre cartes : on cherche un point, s'il en existe, où le BMU de chaque carte est au plus proche de son activité globale. On répétera donc le calcul de l'activité globale et de son argmax plusieurs fois au sein d'une même itération.
 
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{activite_layers.pdf}
-\caption{Calcul d'activité dans une SOM prenant plusieurs entrées au sein d'une architecture : une entrée externe et deux entrées contextuelles. L'indice $(1)$ permet de distinguer les objets relatif à cette carte. Les entrées externes sont $X\m{1}_t$. les deux entrées contextuelles sont $\inpc\m{1}_2$ et $\inpc\m{1}_3$. La carte possède trois couches de poids, permettant de calculer trois activités. L'activité globale prend en compte tout les couches d'activités afin de trouver un BMU commun pour toutes les couches de poids. Ce calcul favorise l'activité externe et est modulé par les activités contextuelles, ce qu'on observe sur la courbe du bas. Le maximum de l'activité globale est noté $\hat{p}$. A partir de l'activité globale, le BMU $\bmu\m{1}$ sera trouvé par le processus de relaxation décrit en partie~\ref{sec:relax}}
-\label{fig:activite}
-\end{figure}
+
 
 \subsection{Calcul du BMU par relaxation}\label{sec:relax}
 
@@ -229,30 +283,17 @@ La recherche du BMU suit le processus de relaxation suivant :
 \item Tant que toutes les positions $\bmu\m{i}$ ne sont pas stables, 
 	\begin{enumerate}
 	\item Dans chaque carte $i$, calculer les activités contextuelles et globales, définissant ainsi $\hat{p}\m{i}_\tau = \argmax_{p\m{i}}(a_g\m{i}(p\m{i},\inpx\m{i}, \bmu\m{i_0}_\tau,\cdots,\bmu\m{i_k},_\tau)$, avec $i_0, \cdots, i_k$ les indices des cartes connectées à $i$ dans l'architecture.
-	\item Déplacer $\bmu\m{i}$ vers $\hat{p}\m{i}$ : $\bmu\m{i}_{\tau +1} \leftarrow \bmu\m{i}_\tau \pm \Delta$ si $\lvert \bmu\m{i}- \hat{p}\m{i}\rvert \geq \Delta$, $\bmu^i \leftarrow p^{\star i}$ sinon
+	\item Déplacer $\bmu\m{i}$ vers $\hat{p}\m{i}$ : $\bmu\m{i}_{\tau +1} \leftarrow \bmu\m{i}_\tau \pm \Delta$ si $\lvert \bmu\m{i}- \hat{p}\m{i}\rvert \geq \Delta$, $\bmu\m{i} \leftarrow \hat{p}\m{i}$ sinon
 	\end{enumerate}
 \item Le BMU de chaque carte est pris comme la valeur finale stable de ce processus dynamique. Cette valeur est utilisée pour les mise a jour des poids.
 \end{enumerate}
 
 Il peut arriver que les positions se stabilisent sur un cycle limite. Dans ce cas, on arrêtera la relaxation arbitrairement; ce phénomène étant ponctuel, il n'influence pas l'apprentissage. Les paramètres des cartes de l'architecture sont choisis pour éviter de telles situations.
 
-
 \subsection{Mise à jour des poids}
 
 Les poids sont mis à jour par rapport à leurs entrées respectives suivant l'équation \ref{eq:update}. Le BMU d'une carte est ainsi commun à toutes les couches. Les rayons de voisinage $h_e$ et $h_c$ ont des valeurs différentes ; celles-ci seront détaillée en partie suivante. 
 Il faut noter que les poids contextuels cartographient l'espace des positions d'une autre carte. Les positions des cartes sont donc associées par les poids contextuels.
-
-\begin{figure}
-\begin{minipage}[c]{0.5\textwidth}
-\includegraphics[width=\textwidth]{maj_layers.pdf}
-\end{minipage}
-\hfill
-\begin{minipage}[c]{0.4\textwidth}
-\caption{Mise à jour de chaque couche de poids indépendamment, relativement au BMU commun $\bmu\m{1}$. Le rayon de voisinage $h_e$ est utilisé pour mettre à jour les poids externes, le rayon $h_c$ pour mettre à jour les poids contextuels. On choisit $h_e > h_c$. Cette différence permet une différence d'échelle d'apprentissage entre couches de poids. Elle est détaillée en section suivante.}
-\end{minipage}
-\label{lig:maj}
-\end{figure}
-
 \begin{algorithm}\label{algo:cxsom}
 \caption{Pas d'apprentissage $t$}
 \SetAlgoLined
