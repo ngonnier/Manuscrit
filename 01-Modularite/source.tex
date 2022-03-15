@@ -28,7 +28,7 @@ Let us cite as example \cite{electronics9101605}}
 
 
 \section{Mémoire associative et multi-modalité}
-
+\draft{
 \subsection{Mémoire associative}
 Dans cette thèse, on s'intéresse à développer une mémoire associative via une architecture de cartes. La mémoire associative se définit par la capacité d'un réseau à apprendre des relations entre des ensembles de données et à pouvoir utiliser ces relations. Une tâche classique de mémoire associative sera la capacité de générer un motif en sortie à partir d'un autre motif d'entrée qui lui est associé, montrant que le réseau a appris la relation existant entre les deux éléments. 
 
@@ -36,31 +36,30 @@ Dans cette thèse, on s'intéresse à développer une mémoire associative via u
 On parle de multimodalité lorsqu'on cherche à apprendre des relations entre données de différentes natures. Ce terme est souvent utilisé en robotique par exemple: les données issues de différents capteurs d'un robot sont les modalités. L'apprentissage multimodal cherche à apprendre ces modalités de façon commune. Ainsi, on peut effectuer un apprentissage multimodale en associant une modalité auditive consituée de signaux sonores et une modalité visuelle consituée d'images.
 Un défi de l'apprentissage multimodal vient de la nature des signaux: comment faire pour que les modalités soient traitées de façon équilibrée ? 
 %
-
+}
 \section{Cartes auto-organisatrices}\label{sec:som001}
 
-Dans cette thèse, nous nous intéressons particulièrement aux architectures de \emph{cartes auto-organisatrices}, abrégées par SOM (self-organizing maps). Le modèle de cartes auto-organisatrice a été initialement développé par Kohonen \cite{Kohonen1982}; le terme de cartes de Kohonen est ainsi utilisé pour désigner ce modèle initial. De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle initial, sur diverses applications. On décompte par exemple plus de 11000 travaux utilisant les cartes de Kohonen dans la littérature en 2010(citer biblio).
+Dans cette thèse, nous nous intéressons particulièrement aux architectures de \emph{cartes auto-organisatrices}, abrégées par SOM (Self-Organizing Maps). Le modèle de cartes auto-organisatrice a été initialement développé par Kohonen \cite{Kohonen1982}; le terme de cartes de Kohonen est ainsi utilisé pour désigner ce modèle initial. De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle initial, sur diverses applications. On décompte par exemple plus de 11000 travaux utilisant les cartes de Kohonen dans la littérature en 2010(citer biblio).
 Applications ?
 
-Au sein de cette zoologie de cartes de Kohonen, nous passerons en revue dans cette section deux familles de modèles de cartes auto-organisatrices dérivés des cartes de Kohonen: les cartes récurrentes traitant des données temporelles, et les modèles de cartes assemblées au sein d'une architecture ou d'un réseau de neurone multicouche.
-
+Au sein de cette zoologie de cartes de Kohonen, nous passerons en revue dans ce chapitre deux familles de modèles de cartes auto-organisatrices dérivés des cartes de Kohonen: les cartes récurrentes traitant des données temporelles, et les modèles de cartes assemblées au sein d'une architecture.
 \subsection{Carte de Kohonen classique}
 
-Une carte de Kohonen est un algorithme de quantification vectorielle, cherchant à résumer un ensemble de données d'entrées issues d'un espace $D$ en un nombre fini de vecteurs représentatifs, des prototypes.  Dans l'algorithme de Kohonen, ces prototypes sont disposés sur les noeuds d'un graphe, en général une grille en deux dimensions. Ce graphe est appelé carte de Kohonen. Les noeuds du graphe possèdent donc chacun un prototype et sont \emph{indexés}. Une distance entre noeuds est ainsi définie.
+Une carte de Kohonen est un algorithme de quantification vectorielle, cherchant à résumer un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs représentatifs, des prototypes.  Dans l'algorithme de Kohonen, ces prototypes sont disposés sur les noeuds d'un graphe, en général une grille en deux dimensions. Ce graphe est appelé carte de Kohonen. Les noeuds du graphe possèdent donc chacun un prototype et sont \emph{indexés}. Une distance entre noeuds est ainsi définie.
 Au début de l'apprentissage, les prototypes ont une valeur aléatoires dans l'espace d'entrée. L'apprentissage est ensuite réalisé en trois étapes:
 \begin{enumerate}
 \item Une entrée $\inpx$ est présentée à la carte.
-\item Le noeud ayant le prototype le plus proche de $\inpx_t$ selon une distance $d$, généralement la distance euclidienne, est choisie comme \emph{Best Matching Unit} (BMU) de la carte. Son index est notée $\bmu$.
+\item Le noeud ayant le prototype le plus proche de $\inpx$ selon une distance $d$, généralement la distance euclidienne, est choisie comme \emph{Best Matching Unit} (BMU) de la carte. Son index est notée $\bmu$.
 \item Le prototype de la best matching unit est déplacé vers l'entrée $\inpx$, ainsi que les prototypes des noeuds voisins de $\bmu$ dans un rayon de voisinage défini à l'avance. On peut voir cette étape comme le déplacement d'une zone de la carte centrée en $\bmu$.
 \end{enumerate}
 
 L'algorithme de Kohonen repose donc sur à la fois un processus de compétition, avec la selection de la BMU de la carte, et un processus de coopération avec le déplacement des unités voisines de la Best Matching Unit et non seulement de cette dernière.
-Toutes les données d'entrées sont tirées dans un même espace $D$; par contre, la dimension de cet espace peut être quelconque.
+Toutes les données d'entrées sont tirées dans un même espace $\mathcal{D}$; par contre, la dimension de cet espace peut être quelconque.
 L'apprentissage d'une carte de Kohonen se traduit par un rapprochement de tous les prototypes des données, de façon à ce que n'importe quel vecteur soit proche d'au moins un prototype. Visuellement, cela correspond à un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimension, se dépliant sur des données en deux dimensions. 
 A la fin de l'apprentissage, la carte conserve la structure topologique des données:
 \begin{itemize}
 \item Elle conserve les distances: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une contiuité des valeurs des prototypes au sein de la carte
-\item Elle conserve les densités. Une zone de $D$ présentant plus de vecteurs aura plus d'unités la représentant dans la carte qu'une zone moins dense.
+\item Elle conserve les densités. Une zone de $\mathcal{D}$ présentant plus de vecteurs aura plus d'unités la représentant dans la carte qu'une zone moins dense.
 \end{itemize}
 Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension. Les cartes de Kohonen sont ainsi utilisées dans de nombreuses applications, notamment pour visualiser des données de grande dimension et faire du regroupement de données (clustering). 
 
@@ -108,10 +107,10 @@ La carte de Kohonen se distingue d'autres algorithmes de quantification vectorie
 La plupart des algorithmes de SOM de la littérature utilisent comme support une grille en deux dimensions. L'indexation des noeuds est alors un ensemble de positions 2D.
 
 
-En théorie, les cartes peuvent être une dimension (ligne), deux dimensions (grilles), ou de dimension plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. En pratique, les grilles deux dimension sont plus couramment utilisées. Elles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser sur un écran. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le cout de l'algorithme d'apprentissage dépend en effet du nombre de neurones, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen en plus de deux dimensions. Les calculs deviennent rapidement couteux, alors qu'un avantage de la carte de Kohonen est la simplicité et la rapidité de l'algorithme. Les cartes une dimension sont limitées en terme de représentation des données, et sont donc rarement utilisées en pratique. Cependant, elles se prêtent bien à la représentation graphique. Nous utiliserons donc principalement des cartes en une dimension dans cette thèse.
+En théorie, les cartes peuvent être une dimension (ligne), deux dimensions (grilles), ou de dimension plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. En pratique, les grilles deux dimension sont les plus couramment utilisées. Elles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser sur un écran. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le cout de l'algorithme d'apprentissage dépend en effet du nombre de neurones, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen en plus de deux dimensions. Les calculs deviennent rapidement couteux, alors qu'un avantage de la carte de Kohonen est la simplicité et la rapidité de l'algorithme. Les cartes une dimension sont quant à elles limitées en terme de représentation des données, et sont donc rarement utilisées en pratique. Cependant, elles se prêtent bien à la représentation graphique. Nous utiliserons donc principalement des cartes en une dimension dans cette thèse.
 
 
-De plus, les calculs et l'organisation générés par l'algorithme de Kohonen sont complexes même avec des cartes en une dimension. Leur description mathématique a été réalisée en \cite{cottrell_theoretical_2016,cottrell_theoretical_1998,fort_soms_2006}. La preuve de la convergence d'une carte a été réalisée seulement pour des cartes 1D et n'est pas généralisable directement au cas en deux dimensions. Les processus intervenant dans dans cartes 1D sont donc déjà mathématiquement difficiles à formaliser, difficulté qui augmente fortement avec les dimensions. Comme nous étudions dans cette thèse un nouveau modèle et cherchons à comprendre les mécanismes qui y interviennent, l'utilisation de cartes 1D réduit un peu la difficulté du problème. 
+De plus, les calculs et l'organisation générés par l'algorithme de Kohonen sont complexes déjà avec des cartes en une dimension. Leur description mathématique a été réalisée en \cite{cottrell_theoretical_2016,cottrell_theoretical_1998,fort_soms_2006}. La preuve de la convergence d'une carte a été réalisée seulement pour des cartes 1D et n'est pas généralisable directement au cas en deux dimensions. Les processus intervenant dans dans cartes 1D sont donc déjà mathématiquement difficiles à formaliser, difficulté qui augmente fortement avec les dimensions. Comme nous étudions dans cette thèse un nouveau modèle et cherchons à comprendre les mécanismes qui y interviennent, l'utilisation de cartes 1D réduit un peu la difficulté du problème. 
 Les cartes de forme autre que 1D ou 2D sont moins couramment utilisées, mais peuvent avoir des avantages. On peut observer par exemple des cartes structurées en arbre \cite{koikkalainen_self-organizing_1990}, permettant une recherche de BMU structurée. Certains modèles construisent une carte de Kohonen noeud à noeud, donnant au final une carte de Kohonen sous forme d'un graphe construit par l'algorithme, telle que \cite{alahakoon_dynamic_2000}. 
 \begin{figure}
 \centering
@@ -151,7 +150,7 @@ D'autre part, certains travaux visent à connecter les cartes entre elles de man
 Certains travaux développent des cartes modulaires où les connexions entre cartes sont créées neuronalement. C'est le cas de l'algorithme SOIMA \cite{SOIMA}, où les connexions entre neurones sont apprise avce une regle hebbienne alors que l'apprentissage se fait dans chaque carte : les neurones qui s'activent ensemble voient leur poids de connexion renforcé.}
 
 \section{Cartes auto-organisatrices récurrentes}
-
+\draft{
 On appelle réseaux récurrents des réseaux de neurones qui prennent en compte leur état précédent pour calculer leur état actuel. Ces réseaux sont utilisés pour le traitement et l'apprentissage de signaux temporels. Citons par exemple, en deep learning, les RNN (recurrent neural networks), dont les neurones recoivent leur état précédent en entrée. Les réseaux récurrents les plus utilisés actuellement sont les LSTM, dans lesquel un système de portes perment d'activer ou non des neurones en fonction des états précédents du réseau. Les cartes de Kohonen ont elles aussi des version récurrentes que nous allons présenter dans cette partie.
 
 Nous nous intéressons aux architectures multi-cartes, mais les cartes récurrentes répondent à des problèmes très similaire à ceux rencontrés dans la conception d'architectures de cartes pour faire de la mémoire associative. Dans une carte récurrente, le problème principal est de trouver comment communiquer à la carte de l'information sur son état précédent et comment utiliser cette information dans l'apprentissage de l'état courant. Cela rejoint la problématique posée dans les architectures de cartes de Kohonen, qui est de comment communiquer à une autre carte son état, afin de l'utiliser dans l'apprentissage de l'état courant. Nous avons vu précedemment qu'il existe assez peu de modèles d'architectures de cartes. Il existe plusieurs modèles de carte récurrentes qui nous permettrons de compléter cette étude. 
@@ -160,11 +159,11 @@ Notre volonté de créer un modèle général d'architecture de cartes auto-orga
 
 %Enfin, les cartes de Kohonen ne se prêtent pas à un apprentissage en ligne de données en temps réel. En effet, il est nécessaires que les données d'entrées soient tirées aléatoirement dans l'espace à apprendre et ne suivent pas une trajectoire. Par exemple, si on veut apprendre des images, mais que les entrées sont données à la carte sous la forme d'une vidéo, les frames de la vidéo sont proches les unes des autres et forment donc une continuité dans l'espace d'entrée des images à apprendre. La carte va alors apprendre le sous ensemble de l'espace sur lequel se trouvent les premières frames, puis les oublier au fur et à mesure de l'apprentissage et les remplacer par les images qui suivent. Avec une architecture multi cartes qui prendrait en compte un aspect temporel, on pourrait imaginer la construction d'une architecture plus robuste.
 
-Nous avons classé les modèles de cartes récurrentes existants en différentes catégories. D'une part, certains modèles de cartes utilisent l'état précédent de la carte lors du calcul de l'activité de l'état courant. De l'autre, des modèles réutilisent plutot des élement de la carte précedente en tant qu'entrée de l'état courant.
+Nous avons classé les modèles de cartes récurrentes existants en différentes catégories. D'une part, certains modèles de cartes utilisent l'état précédent de la carte lors du calcul de l'activité de l'état courant. De l'autre, des modèles réutilisent plutot des élement de la carte précedente en tant qu'entrée de l'état courant}
 
 \subsection{Cartes récurrentes }
 
-TKM, RSOM, utilisation seulement de la zone autour du BMU
+\draft{TKM, RSOM, utilisation seulement de la zone autour du BMU}
 
 \subsection{Réutilisation d'élements en entrées}
 %

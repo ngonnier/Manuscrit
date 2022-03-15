@@ -21,7 +21,7 @@ Dans ce chapitre, nous détaillons le modèle CxSOM développé et étudié dura
 
 
 \section{Carte de Kohonen classique}\label{sec:kohonen}
-Chaque carte de Kohonen intervenant dans l'architecture CxSOM est directement dérivée de l'algorithme d'une carte de Kohonen classique \cite{kohonen92}. Le principe général d'une carte de Kohonen a été décrit dans le chapitre précédent; nous définissons ici plus précisément le modèle et les équations qui serviront de base pour la définition de l'algorithme CxSOM.
+Chaque carte de Kohonen intervenant dans l'architecture CxSOM est directement dérivée de l'algorithme d'une carte de Kohonen classique \cite{Kohonen1982}. Le principe général d'une carte de Kohonen a été décrit dans le chapitre précédent; nous définissons ici plus précisément le modèle et les équations qui serviront de base pour la définition de l'algorithme CxSOM.
 
 \subsection{Algorithme et notations}
 Une carte de Kohonen est un graphe, généralement une ligne 1D ou une grille 2D de $N$ noeuds. Nous utiliserons dans cette thèse des cartes en une et deux dimensions, c'est à dire des lignes et des grilles. Les notations et le modèle présentés ici sont toutefois applicables à des cartes de dimension et topologies quelconques.
@@ -143,23 +143,26 @@ Notre algorithme implémente donc deux modifications principales par rapport à 
 \item La recherche du BMU est modifiée afin de gérer les rétroactions entre cartes.
 \end{itemize}
 
-L'architecture CxSOM couple ainsi l'apprentissage de plusieurs cartes. Elles apprennent à la fois sur leurs données $\inpx\m{i}$, mais contextualisées selon les informations issues des autres cartes. Notons que les cartes apprennnent de façon jointe dès le début de leur apprentissage. Seule la position du BMU est utilisée comme information transmise entre carte. Cette valeur a l'avantage d'apporter une homogénéité dans l'architecture de cartes: quelles que soient les entrées d'une carte et leur dimension, le BMU sera une position en 1 ou 2 dimensions. Si on prenait le poids du BMU comme valeur transmise, par exemple, comme peut le faire la carte récurrente MSOM~\cite{msom}, l'information circulant entre les cartes dépendrait des dimensions des entrées.
-De plus, transmettre seulement le BMU est une avantage en terme de quantité d'information à transmettre. Certains modèles, tel que le modèle de carte récurrente \cite{voetglin} transmettent l'activité complète d'une carte en contexte. Certes, cette information reste indépendante du type d'entrée, est complète, mais lourde. La transmission du seul BMU, on le verra dans le chapitre d'analyse, est suffisante pour permettre l'apprentissage du modèle de relations entre données, qui est ce qu'on recherche avec les entrées multimodales. 
+L'architecture CxSOM couple ainsi l'apprentissage de plusieurs cartes. Elles apprennent à la fois sur leurs données $\inpx\m{i}$, mais contextualisées selon les informations issues des autres cartes. Notons que les cartes apprennnent de façon jointe dès le début de leur apprentissage. Seule la position du BMU est utilisée comme information transmise entre carte. Cette valeur a l'avantage d'apporter une homogénéité dans l'architecture de cartes: quelles que soient les entrées d'une carte et leur dimension, le BMU sera une position en 1 ou 2 dimensions. Si on prenait le poids du BMU comme valeur transmise, par exemple, comme peut le faire la carte récurrente MSOM~\cite{Strickert2005MergeSF}, l'information circulant entre les cartes dépendrait des dimensions des entrées.
+De plus, transmettre seulement le BMU est une avantage en terme de quantité d'information à transmettre. Certains modèles, tel que le modèle de carte récurrente \cite{Voegtlin2002RecursiveSM} transmettent l'activité complète d'une carte en contexte. Certes, cette information reste indépendante du type d'entrée, est complète, mais lourde. La transmission du seul BMU, on le verra dans le chapitre d'analyse, est suffisante pour permettre l'apprentissage du modèle de relations entre données, qui est ce qu'on recherche avec les entrées multimodales. 
 
 L'algorithme CxSOM est détaillé en algorithme~\ref{algo:cxsom}; les parties suivantes expliquent et illustrent le modèle. Nous présentons d'abord le modèle sur un exemple de deux cartes, puis le formalisme étendu dans un cadre général d'architecture.
 
 \section{Présentation de CxSOM: exemple d'une architecture de deux cartes}
+
 Avant de présenter le modèle général de CxSOM sur une architecture quelconque, présentons le fonctionnement de l'architecture la plus simple qui soit: deux cartes $M\m{1}$ et $M\m{2}$, connectées réciproquement, présentée en figure~\ref{fig:2som_archi}. Toutes les équations seront formalisées dans le cas général en section~\ref{sec:formalisme}.
-
-
 On prend dans cet exemple des cartes en une dimension, indexées par $p \in [0,1]$.
 La carte $M\m{1}$ prend une entrée externe notée $\inpx\m{1}$ et une entrée contextuelle notée $\inpc\m{1}$, qui est le BMU de la carte $M\m{2}$ $\bmu\m{2}$. Les entrées externes $\inpx\m{1}$ et $\inpx\m{2}$ sont deux modalités interdépendantes; dans cet exemple, il s'agit des coordonnées $x$ et $y$ d'un point sur un cercle tel que présenté en figure~\ref{fig:inputs}. Les entrées externes sont donc également en une dimension.
+
+
 La structure de chaque carte de l'architecture est adaptée à partir du modèle classique de SOM pour prendre deux entrées au lieu d'une. On indicera les élements des cartes par $(1)$ et $(2)$ pour désigner les éléments appartenant à la carte $M\m{1}$ et $M\m{2}$.
 Une carte possède ainsi deux couches de poids: les poids \emph{externes} $\w_e\m{i}$, $i=1,2$ qui se déplient sur les entrées $\inpx\m{(i)}$, et les poids contextuels $w_c\m{i}$, qui se déplient sur l'espace des positions en une dimension de l'autre carte. Ces deux couches de poids sont représentées en figure~\ref{fig:2som_weights}.
+L'activité de la carte $a_g$ résulte de la combinaison entre l'activité \emph{externe} et l'activité \emph{contextuelle}. Ces deux activités sont calculées comme dans le modèle classique, équation~\ref{eq:act1som} et tracées en figure~\ref{fig:2som_activite}; l'activité externe compare les poids externes à l'entrée externe $\inpx_t$, et l'activité contextuelle les poids contextuels à l'entrée contextuelle $\inpc$. 
+La position du BMU de $M\m{2}$, $\bmu\m{2}$ est utilisée comme entrée contextuelle de $M\m{1}$, et $\bmu\m{1}$ comme entrée contextuelle de $M\m{2}$. Les deux cartes apprennnent donc de façon couplée. Enfin, la mise à jour des poids s'effectue séparément sur chaque carte, et chaque couche de poids, selon leur entrées et BMU respectifs.
 
-L'activité de la carte résulte de la combinaison entre l'activité \emph{externe} et l'activité \emph{contextuelle}. Ces deux activités sont calculées comme dans le modèle classique, équation~\ref{eq:act1som} et tracées en figure~\ref{fig:2som_activite}; l'activité externe compare les poids externes à l'entrée externe $\inpx_t$, et l'activité contextuelle les poids contextuels à l'entrée contextuelle $\inpc$. 
-La position du BMU de $M\m{2}$, $\bmu\m{2}$ est utilisée comme entrée contextuelle de $M\m{1}$, et $\bmu\m{1}$ comme entrée contextuelle de $M\m{2}$. Les deux cartes apprennnent donc de façon couplée.
-Pour la carte $M\m{1}$, au pas de temps $t$, on a donc:
+\subsection{Détail des étapes}
+\paragraph{Calcul d'activité}
+Pour la carte $M\m{1}$, au pas de temps $t$, on a:
 \begin{equation}
 \label{eq:activite}
 \begin{cases}
@@ -182,7 +185,7 @@ Par la différence de contribution de $a_c$ et $a_e$ au sein de l'activité glob
 \includegraphics[width=0.75\textwidth]{weights_2som.pdf}
 \caption{Représentation des poids de $M\m{1}$. L'entrée externe $\inpx_t$ présentée à l'itération $t$, tirée d'un espace d'entrée 1D $[0,1]$, est indiquée en bleu sur le graphique. L'entrée contextuelle  est $\inpc\m{1}$, le BMU de la carte $M\m{2}$. Sa valeur est indiquée en jaune; il s'agit d'une position 1D dans la carte $M\m{2}$, à valeur entre 0 et 1. L'exemple de disposition des poids est pris au cours du dépliement d'une structure de deux cartes sur un cercle. \label{fig:2som_weights}}
 \end{figure}
-
+\paragraph{Relaxation}
 Le calcul de $\bmu\m{1}$ dépend donc de $\bmu\m{2}$ et inversement. Contrairement à une carte simple, on ne peut pas calculer tous les BMUs de l'architecture un par un en prenant $\hat{p}$, l'argmax de $a_g$, comme BMU dans chaque carte.
 On remplace l'étape de simple calcul d'argmax par un processus global à l'architecture de recherche de BMU. Cette recherche est réalisée par un processus dynamique que l'on appelera \emph{relaxation}, menant à un consensus entre cartes : on cherche un point, s'il en existe, où le BMU de chaque carte est au plus proche du maximum de son activité globale $\hat{p}$. On répétera donc le calcul de l'activité globale et de son argmax plusieurs fois au sein d'une même itération.
 Cette recherche est une boucle imbriquée dans un pas d'apprentissage $t$, indexée par $\tau$ et appelée relaxation. Cette boucle définit une suite de BMUs intermédaires, $(\bmu\m{1}_\tau , \bmu\m{2}_\tau)$, $\tau$ variant de $0$ à un nombre d'itération maximum fixé pour assurer une fin de la boucle. Le processus de relaxation est le suivant:
@@ -196,19 +199,8 @@ Cette recherche est une boucle imbriquée dans un pas d'apprentissage $t$, index
 	\end{enumerate}
 \item Le BMU de chaque carte est pris comme la valeur finale stable de ce processus dynamique. Cette valeur est utilisée pour les mise a jour des poids. Si la relaxation n'atteint pas de point stable, on fixe tout de même un nombre d'itérations maximum après lequel on arrête la relaxation.
 \end{enumerate}
-
+\paragraph{Mise à jour}
 Enfin, chaque couche de poids $\w\ext\m{i}$, $\w_c\m{i}$ est mise à jour indépendamment dans chaque carte relativement au BMU $\bmu\m{i}$ et les entrées $\inpx\m{i}$ et $\inpc\m{i} = \bmu\m{j}$. Cette mise à jour correspond à la figure~\ref{fig:maj}. Les rayons d'apprentissage sont différents entre couche externe et couche contextuelle.
-En résumé, les étapes d'un pas d'apprentissage d'une architecture de deux cartes sont:
-\begin{enumerate}
-\item Présentation des entrées $\inpx\m{1}$ et $\inpx\m{2}$ à chaque carte
-\item Relaxation:
-\begin{enumerate}
-\item Calcul de l'activité externe $a_e(\inpx\m{i},p)$ dans chaque carte et initialisation des BMUs $(\bmu\m{1}_0,\bmu\m{2}_0)$ pour la relaxation.
-\item Relaxation par petits déplacements de $\bmu\m{1}_\tau,\bmu\m{2}_\tau$ dans chaque carte, avec calcul de l'activité contextuelle et globale à chaque pas $\tau$, jusqu'à stabilisation selon $\tau$ du couple de valeurs $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$
-\item Choix des positions de BMU $\bmu\m{1}_t,\bmu\m{2}_t$ comme la valeur de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ à l'issue de la relaxation
-\end{enumerate}
-\item Mise à jour des poids $\w\ext\m{i}$ et $\w\cont\m{i}$ dans chaque carte, selon la position du BMU $\bmu\m{i}$, les entrées $\inpx\m{i}_t$ et $\inpc\m{i} = \bmu\m{j}_t$, la position du BMU calculée par relaxation dans l'autre carte.
-\end{enumerate}
 
 \begin{figure}
 \centering
@@ -236,15 +228,37 @@ En résumé, les étapes d'un pas d'apprentissage d'une architecture de deux car
 \begin{minipage}[c]{0.35\textwidth}
 \caption{Mise à jour de chaque couche de poids indépendamment, relativement au BMU commun $\bmu\m{1}$, calculé par relaxation. Par définition de la relaxation, la position $\bmu\m{1}$ est proche de la position $\hat{p}\m{1}$ à la fin de la relaxation. Le rayon de voisinage $h_e$ est utilisé pour mettre à jour les poids externes, le rayon $h_c$ pour mettre à jour les poids contextuels. On choisit $h_e > h_c$. Cette différence permet une différence d'échelle d'apprentissage entre couches de poids. Elle est détaillée en section suivante.\label{fig:maj}}
 \end{minipage}
-
 \end{figure}
+
+\subsection{Résumé}
+Les étapes d'un pas d'apprentissage d'une architecture de deux cartes sont les suivantes; elles sont schématisées en figure~\ref{fig:algo}.
+\begin{enumerate}
+\item Présentation des entrées $\inpx\m{1}$ et $\inpx\m{2}$ à chaque carte
+\item Relaxation:
+\begin{enumerate}
+\item Calcul de l'activité externe $a_e(\inpx\m{i},p)$ dans chaque carte et initialisation des BMUs $(\bmu\m{1}_0,\bmu\m{2}_0)$ pour la relaxation.
+\item Relaxation par petits déplacements de $\bmu\m{1}_\tau,\bmu\m{2}_\tau$ dans chaque carte, avec calcul de l'activité contextuelle et globale à chaque pas $\tau$, jusqu'à stabilisation selon $\tau$ du couple de valeurs $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$
+\item Choix des positions de BMU $\bmu\m{1}_t,\bmu\m{2}_t$ comme la valeur de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ à l'issue de la relaxation
+\end{enumerate}
+\item Mise à jour des poids $\w\ext\m{i}$ et $\w\cont\m{i}$ dans chaque carte, selon la position du BMU $\bmu\m{i}$, les entrées $\inpx\m{i}_t$ et $\inpc\m{i} = \bmu\m{j}_t$, la position du BMU calculée par relaxation dans l'autre carte.
+\end{enumerate}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{learning_tests_2maps}
+\caption{Résumé des étapes de l'algorithme d'apprentissage d'une architecture.}
+\label{fig:algo}
+\end{figure}
+
+
+
 
 
 \section{Formalisation: cas pour $n$ cartes}\label{sec:formalisme}
 
 Nous présentons dans cette partie un formalisme pour l'algorithme général pour une architecture quelconque de $n$ cartes. Les notations sont valables pour des cartes de dimension quelconque; les entrées peuvent être de dimension quelconque.
 La différence principale avec l'exemple à deux cartes est qu'une carte peut prendre plusieurs entrées contextuelles, qui sont les BMUs de toutes les cartes qui lui sont connectées dans l'architecture, au lieu d'une dans le cas de deux cartes. On retrouvera donc les notations de la partie précédente.
-Cette partie concentre toutes les notations et l'algorithme utilisé dans cette thèse. 
+Cette partie concentre toutes les notations et l'algorithme utilisé dans cette thèse. L'algorithme est résumé en algorithme~\ref{algo:cxsom}.
 
 \subsection{Entrées et calcul d'activité}
 Nous présentons d'abord la structure et les notations utilisées dans une carte; toutes ces notations sont retrouvables en figure~\ref{fig:2som_activite}, pour l'exemple d'architecture de 2 cartes. Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \{1,\cdots,n\}$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$.
@@ -313,7 +327,7 @@ Il peut arriver que les positions ne trouvent pas de point de stabilité. Dans c
 Les poids sont mis à jour par rapport à leurs entrées respectives suivant l'équation \ref{eq:update}. Le BMU d'une carte est ainsi commun à toutes les couches. Les rayons de voisinage $h_e$ et $h_c$ ont des valeurs différentes ; celles-ci seront détaillée en partie suivante. 
 Il faut noter que les poids contextuels cartographient l'espace des positions d'une autre carte. Les positions des cartes sont donc associées par les poids contextuels.
 \begin{algorithm}\label{algo:cxsom}
-\caption{Pas d'apprentissage $t$}
+\caption{Déroulement d'une itération d'apprentissage $t$}
 \SetAlgoLined
   \KwData{$\inpx\m{1}_t, ... , \inpx\m{K}_t$ tirés dans $\mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$}
   $\tau \leftarrow 0$ \;
@@ -335,7 +349,8 @@ Il faut noter que les poids contextuels cartographient l'espace des positions d'
   \lForEach{$k$}{$\w_{ck}\m{i}(p) \leftarrow \w_{ck}\m{i}(p) + H\cont(\bmu\m{i},p)(\w_{ck}\m{i}(p) - \bmu\m{i_k}_t)$}
   }
  \end{algorithm}
- 
+
+
 \subsection{Etape de test}
 
 Afin d'étudier le dépliement des cartes, on effectue des itérations de \emph{test} pendant l'apprentissage. Ces étapes consistent à effectuer les étapes de présentation d'entrée, calcul d'activité et recherche du BMU par relaxation, mais pas l'étape de mise à jour des poids. Les poids des cartes restent donc figés pendant un ensemble de tests. Les entrées des cartes sont alors les entrées externes $\inpx\m{i}$ de test et les sorties sont les BMUs $\bmu\m{i}$ des cartes de l'architecture. 
@@ -344,7 +359,6 @@ Les entrées $\inpx\m{i}$ sont tirées du même espace que les entrées utilisé
 \subsection{Prédiction d'entrée}
 Par construction, une carte de l'architecture CxSOM peut ne pas avoir d'entrée externe. Les activités considérées pour la recherche du BMU seront alors les activités contextuelles. On peut ainsi utiliser CxSOM pour des tâches de prédiction. Les données présentée à l'architecture sont $\inpx\m{1}, \cdots, \inpx\m{n}$, $n$ modalités. Ces modalités portent de l'information les unes sur les autres. 
 L'architecture de cartes peut être vue comme un système dynamique réagissant à des données d'entrées.
-
 
 \section{Choix des paramètres}\label{sec:params}
 
@@ -379,6 +393,7 @@ $\Delta$ & Pas de relaxation & $0.1$ \\
 
 \section{Conclusion}
 
-le modèle CxSOM permet de construire une architectures de carte auto-organisatrices apprennant chacune sur des entrées de différent types, mais liées par un modèle: des entrées multimodales. L'apprentissage est couplé entre cartes par l'utilisation d'entrée contextuelles dans chaque carte, qui sont les positions des best matching unit des cartes qui lui sont connectées. Nous avons décrit dans ce chapitre l'algorithme permettant d'effectuer l'apprentissages de données dans une telle architecture ainsi que les notations associées. 
+le modèle CxSOM permet de construire une architectures de carte auto-organisatrices apprennant chacune sur des entrées de différent types, mais liées par un modèle: des entrées multimodales. L'apprentissage est couplé entre cartes par l'utilisation d'entrée contextuelles dans chaque carte, qui sont les positions des best matching unit des cartes qui lui sont connectées. Nous avons décrit dans ce chapitre l'algorithme permettant d'effectuer l'apprentissages de données dans une telle architecture ainsi que les notations associées.
 
 L'algorithme d'apprentissage a été conçu de façon large: nous avons développé un modèle général permettant d'associer des cartes. Les objectifs des chapitres suivants sont d'abord de montrer le comportement de l'algorithme et comment la relaxation permet de déterminer un BMU dans chaque carte. Nous étudierons ensuite en détail comment les données fournies en entrées à une architecture sont représentées dans les couches de poids. Nous verrons enfin une application d'une architecture de cartes dans un contexte de prédiction d'entrée.
+
