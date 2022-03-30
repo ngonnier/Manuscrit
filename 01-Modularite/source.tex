@@ -12,21 +12,6 @@
 
 \section{Modularité}
 
-\section{Intérêt computationnel}
-
-\section{Réseaux de neurones modulaires}
-
-\subsection{Réseaux bio-inspirés}
-
-\draft{De nombreux travaux de biologie observent des co-activations entre les zones du cerveaux. Le cortex cérébral est ainsi être considéré comme un reseaux de neurone modulaires, avec des régions s'activant entre elles. \cite{primate_cortex_91,mountcastle_columnar_1997,Harriger2012RichCO}
-
-Ces coactivations aient été observées expérimentalement. Plusieurs modèles en neurosciences computationnelles ont été proposés pour expliquer ce phénomènes. Les modèles les plus communs sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de réentrées de Edelmann \cite{Edelman1982GroupSA}.
-
- CDZ holds that specific cortical areas act as sets of pointers to other areas , and therefore connect several brain networks. The reentry theory hypothezise direct bidirectional exchanges between several brain areas. Those theories are a biological inspiration to create and connect modular networks.
-The models inspired by those theories are mostly based on spiking neural networks. Indeed, those networks are 
-Let us cite as example \cite{electronics9101605}}
-
-
 \section{Mémoire associative et multi-modalité}
 \draft{
 \subsection{Mémoire associative}
@@ -94,12 +79,7 @@ natal growth, or learning.
 \label{fig:SOM}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.6\textwidth]{v1.jpg}
-\caption{Représentation des réponses du cortex visuel V1 à un stimulus visuel (batonnets d'orientation spatiale différentes). Les neurones répondant à une certaine orientation sont affichés de la même couleur. On observe une continuité entre les neurones proches dans le cortex et l'orientation à laquelle ils répondent. Cette propriété d'organisation est l'inspiration biologique des cartes de Kohonen. }
-\label{fig:v1}
-\end{figure}
+
 
 \subsection{Aspect topologique de la carte de Kohonen}
 
@@ -122,21 +102,113 @@ Les cartes de forme autre que 1D ou 2D sont moins couramment utilisées, mais pe
 \begin{figure}
 \centering
 \includegraphics[width=0.7\textwidth]{som2d}
-\caption{Dépliement d'une SOM 2D sur des données dans le plan $[0,1]^2$ [citation] \label{fig:som2d}}
+\caption{Dépliement d'une SOM 2D sur des données dans le plan $[0,1]^2$, \cite{Kohonen1995SelfOrganizingM} \label{fig:som2d}}
 
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics[width=0.7\textwidth]{som1d}
-\caption{Dépliement d'une SOM 1D sur des données dans un triangle 2D [citation] \label{fig:som1d}}
+\caption{Dépliement d'une SOM 1D sur des données dans un triangle 2D \cite{Kohonen1995SelfOrganizingM}\label{fig:som1d}}
 
 \end{figure}
 
+\subsection{Inspiration Biologique d'une carte de Kohonen}
+
+Le développement des cartes par Kohonen est intiallement inspiré par les cartes topologiques observées dans le cerveau. En effet, si on cartographie la position des neurones par rapport aux stimuli auxquels ils répondent dans certaines zones sensorielles du cerveau, on observe une disposition ordonnée. Les neurones proches réagissent à des stimuli proches. Un exemple est ainsi celui du cortex visuel v1, représenté en figure~\ref{fig:v1}. L'aire associée à l'audition présente aussi une organisation topographique (tonotopic maps), ainsi que de nombreuses autres aires, sensorielles ou plus abstraites [ref kohonen book].
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{v1.jpg}
+\caption{Représentation des réponses du cortex visuel V1 à un stimulus visuel (batonnets d'orientation spatiale différentes). Les neurones répondant à une certaine orientation sont affichés de la même couleur. On observe une continuité entre les neurones proches dans le cortex et l'orientation à laquelle ils répondent. Cette propriété d'organisation est l'inspiration biologique des cartes de Kohonen. }
+\label{fig:v1}
+\end{figure}
+
+
+
+\section{Motivations de la thèse : pourquoi construire une architecture de cartes auto-organisatrices modulaires}
+
+\subsection{Inspiration biologique}
+Nous avons vu d'un coté que les cartes auto-organisatrices sont d'inspiration biologique; sans chercher à modéliser les neurones du cerveau, on tend vers des principes généraux rappelant ce qu'on peut observer dans le cerveau. De la même façon, on observe dans le cerveau de multiples aires communiquant entre elles. Cette communication est observée en biologie lorsque des neurones d'une aire cérébrales activent des neurones d'une autre aire cérébrale. 
+Ces connexions à l'échelle des aires cérébrales peuvent être rétroactives, c'est à dire que l'activation entre deux zones se fait dans les deux sens. Par exemple, \cite{primate_cortex_91}: zones dans le cortex du primate. La plupart des connexions est établie dans les deux sens.
+
+La notion d'aire cérébrale renvoie à un aspect modulaire du cerveau. Modules préexistants mais flexibles: ainsi certaines zones qui s'avèrent non utilisées, suite par exemple à la perte d'un sens, se voient réorganisées au profit d'autre zones. On peut donc relier le cerveau à un modèle modulaire, avec des modules apprenant et pouvant se réorganiser.
+
+Ainsi, de la même façon que les cartes auto-organisatrices rappellent l'organisation du cerveau sans chercher à le modéliser, l'architecture biologique observé dans le cerveau justifie l'idée de créer des architectures modulaires de cartes auto-organisatrices. Quitte à imiter la biologie, autant le faire jusqu'au bout.
+
+On peut explorer plus en détail la notion de modules dans le cerveau. Des zones sont directement liées à des entrées externes, des zones sensorielles, de bas niveau. Le cerveau présente ensuite  d'autres aires liées à ces zones sensorielles, qui apportent de plus en plus d'abstraction dans les représentations des sens. Des aires sont aussi dédiées à l'assocation de plusieurs aires. On parle alors d'architecture hiérarchique, en référence à cette structure de zones sensorielles vers zones abstraites. Cependant, des connexions entre aires peuvent exister dans les deux sens. 
+
+\draft{Le modèle de ces connexions n'est pas établi, mais plusieurs hypothèses et modèles existent en neurosciences computationnelles pour chercher à comprendre ce phénomène. Les plus répandues sont la zone de convergence divergence et la réentrée. A mettre dans modèle computationnels}
+
+\subsection{Systèmes autonomes de cartes auto-organisatrices}
+
+Un des enjeux de l'intelligence artificielle est de construire des systèmes autonomes, en robotique par exemple. Les cartes auto-organisatrices ont déjà comme avantage d'être un modèle d'apprentissage non-supervisé: l'ensemble des neurones et des poids réagit aux données présentées pour en dégager des représentations, sans intervention ou retour extérieur. Ensuite s'arrête l'aspect autonome: l'utilisation des cartes pour des tâches applicative nécessite une intervention extérieure. Il faut par exemple étiquetter les poids pour pouvoir faire de la classification d'entrées. La reconstruction d'image utilise la carte comme donnée pour faire du post processing de reconstruction. Utilisée comme algorithme de machine learning, la carte n'est pas un système autonome. 
+
+Kohonen écrivait ainsi dans son livre à propos des enjeux des cartes de Kohonen en 1995:
+
+
+\begin{quote}Systems of SOMs. A far-reaching goal in self-organization is to create
+autonomous systems, the parts of which control each other and learn from
+each other. Such control structures may be implemented by special SOMs;
+the main problem thereby is the interface, especially automatic scaling of
+interconnecting signals between the modules, and picking up relevant signals
+to interfaces between modules. We shall leave this idea for future research. \cite{Kohonen1995SelfOrganizingM}
+\end{quote}
+L'idée d'un système de SOMs s'inscrit dans une recherche de système autonome. En introduisant des connexions entre cartes, on autorise le système à s'auto-activer au lieu de simplement réagir à des entrées, ce qui est nécessaire pour créer un système dynamique. Nous chercherons donc à créer un système de SOMs qui réagit à des entrées, mais qui peut ensuite s'auto-activer.
+
 \subsection{Mémoire associative et SOM}
 
+Les cartes auto-organisatrices sont utilisées pour faire de la mémoire associatives dans de nombreux travaux. 
+
+%TODO : les lister :) 
+
+L'implémentation d'une mémoire associative nécessite de fusionner des données de différent types en tant que modalités. Cette fusion peut être réalisée selon deux paradigmes:
+\begin{itemize}
+\item Les modalités sont fusionnées \emph{avant} leur présentation à l'algorithme. Il s'agit par exemple de présenter un vecteur concanténant deux modalités. Il s'agit d'une fusion au niveau des entrées.
+%TODO exemples de fusions de ce type dans les cartes de Kohonen
+Il faut faire attention à la façon dont les modalités sont assemblées: une peut prendre plus d'espace, être mieux prise en compte ...
+\item Fusion de modalités au niveau de l'architecture. Dans ce cadre, l'idée est de garder des modules traitant les modalités séparemment, et l'apprentissage des liens entre les modalités est réalisé directement au sein de l'architecture. La signification de modalité est alors retranscrite dans l'architecture: la partie du réseau apprenant une modalité est uniquement associé à une modalité; son comportement pris séparément peut alors avoir un intérêt en lui-même à propos de la modalité considérée.
+L'enjeu est alors de sélectionner les bons moyens de communication entre parties du modèle liées à chaque modalité.
+\end{itemize}
+
+Nous privilégions la deuxième option. Elle rejoint le cadre de systèmes autonomes et d'inspiration biologique; la parties du modèle renvoyant à une modalité précise est vue comme un module. Ces modules 
+
+
+\subsection{Notion de mémoires}
+
+De la même manière que les aires du cerveau, on observe différent types de mémoires interagissant dans un cerveau: mémoire épisodique, mémoire à long terme. Le temps et la mémoire est en quelque sorte spacialisé grâce aux échelles et aux temps de connexions dans le cerveau. 
+La notion de mémoire se rapporte finalement aux architectures et systèmes autonomes. Les mêmes éléments de cerveau sont utilisés dans des cadre sensoriels et de mémoire. 
+Des systèmes autonomes doivent présenter une mémoire. 
+La notion temporelle a donc tout intéret à être intégrée à une architecture de cartes auto-organisatrices dans le cadre de rechercher des systèmes plus autonomes.
+
+\subsection{Association de réseaux de neurones}
+
+Parler du deep learning, des capacités d'émergence dans les systèmes complexes ?????
+
+\subsection{Calcul décentralisé ? }
+
 \section{Architectures de cartes auto-organisatrices}
-\draft{
+Les cartes auto-organisatrices ont été largement étudiées depuis leur introduction en 1984. On dénombre de milliers de papiers en traitant, rien que sur la période 1984 - 2003 pour laquelle une bibliographie exhaustive par mot clés a été menée par Lampinen et Oja (ref). De nombreux papiers ont été publiés depuis, 10000 selon une recherche par mot clés sur google scholar. 
+
+La question d'architecture de cartes de Kohonen a bien sur été explorée. Associer les cartes en modèle hiérarchique faisait même partie des premiers travaux publiés autour des cartes de Kohonen.
+L'association de quelques cartes de Kohonen dans des applications spécifiques est également assez répandue:
+(citer association de cartes pour détection d'erreur, autres applis ?). Tous ces modèles sont des constructions adaptées pour résoudre un problème de machine learning spécifique.
+
+Mais étonnament peu de travaux, par rapport à la littérature sur le sujet, se sont intéressés à l'association de cartes en tant que nouveau modèle à part entière.
+
+Dans cette section, nous passons en revues les modèles existantes permettant, d'une façon ou d'une autre, de connecter des cartes entre elle. Nous étudierons d'un coté les modèles d'architectures de plusieurs cartes communiquant via des interfaces; nous étudierons également les modèles de cartes récurrentes. Les cartes récurrentes sont appliquées à des motifs temporels et ont la caractéristique d'utiliser des éléments de leur état passé pour calculer leur état à un instant donné. La notion de communication est ici encore présente et peut nous servir d'inspiration pour développer une architecture de cartes. Par ailleurs, nous avons mentionné que le traitement de données temporel doit pouvoir être intégrée dans une architecture de carte visant à être autonome. Il s'agit ici de trouver une méthode d'interface entre carte qui puisse à la fois connecter des cartes auto-organisatrices et introduire des connections récurrentes dans le temps. 
+
+\subsection{Modèles de neuroscience computationnelles}
+
+De nombreux travaux de biologie observent des co-activations entre les zones du cerveaux. Le cortex cérébral est ainsi être considéré comme un reseaux de neurone modulaires, avec des régions s'activant entre elles. \cite{primate_cortex_91,mountcastle_columnar_1997,Harriger2012RichCO}
+
+Ces coactivations aient été observées expérimentalement. Plusieurs modèles en neurosciences computationnelles ont été proposés pour expliquer ce phénomènes. Les modèles les plus communs sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de réentrées de Edelmann \cite{Edelman1982GroupSA}.
+
+CDZ holds that specific cortical areas act as sets of pointers to other areas , and therefore connect several brain networks. The reentry theory hypothezise direct bidirectional exchanges between several brain areas. Those theories are a biological inspiration to create and connect modular networks.
+L'étude des réseaux de neurones impulsionnels, utilisés notamment en neurosciences computationnelles, dégage des 
+\cite{electronics9101605}
+
+\subsection{Modèle de SOMs 1}
 Contrairement aux réseaux impulsionnels qui utilisent des règles d'activation à l'échelle d'un neurone, les cartes auto-organisatrices (SOM) et de ses variantes (GSOM, Tree SOM) définissent des règles de calcul à l'échelle de la carte. Ces calculent s'appuient sur sur les distances et le voisinage, imitant les règles locales ; on parle donc de processus d'auto-organisation. Les motifs d'activation qu'ils développent sont alors similaires à ceux que l'on retrouve dans des zones cérébrales telles que le cortex visuel.
 Il est donc pertinent d'étudier comment plusieurs cartes peuvent être connectées pour réaliser un calcul décentralisé.
 De nombreux travaux utilisent des modèles incluant plusieurs cartes auto-organisatrices; mais la plupart de ces architectures sont conçues pour une application spécifique.
@@ -147,10 +219,10 @@ Ces architectures hiérarchiques : commentaire
 Dans \cite{dominey13}, les auteurs construisent des architectures hiérarchiques en transmettant les positions des BMU entre les cartes multimodales. L'inspiration est tirée du cadre CDZ.
 D'autre part, certains travaux visent à connecter les cartes entre elles de manière directe, en se rapprochant de la théorie de la rentrée d'Edelman. C'est le cas de A-SOM : combiner des cartes.
 
-Certains travaux développent des cartes modulaires où les connexions entre cartes sont créées neuronalement. C'est le cas de l'algorithme SOIMA \cite{SOIMA}, où les connexions entre neurones sont apprise avce une regle hebbienne alors que l'apprentissage se fait dans chaque carte : les neurones qui s'activent ensemble voient leur poids de connexion renforcé.}
+Certains travaux développent des cartes modulaires où les connexions entre cartes sont créées neuronalement. C'est le cas de l'algorithme SOIMA \cite{SOIMA}, où les connexions entre neurones sont apprise avce une regle hebbienne alors que l'apprentissage se fait dans chaque carte : les neurones qui s'activent ensemble voient leur poids de connexion renforcé.
 
 \section{Cartes auto-organisatrices récurrentes}
-\draft{
+
 On appelle réseaux récurrents des réseaux de neurones qui prennent en compte leur état précédent pour calculer leur état actuel. Ces réseaux sont utilisés pour le traitement et l'apprentissage de signaux temporels. Citons par exemple, en deep learning, les RNN (recurrent neural networks), dont les neurones recoivent leur état précédent en entrée. Les réseaux récurrents les plus utilisés actuellement sont les LSTM, dans lesquel un système de portes perment d'activer ou non des neurones en fonction des états précédents du réseau. Les cartes de Kohonen ont elles aussi des version récurrentes que nous allons présenter dans cette partie.
 
 Nous nous intéressons aux architectures multi-cartes, mais les cartes récurrentes répondent à des problèmes très similaire à ceux rencontrés dans la conception d'architectures de cartes pour faire de la mémoire associative. Dans une carte récurrente, le problème principal est de trouver comment communiquer à la carte de l'information sur son état précédent et comment utiliser cette information dans l'apprentissage de l'état courant. Cela rejoint la problématique posée dans les architectures de cartes de Kohonen, qui est de comment communiquer à une autre carte son état, afin de l'utiliser dans l'apprentissage de l'état courant. Nous avons vu précedemment qu'il existe assez peu de modèles d'architectures de cartes. Il existe plusieurs modèles de carte récurrentes qui nous permettrons de compléter cette étude. 
@@ -159,7 +231,7 @@ Notre volonté de créer un modèle général d'architecture de cartes auto-orga
 
 %Enfin, les cartes de Kohonen ne se prêtent pas à un apprentissage en ligne de données en temps réel. En effet, il est nécessaires que les données d'entrées soient tirées aléatoirement dans l'espace à apprendre et ne suivent pas une trajectoire. Par exemple, si on veut apprendre des images, mais que les entrées sont données à la carte sous la forme d'une vidéo, les frames de la vidéo sont proches les unes des autres et forment donc une continuité dans l'espace d'entrée des images à apprendre. La carte va alors apprendre le sous ensemble de l'espace sur lequel se trouvent les premières frames, puis les oublier au fur et à mesure de l'apprentissage et les remplacer par les images qui suivent. Avec une architecture multi cartes qui prendrait en compte un aspect temporel, on pourrait imaginer la construction d'une architecture plus robuste.
 
-Nous avons classé les modèles de cartes récurrentes existants en différentes catégories. D'une part, certains modèles de cartes utilisent l'état précédent de la carte lors du calcul de l'activité de l'état courant. De l'autre, des modèles réutilisent plutot des élement de la carte précedente en tant qu'entrée de l'état courant}
+Nous avons classé les modèles de cartes récurrentes existants en différentes catégories. D'une part, certains modèles de cartes utilisent l'état précédent de la carte lors du calcul de l'activité de l'état courant. De l'autre, des modèles réutilisent plutot des élement de la carte précedente en tant qu'entrée de l'état courant.
 
 \subsection{Cartes récurrentes }
 
