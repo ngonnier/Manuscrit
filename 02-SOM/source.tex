@@ -348,7 +348,7 @@ Il faut noter que les poids contextuels cartographient l'espace des positions d'
   \KwData{$\inpx\m{1}_t, ... , \inpx\m{K}_t$ tirés dans $\mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$}
   $\tau \leftarrow 0$\\
   \lForEach{Carte $i$}{$\bmu\m{i}_0 \leftarrow \argmax_{p\m{i}} a\ext(\inpx\m{i}_t,p\m{i})$}
-  \While {$\mathbf{\bmu}_\tau \neq \mathbf{ \bmu}_{\tau-1}$ et $\tau < N_{max}$}{
+  \While {$\mathbf{\bmu}_\tau \neq \mathbf{ \bmu}_{\tau-1}$ et $\tau < \tau_{max}$}{
   \ForEach{Carte $i$}{
  	Avec $i_0, \cdots i_k$ indices des cartes connectées à $i$ dans l'architecture:
 	Calcul de $a_{ci}\m{i}(\bmu\m{i_0},p\m{i}), \cdots, a_{ck}\m{i}(\bmu\m{i_k},p\m{i})$\\
@@ -390,12 +390,12 @@ On choisit de prendre un taux d'apprentissage $\alpha$ commun à toutes les couc
 
 
 On choisit de prendre une valeur $h_{ck} = h_c$ commune à toutes les couches de poids contextuels d'une carte. Ainsi, on apporte une symétrie dans les connexions: les carte réagissent de la même façon aux autres cartes.
-On choisit par contre de prendre le rayon externe $h_e$ très supérieur au rayon contextuel. Nous prendrons au moins $h_e = 10 h_c$. Ce choix de paramètres apporte deux échelles de vitesse dans l'apprentissage, sans avoir à modifier les paramètres au cours du dépliement. Les poids externes se déplient alors très rapidement sur les données, quand les poids contextuels se déplacent très peu au début. Lorsque les poids externes sont organisés, l'apprentissage n'influence plus que les poids contextuels et ces derniers se déplient. Nous analyserons plus en détail l'apprentissage des cartes dans le chapitre suivant.
+On choisit par contre de prendre le rayon externe $h_e$ très supérieur au rayon contextuel. Nous prendrons au moins $h_e = 10 h_c$. Ce choix de paramètres apporte deux élasticités dans l'apprentissage, et induits deux vitesses de dépliement sans avoir à modifier les paramètres au cours du dépliement. Les poids externes se déplient alors très rapidement sur les données, quand les poids contextuels se déplacent très peu au début. Lorsque les poids externes sont organisés, l'apprentissage n'influence plus que les poids contextuels et ces derniers se déplient. Nous analyserons plus en détail l'organisation des cartes dans le chapitre suivant.
 
 Ce jeu de paramètres est ajustable indépendamment dans chaque carte de l'architecture. Dans cette thèse, on prendra en général les mêmes valeurs pour toutes les cartes d'une architecture.
 
 \subsection{Paramètres de l'architecture}
-Certains paramètres sont relatifs à l'architecture. Il s'agit d'abord de $\Delta$, le pas d'apprentissage. Nous avons pris la même valeur de pas pour toutes les cartes. Cette valeur sera en général d'ordre $0.1$, c'est à dire un déplacement de $10\%$ de la taille de la carte, dans les expériences présentées dans les chapitres suivants. Nous verrons que la valeur de ce paramètre a finalement peu d'influence sur la relaxation; il faut juste veiller à ne pas le prendre trop petit, pour ne pas augmenter les temps de relaxation. Le deuxième paramètre relatif à la relaxation est $N_{max}$, nombre maximum de pas de relaxation. Il sera fixé à 200 dans la plupart de nos expériences; nous verrons que la relaxation, si elle converge,se réalise en une dizaine de pas.
+Certains paramètres sont relatifs à l'architecture. Il s'agit d'abord de $\Delta$, le pas d'apprentissage. Nous avons pris la même valeur de pas pour toutes les cartes. Cette valeur sera en général d'ordre $0.1$, c'est à dire un déplacement de $10\%$ de la taille de la carte, dans les expériences présentées dans les chapitres suivants. Nous verrons que la valeur de ce paramètre a finalement peu d'influence sur la relaxation; il faut juste veiller à ne pas le prendre trop petit, pour ne pas augmenter les temps de relaxation. Le deuxième paramètre relatif à la relaxation est $\tau_{max}$, nombre maximum de pas de relaxation. Il sera fixé à 200 dans la plupart de nos expériences; nous verrons que la relaxation, si elle converge,se réalise en une dizaine de pas.
 Les connexions entre cartes sont prédéfinies et fixes. On choisit donc au préalable la taille de l'architecture et les connexions entre cartes.
 
 \begin{table}
