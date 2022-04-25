@@ -195,8 +195,8 @@ Le sens de la moyenne géométrique est une sorte de "et" entre les activités, 
 \caption{Représentation des poids de $M\m{1}$. L'entrée externe $\inpx_t$ présentée à l'itération $t$, tirée d'un espace d'entrée 1D $[0,1]$, est indiquée en bleu sur le graphique. L'entrée contextuelle  est le BMU de la carte $M\m{2}$. Sa valeur est indiquée en jaune; il s'agit d'une position 1D dans la carte $M\m{2}$, à valeur entre 0 et 1. La configuration des poids présentée dans cet exemple est atteinte durant le processus d'apprentissage de deux cartes $M\m{1}$ et $M\m{2}$, dont les entrées $\inpx\m{1}_t$ et $\inpx\m{2}_t$ sont les coordonnées de points tirés sur un cercle. \label{fig:2som_weights}}
 \end{figure}
 \paragraph{Relaxation}
-Le calcul de $\bmu\m{1}$ dépend donc de $\bmu\m{2}$ et inversement. Contrairement à une carte simple, on ne peut pas calculer tous les BMUs de l'architecture un par un en prenant $\hat{p}$, l'argmax de $a_g$, comme BMU dans chaque carte.
-On remplace l'étape de simple calcul d'argmax par un processus global à l'architecture de recherche de BMU. Cette recherche est réalisée par un processus dynamique que l'on appelera \emph{relaxation}, menant à un \emph{consensus} entre cartes : on cherche un point, s'il en existe, où le BMU de chaque carte est au plus proche du maximum de son activité globale $\hat{p}$.
+Le calcul de $\bmu\m{1}_t$ dépend donc de $\bmu\m{2}_t$ et inversement. Contrairement à une carte simple, on ne peut pas calculer tous les BMUs de l'architecture un par un en prenant $\hat{p}$, l'argmax de $a_g$, comme BMU dans chaque carte.
+On remplace l'étape de simple calcul d'argmax par un processus global à l'architecture de recherche de BMU. Cette recherche est réalisée par un processus dynamique que l'on appelera \emph{relaxation}, menant à un \emph{consensus} entre cartes : on cherche un point, s'il existe, où le BMU de chaque carte est au plus proche du maximum de son activité globale $\hat{p}$.
 
 Cette recherche est une boucle imbriquée dans un pas d'apprentissage $t$, indexée par $\tau$ et appelée relaxation. On définit une suite de BMUs intermédaires, $(\bmu\m{1}_\tau , \bmu\m{2}_\tau)$, $\tau$ variant de $0$ à un nombre d'itérations maximum $\tau_{max}$ fixé pour assurer une fin de la boucle. Le processus de relaxation est le suivant:
 \begin{enumerate}
@@ -210,7 +210,7 @@ Cette recherche est une boucle imbriquée dans un pas d'apprentissage $t$, index
 \item Le BMU de chaque carte est pris comme la valeur finale stable de ce processus dynamique. On note cette position finale $\bmu\m{i}_t$, désignant que cette valeur correspond à l'itération d'apprentissage $t$. Cette valeur est utilisée pour les mise a jour des poids. Si la relaxation n'atteint pas de point stable, on fixe tout de même un nombre d'itérations maximum après lequel on arrête la relaxation.
 \end{enumerate}
 \paragraph{Mise à jour}
-Enfin, chaque couche de poids $\w\ext\m{i}$, $\w_c\m{i}$ est mise à jour indépendamment dans chaque carte relativement au BMU $\bmu\m{i}_t$ et les entrées externes $\inpx\m{i}_t$ et contextuelles $\bmu\m{j}_t$. Cette mise à jour correspond à la figure~\ref{fig:maj}. Les rayons d'apprentissage diffèrent entre couche externe et couche contextuelle.
+Enfin, chaque couche de poids $\w\ext\m{i}$, $\w_c\m{i}$ est mise à jour indépendamment dans chaque carte relativement au BMU $\bmu\m{i}_t$ et les entrées externes $\inpx\m{i}_t$ et contextuelles $\bmu\m{j}_t$. Cette mise à jour correspond à la figure~\ref{fig:maj}. A noter que les rayons d'apprentissage sont différents entre couche externe et couche contextuelle.
 
 \begin{figure}
 \centering
@@ -235,7 +235,7 @@ Le maximum de l'activité globale est noté $\hat{p}$. A partir de l'activité g
 \includegraphics[width=0.9\textwidth]{maj_2som.pdf}
 %\end{minipage}
 %\begin{minipage}[c]{0.35\textwidth}
-\caption{Mise à jour de chaque couche de poids indépendamment, relativement au BMU commun $\bmu\m{1}_t$, calculé par relaxation. Par définition de la relaxation, la position $\bmu\m{1}_t$ est proche de la position $\hat{p}\m{1}$ à la fin de la relaxation. Le rayon de voisinage $h_e$ est utilisé pour mettre à jour les poids externes, le rayon $h_c$ pour mettre à jour les poids contextuels. On choisit $h_e > h_c$. Cette différence permet une différence d'échelle d'apprentissage entre couches de poids. Elle est détaillée en section suivante.\label{fig:maj}}
+\caption{Mise à jour de chaque couche de poids indépendamment, relativement au BMU commun $\bmu\m{1}_t$, calculé par relaxation. Par définition de la relaxation, la position $\bmu\m{1}_t$ est proche de la position $\hat{p}\m{1}$ à la fin de la relaxation. Le rayon de voisinage $h_e$ est utilisé pour mettre à jour les poids externes, le rayon $h_c$ pour mettre à jour les poids contextuels. On choisit $h_e > h_c$. Cette différence permet une différence de rythme d'apprentissage entre couches de poids. Elle est détaillée en section suivante.\label{fig:maj}}
 %\end{minipage}
 \end{figure}
 
@@ -247,9 +247,9 @@ Les étapes d'un pas d'apprentissage $t$ d'une architecture de deux cartes sont 
 \begin{enumerate}
 \item Calcul de l'activité externe $a_e(\inpx\m{i},p)$ dans chaque carte et initialisation des BMUs $(\bmu\m{1}_0,\bmu\m{2}_0)$ pour la relaxation.
 \item Relaxation par petits déplacements de $\bmu\m{1}_\tau,\bmu\m{2}_\tau$ dans chaque carte, avec calcul de l'activité contextuelle et globale à chaque pas $\tau$, jusqu'à stabilisation selon $\tau$ du couple de valeurs $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$
-\item Choix des positions de BMU $\bmu\m{1}_t,\bmu\m{2}_t$ comme la valeur de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ à l'issue de la relaxation
+\item Définition des positions de BMU $\bmu\m{1}_t,\bmu\m{2}_t$ comme la valeur de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ à l'issue de la relaxation
 \end{enumerate}
-\item Mise à jour des poids $\w\ext\m{i}$ et $\w\cont\m{i}$ dans chaque carte, selon la position du BMU $\bmu\m{i}_t$, les entrées externes $\inpx\m{i}_t$ et contextuelles $\bmu\m{j}_t$, la position du BMU calculée par relaxation dans l'autre carte.
+\item Mise à jour des poids $\w\ext\m{i}$ et $\w\cont\m{i}$ dans chaque carte, selon sa position du BMU $\bmu\m{i}_t$, son entrées externe $\inpx\m{i}_t$ et son entrées contextuelle $\bmu\m{j}_t$, avec $\bmu\m{j}_t$ la position du BMU calculée par relaxation dans l'autre carte.
 \end{enumerate}
 \begin{figure}
 \centering
