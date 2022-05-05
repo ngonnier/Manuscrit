@@ -4,11 +4,11 @@
 \minitoc
 
 Nous proposons dans cette thèse un modèle d'architecture de cartes auto-organisatrices, CxSOM. Avec ces architectures, on cherchera à apprendre un modèle de relation entre des ensembles de données issues de plusieurs modalités. 
-On souhaite que ce modèle soit générique, permette de construire n'importe quel forme et taille d'architecture, et aie la possibilité d'intégrer des connexions récurrentes. Notre démarche est d'abord de proposer un nouveau modèle de calcul général à base de cartes auto-organisatrices; des applications plus spécifiques pourront être développées à partir de cette méthode. Nous avons publié le modèle CxSOM en~\cite{gonnier2020}.
+On souhaite que ce modèle soit générique, permette de construire n'importe quel forme et taille d'architecture, et ait la possibilité d'intégrer des connexions récurrentes. Notre démarche est d'abord de proposer un modèle de calcul général à base de cartes auto-organisatrices; des applications plus spécifiques pourront être développées à partir de cette méthode. Nous avons publié le modèle CxSOM en~\cite{gonnier2020}.
 
 
-On définit une \emph{architecture} de carte par un réseau composé de plusieurs modules qui sont chacun une cartes de Kohonen, et dans lequel des connexions sont définies entre ces modules. Ces connexions sont orientées: on parle d'une connexion d'une carte A vers une carte B. Le but de ces connexions est de coupler l'apprentissage de plusieurs cartes.
-Sur une telle architecture, on peut construire un graphe $G$ orienté, dont les n\oe{}uds sont des cartes. La connexion d'une carte A vers une carte B est indiquée par la présence d'une arête de A vers B. On appelle architecture \emph{non-hiérarchique} une architecture pour laquelle le graphe $G$ n'est pas un arbre: il présente des boucles. Un exemple d'architecture non-hiérarchique est par exemple représenté en figure~\ref{fig:archi_non_hierarchique}. Certaines cartes sont connectées dans les deux directions, d'autres en boucle. Dans cette thèse, nous cherchons à utiliser de telles architectures non-hiérarchiques pour des tâches de mémoire associative.
+On définit une \emph{architecture} de carte par un réseau composé de plusieurs modules qui sont chacun une cartes de Kohonen et dans lequel des connexions sont définies entre ces modules. Ces connexions sont orientées: on parle d'une connexion d'une carte A vers une carte B. Le but de ces connexions est de coupler l'apprentissage de plusieurs cartes.
+Sur une telle architecture, on peut construire un graphe $G$ orienté, dont les n\oe{}uds sont des cartes. La connexion d'une carte A vers une carte B est indiquée par la présence d'une arête de A vers B. On appelle architecture \emph{non-hiérarchique} une architecture pour laquelle le graphe $G$ n'est pas un arbre: il présente des boucles. Un exemple d'architecture non-hiérarchique est représenté en figure~\ref{fig:archi_non_hierarchique}. Certaines cartes sont connectées dans les deux directions, d'autres en boucle. Dans cette thèse, nous cherchons à utiliser de telles architectures non-hiérarchiques pour des tâches de mémoire associative.
 Ici, chaque carte de l'architecture cherche à apprendre une représentation de l'entrée $A,B,C,D,E$ ou $F$ qui lui est fournie. 
 Lorsque ces entrées sont dépendantes les unes des autres, l'architecture dans sa globalité doit également, d'une façon ou d'une autre extraire les relations, les dépendances, existant entre les distributions de données. Cet apprentissage de relations est au c\oe{}ur de cette thèse et sera détaillé dans le chapitre d'analyse de l'architecture.
 
@@ -24,19 +24,19 @@ Les entrées sont $A,B,C,D,E,F$ quelconques.}
 
 
 \section{Carte de Kohonen classique}\label{sec:kohonen}
-Chaque carte de Kohonen d'une architecture CxSOM est directement dérivée de l'algorithme d'une carte de Kohonen classique introduite en \cite{Kohonen1982}, et décrite extensivement par Kohonen en \cite{Kohonen1995SelfOrganizingM}. Le principe général d'une carte de Kohonen a été décrit dans le chapitre précédent; nous définissons ici plus précisément le modèle et les équations qui serviront de base pour la définition de l'algorithme CxSOM.
+Chaque carte de Kohonen d'une architecture CxSOM est directement dérivée de l'algorithme d'une carte de Kohonen classique introduite en \cite{Kohonen1982}. Cet algorithme et ses dérivés sont décrits en détail par T. Kohonen dans son ouvrage~\cite{Kohonen1995SelfOrganizingM}. Le principe général d'une carte de Kohonen a été décrit dans le chapitre précédent; nous définissons ici plus précisément le modèle et les équations qui serviront de base pour la définition de l'algorithme CxSOM.
 
 \subsection{Algorithme et notations}
-Une carte de Kohonen est un graphe, généralement une ligne 1D ou une grille 2D de $N$ n\oe{}uds. Nous utiliserons dans cette thèse des cartes en une et deux dimensions, c'est à dire des lignes et des grilles. Les notations et le modèle présentés ici sont toutefois applicables à des cartes de dimensions et topologie quelconques.
+Une carte de Kohonen est un graphe, généralement une ligne 1D ou une grille 2D de $N$ n\oe{}uds. Nous utiliserons dans cette thèse des cartes en une et deux dimensions, c'est-à-dire des lignes et des grilles. Les notations et le modèle présentés ici sont toutefois applicables à des cartes de dimensions et topologie quelconques.
 
-L'algorithme et les notations sont résumés en figure~\ref{fig:one_map_not}. Une entrées fournie à une carte de Kohonen est notée $\inpx_t$, tirée dans un espace d'entrée $\mathcal{D}$. A chaque n\oe{}ud de la carte est associé un poids, appelé aussi prototype, noté $\w_e \in D$. Sa \emph{position} dans la carte est indexée par $p$. Nous choisissons d'indexer les positions entre $0$ et $1$: l'ensemble des positions $p$ est donc un ensemble de points discrets entre $0$ et $1$. L'ensemble des poids est noté $\{\w_e(p), p \in \{0,\cdots,\frac{i}{N}, \cdots, 1\}\}$, avec $i$ l'indice entier d'un noeud de la carte. On peut faire la même discrétisation de l'espace pour une carte en 2D.
+L'algorithme et les notations sont résumés en figure~\ref{fig:one_map_not}. Une entrées fournie à une carte de Kohonen est notée $\inpx_t$, tirée dans un espace d'entrée $\mathcal{D}$. \'A chaque n\oe{}ud de la carte est associé un poids, appelé aussi prototype, noté $\w_e \in D$. Sa \emph{position} dans la carte est indexée par $p$. Nous choisissons d'indexer les positions dans $[0,1]$: l'ensemble des positions $p$ est donc un ensemble de points discrets entre $0$ et $1$. L'ensemble des poids est noté $\{\w_e(p), p \in \{0,\cdots,\frac{i}{N}, \cdots, 1\}\}$, avec $i$ l'indice entier d'un noeud de la carte. On peut faire la même discrétisation de l'espace $[0,1]^2$ pour une carte en 2D.
 
 Une étape $t$ de l'algorithme de mise à jour d'une carte de Kohonen contient les étapes suivantes:
 \begin{enumerate}
 \item\label{enum:inp} Une entrée $\inpx_t$ est tirée et présentée à la carte.
 \item\label{enum:act} Une \emph{activité} $a_e(\inpx_t,p)$ est calculée dans la carte pour chaque noeud de position $p$. La fonction d'activité choisie est gaussienne:
 \begin{equation}\label{eq:act1som}
-a_e(\inpx_t,p) = \exp{\frac{\lVert \inpx_t-\w\ext(p) \rVert ^2}{2\sigma^2}}
+a_e(\inpx_t,p) = \exp{\frac{-\lVert \inpx_t-\w\ext(p) \rVert ^2}{2\sigma^2}}
 \end{equation}
 \item\label{enum:bmu} L'unité ayant l'activité maximale est la \emph{Best Matching Unit} de la carte. Sa position est notée $\bmu_t$.
 \item Chaque poids $\w_e$ est déplacé vers l'entrée $\inpx$. Le déplacement est pondéré par une \emph{fonction de voisinage} $H(\bmu,p)$. Cette fonction est maximale en $p = \bmu$ et décroissante autour de cette position. Dans notre étude, la fonction de voisinage est triangulaire,  maximale en $\bmu_t$, linéairement décroissante sur un \emph{rayon de voisinage} noté $h_e$ et nulle sinon.
@@ -62,10 +62,9 @@ L'organisation d'une carte de Kohonen est gérée par plusieurs paramètres.
 Nous détaillons ici les choix de paramètres effectués. Les paramètres supplémentaires introduits par la version CxSOM seront présentés en partie \ref{sec:params}.
 
 \subsubsection{Taux d'apprentissage $\alpha$}
-Le taux d'apprentissage $\alpha$ détermine la proportion dans laquelle chaque poids est déplacé vers l'entrée lors de sa mise à jour, selon l'équation~\ref{eq:update}. Dans l'algorithme classique, le taux d'apprentissage décroît au cours de l'apprentissage. Au début de l'apprentissage, $\alpha$ est élevé, ce qui assure un dépliement rapide de la carte. $\alpha$ est ensuite diminué manuellement tout au long de l'apprentissage. Cette décroissance assure la convergence des poids de la carte au cours de l'apprentissage.
+Le taux d'apprentissage $\alpha$ détermine la proportion dans laquelle chaque poids est déplacé vers l'entrée lors de sa mise à jour, selon l'équation~\ref{eq:update}. Dans l'algorithme classique, le taux d'apprentissage décroît au cours de l'apprentissage. Au début de l'apprentissage, $\alpha$ est élevé, ce qui assure un dépliement rapide de la carte. $\alpha$ est ensuite diminué manuellement tout au long de l'apprentissage. Cette décroissance accompagne la convergence des poids de la carte au cours de l'apprentissage.
 
-Un objectif à long terme de développement de l'architecture CxSOM est de développer des systèmes de cartes autonomes. Ces systèmes apprennent sur des données en temps réel, c'est à dire traitent des données séquentielles. Dans ce cas d'utilisation, il n'est pas souhaitable de faire décroître le taux d'apprentissage qui introduit un début et une fin d'apprentissage fixés par avance. Le calcul d'une itération dépend alors non seulement de l'état précédent de la carte, mais aussi de l'itération $t$ courante.
-Dans une logique de développement futur, nous utiliserons un taux d'apprentissage constant au cours des itérations dans CxSOM. Les calculs réalisés lors d'une itération $t$ dépendent alors uniquement de l'état précédent.
+Un objectif à long terme de développement de l'architecture CxSOM est de construire des systèmes de cartes autonomes dynamiques. Ces systèmes apprennent sur des données en temps réel, c'est à dire traitent des données séquentielles. Dans ce cas d'utilisation, il n'est pas souhaitable de faire décroître le taux d'apprentissage qui introduit un début et une fin d'apprentissage fixés par avance. Le calcul d'une itération dépend alors non seulement de l'état précédent de la carte, mais aussi de l'itération $t$ courante. Les calculs réalisés lors d'une itération $t$ dépendent alors uniquement de l'état précédent.
 
 
 \subsubsection{Topologie de la carte}
@@ -99,15 +98,15 @@ Lorsque la dimension des données est plus grande que celle de la carte, par exe
 \subsubsection{Rayon de voisinage}
 Le choix de la fonction de voisinage est déterminant dans la topologie de la carte. Elle dépend en particulier du rayon de voisinage $h_e$.
 Cette valeur détermine quelles unités voisines du BMU auront leurs poids mis à jour.
-Plus le rayon $h_e$ est grand, plus la partie de la carte déplacée vers l'entrée lors de la mise à jour est étendue. 
+Plus le rayon $h_e$ est grand, plus la partie de la carte dont les poids sont déplacés vers l'entrée lors de la mise à jour est étendue. 
 Le rayon de voisinage détermine \emph{l'élasticité} d'une carte. Une carte ayant un grand rayon de voisinage est moins sensible aux variations locales des données et parvient à se déplier selon les variations à grande échelle de la distribution des entrées.
 Un petit rayon d'apprentissage permet au contraire de déplacer les poids concentrés dans une petite région sans affecter toute la carte. Les poids s'ajustent ainsi aux variations locales des entrées. Par contre, choisir un rayon de voisinage petit au début de l'apprentissage empêche la carte de se déplier globalement de façon ordonnée; au contraire, on verra apparaître des portions distinctes de cartes s'organisant de façon discontinue.
 Le choix de l'élasticité est donc un compromis entre apprentissage d'une structure globale des entrées et ajustement aux variations locales.
 Dans l'algorithme classique, ce compromis est trouvé en faisant décroitre le rayon de voisinage au cours de l'apprentissage. Un grand rayon de voisinage permet à la carte de se déplier rapidement en apprenant une structure globale des données. Sa décroissance au cours des itérations permet d'affiner l'apprentissage des données à un niveau plus fin. 
-Contrairement à la plupart des SOM classiques, nous garderons des rayons de voisinage constants dans CxSOM. Tout comme le fait de garder le taux d'apprentissage constant, garder le rayon de voisinage constant est motivé par les objectifs de traitement de données séquentielles.
+Contrairement à la plupart des SOM classiques, nous garderons des rayons de voisinage constants dans CxSOM. Tout comme le fait de garder le taux d'apprentissage constant, garder le rayon de voisinage constant est motivé par les objectifs de traitement de données séquentielles, vers des systèmes de cartes autonomes.
 
 \section{Motivations du modèle CxSOM}
-A partir du modèle de carte de Kohonen détaillé en section \ref{sec:kohonen}, nous proposons une version de carte auto-organisatrice servant de bloc de base pour construire des architectures non-hiérarchiques de cartes. L'idée de construire de telles architectures est de traiter plusieurs ensembles de données hétérogènes de façon jointe, pour réaliser de la mémoire associative.
+A partir du modèle de carte de Kohonen détaillé en section \ref{sec:kohonen}, nous proposons une version de carte auto-organisatrice servant de bloc de base pour construire des architectures non-hiérarchiques de cartes. L'idée de construire de telles architectures est de traiter plusieurs ensembles de données hétérogènes de façon jointe, pour réaliser une fonction de mémoire associative.
 Nous présentons tout d'abord les choix de développement effectués pour créer le modèle d'architecture.
 
 \subsection{Champ d'application: mémoire associative}
@@ -119,7 +118,7 @@ Les exemples porteront sur des modalités en une dimension, mais les dimensions 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{inputs_3som}
-\caption{Exemple de disposition d'entrées. Les modalités associées à différentes cartes sont les coordonnées $x,y,z$ de chaque point. Dans une telle disposition, les modalités dépendent les unes des autres: développer une mémoire associative signifie apprendre le modèle de relation existant etre $x,y$ et $z$, c'est à dire le cercle.\label{fig:inputs}}
+\caption{Exemple de disposition d'entrées en deux dimensions, à gauche, et trois dimensions, à droite. Les modalités associées à différentes cartes sont les coordonnées $x,y$ et $z$ de chaque point. Dans une telle disposition, les modalités dépendent les unes des autres: développer une mémoire associative signifie apprendre le modèle de relation existant etre $x,y$ et $z$, c'est à dire le cercle.\label{fig:input_3som}}
 \end{figure}
 
 \subsection{Description de l'architecture}
@@ -161,9 +160,9 @@ On prend dans cet exemple des cartes en une dimension, indexées par $p \in [0,1
 
 \subsection{Détail des étapes}
 \paragraph{Structure des cartes}
-La carte $M\m{1}$ prend une entrée externe notée $\inpx\m{1}_t$ et une entrée contextuelle qui est la position courante du BMU de la carte $M\m{2}$, $\bmu\m{2}_t$. Les entrées externes $\inpx\m{1}_t$ et $\inpx\m{2}_t$ sont deux modalités interdépendantes; dans cet exemple, il s'agit des coordonnées $x$ et $y$ d'un point sur un cercle tel que présenté en figure~\ref{fig:inputs}. Les entrées externes sont donc également en une dimension.
+La carte $M\m{1}$ prend une entrée externe notée $\inpx\m{1}_t$ et une entrée contextuelle qui est la position courante du BMU de la carte $M\m{2}$, $\bmu\m{2}_t$. Les entrées externes $\inpx\m{1}_t$ et $\inpx\m{2}_t$ sont deux modalités interdépendantes; dans cet exemple, il s'agit des coordonnées $x$ et $y$ d'un point sur un cercle tel que présenté en figure~\ref{fig:input_3som}. Les entrées externes sont donc également en une dimension.
 La structure de chaque carte de l'architecture est adaptée à partir du modèle classique de SOM pour prendre deux entrées au lieu d'une. On indicera les élements des cartes par $(1)$ et $(2)$ pour désigner les éléments appartenant à la carte $M\m{1}$ et $M\m{2}$.
-Une carte possède ainsi deux couches de poids: les poids \emph{externes} $\w_e\m{i}$, $i=1,2$ qui se déplient sur les entrées $\inpx\m{(i)}$, et les poids contextuels $w_c\m{i}$, qui se déplient sur l'espace des positions en une dimension de l'autre carte. Ces deux couches de poids sont représentées en figure~\ref{fig:2som_weights}. La position du BMU à une instant $t$ de $M\m{2}$, $\bmu\m{2}_t$ est utilisée comme entrée contextuelle de $M\m{1}$, et $\bmu\m{1}_t$ comme entrée contextuelle de $M\m{2}$. Les deux cartes apprennent donc de façon couplée.
+Une carte $i$ ($i \in {1,2}$) possède ainsi deux couches de poids: les poids \emph{externes} $\w_e\m{i}$,  qui se déplient sur les entrées $\inpx\m{i}$, et les poids contextuels $w_c\m{i}$, qui se déplient sur l'espace des positions en une dimension de l'autre carte. Ces deux couches de poids sont représentées en figure~\ref{fig:2som_weights}. La position du BMU à une instant $t$ de $M\m{2}$, $\bmu\m{2}_t$ est utilisée comme entrée contextuelle de $M\m{1}$, et $\bmu\m{1}_t$ comme entrée contextuelle de $M\m{2}$. Les deux cartes apprennent donc de façon couplée.
 
 \paragraph{Calcul d'activité}
 L'activité globale de la carte $a_g$ résulte de la combinaison entre l'activité \emph{externe} et l'activité \emph{contextuelle}. Ces deux activités sont calculées comme dans le modèle classique, équation~\ref{eq:act1som} et tracées en figure~\ref{fig:2som_activite}; l'activité externe compare les poids externes à l'entrée externe $\inpx_t$, et l'activité contextuelle les poids contextuels à l'entrée contextuelle.
@@ -181,7 +180,7 @@ $a_c$ et $a_e$ sont combinées en une activité globale:
 a_g\m{1}(\inpx\m{1},\bmu\m{1}_t,\bmu\m{2}_t,p) = \sqrt{a_e(\inpx_t,p)\times \frac{a_e(\inpx_t,p) + a_c(\bmu\m{2}_t,p)}{2}}
 \end{equation}
 Par la différence de contribution de $a_c$ et $a_e$ au sein de l'activité globale -- $a_c$ ne contribue qu'à la puissance $\frac{1}{2}$ -- on assure que l'activité contextuelle vient seulement moduler l'activité externe.
-On peut observer cette modulation sur la courbe noire de la figure~\ref{fig:2som_activite}: l'activité globale suit la même progression que l'activité externe, mais est localement modifiée par les variations de l'activité contextuelle. De cette façon, les entrées contextuelles ne viennent pas donner d'hallucinations à la carte: elle apprend en priorité ses entrées externes, conditionnées aux entrées contextuelles. Cette façon d'assembler les entrées est inspirée des travaux conduits en \cite{menard_model_2005}.
+On peut observer cette modulation sur la courbe noire de la figure~\ref{fig:2som_activite}: l'activité globale suit la même progression que l'activité externe, mais est localement modifiée par les variations de l'activité contextuelle. De cette façon, les entrées contextuelles ne viennent pas donner d'"hallucinations" à la carte: elle apprend en priorité ses entrées externes, conditionnées aux entrées contextuelles. Cette façon d'assembler les entrées est inspirée des travaux conduits en \cite{menard_model_2005}.
 Dans ces travaux, les auteurs combinent des activités par leur moyenne géométrique. 
 Le sens de la moyenne géométrique est une sorte de "et" entre les activités, ce qu'on recherche ici aussi.
 \begin{figure}
@@ -246,7 +245,7 @@ Les étapes d'un pas d'apprentissage $t$ d'une architecture de deux cartes sont 
 \item Relaxation:
 \begin{enumerate}
 \item Calcul de l'activité externe $a_e(\inpx\m{i},p)$ dans chaque carte et initialisation des BMUs $(\bmu\m{1}_0,\bmu\m{2}_0)$ pour la relaxation.
-\item Relaxation par petits déplacements de $\bmu\m{1}_\tau,\bmu\m{2}_\tau$ dans chaque carte, avec calcul de l'activité contextuelle et globale à chaque pas $\tau$, jusqu'à stabilisation selon $\tau$ du couple de valeurs $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$
+\item Relaxation par petits déplacements de $\bmu\m{1}_\tau,\bmu\m{2}_\tau$ dans chaque carte, avec calcul de l'activité contextuelle et globale à chaque pas $\tau$, jusqu'à stabilisation du couple de valeurs $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$
 \item Définition des positions de BMU $\bmu\m{1}_t,\bmu\m{2}_t$ comme la valeur de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ à l'issue de la relaxation
 \end{enumerate}
 \item Mise à jour des poids $\w\ext\m{i}$ et $\w\cont\m{i}$ dans chaque carte, selon sa position du BMU $\bmu\m{i}_t$, son entrées externe $\inpx\m{i}_t$ et son entrées contextuelle $\bmu\m{j}_t$, avec $\bmu\m{j}_t$ la position du BMU calculée par relaxation dans l'autre carte.
@@ -339,8 +338,8 @@ Les poids sont mis à jour par rapport à leurs entrées respectives suivant l'�
 Les rayons de voisinage $h_e$ et $h_c$ ont des valeurs différentes.
 Ainsi, la mise à jour des poids d'une carte est indépendante à chaque couche, avec des paramètres propres, ayant simplement le BMU en commun.
 \begin{align}
- \w\ext\m{i}(p,t+1) = \w\ext\m{i}(p,t) + H\ext(\bmu\m{i}, p)(\w\ext\m{i}(p) - \inpx_t\m{i}) \\
-\forall k, \w_{ci_k}\m{i}(p,t+1) = \w_{ci_k}\m{i}(p) + H\cont(\bmu\m{i},p)(\w_{ci_k}\m{i}(p) - \bmu\m{i_k}_t)
+ \w\ext\m{i}(p,t+1) = \w\ext\m{i}(p,t) + \alpha H\ext(\bmu\m{i}, p)(\w\ext\m{i}(p) - \inpx_t\m{i}) \\
+\forall k, \w_{ci_k}\m{i}(p,t+1) = \w_{ci_k}\m{i}(p) + \alpha H\cont(\bmu\m{i},p)(\w_{ci_k}\m{i}(p) - \bmu\m{i_k}_t)
 \end{align}
 
 
@@ -363,8 +362,8 @@ Ainsi, la mise à jour des poids d'une carte est indépendante à chaque couche,
   }
   $\bmu\m{1}_t, \cdots, \bmu\m{n}_t \leftarrow \hat{p}\m{1}_\tau, \cdots , \hat{p}\m{n}_\tau$\\
   \ForEach{Carte $i$}{
-  $\w\ext\m{i}(p) \leftarrow \w\ext\m{i}(p) + H\ext(\bmu\m{i}_t, p)(\w\ext\m{i}(p) - \inpx_t\m{i})$\\
-  \lForEach{$k$}{$\w_{ci_k}\m{i}(p) \leftarrow \w_{ci_k}\m{i}(p) + H\cont(\bmu\m{i}_t,p)(\w_{ci_k}\m{i}(p) - \bmu\m{i_k}_t)$}
+  $\w\ext\m{i}(p) \leftarrow \w\ext\m{i}(p) + \alpha H\ext(\bmu\m{i}_t, p)(\w\ext\m{i}(p) - \inpx_t\m{i})$\\
+  \lForEach{$k$}{$\w_{ci_k}\m{i}(p) \leftarrow \w_{ci_k}\m{i}(p) + \alpha H\cont(\bmu\m{i}_t,p)(\w_{ci_k}\m{i}(p) - \bmu\m{i_k}_t)$}
   }
  \end{algorithm}
  
@@ -394,7 +393,7 @@ $\alpha$ et $h_e, h_c$ resteront constants au cours de l'apprentissage.
 Ce jeu de paramètres est ajustable indépendamment dans chaque carte de l'architecture; dans nos travaux, on prendra en général les mêmes valeurs pour toutes les cartes d'une architecture.
 
 \subsection{Paramètres de l'architecture}
-Certains paramètres sont relatifs à l'architecture. Il s'agit d'abord de $\Delta$, le pas de relaxation. Nous avons pris la même valeur de pas pour toutes les cartes. Cette valeur sera en général d'ordre $0.1$, c'est à dire un déplacement de $10\%$ de la taille de la carte, dans les expériences présentées dans les chapitres suivants. Nous verrons que la valeur de ce paramètre a finalement peu d'influence sur la relaxation; il faut juste veiller à ne pas le prendre trop petit, pour ne pas augmenter les temps de relaxation. Le deuxième paramètre relatif à la relaxation est $\tau_{max}$, nombre maximum de pas de relaxation. Il sera fixé à 200 dans la plupart de nos expériences; nous verrons que la relaxation, si elle converge, se réalise en une dizaine de pas.
+Certains paramètres sont relatifs à l'architecture. Il s'agit d'abord de $\Delta$, le pas de relaxation. Nous avons pris la même valeur de pas pour toutes les cartes. Cette valeur sera en général d'ordre $0.1$, c'est-à-dire un déplacement de $10\%$ de la taille de la carte, dans les expériences présentées dans les chapitres suivants. Nous verrons que la valeur de ce paramètre a finalement peu d'influence sur la relaxation; il faut juste veiller à ne pas le prendre trop petit, pour ne pas augmenter les temps de relaxation. Le deuxième paramètre relatif à la relaxation est $\tau_{max}$, nombre maximum de pas de relaxation. Il sera fixé à 200 dans la plupart de nos expériences; nous verrons que la relaxation, si elle converge, se réalise en une dizaine de pas.
 Les connexions entre cartes sont prédéfinies et fixes.
 On choisit au préalable la taille de l'architecture et les connexions entre cartes.
 
@@ -403,7 +402,7 @@ On choisit au préalable la taille de l'architecture et les connexions entre car
 \vspace{3mm}
 \begin{tabular}{|c|c|c|}
 \hline
-Paramètres & Description & Plage de valeur \\
+Paramètres & Description & Valeur \\
 \hline
 $\alpha$ & Taux d'apprentissage & $0.1$ \\
 $N$ & Taille de la carte & de $500$ à $1000$ en 1D, $50 \times 50$ en 2D \\
