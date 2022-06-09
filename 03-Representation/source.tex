@@ -12,7 +12,6 @@ Nous étudions l'architecture CxSOM dans un cadre de mémoire associative.
 L'objectif pour une architecture de cartes est alors d'apprendre une représentation des relations existant entre des entrées de différentes modalités, tout en apprenant une représentation de chaque espace d'entrée.
 Le but de cette thèse est d'analyser comment est effectuée cette représentation des relations et des entrées dans une architecture CxSOM.
 La compréhension du comportement de structures avec un faible nombres de cartes posera des bases pour la construction d'architectures plus grandes.
-
 Ce système de cartes est un système complexe, même dans une architecture de quelques cartes. Chaque carte possède 500 unités; son état, représenté par son BMU, peut alors prendre 500 valeurs. L'état d'une carte dépend des cartes voisines.
 
 Cette thèse s'inscrit dans une démarche complètement expérimentale: nous observons l'organisation d'architectures de cartes sur différents espaces d'entrées, différents configurations, différents paramètres pour comprendre leur comportement. Nous voulons également poser un formalisme clair sur des architectures de quelques cartes pour permettre l'adaptation de CxSOM à plus grande échelle.
@@ -20,9 +19,8 @@ Ce chapitre s'attelle à définir une méthode expérimentale claire et un forma
 
 Pour analyser l'organisation de ces cartes sur plusieurs entrées et plusieurs cartes, nous avons besoin de définir des représentations nouvelles par rapport à l'étude d'une SOM classique.
 Nous posons dans ce chapitre la méthode expérimentale que nous utiliserons dans toutes les expériences présentées dans ce manuscrit. 
-Nous présenterons des représentations adaptées à cette méthode expérimentale et le formalisme utilisé. Le but de ce chapitre est de présenter la démarche et expliciter les représentations choisies.
-Nous introduirons enfin un indicateur caractérisant l'apprentissage de ces relations entre entrées, basé sur l'information mutuelle.
-Toutes ces représentations seront illustrées sur une architecture de deux cartes.
+Nous présenterons des représentations adaptées à cette méthode expérimentale et le formalisme utilisé. Ces représentations ont pour but non seulement de qualifier la qualité de l'apprentissage mais surtout de mettre en lumière les propriétés et l'organisation des cartes émergeant de l'algorithme d'apprentissage.
+Nous introduirons enfin un indicateur caractérisant l'apprentissage de ces relations entre entrées, basé sur l'information mutuelle. Toutes ces représentations seront illustrées sur une architecture de deux cartes.
 
 \subsection{Une expérience simple à titre d'illustration}
 
@@ -170,7 +168,7 @@ Le formalisme par variable aléatoires permet d'utiliser des outils et métrique
 \begin{figure}
 \centering
 \includegraphics[width=0.85\textwidth]{tests_2maps.pdf}
-\caption{Schéma decrivant les tests. Un test consiste à présenter successivement des réalisations de $mathbf{X}$, notées $(\inpx\m{1}_t,\inpx\m{2}_t)$. Nous laissons le processus de relaxation décrit au paragraphe xxx stabiliser les BMUs. Quand la stabilité est atteinte, la valeur des positions de BMU $\bmu\m{1}_t$ et $\bmu\ù{2}$ est obtenue. Un échantillon de test complet est obtenu en présentant un ensemble de réalisations de $\mathbf{X}$. Les poids ne sont pas mis à jour entre chaque itération, ce qui permet de considérer une phase de test comme un échantillonnage des variables aléatoires considérées: $\inpx\m{1},\inpx\m{2}$ par définition, mais aussi $\bmu\m{1}$, $\bmu\m{2}$ et $U$.}
+\caption{Schéma decrivant les tests. Un test consiste à présenter successivement des réalisations de $mathbf{X}$, notées $(\inpx\m{1}_t,\inpx\m{2}_t)$. Nous laissons le processus de relaxation décrit au paragraphe xxx stabiliser les BMUs. Quand la stabilité est atteinte, la valeur des positions de BMU $\bmu\m{1}_t$ et $\bmu\m{2}$ est obtenue. Un échantillon de test complet est obtenu en présentant un ensemble de réalisations de $\mathbf{X}$. Les poids ne sont pas mis à jour entre chaque itération, ce qui permet de considérer une phase de test comme un échantillonnage des variables aléatoires considérées: $\inpx\m{1},\inpx\m{2}$ par définition, mais aussi $\bmu\m{1}$, $\bmu\m{2}$ et $U$.}
 \label{fig:flowchart}
 \end{figure}
 
@@ -187,14 +185,14 @@ Il s'agit de tracer les dépendances entre les variables $$(\inpx\m{1}, \cdots, 
 Nous proposons d'abord une représentation pour évaluer la qualité de quantification vectorielle effectuée par une carte de l'architecture. Nous présenterons ensuite des représentations nous permettant de comprendre comment le modèle d'entrées est appris par l'architecture CxSOM.
 % Ces points se superposent à la courbe de poids, mais certaines unités ne seront pas représentées: on les appelles \emph{unités mortes}. La position de la best matching unit $\bmu$ étant la réponse de la carte à une entrée, il s'agit d'un tracé d'un élément de la carte en fonction de la réponse de celle-ci.
 %\subsection{Représentation des entrées par rapport au BMU}
-\subsection{Erreur de quantification d'une modalité dans une carte}
+\subsection{Erreur de quantification d'une modalité dans chaque carte}
 
 La première fonction d'une carte de Kohonen est de réaliser une tâche de quantification vectorielle sur son entrée externe. Au sein d'une architecture de cartes, nous nous attendons à ce que chaque carte extrait une représentation de la modalité qu'elle prend en entrée.
 Afin de mesurer cette qualité de la quantification vectorielle au sein d'une carte dans CxSOM, nous tracerons le nuage de points correspondant au poids externe du BMU $\w_e(\bmu\m{i})$ en fonction de l'entrée présentée $\inpx\m{i}$. Une carte effectue une quantification vectorielle correcte si ce nuage de points est proche de la fonction identité.
 Ces tracés sont réalisés en figure~\ref{fig:erreur} pour l'expérience exemple. Ces tracés s'approchent de l'identité: la quantification des entrées est correctement réalisée.
-On pourrait mesurer une erreur quadratique pour déterminer en quoi les points dérivent de l'identité, mais la représentation en nuage de points est, à défaut d'être quantitative, plus qualitative. En effet, ici, on observe que le nuage à une structure "filamenteuse". Nous reviendrons sur ce point par la suite, nous contentant de souligner ici que la représentation graphique exprime une propriété que la simple mesure d'erreur n'aurait pas mise en évidence. 
+On pourrait mesurer une erreur quadratique moyenne pour déterminer numériquement cette erreur de quantification mais la représentation en nuage de points est, à défaut d'être quantitative, plus qualitative. En effet, ici, on observe que le nuage à une structure "filamenteuse". Nous reviendrons sur ce point par la suite, nous contentant de souligner ici que la représentation graphique exprime une propriété que la simple mesure d'erreur n'aurait pas mise en évidence. 
 
-Cette représentation nous informe sur la qualité de quantification dans une seule carte relativement à une seule modalité. Il nous faut ensuite définir des méthodes de représentation permettant d'évaluer comment le modèle d'entrée est appris par l'architecture de cartes.
+Cette représentation nous informe ainsi sur la qualité de quantification dans une seule carte relativement à une seule modalité. Il nous faut ensuite définir des méthodes de représentation permettant d'évaluer comment le modèle d'entrée est appris par l'architecture de cartes.
 
 \begin{figure}
     \centering
@@ -274,15 +272,21 @@ $U$ apparaît alors comme une fonction de la position du BMU $\bmu\m{i}$ dans ch
 Une représentation utilisée pour les cartes de Kohonen classique est de tracer les poids du graphe qu'est la carte dans l'espace de ses entrées, tel que la figure de droite en~\ref{fig:representation}. Dans CxSOM, chaque carte prend en entrée une seule des modalités. Par contre, il est possible de représenter comment la carte se déplie dans l'espace de toutes les modalités.
 
 Nous définissons alors une façon de représenter le dépliement d'une seule carte de CxSOM dans l'espace global des entrées. Pour les entrées 2D, il s'agit alors de représenter le dépliement de $M\m{1}$ dans l'espace des entrées $\inpx\m{1},\inpx\m{2}$.
+Au lieu de s'appuyer sur les poids des cartes comme en~\ref{fig:representation}, nous utilisons les valeurs de l'échantillon de test. Nous traçons le nuage de poids correspondant au poids des BMUs: $\w_e\m{1}(\bmu\m{1},\w_e\m{2}(\bmu\m{2})$, puis relions ces points selon l'ordre de leurs positions dans la carte $M\m{1}$ ou $M\m{2}$. Ainsi, nous obtenons une représentation des cartes $M\m{1}$ ou $M\m{2}$ dépliées dans l'espace global des entrées. 
+Notons que les unités mortes ne peuvent pas être représentées sur la carte. Nous ne représentons que les morceaux de cartes étant effectivement BMUs. 
+Cette représentation est tracée en ~\ref{fig:distortion} pour l'exemple à deux cartes.
+La carte représentant les poids externes des BMUs, on s'attend à ce que la forme du nuage de poids se rapproche de la distribution des entrées.
+Les tracés mettent en lumière les propriétés observées lors de la représentation cartographique des entrées, à savoir l'apparition de zones dans chaque carte. Les poids suivent la structure circulaire des entrées en découpant l'espace en zones. Les parties du cercle effectivement représentées par les poids sont réduites: le cercle est comme discrétisé en morceaux. 
+Les tracés font apparaître la façon qu'ont les cartes d'organiser leurs poids. 
 
 \begin{figure}
-    \begin{minipage}{0.45\textwidth}
+    \begin{minipage}{0.49\textwidth}
     \includegraphics[width=\textwidth]{disto_cercle_M1.pdf}
     \end{minipage}
-    \begin{minipage}{0.45\textwidth}
+    \begin{minipage}{0.49\textwidth}
     \includegraphics[width=\textwidth]{disto_cercle_M2.pdf}
     \end{minipage}
-    \caption{représentation des poids des BMUs des cartes $M\m{1}$ et $M\m{2}$, reliés dans l'ordre de leurs positions selon $M\m{1}$ figure de gauche et $M\m{2}$ figure de droite. Le dépliement de chacune des cartes est alors représenté dans l'espace complet des entrées \label{fig:distortion}}
+    \caption{représentation des poids des BMUs des cartes $M\m{1}$ et $M\m{2}$, reliés dans l'ordre de leurs positions selon $M\m{1}$ figure de gauche et $M\m{2}$ figure de droite. Le dépliement de chacune des cartes est alors représenté dans l'espace complet des entrées \label{fig:distortion}.}
     \end{figure}
 
 \subsection{Conclusion}
@@ -290,20 +294,20 @@ Nous définissons alors une façon de représenter le dépliement d'une seule ca
 Nous utiliserons donc quatre représentations des cartes dans la suite de cette thèse, toutes définies à partir d'un échantillon de test.
 Le tracé du poids du BMU en fonction de l'entrée externe permet d'évaluer comment une carte a individuellement appris une représentation de son espace d'entrée. 
 
-
 Pour observer comment l'architecture a appris le modèle d'entrée, nous traçons une représentation cartographique des entrées. Sur un même graphique nous tracons les nuages de points $(\inpx\m{1},\bmu\m{1})$ et $(\inpx\m{2},\bmu\m{1})$, de même pour $M\m{2}$, superposés avec les courbes de poids de $M\m{1}$ (respectivement $M\m{2}$). Cette représentation permet d'observer quelles valeurs d'entrées chaque position de BMU encode.
 
-Enfin, nous réduisons si possible la dimension du modèle d'entrée $(\inpx\m{1},\cdots,\inpx\m{n})$ en une valeur $U$ et traçons les nuage de points $(U,\bmu\m{1})$ et $(U,\bmu\m{2})$. L'apprentissage du modèle d'entrée doit se traduire par l'observation d'une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte.
+
+L'apprentissage du modèle d'entrée doit se traduire par l'observation d'une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte.
 
 
 
 \section{Un indicateur de l'apprentissage du modèle par l'architecture basé sur l'information mutuelle}
 
 Nous avons présentés différents tracés permettant de conclure que l'architecture de carte a appris une représentation du modèle d'entrée. Cet apprentissage du modèle se caractérise notamment par le fait que chaque carte dissocie ses BMUs en fonction du modèle d'entrée globale et non seulement de son entrée externe. 
-Nous souhaitons définir un indicateur numérique caractérisant cet apprentissage. Cet indicateur nous permettra de comparer de multiples expériences entre elles. Les tracés sont réalisables pour une variable cachée $U$ en en une dimension; un indicateur numérique nous permettra aussi d'évaluer l'apprentissage lorsque la dimension de $U$ est plus grande.
+Nous souhaitons définir un indicateur numérique caractérisant cet apprentissage. Cet indicateur nous permettra de comparer plusieurs expériences entre elles. Les tracés sont réalisables pour une variable cachée $U$ en en une dimension; un indicateur numérique nous permettra aussi d'évaluer l'apprentissage lorsque la dimension de $U$ est plus grande.
 
 Nous avons défini les expériences en termes de variables aléatoires. La théorie de l'information de Shannon \cite{Shannon1948AMT} apporte un modèle mathématique qui permet de manipuler et encoder ces variables et quantifier l'information partagée entre leurs distributions.
-Nous définirons dans cette partie un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes par des outils d'information. Nous présenterons également la méthode d'estimation choisie. 
+Nous définirons dans cette partie un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes en s'appuyant sur la notion d'information mutuelle, issue de la théorie de l'information. Nous détaillerons notamment la méthode d'estimation choisie pour cet indicateur.
 
 \subsection{Information mutuelle et entropie}
 
@@ -334,42 +338,40 @@ L'information mutuelle possède les propriété suivantes:
 \end{enumerate}
 
 Lors de l'analyse de CxSOM, on s'interroge sur l'information que portent les positions des BMUs $\bmu$ d'une carte sur le modèle d'entrée. Les éléments de la carte ont été définis en termes statistiques; on peut donc utiliser l'information mutuelle comme une représentation de l'information portée par le BMU d'une carte sur le modèle d'entrée.
+
 \subsection{Indicateur}
 
-Nous avons introduit $U$, la variable correspondant à une réduction de dimension des entrées $(\inpx\m{i})$. Dans l'exemple, $U$ est en une dimension pour des entrées 2D $(\inpx\m{1},\inpx\m{2})$.
-Nous avons observé que si l'architecture a appris le modèle s'entrée, alors $U$ est une fonction de $\bmu$ dans chacune des cartes.
-Cette relation fonctionnelle montre qu'une carte a appris non seulement une représentation de son entrée mais aussi une représentation du modèle complet, représenté par $(\inpx\m{1},\cdots,\inpx\m{n})$ ou par la variable $U$, qui est en bijection avec $(\inpx\m{1},\cdots,\inpx\m{n})$.
-Nous cherchons à définir un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes. D'après les observations mentionnées ci-dessus, nous cherchons donc un indicateur traduisant le fait que $U$ est une fonction de $\bmu$ dans chacune des cartes. Nous attendons que cet indicateur prenne une valeur minimale lorsque $U$ n'a aucune relation avec $\bmu$, et augmente jusqu'à une valeur maximale lorsque $U$ est fonction de $\bmu$. Afin de pouvoir comparer les expériences entre elles, nous voulons définir un indicateur normalisé, dont la valeur est donc comprise entre $0$ et $1$.
+Nous cherchons à définir un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes. D'après les observations mentionnées ci-dessus, l'existence d'un apprentissage du modèle complet se traduit par le fait que $U$ est une fonction de $\bmu$ \emph{dans chacune des cartes}.
+Nous choisissons donc de définir un indicateur mesurant à quel point la variable cachée équivalente au modèle d'entrée, $U$ est une fonction du BMU $\bmu$.
+Dans l'exemple, $U$ est en une dimension pour des entrées 2D $(\inpx\m{1},\inpx\m{2})$.
+Nous attendons que cet indicateur prenne une valeur minimale lorsque $U$ n'a aucune relation avec $\bmu$, et augmente jusqu'à une valeur maximale lorsque $U$ est fonction de $\bmu$. Afin de pouvoir comparer les expériences entre elles, nous voulons définir un indicateur normalisé, dont la valeur est donc comprise entre $0$ et $1$.
 
+Nous pouvons utiliser l'information mutuelle $I(\bmu, U)$, représentant l'information qu'une position du BMU d'une carte porte en moyenne sur la valeur de $U$, et $U$ sur le BMU.
+L'information mutuelle dépend de la quantité d'information portée par chaque distribution et se mesure en bit/symbole. Nous cherchons plutôt à définir un indicateur normalisé qui permettra de pouvoir comparer des expériences différentes.
 
-Nous pouvons utiliser $I(\bmu, U)$ comme l'information moyenne qu'une position de BMU d'une carte porte sur $U$, donc sur le modèle d'entrées, et $U$ sur le BMU.  Il est alors nécessaire ici que la relation entre $U$ et $\mathbf{X}$ soit bijective.
-L'information mutuelle dépend de la quantité d'information portée par chaque distribution et se mesure en bit/symbole. Nous cherchons un indicateur normalisé.
-
-
-Nous choisissons de normaliser l'information mutuelle $I(\bmu,U)$  par la valeur maximale qu'elle peut prendre dans une expérience de CxSOM. Cette valeur maximale atteinte par $I(\bmu,U)$ est $H(U)$, atteinte lorsque $U$ est fonction de $\bmu$.
+Nous choisissons de normaliser l'information mutuelle $I(\bmu,U)$  par la valeur maximale qu'elle peut prendre dans une expérience de CxSOM. Cette valeur maximale atteinte par $I(\bmu,U)$ est $H(U)$, atteinte lorsque $U$ est une fonction de $\bmu$.
 En effet, par construction, $\bmu$ est une fonction de $U$ dans une carte de Kohonen: l'algorithme est déterministe et une sortie est définie pour toute valeur de $U$. C'est à dire, $I(U,\bmu) = I (U, f(U))$.
 Par propriété de l'information mutuelle, pour toute fonction $f$ et variables $X,Y$, $I(X,f(Y)) \leq I(X,Y) $. 
 Donc, $I(U,\bmu) \leq I(U,U) = H(U)$
 Cette valeur est atteinte si et seulement si $U$ et $\bmu$ sont en bijection, autrement dit, si et seulement si $U$ est aussi une fonction de $\bmu$.
 
-Nous définissons donc un indicateur de la relation fonctionnelle existant entre $U$ et $\bmu$ comme:
+L'indicateur de la relation fonctionnelle existant entre $U$ et $\bmu$  est donc défini comme:
 \begin{equation}
 I_x(U|\bmu) = \frac{I(\bmu,U)}{H(U)}
 \end{equation}
-Ce coefficient n'est pas symétrique, et mesure donc l'information portée par le premier terme sur le second, relativement à la valeur maximale qu'elle peut prendre. Dans le cas des cartes CxSOM, $I_x \in [0,1]$. Cette valeur rappelle le \emph{coefficient d'incertitude} entre $U$ et $\Pi$ \cite{Theil1961EconomicFA}.
+Ce c\oe{}fficient n'est pas symétrique, et mesure donc l'information portée par le premier terme sur le second, relativement à la valeur maximale qu'elle peut prendre. Dans le cas des cartes CxSOM, $I_x \in [0,1]$. Cette valeur rappelle le \emph{c\oe{}fficient d'incertitude} entre $U$ et $\Pi$ \cite{Theil1961EconomicFA}.
 
-
+Il vaut 1 lorsque $U$ est une fonction de $\bmu$ dans la carte considérée, et $0$ lorsque les deux distributions sont indépendantes. Cette relation fonctionnelle entre $U$ et $\bmu$ est bien la propriété qu'on souhaite mesurer.
 %TODO : développer ce point : information portée par plus de variables !
 %TODO : calculer et comparer les valeurs pour le cas du cercle.
 
-Ce coefficient peut être élargi à plus de variables: on peut calculer $I_x(U | (\bmu\m{1},\bmu\m{2},\bmu\m{3}))$ pour 3 cartes, en considérant la variable jointe $(\bmu\m{1},\bmu\m{2},\bmu\m{3})$.
-Plus largement, pour prouver que l'archictecture a appris un modèle, on souhaite que $I_x(U|\bmu\m{1},\cdots,\bmu\m{k})$ soit le plus proche possible de 1.
-
-Cet indicateur permet de comparer des expériences par des valeurs numériques, sans passer par des tracés.
+% Ce coefficient peut être élargi à plus de variables: on peut calculer $I_x(U | (\bmu\m{1},\bmu\m{2},\bmu\m{3}))$ pour 3 cartes, en considérant la variable jointe $(\bmu\m{1},\bmu\m{2},\bmu\m{3})$.
+% Plus largement, pour prouver que l'archictecture a appris un modèle, on souhaite que $I_x(U|\bmu\m{1},\cdots,\bmu\m{k})$ soit le plus proche possible de 1.
+% Cet indicateur permet de comparer des expériences par des valeurs numériques, sans passer par des tracés.
 
 \subsection{Estimation}
 
-L'information mutuelle et l'entropie sont des grandeurs probabilistes. Elles sont définies à partir de la distribution des variables aléatoires. Ces distributions, dans notre cas, ne sont pas connues, nous devons donc estimer ces quantités.
+L'information mutuelle et l'entropie sont des grandeurs probabilistes. Elles sont définies à partir de la distribution des variables aléatoires. Ces distributions, dans notre cas, ne sont pas connues, nous devons donc estimer ces quantités à partir des échantillons de données.
 Nous passons par une estimation de la distribution des variables $U$,$\bmu$ et la distribution de la variable jointe $(U,\bmu)$ en discrétisant l'espace par la méthode des \emph{histogrammes}.
 Cette méthode est représentée en figure~\ref{fig:binning}. Les variables $U$ et $\bmu$ sont discrétisées en \emph{boîtes} de centres $x_k$ et $y_k$.
 La distribution de X est alors estimée par: 
@@ -382,23 +384,52 @@ L'information mutuelle et l'entropie sont ensuite estimées à partir de ces dis
 La méthode par histogramme est simple, mais biaisée quand la dimension des entrée augmente.
 Le nombre d'échantillons disponibles pour l'estimation doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient dû en contenir selon leur distribution; l'estimation de la distribution en ce point sera alors nulle, et l'estimation de l'indicateur faussée.
 \begin{figure}
+\begin{minipage}{0.4\textwidth}
 \centering
-\includegraphics[width=0.45\textwidth]{boxes}
+\includegraphics[width=\textwidth]{boxes}
 \caption{Méthode par histogrammes pour estimer les distributions des variables $U$ et $\bmu$. Les distributions sont estimées à partir de $n_{xj}$, $n_{yi}$ et $n_{zij}$, puis les valeurs de l'entropie $H$ et l'information mutuelle $I$ calculées.}
-\label{fig:binning}
+\label{fig:binning}  
+\end{minipage}
+\hfill
+\begin{minipage}{0.4\textwidth}    
+        \centering
+        \includegraphics[width=0.8\textwidth]{kraskov.pdf}
+        \caption{Découpage en KNN de Kraskov pour estimer l'entropie et l'information mutuelle des variables $X$ et $Y$. Les plus proches voisins du point rouge sont trouvés, en vert, et le processus est répété sur tous les points. Les valeurs de $n_x$ et $n_y$ permettent d'estimer directement l'entropie.}
+        \label{fig:kraskov}
+\end{minipage}
+\end{figure}
 
-
-
-Nous avons donc envisagé d'autres estimateurs moins biaisés en grand dimension. Détaillons par exemple l'estimateur par KNN (K-nearest neighbors) de Kraskov \cite{2004kraskov}. 
+Nous avons envisagé d'autres estimateurs moins biaisés en grand dimension. Détaillons par exemple l'estimateur par KNN (K-nearest neighbors) de Kraskov \cite{2004kraskov}. 
 Cet estimateur ne passe pas par l'estimation de la densité de probabilité, contrairement aux histogrammes, mais estime directement l'information mutuelle. C'est l'estimation de la densité de probabilité qui posai justement problème en grande dimension.
 Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
 $$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$
 Cette information mutuelle locale est ensuite moyennée sur l'ensemble des points: 
 $$\hat{I}(X,Y) = \psi(k) - \langle\psi(n_{x_j} + 1) + \psi(n_{y_j} +1)\rangle + \psi(N)$$
 Pour estimer $I_x(X|Y)$, on estimera $I(X,Y)$ et $H(Y)$ avec les mêmes paramètres, en notant que $H(Y) = I(Y,Y)$.
-L'estimateur de Kraskov est plus granulaire que la méthode des histogrammes. 
+L'estimateur de Kraskov est plus précis que l'estimateur par histogramme et plus fréquemment utilisé pour l'estimation de l'information mutuelle. Cependant, dans notre cas, nous ne souhaitons pas une estimation précise de l'information mutuelle.
+Le but de l'indicateur est de mesurer une relation de type fonction entre $U$ et $\bmu$.
+Cette relation peut être bruitée et imprécise: ce qui nous importe, c'est qu'une valeur de $\bmu$ corresponde à un seul intervalle de $U$, assez petit.
 
-\end{figure}
+% La méthode des noyaux de Kraskov est plus "granulaire" que la méthode des histogrammes au niveau de l'estimation, c'est à dire que les données sont considérées \emph{points par point}. L'avantage est que l'évaluation de la relation fonctionnelle entre $U$ et $\bmu\m{i}$ est plus précise qu'avec les histogrammes: s'il y a deux valeurs de $U$ pour un même $\bmu\m{i}$, l'information diminue. Par contre, la contribution de ces deux valeurs sera la même dans le calcul de l'information mutuelle, qu'elles soient proches ou éloignées: la distance entre donnée n'intervient pas dans le calcul. Cette différence de contribution est illustrée en figure~\ref{fig:exemple-limite}. On calcule l'information mutuelle $I_x$ dans les deux cas de distribution proposées, à l'aide de l'estimateur granulaire de Kraskov. Dans le cas ou la relation est proche d'une relation fonctionnelle, mais est très bruitée, l'information $I_x(Y|X)$ est plus faible que dans le cas ou cette relation n'est pas fonctionnelle, mais sans bruit parasite.
+
+
+Or, l'information mutuelle mesure la qualité de la relation statistique entre les deux distributions. La figure~\ref{fig:exemple-limite} présente deux exemple de relations entre les variables $U$ et $\bmu$. Dans le cas de gauche, la relation se rapproche d'une relation fonctionnelle, qu'on souhaite dans le cas de CxSOM, mais cette relation est bruitée. Dans le cas de droite, la relation n'est pas une fonction, mais elle est "précise": une valeur de $\bmu$ correspond à deux valeurs de $U$ et pas plus.
+Nous avons calculé l'indicateur $I_x$ sur les deux distributions, estimé avec la méthode des histogrammes de Kraskov. La méthode de Kraskov est considérée comme donnant une valeur plus proche de la valeur théorique de l'information mutuelle que la méthode par histogrammes. 
+
+Dans le cas de gauche, la méthode de Kraskov donne une information mutuelle normalisée assez faible. En effet, une valeur de $\bmu$ correspond à tout un intervalle de valeurs pour $U$. Sur le cas de droite, sa valeur est plus haute. En effet, une valeur de $\bmu$ correspond à deux valeurs de $U$, ce qui donne plus d'information que dans le premier cas de figure. Ce n'est pas ce qu'on veut mesurer dans CxSOM: le bruit est accepté, tant que la relation se rapproche d'une fonction.
+
+
+La méthode des histogrammes permet d'effacer ce bruit en prenant une taille de découpe plus grande pour $U$. Grâce à la méthode par histogrammes, l'indicateur normalisé possède une valeur forte, proche de 1 dans le cas de la droite, et plus faible dans le cas du cercle.
+Nous utiliserons donc l'indicateur $I_x$ pour CxSOM en l'estimant avec un découpage grossier pour $U$. Cette façon d'estimer permettra de gommer la dispersion locale sur la valeur de $U$ pour mesurer uniquement la relation fonctionnelle existant entre $U$ et $\bmu$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{comparaison_binning_kraskov.pdf}
+    \caption{Comparaison du calcul de l'indicateur $I_x$ sur deux distributions. A gauche, la relation entre $Y$ et $X$ se rapproche d'une fonction, mais bruitée. A droite, la relation n'est pas fonctionnelle, mais de telle sorte qu'une valeur de $X$ correspond au maximum à deux valeurs de $Y$. Lorsqu'on calcule l'indicateur avec la méthode très granulaire de Kraskov, cet indicateur est plus élevé dans le cas de droite que de gauche: en effet, le calcul ne prend pas en compte si les points sont condensés ou éloignés. Pour que l'indicateur nous informe correctement sur l'aspect fonctionnel de la relation entre $X$ et $Y$, il faut enlever manuellement le bruit. Avec la méthode par histogrammes, on prend une taille de boîte de $0.1$ selon $Y$. Dans ce cas, l'indicateur est bien plus élevé à gauche, ou $Y$ se rapproche d'une fonction de $X$, que à droite.}
+    \label{fig:exemple-limite}
+    \end{figure}
+
+
 
 %\begin{figure}
 %\centering
@@ -423,52 +454,36 @@ L'observation du tracé montre que les quantités $I_x(U|\bmu\m{1})$ et $I_x(U|\
 
 \begin{figure}
 \includegraphics[width=\textwidth]{evolution_MI_binning}
-\caption{Evolution du coefficient d'incertitude dans chaque carte au long de l'apprentissage. La courbe bleue correspond à $I_x(U|\bmu)$ dans l'architecture de cartes $M\m{1}$ et $M\m{2}$. On compare cette évolution à l'évolution de l'information d'une seule carte apprenant sur les mêmes entrées $X$ ou $Y$, sans être connectée.}
+\caption{Evolution de l'information mutuelle normalisée $I_x(U|\bmu)$ dans chaque carte au long de l'apprentissage. La courbe bleue correspond à $I_x(U|\bmu)$ dans l'architecture de cartes $M\m{1}$ et $M\m{2}$. On compare cette évolution à l'évolution de l'information d'une seule carte apprenant sur les mêmes entrées $X$ ou $Y$, sans être connectée.}
 \label{fig:MI_evol}
 \end{figure}
 
-\subsection{Discussion}
+\subsection{Comparaison de l'évolution avec deux méthodes d'estimation.}
 
-\subsubsection{Qualité de l'estimation}
+Nous avons proposé $I_x$ comme indicateur pour évaluer la relation fonctionnelle entre $U$ et $\bmu$ et noté qu'il est nécessaire de l'estimer par histogrammes pour l'interpréter de cette façon.
+Nous sortons de l'étape de validation de l'indicateur pour comparer deux indicateurs: $I_x$ estimé par histogrammes, et $I_x$ estimé par KNN de Kraskov. Dans cette partie, on considère ces deux valeurs comme deux indicateurs différents. L'estimation par Kraskov est considérée comme l'information théorique, et celle par histogramme comme l'indicateur représentant la relation fonctionnelle.
 
-Comparons les deux méthodes d'estimation de l'information mutuelle proposées dans ce chapitre: l'estimation par histogrammes, et l'estimation par KNN de Kraskov.
 En figure~\ref{fig:MI_evol_total}, nous tracons l'évolution de l'information mutuelle moyenne, cette fois estimée par la méthode de Kraskov. Sur le même schéma, nous tracons également l'évolution de l'information mutuelle obtenue par la méthode des histogrammes. 
 
 Sur les tracés, l'indicateur calculé avec la méthode de Kraskov converge vers une même valeur à la fin de l'apprentissage pour la carte simple que pour la carte au sein d'une architecture CxSOM (tracés rouges et noirs). Ce résultat est étonnant: cela signifie donc que la carte au sein de CxSOM n'a pas plus d'information sur le modèle que la carte isolée, lorsque cette information est estimée avec la méthode de Kraskov. Ce résultat va également à l'encontre de ce qu'on observe sur l'évolution de l'information mutuelle calculée par les histogrammes, dans laquelle une différence franche est observée entre la carte isolée et la carte au sein de l'architecture.
 
 Proposons une explication.
-La méthode des noyaux de Kraskov est plus "granulaire" que la méthode des histogrammes au niveau de l'estimation, c'est à dire que les données sont considérées \emph{points par point}. L'avantage est que l'évaluation de la relation fonctionnelle entre $U$ et $\bmu\m{i}$ est plus précise qu'avec les histogrammes: s'il y a deux valeurs de $U$ pour un même $\bmu\m{i}$, l'information diminue. Par contre, la contribution de ces deux valeurs sera la même dans le calcul de l'information mutuelle, qu'elles soient proches ou éloignées: la distance entre donnée n'intervient pas dans le calcul. Cette différence de contribution est illustrée en figure~\ref{fig:exemple-limite}. On calcule l'information mutuelle $I_x$ dans les deux cas de distribution proposées, à l'aide de l'estimateur granulaire de Kraskov. Dans le cas ou la relation est proche d'une relation fonctionnelle, mais est très bruitée, l'information $I_x(Y|X)$ est plus faible que dans le cas ou cette relation n'est pas fonctionnelle, mais sans bruit parasite.
-
-On observe que l'information $I_x(U|\bmu)$ tend vers une même valeur dans CxSOM et dans une carte isolée quand on la calcule avec l'estimateur granulaire. Cela signifie, qu'on a la même quantité d'information sur $U$ avec le BMU, dans la carte isolée que dans CxSOM. Simplement, cette information n'est pas répartie de la même façon. 
+On observe que l'information $I_x(U|\bmu)$ tend vers une même valeur dans CxSOM et dans une carte isolée quand on la calcule avec l'estimateur de Kraskov, plus proche de la valeur théorique de l'information mutuelle. Cela signifie, qu'on a la même quantité d'information sur $U$ avec le BMU, dans la carte isolée que dans CxSOM. Simplement, cette information n'est pas répartie de la même façon. 
 Dans une carte isolée, le niveau de quantification vectorielle qu'on effectue sur $X$ est très précis: lorsqu'on présente une entrée $X$ à la carte, le poids du BMU est très proche de cette valeur $X$ Dans CxSOM, on perd ce niveau de quantification, ce qu'on a observé en figure~\ref{fig:erreur}. Le fait que l'indicateur, lorsqu'il est estimé avec une méthode très granulaire, prend la même valeur dans les deux expériences traduit alors qu'on a perdu de l'information sur l'entrée $X$ par rapport à la carte isolée, avec la perte de précision, mais qu'on a gagné de l'information sur l'autre entrée $Y$. Le fait que les deux évolutions de $I_x$, pour chaque expérience, convergent vers la même valeur montre qu'on est dans une situation de compromis: on gagne de l'information sur le modèle au détriment de l'information sur l'entrée externe.
 
-C'est donc le fait de discrétiser grossièrement la distribution de $U$ qui permet de mesurer le gain d'information sur le modèle complet, sans prendre en compte le fait que la précision sur l'entrée externe est affaiblie. L'indicateur $I_x$ reste un indicateur fiable, mais il doit être utilisé en prenant en compte cet aspect.
-
-%ela a peu de sens dans le cas de notre application: on souhaite mesurer que $U$ est proche d'une fonction de $\bmu$, mais du bruit est toléré. L'estimation par histogrammes permet de ne pas prendre en compte ce bruit; ce n'est pas possible avec la méthode de Kraskov. 
+C'est donc le fait de discrétiser grossièrement la distribution de $U$ qui permet de mesurer le gain d'information sur le modèle complet, sans prendre en compte le fait que la précision sur l'entrée externe est affaiblie. La comparaison de l'information mutuelle, estimée par Kraskov, entre la carte simple et la carte dans CxSOM nous indique par contre que la quantité d'information totale gagnée par une carte reste identique; elle est cependant répartie différemment entre les deux expériences.
 
 
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.35\textwidth]{kraskov.pdf}
-    \caption{Découpage en KNN de Kraskov pour estimer l'entropie et l'information mutuelle des variables $X$ et $Y$. Les plus proches voisins du point rouge sont trouvés, en vert, et le processus est répété sur tous les points. Les valeurs de $n_x$ et $n_y$ permettent d'estimer directement l'entropie.}
-    \label{fig:kraskov}
-\end{figure}
 
 \begin{figure}
 \includegraphics[width=\textwidth]{evolution_MI}
-\caption{Evolution du coefficient d'incertitude dans chaque carte au long de l'apprentissage, en comparant l'estimation par histogrammes et l'estimation par la méthode de Kraskov.}
+\caption{Evolution de $I_x(U|\bmu)$ dans chaque carte au long de l'apprentissage, en comparant l'estimation par histogrammes et l'estimation par la méthode de Kraskov.}
 \label{fig:MI_evol_total}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{comparaison_binning_kraskov.pdf}
-    \caption{Comparaison du calcul de l'indicateur $I_x$ sur deux distributions. A gauche, la relation entre $Y$ et $X$ se rapproche d'une fonction, mais bruitée. A droite, la relation n'est pas fonctionnelle, mais de telle sorte qu'une valeur de $X$ correspond au maximum à deux valeurs de $Y$. Lorsqu'on calcule l'indicateur avec la méthode très granulaire de Kraskov, cet indicateur est plus élevé dans le cas de droite que de gauche: en effet, le calcul ne prend pas en compte si les points sont condensés ou éloignés. Pour que l'indicateur nous informe correctement sur l'aspect fonctionnel de la relation entre $X$ et $Y$, il faut enlever manuellement le bruit. Avec la méthode par histogrammes, on prend une taille de boîte de $0.1$ selon $Y$. Dans ce cas, l'indicateur est bien plus élevé à gauche, ou $Y$ se rapproche d'une fonction de $X$, que à droite.}
-    \label{fig:exemple-limite}
-    \end{figure}
 
-\subsubsection{Perspectives}
+
+\subsection{Perspectives}
 
 L'indicateur $I_x$ permet donc bien de mesurer s'il existe une relation fonctionnelle entre $U$ et la positio du BMU d'une carte. Cependant, son estimation doit nécessairement être réalisée par histogrammes, avec une grande taille de découpage pour $U$. Ce découpage occulte le fait qu'une position de BMU code pour une zone de valeur de $U$ plus grande que pour une carte classique. 
 
@@ -477,7 +492,7 @@ L'estimation du même indicateur par une méthode plus granulaire et précise no
 L'indicateur que nous proposons, $I_x(Y|X) = \frac{I(X,Y)}{H(Y)}$ traduit bien le fait que les cartes ont appris une relation entre les entrées. Son estimation doit passer par une discrétisation avec des intervalles larges pour $U$, afin de ne pas prendre en compte la perte d'information sur l'entrée externe $X$.
 Les données doivent égalemement être débruitées avant l'estimation.
 Cet indicateur permet de comparer les expériences entre elles.
-L'information mutuelle et l'entropie étant des quantités fondamentales en théorie de l'information, il existe de nombreuses méthodes d'estimations de ces valeurs malgré la difficulté qu'elle pose, voir~\cite{Doquire2012ACO} pour une revue de différentes méthodes. Ainsi, l'utilisation du coefficient d'incertitude comme indicateur reste robuste pour des données de plus grande dimension ou pour plus de cartes, en utilisant des méthode d'estimations plus élaborées. Cependant, cette estimation devra être retravaillée en plus grande dimension. 
+L'information mutuelle et l'entropie étant des quantités fondamentales en théorie de l'information, il existe de nombreuses méthodes d'estimations de ces valeurs malgré la difficulté qu'elle pose, voir~\cite{Doquire2012ACO} pour une revue de différentes méthodes. Ainsi, de l'information mutuelle normalisée comme indicateur reste robuste pour des données de plus grande dimension ou pour plus de cartes, en utilisant des méthode d'estimations plus élaborées. Cependant, cette estimation devra être retravaillée en plus grande dimension. 
 
 \draft{
 Une solution serait par exemple de chercher à séparer les sources d'information: l'information apportée par $X$ sur $U$ de l'information apportée par $\bmu$ sur $U$. On pourrait alors mesurer un gain d'information. Par exemple, en~\cite{williams_nonnegative_2010}, les auteurs décomposent l'information à plusieurs variables en \emph{redondance} et \emph{synergie}. 
