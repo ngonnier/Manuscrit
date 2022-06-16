@@ -1,4 +1,4 @@
-\chapter{Un nouvel indicateur de l'apprentissage des données multimodales basé sur l'information mutuelle}
+\chapter{Un nouvel indicateur de l'apprentissage des données multimodales basé sur l'information mutuelle\label{chap:indicateur}}
 \graphicspath{{03-Representation/}}
 \minitoc
 
@@ -11,7 +11,7 @@ Nous définirons dans cette partie un indicateur permettant d'évaluer l'apprent
 \section{Rappel des éléments de la théorie de l'information}
 
 Les notions d'\emph{entropie} et les valeurs associées, telle que l'\emph{information mutuelle} entre des distributions, sont des notions fondamentales de la théorie de l'information de Shannon. Ces quantités donnent des informations concernant la distribution d'une variable aléatoire.
-Les formules indiquées dans ce paragraphe concernent des variables aléatoire discrètes mais sont transposables en version continue.
+Les formules indiquées dans ce paragraphe concernent des variables aléatoire discrètes.
 L'entropie de Shannon d'une variable aléatoire $X$ à valeurs discrètes dans un ensemble $E_X$, de distribution $p$, est notée $H(X)$ et définie par la formule : 
 \begin{equation}
 H(X) = - \sum_{x \in E_X}{p(x)\textrm{log}(p(x))}
@@ -73,6 +73,7 @@ Il vaut 1 lorsque $U$ est une fonction de $\bmu$ dans la carte considérée, et 
 
 L'information mutuelle et l'entropie sont des grandeurs définies à partir de la distribution des variables aléatoires. Ces distributions, dans notre cas, ne sont pas connues, nous devons donc estimer ces quantités à partir des échantillons de données.
 Nous passons par une estimation de la distribution des variables $U$,$\bmu$ et la distribution de la variable jointe $(U,\bmu)$ en discrétisant l'espace par la méthode des \emph{histogrammes}.
+Cette méthode transforme donc les variables continues considérées en variables \emph{discrètes}.
 Cette méthode est représentée en figure~\ref{fig:binning}. Les variables $U$ et $\bmu$ sont discrétisées en \emph{boîtes} de centres $x_k$ et $y_k$ choisis.
 La distribution de X est alors estimée par: 
 $$P(U = x_i) = \frac{n_{xi}}{N} $$ où $n_{xi}$ est le nombre d'échantillons de X tombant dans la boîte de centre $x_i$ et $N$ le nombre de points. Le même procédé est réalisé pour $\bmu$ et $(U,\bmu)$. La précision de l'estimation peut être améliorée en choisissant des tailles de boîtes variables; nous utilisons ici la méthode simple avec des boites de taille fixe. Pour des variables à valeur dans $[0,1]$, les centres sont définis par $x_k = \frac{k}{M}+\frac{1}{2M}$, avec $M$ le nombre de boîtes.
@@ -81,8 +82,8 @@ L'information mutuelle et l'entropie sont ensuite estimées à partir de ces dis
     I(U,\bmu) = \sum_{i = 0}^{n_x} \sum_{j=0}^{n_y} {P(x_i,y_j)\textrm{log}\left(\frac{P(U = x_i,\bmu = y_j)}{P(U = x_i)\times P(\bmu = y_j)}\right)}
    \end{equation}
 
-La méthode par histogrammes est simple, mais biaisée quand la dimension des entrées augmente.
-Le nombre d'échantillons disponibles pour l'estimation doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient dû en contenir selon leur distribution; l'estimation de la distribution en ce point sera alors nulle, et l'estimation de l'indicateur faussée.
+Ces valeurs correspondent à l'information mutuelle discrète. Bien que nous travaillions avec des variables continues, nous resterons dans notre cas de la version discrète.
+
 
 \begin{figure}
 \begin{minipage}{0.4\textwidth}
@@ -100,6 +101,8 @@ Le nombre d'échantillons disponibles pour l'estimation doit augmenter exponenti
 \end{minipage}
 \end{figure}
 
+La méthode par histogrammes est simple, mais biaisée quand la dimension des entrées augmente.
+Le nombre d'échantillons disponibles pour l'estimation doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides": à cause de la dispersion des données, de nombreuses boîte $(x_j,y_i)$ ne contiendront pas de points alors qu'elles auraient dû en contenir selon leur distribution; l'estimation de la distribution en ce point sera alors nulle, et l'estimation de l'indicateur faussée.
 Nous avons envisagé d'autres estimateurs moins biaisés en grand dimension. Détaillons par exemple l'estimateur par KNN (K-nearest neighbors) de Kraskov \cite{2004kraskov}. 
 Cet estimateur ne passe pas par l'estimation de la densité de probabilité, contrairement aux histogrammes, mais estime directement l'information mutuelle.
 Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
@@ -153,25 +156,25 @@ L'observation du tracé montre que les quantités $I_x(U|\bmu\m{1})$ et $I_x(U|\
 
 \subsection{Comparaison des deux méthodes d'estimation}
 
-Nous avons proposé $I_x$ comme indicateur pour évaluer la relation fonctionnelle entre $U$ et $\bmu$ et noté qu'il est nécessaire de l'estimer par histogrammes pour l'interpréter de cette façon.
-Nous sortons de l'étape de validation de l'indicateur pour comparer deux indicateurs: $I_x$ estimé par histogrammes, et $I_x$ estimé par KNN de Kraskov. Dans cette partie, on considère ces deux valeurs comme deux indicateurs différents. L'estimation par Kraskov est considérée comme l'information théorique, et celle par histogrammes comme l'indicateur représentant la relation fonctionnelle.
+% Nous avons proposé $I_x$ comme indicateur pour évaluer la relation fonctionnelle entre $U$ et $\bmu$ et noté qu'il est nécessaire de l'estimer par histogrammes pour l'interpréter de cette façon.
+% Nous sortons de l'étape de validation de l'indicateur pour comparer deux indicateurs: $I_x$ estimé par histogrammes, et $I_x$ estimé par KNN de Kraskov. Dans cette partie, on considère ces deux valeurs comme deux indicateurs différents. L'estimation par Kraskov est considérée comme l'information théorique, et celle par histogrammes comme l'indicateur représentant la relation fonctionnelle.
 
-En figure~\ref{fig:MI_evol_total}, nous tracons l'évolution de l'information mutuelle moyenne, cette fois estimée par la méthode de Kraskov. Sur le même schéma, nous tracons également l'évolution de l'information mutuelle obtenue par la méthode des histogrammes. 
+% En figure~\ref{fig:MI_evol_total}, nous tracons l'évolution de l'information mutuelle moyenne, cette fois estimée par la méthode de Kraskov. Sur le même schéma, nous tracons également l'évolution de l'information mutuelle obtenue par la méthode des histogrammes. 
 
-Sur les tracés, l'indicateur calculé avec la méthode de Kraskov converge vers une même valeur à la fin de l'apprentissage pour la carte simple que pour la carte au sein d'une architecture CxSOM (tracés rouges et noirs). Ce résultat est étonnant: cela signifie donc que la carte au sein de CxSOM n'a pas plus d'information sur le modèle que la carte isolée, lorsque cette information est estimée avec la méthode de Kraskov. Ce résultat va également à l'encontre de ce qu'on observe sur l'évolution de l'information mutuelle calculée par les histogrammes, dans laquelle une différence franche est observée entre la carte isolée et la carte au sein de l'architecture.
+% Sur les tracés, l'indicateur calculé avec la méthode de Kraskov converge vers une même valeur à la fin de l'apprentissage pour la carte simple que pour la carte au sein d'une architecture CxSOM (tracés rouges et noirs). Ce résultat est étonnant: cela signifie donc que la carte au sein de CxSOM n'a pas plus d'information sur le modèle que la carte isolée, lorsque cette information est estimée avec la méthode de Kraskov. Ce résultat va également à l'encontre de ce qu'on observe sur l'évolution de l'information mutuelle calculée par les histogrammes, dans laquelle une différence franche est observée entre la carte isolée et la carte au sein de l'architecture.
 
-Proposons une explication.
-On observe que l'information $I_x(U|\bmu)$ tend vers une même valeur dans CxSOM et dans une carte isolée quand on la calcule avec l'estimateur de Kraskov, plus proche de la valeur théorique de l'information mutuelle. Cela signifie, qu'on a la même quantité d'information sur $U$ avec le BMU, dans la carte isolée que dans CxSOM. Simplement, cette information n'est pas répartie de la même façon. 
-Dans une carte isolée, le niveau de quantification vectorielle qu'on effectue sur $X$ est très précis: lorsqu'on présente une entrée $X$ à la carte, le poids du BMU est très proche de cette valeur $X$ Dans CxSOM, on perd ce niveau de quantification, ce qu'on a observé en figure~\ref{fig:erreur}. Le fait que l'indicateur, lorsqu'il est estimé avec une méthode très granulaire, prend la même valeur dans les deux expériences traduit alors qu'on a perdu de l'information sur l'entrée $X$ par rapport à la carte isolée, avec la perte de précision, mais qu'on a gagné de l'information sur l'autre entrée $Y$. Le fait que les deux évolutions de $I_x$, pour chaque expérience, convergent vers la même valeur montre qu'on est dans une situation de compromis: on gagne de l'information sur le modèle au détriment de l'information sur l'entrée externe.
+% Proposons une explication.
+% On observe que l'information $I_x(U|\bmu)$ tend vers une même valeur dans CxSOM et dans une carte isolée quand on la calcule avec l'estimateur de Kraskov, plus proche de la valeur théorique de l'information mutuelle. Cela signifie, qu'on a la même quantité d'information sur $U$ avec le BMU, dans la carte isolée que dans CxSOM. Simplement, cette information n'est pas répartie de la même façon. 
+% Dans une carte isolée, le niveau de quantification vectorielle qu'on effectue sur $X$ est très précis: lorsqu'on présente une entrée $X$ à la carte, le poids du BMU est très proche de cette valeur $X$ Dans CxSOM, on perd ce niveau de quantification, ce qu'on a observé en figure~\ref{fig:erreur}. Le fait que l'indicateur, lorsqu'il est estimé avec une méthode très granulaire, prend la même valeur dans les deux expériences traduit alors qu'on a perdu de l'information sur l'entrée $X$ par rapport à la carte isolée, avec la perte de précision, mais qu'on a gagné de l'information sur l'autre entrée $Y$. Le fait que les deux évolutions de $I_x$, pour chaque expérience, convergent vers la même valeur montre qu'on est dans une situation de compromis: on gagne de l'information sur le modèle au détriment de l'information sur l'entrée externe.
 
-C'est donc le fait de discrétiser grossièrement la distribution de $U$ qui permet de mesurer le gain d'information sur le modèle complet, sans prendre en compte le fait que la précision sur l'entrée externe est affaiblie. 
-La comparaison de l'information mutuelle, estimée par Kraskov, entre la carte simple et la carte dans CxSOM nous indique que la quantité d'information totale gagnée par une carte reste identique; elle est simplement répartie différemment entre les deux expériences.
+% C'est donc le fait de discrétiser grossièrement la distribution de $U$ qui permet de mesurer le gain d'information sur le modèle complet, sans prendre en compte le fait que la précision sur l'entrée externe est affaiblie. 
+% La comparaison de l'information mutuelle, estimée par Kraskov, entre la carte simple et la carte dans CxSOM nous indique que la quantité d'information totale gagnée par une carte reste identique; elle est simplement répartie différemment entre les deux expériences.
 
-\begin{figure}
-\includegraphics[width=\textwidth]{evolution_MI}
-\caption{Evolution de $I_x(U|\bmu)$ dans chaque carte au long de l'apprentissage, en comparant l'estimation par histogrammes et l'estimation par la méthode de Kraskov.}
-\label{fig:MI_evol_total}
-\end{figure}
+% \begin{figure}
+% \includegraphics[width=\textwidth]{evolution_MI}
+% \caption{Evolution de $I_x(U|\bmu)$ dans chaque carte au long de l'apprentissage, en comparant l'estimation par histogrammes et l'estimation par la méthode de Kraskov.}
+% \label{fig:MI_evol_total}
+% \end{figure}
 
 
 \section{Conclusion}

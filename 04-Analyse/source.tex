@@ -1,3 +1,4 @@
+\part{Expériences de validation et application}
 \chapter{Analyse de l'organisation de CxSOM}\label{chap:analyse}
 \graphicspath{{04-Analyse/}}
 \minitoc
@@ -116,9 +117,9 @@ Chaque point est calculé sur un échantillon de 1000 relaxations au temps t, é
 
 \subsection{Formalisation de l'algorithme de relaxation}
 
-La relaxation cherche à maximiser de façon \emph{commune} de l'activité globale de chaque carte de l'architecture. Notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{N}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
+La relaxation cherche à maximiser de façon \emph{commune} de l'activité globale de chaque carte de l'architecture. Notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
 La suite $(\mathbf{\bmu})_\tau$ est une suite définie par récurrence par $\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)$
-avec $\mathbf{f} = (f\m{0},\cdots,f\m{N}) : [0,1]^N \rightarrow [0,1]^N$ une application non linéaire transformant l'espace des positions des BMUs; $\mathbf{f}$ ne dépend pas de $\tau$. L'algorithme de relaxation est alors une recherche de point fixe de la fonction $\mathbf{f}$.
+avec $\mathbf{f} = (f\m{0},\cdots,f\m{n}) : [0,1]^N \rightarrow [0,1]^N$ une application non linéaire transformant l'espace des positions des BMUs; $\mathbf{f}$ ne dépend pas de $\tau$. L'algorithme de relaxation est alors une recherche de point fixe de la fonction $\mathbf{f}$.
 Détaillons l'évolution de cette suite. Pour clarifier les notations, définissons pour chaque carte~$i$ $p\star\m{i}_\tau$, comme la position maximisant l'activité globale de la carte $i$:
 \begin{equation}
 \begin{gathered}
@@ -140,7 +141,7 @@ p\star\m{i}_{\tau} \; \text{sinon}
 
 En posant $f\m{i}$ la partie droite de l'équation \ref{eq:evolution}, on peut donc écrire: 
 \begin{equation}
-\bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{N}_\tau)
+\bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)
 \label{eq:fonction}
 \end{equation}
 Soit, pour l'ensemble des composantes : 
@@ -157,12 +158,12 @@ La relaxation se traduit ainsi par une recherche de point fixe de la suite $(\ma
 Si $f$ admet un point fixe, alors ce point fixe est aussi un point fixe pour la suite $(\mathbf{\bmu})_\tau$. Cependant, rien ne garantit que ce point fixe existe, et qu'il sera atteint par la suite. Expérimentalement, il semble que si $\mathbf{f}$ admet un unique point fixe et que les poids $\w$ présentent une continuité, alors $(\mathbf{\bmu})_{\tau}$ converge vers ce point fixe. 
 
 L'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dépend de son initialisation.
-L'état initial $(\bmu\m{0}_0, \cdots , \bmu\m{N}_0)$ est défini dans CxSOM par: 
+L'état initial $(\bmu\m{0}_0, \cdots , \bmu\m{n}_0)$ est défini dans CxSOM par: 
 \begin{equation}
 \begin{cases}
 \bmu\m{0}_0 = \argmax_{p\m{0}} a_e(p\m{0},\inpx\m{0})\\
 \cdots \\
-\bmu\m{N}_0 = \argmax_{p\m{N}} a_e(p\m{N},\inpx\m{N})\\
+\bmu\m{n}_0 = \argmax_{p\m{n}} a_e(p\m{n},\inpx\m{n})\\
 \end{cases}
 \label{eq:init}
 \end{equation}

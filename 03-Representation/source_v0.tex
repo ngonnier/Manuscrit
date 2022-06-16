@@ -64,7 +64,7 @@ Nous introduisons dans cette section un formalisme traitant les éléments des c
 \subsection{Représentation des entrées}
 
 Les observations multimodales que l'on cherche à apprendre par l'architecture de cartes sont notées $(\inpx\m{i}, i = 1 \cdots n)$ où $n$ est le nombre de modalités considérées. On considère les $\inpx\m{i}$ comme des variables aléatoires, et le vecteur $\mathbf{\inpx} = (\inpx\m{1}, \cdots, \inpx\m{n})$ la variable aléatoire jointe. Cette variable est tirée dans l'espace $\mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$ selon une distribution de probabilité. La distribution de chaque modalité $\inpx\m{i}$ sur son espace $\mathcal{D}\m{i}$ est appellée distribution marginale de $\mathbf{X}$.
-A chaque pas de temps, un vecteur $\mathbf{\inpx} = (\inpx\m{0}_t, \cdots , \inpx\m{N}_t)$ est présenté à l'architecture: il s'agit d'une réalisation de la variable jointe. On s'intéresse à l'apprentissage de relations entre entrées: les variables $\inpx\m{i}$ ne sont pas des variables indépendantes.
+A chaque pas de temps, un vecteur $\mathbf{\inpx} = (\inpx\m{0}_t, \cdots , \inpx\m{n}_t)$ est présenté à l'architecture: il s'agit d'une réalisation de la variable jointe. On s'intéresse à l'apprentissage de relations entre entrées: les variables $\inpx\m{i}$ ne sont pas des variables indépendantes.
 
 On représente cette dépendance en considérant une variable aléatoire cachée $U$. Cette variable est multidimensionnelle et choisie de façon à ce que chaque variable $\inpx\m{i}$ soit une fonction de la variable aléatoire $U$, et uniquement de cette variable.
 \begin{equation}
@@ -72,7 +72,7 @@ On représente cette dépendance en considérant une variable aléatoire cachée
 \label{eq:U}
 \end{equation}
 
-Pour que la variable $U$ conserve toute l'information sur le modèle, la fonction $(f\m{1}, \cdots, f\m{N})$ : $(\inpx\m{1}, \cdots \inpx\m{N})\rightarrow U$ doit être une bijection. Toute valeur jointe d'entrée correspond à un seul $U$, toute valeur de $U$ renvoie à une seule valeur d'entrée jointe.
+Pour que la variable $U$ conserve toute l'information sur le modèle, la fonction $(f\m{1}, \cdots, f\m{n})$ : $(\inpx\m{1}, \cdots \inpx\m{n})\rightarrow U$ doit être une bijection. Toute valeur jointe d'entrée correspond à un seul $U$, toute valeur de $U$ renvoie à une seule valeur d'entrée jointe.
 
 
 Il s'agit d'une réduction de dimension qui traduit l'existence d'un modèle reliant les observations.
@@ -128,14 +128,14 @@ Le jeu de données d'entrée se décompose en jeu d'apprentissage et jeu de test
 
 Nous considérerons plusieurs éléments des cartes; qui nous intéressent particulièrement dans les représentations, en tant que variables aléatoires: 
 \begin{itemize}
-\item Les positions des BMUs $\bmu\m{0}, \cdots, \bmu\m{N}$ dans chaque carte
-\item Les poids externes des BMUs $\w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{N}(\bmu\m{N})$
+\item Les positions des BMUs $\bmu\m{0}, \cdots, \bmu\m{n}$ dans chaque carte
+\item Les poids externes des BMUs $\w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{n}(\bmu\m{n})$
 \end{itemize}
 Mais tout autre élément d'une carte peut être vu de cette manière, telles que les activités.
 
 
 Une phase de test est alors un ensemble de réalisations d'une variable aléatoire jointe : 
-$$(\inpx\m{0}, \cdots, \inpx\m{N}, \bmu\m{0}, \cdots, \bmu\m{N}, \w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{N}(\bmu\m{N}))$$
+$$(\inpx\m{0}, \cdots, \inpx\m{n}, \bmu\m{0}, \cdots, \bmu\m{n}, \w_e\m{0}(\bmu\m{0}), \cdots, \w_e\m{n}(\bmu\m{n}))$$
 Les composantes de cette variable jointe ne sont pas indépendantes. Les représentations et indicateurs présentés ensuite chercheront à détecter et comprendre au mieux leurs dépendances statistiques.
 
 Le formalisme par variable aléatoires permet d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture.
