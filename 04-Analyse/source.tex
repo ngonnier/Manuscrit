@@ -1,6 +1,70 @@
 \chapter{Analyse de l'organisation de CxSOM}\label{chap:analyse}
 \graphicspath{{04-Analyse/}}
 \minitoc
+
+\section{Identification des comportements de blocs élémentaires de cartes}
+
+Cette thèse s'inscrit dans une démarche expériementale d'analyse d'un système complexe.
+Nous avons proposé un modèle de connexions de cartes auto-organisatrices au sein d'une architecture complète.
+Ce modèle s'appuie sur des modèles de connexions entre cartes existant dans la littérature, utilisés notamment dans le cadre des cartes récurrentes: la transmission de la position du BMU entre cartes.
+La démarche expérimentale est constructive: nous proposons un modèle qui semble pertinent au regard des résultats existants dans la littératures, sur des problèmes similaires que sont les cartes récurrentes. En effet, la transmission de contexte entre carte est un problème partagé par les modèles utilisés en traitement de séquence et en mémoire associative. Nous cherchons ensuite à évaluer la pertinence du modèle et identifier des comportements.
+
+Nous avons présenté ce modèle et les méthodes de représentations sur lesquelles nous nous appuierons. L'expérience présentée en exemple a permis d'identifier quelques comportements élémentaires émergeant des connexions entre carte. Notamment, nous avons observé que les poids contextuels s'organisent de façon à ce qu'une carte différencie son BMU en fonction de son entrée externe et de son entrée contextuelle. 
+Dans ce chapitre, nous analyserons ces comportements plus en détail, et identifierons les comportements \emph{systémiques} émergeant d'une architecture simple à deux et trois cartes.
+
+\subsection{Auto-organisation émergeant d'architectures de deux et trois cartes}
+
+Une architecture de cartes est un système complexe. 
+Dans une logique de construction d'architecture, nous voulons d'abord identifier des comportements collectifs de cartes qui pourraient être intéressants dans l'apprentissage de données multimodales.
+Nous avons choisi d'identifier ces comportements collectifs sur des petites architectures de deux et trois cartes en une dimension. Ces architectures sont représentables graphiquement.
+
+Nous utiliserons la cartographie des entrées en fonction des BMUs dans deux dispositions d'entrées.
+Dans toutes les dispositions, les modalités sont les coordonnées d'un point.
+Nous considérerons des entrées tirées sur un cercle en deux et trois dimensions.
+Dans cette disposition, chaque abcsisse $x$ correspond à deux valeurs de $y$, et inversement.
+Dans cette disposition, nous ajoutons un bruit: le cercle sera en fait un anneau. Nous souhaitons ainsi évaluer si les cartes sont résistantes au bruit d'entrée et apprennent une représentation de la structure débruitée.
+Nous étudierons également une disposition d'entrée prise sur l'ensemble du carré unité. Cette disposition d'entrée permet d'étudier comment une carte se comporte dans le cas ou il n'existe pas de relation entre les entrées.
+
+Chaque expérience se déroule sur
+
+Analysons d'abord la forme des poids contextuels de $M\m{1}$, que nous avions tracés en figure~\ref{fig:weights} sans les commenter. Les poids externes, en orange, présentent une disposition similaire à ceux observés dans la carte classique (b). Les poids contextuels, en bleu, présentent une forme de vagues, avec 7 valeurs de maximum allant de 0.5 à 1, et 6 minimum allant de 0.5 à 0.1. Ces maximum et minimum sont répartis en zones de taille équivalente sur la carte. 
+
+Lorsqu'on s'intéresse au tracés des échantillons, on remarque d'abord que les positions dans la carte $M\m{1}$ se répartissent en zones étant BMUs et zones mortes, dans lesquelles aucune entrée n'a gagné. C'est une première différence avec la carte indépendante, pour laquelle toutes les positions gagneront pour des entrées. Les zones dans lesquelles il y a des BMUs correspondent aux extremum des poids contextuels et leurs alentours. C'est un phénomène inhabituel pour une carte de Kohonen. Les entrées $\inpx\m{1}$, dans la carte classique (b), correspondent à la courbe de poids externe: la valeur du poids du gagnant est toujours très proche de la valeur de l'entrée. Dans la carte $M\m{1}$, les entrées externes $\inpx\m{1}$ orange sont proches de la courbe de poids externes, mais avec plus d'erreur de quantification.
+Les deux points rouge et bleu ayant la même valeur de $x$ ont un BMU différent dans la carte $M\m{1}$, alors que ces deux échantillons ont le même BMU dans la carte apprenant indépendamment sur les valeurs de $x$. Ainsi, la carte connectée au sein de CxSOM différencie les échantillons en fonction de non seulement leur entrée externe, mais aussi de l'entrée de l'autre carte de l'architecture. La plage de valeurs des $\inpx\m{1}$ gagnant dans un des zones recoupe les plages de valeurs gagnant dans les zones situées à gauche et à droite. Par exemple, la zone dans laquelle l'échantillon rouge gagne, autour de $\bmu\m{1} = 0.25$. La partie des entrées située en dessous de la courbe de poids externe recoupe les valeurs d'entrées gagnant dans la zone précédente; la partie située au dessous de la courbe de poids externe recoupe des valeurs gagnant dans la partie suivante. Pour une entrée externe, le choix de la zone de BMU dans laquelle elle gagnera dépend alors de l'entrée contextuelle. 
+
+
+Dans la carte $M\m{1}$, une unité se spécialise donc par rapport aux deux entrées et non pas une seule comme dans la carte indépendante: les entrées externes et l'entrée contextuelles. C'est bien ce à quoi on s'attendait en ayant deux couches de poids. Ce qui est intéressant est que cette différenciation est réalisée par la répartition des unités en un nombre fini de zones distinctes. Dans chaque zone, les unités sont BMUs pour un segment de valeurs d'entrée externe et contextuelles. Au sein d'une zone, la répartition des entrées externe selon le BMUs est ordonnée, comme ce serait le cas dans une carte auto-organisatrice classique. Le comportement de la carte au sein d'une zone reste donc similaire à celui d'une carte classique.
+
+Deux zones adjacentes correspondent par ailleurs à des segments de valeur d'entrée en partie superposés, et des segments de valeurs d'entrées contextuelles différentes. Il s'agit d'une deuxième échelle d'organisation, qui garde également l'aspect ordonné d'une carte classique. Ces zones sont créées par auto-organisation; aucun paramètre de la carte n'a été modifié pendant l'apprentissage pour former ces zones, et le nombre d'unités allouées par auto-organisation dans chaque zone est à peu près égal. La carte agit un peu comme une base de données structurée avec des indices primaires et des indices secondaires pour chaque neurone, l'indice primaire étant la zone de la carte, et l'indice secondaire la position dans cette zone.
+
+
+
+\begin{itemize}
+	\item 
+\end{itemize}
+
+
+\begin{figure}
+	\includegraphics[width=0.7\textwidth]{2som_cercle_w.pdf}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=0.7\textwidth]{3som_cercle_w.pdf}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=0.7\textwidth]{2som_square_w.pdf}
+\end{figure}
+
+
+
+
+
+\subsection{Conclusion}
+
+Ces architectures de quelques cartes sont des architectures \emph{élémentaires}: toute architecture comportant plus de cartes pourra être construite à partir de petits modules. Nous considérerons les comportements observés dans ce chapitre comme des comportements élémentaires des architectures de cartes.
+
+
 \section{Analyse de la relaxation}
 
 Le processus de relaxation utilisé dans l'algorithme CxSOM est une méthode originale pour construire des connexions bidirectionnelles entre cartes. Deux cartes connectées de cette façon jouent alors un rôle symétrique, contrairement à une connexion unidirectionnelle ou hiérarchique dans laquelle une carte joue le rôle d'entrée et une autre de sortie. Dans cette section, nous évaluons expérimentalement la méthode de relaxation en tant que moyen de trouver une best matching unit (BMU). 
@@ -241,21 +305,3 @@ Bien que la relaxation ne converge pas au début de l'apprentissage, la converge
 La relaxation est alors un moyen de trouver un ensemble de BMU au sein d'une architecture maximisant une propriété \emph{globale} à cette architecture: toutes les cartes voient leur activité globale maximisée. Les BMUs ont donc un sens topologique. Cette recherche de maximum est réalisée localement, au niveau de chaque carte, et non de façon globale. La relaxation agit alors comme une manière de connecter des cartes de façon non-hiérarchique, avec un calcul décentralisé.
 
 
-\section{Organisation de structures de deux et trois cartes}
-
-Une architecture de cartes est un système complexe. 
-Dans une logique de construction d'architecture, nous voulons d'abord identifier des comportements collectifs de cartes qui pourraient être intéressants dans l'apprentissage de données multimodales.
-Nous avons choisi d'identifier d'abord ces comportements collectifs sur des petites architectures de deux et trois cartes en une dimension. Ces architectures sont facilement représentables graphiquement.
-
-
-
-
-Analysons d'abord la forme des poids contextuels de $M\m{1}$, que nous avions tracés en figure~\ref{fig:weights} sans les commenter. Les poids externes, en orange, présentent une disposition similaire à ceux observés dans la carte classique (b). Les poids contextuels, en bleu, présentent une forme de vagues, avec 7 valeurs de maximum allant de 0.5 à 1, et 6 minimum allant de 0.5 à 0.1. Ces maximum et minimum sont répartis en zones de taille équivalente sur la carte. 
-
-Lorsqu'on s'intéresse au tracés des échantillons, on remarque d'abord que les positions dans la carte $M\m{1}$ se répartissent en zones étant BMUs et zones mortes, dans lesquelles aucune entrée n'a gagné. C'est une première différence avec la carte indépendante, pour laquelle toutes les positions gagneront pour des entrées. Les zones dans lesquelles il y a des BMUs correspondent aux extremum des poids contextuels et leurs alentours. C'est un phénomène inhabituel pour une carte de Kohonen. Les entrées $\inpx\m{1}$, dans la carte classique (b), correspondent à la courbe de poids externe: la valeur du poids du gagnant est toujours très proche de la valeur de l'entrée. Dans la carte $M\m{1}$, les entrées externes $\inpx\m{1}$ orange sont proches de la courbe de poids externes, mais avec plus d'erreur de quantification.
-Les deux points rouge et bleu ayant la même valeur de $x$ ont un BMU différent dans la carte $M\m{1}$, alors que ces deux échantillons ont le même BMU dans la carte apprenant indépendamment sur les valeurs de $x$. Ainsi, la carte connectée au sein de CxSOM différencie les échantillons en fonction de non seulement leur entrée externe, mais aussi de l'entrée de l'autre carte de l'architecture. La plage de valeurs des $\inpx\m{1}$ gagnant dans un des zones recoupe les plages de valeurs gagnant dans les zones situées à gauche et à droite. Par exemple, la zone dans laquelle l'échantillon rouge gagne, autour de $\bmu\m{1} = 0.25$. La partie des entrées située en dessous de la courbe de poids externe recoupe les valeurs d'entrées gagnant dans la zone précédente; la partie située au dessous de la courbe de poids externe recoupe des valeurs gagnant dans la partie suivante. Pour une entrée externe, le choix de la zone de BMU dans laquelle elle gagnera dépend alors de l'entrée contextuelle. 
-
-
-Dans la carte $M\m{1}$, une unité se spécialise donc par rapport aux deux entrées et non pas une seule comme dans la carte indépendante: les entrées externes et l'entrée contextuelles. C'est bien ce à quoi on s'attendait en ayant deux couches de poids. Ce qui est intéressant est que cette différenciation est réalisée par la répartition des unités en un nombre fini de zones distinctes. Dans chaque zone, les unités sont BMUs pour un segment de valeurs d'entrée externe et contextuelles. Au sein d'une zone, la répartition des entrées externe selon le BMUs est ordonnée, comme ce serait le cas dans une carte auto-organisatrice classique. Le comportement de la carte au sein d'une zone reste donc similaire à celui d'une carte classique.
-
-Deux zones adjacentes correspondent par ailleurs à des segments de valeur d'entrée en partie superposés, et des segments de valeurs d'entrées contextuelles différentes. Il s'agit d'une deuxième échelle d'organisation, qui garde également l'aspect ordonné d'une carte classique. Ces zones sont créées par auto-organisation; aucun paramètre de la carte n'a été modifié pendant l'apprentissage pour former ces zones, et le nombre d'unités allouées par auto-organisation dans chaque zone est à peu près égal. La carte agit un peu comme une base de données structurée avec des indices primaires et des indices secondaires pour chaque neurone, l'indice primaire étant la zone de la carte, et l'indice secondaire la position dans cette zone.
