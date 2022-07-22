@@ -25,3 +25,6 @@ chapter:##compile only one chapter. Usage : chapter CHAP=<directory_name>, with 
 	pdflatex -jobname=chapter-${CHAP} '\includeonly{${CHAP}/source}\input' main.tex
 	bibtex chapter-${CHAP}
 
+chapterbis:##compile only one chapter. Usage : chapter CHAP=<directory_name>, with directory = 01-Modularite, 02-SOM, 03-Representation, 04-Analyse, 05-Application
+	pdflatex -jobname=chapter-${CHAP}  ${CHAP}/source.tex
+	bibtex chapter-${CHAP}

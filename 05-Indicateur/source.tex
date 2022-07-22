@@ -9,8 +9,7 @@ Nous souhaitons définir un indicateur numérique caractérisant cette propriét
 Les tracés sont réalisables pour une variable cachée $U$ en en une dimension; un indicateur numérique nous permettra aussi d'évaluer l'apprentissage lorsque la dimension de $U$ est plus grande.
 
 Nous avons défini les expériences en termes de variables aléatoires. La théorie de l'information de Shannon \cite{Shannon1948AMT} apporte un modèle mathématique qui permet de manipuler et encoder ces variables et quantifier l'information partagée entre leurs distributions.
-Nous définirons dans ce chapitre un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes en s'appuyant sur la notion d'information mutuelle, issue de la théorie de l'information.
-Nous détaillerons notamment la méthode d'estimation choisie pour cet indicateur.
+Nous définirons dans ce chapitre des indicateurs permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes.
 
 \begin{figure}
     \centering
@@ -19,7 +18,19 @@ Nous détaillerons notamment la méthode d'estimation choisie pour cet indicateu
     \label{fig:upi_chap4}}
 \end{figure}
 
-\section{Rappel des éléments de la théorie de l'information}
+\subsection{Indicateurs envisagés}
+
+Plusieurs méthodes permettent d'évaluer une relation statistique existant entre deux signaux. Citons notamment la corrélation croisée, le ratio de corrélation et l'information mutuelle.
+La corrélation croisée cherche une ressemblance entre deux signaux de façon linéaire. Une bonne corrélation croisée traduit ainsi l'existence d'une relation linéaire entre deux signaux.
+Le ratio de correlation est un rapport mesurant l'existence d'une relation fonctionnelle non-linéaire entre les deux variable. 
+Enfin, l'information mutuelle permet d'evaluer une relation statistique quelconque entre les variables.
+
+\begin{itemize}
+    \item Avantages du correlation ratio: mesure précisément une relation fonctionnelle quelconque, est à valeur dans 0,1. Désavantages: besoin de passer par l'estimation des densités de proba, en particulier $U|\bmu$, donc peu pratique quand la dimension augmente.
+    \item Information mutuelle : mesure une relation statistique quelconque. Largement utilisé, donc de nombreuses méthodes fiables d'estimation existent, y compris pour des dimensions supérieures. Normalisation possible pour définir un indicateur compris entre 0 et 1. Est maximale lorsque qu'il existe une bijection entre les deux variables, ce qui est ce qu'on veut mesurer.
+\end{itemize}
+
+\section{Rappel des éléments de théorie de l'information}
 
 Les notions d'\emph{entropie} et les valeurs associées, telle que l'\emph{information mutuelle} entre des distributions, sont des notions fondamentales de la théorie de l'information de Shannon. Ces quantités sont liées à la distribution d'une variable aléatoire.
 L'entropie de Shannon d'une variable aléatoire $X$ à valeurs discrètes dans un ensemble $E_X$, de distribution $P_X$, est notée $H(X)$ et définie par la formule : 
@@ -37,13 +48,6 @@ Outre les entropies jointes et conditionnelles, l'existence d'une relation stati
  I(X,Y) = \sum_{x,y \in E_X,E_Y}{P_{XY}(x,y)\textrm{log}(\frac{P_{XY}(x,y)}{P_X(x)P_Y(y)})}
 \end{equation}
 Cette valeur mesure la quantité d'information moyenne partagée entre les distributions $X$ et $Y$: en moyenne, quelle information sur la valeur de $Y$ donne une valeur de $X$ et inversement, quelle information sur la valeur de $X$ donne une valeur de $Y$.
-Contrairement à la corrélation croisée, qui mesure l'existence d'une relation linéaire entre les deux distributions, l'information mutuelle mesure l'existence d'une relation statistique générale, comme illustré en figure~\ref{fig:mi_description}.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{mi_description}
-    \caption{Différence entre la corrélation croisée et l'information mutuelle. La corrélation croisée évalue une relation affine entre deux variables aléatoires. L'information mutuelle évalue une relation statistique quelconque.\label{fig:mi_description}}
-\end{figure}
 
 L'information mutuelle possède les propriété suivantes:
 \begin{enumerate}
@@ -200,7 +204,7 @@ Nous pourrons donc utiliser $I_x$ comme indicateur d'une relation fonctionnelle 
 \begin{figure}
 \includegraphics[width=\textwidth]{evolution_MI_binning}
 \caption{Evolution de l'information mutuelle normalisée $I_x(U|\bmu)$ dans chaque carte au long de l'apprentissage. La courbe bleue correspond à $I_x(U|\bmu)$ dans l'architecture de cartes $M\m{1}$ et $M\m{2}$. On compare cette évolution à l'évolution de l'information d'une seule carte apprenant sur les mêmes entrées $X$ ou $Y$, sans être connectée.}
-\label{fig:MI_evol}
+    \label{fig:MI_evol}
 \end{figure}
 
 \subsection{Evolution du coefficient d'incertitude théorique au cours de l'apprentissage}
@@ -229,7 +233,12 @@ La comparaison de la valeur précise du coefficient d'intertitude, estimé par K
 
 \end{figure}
 
+\section{Utilisation du ration de corrélation comme mode d'évaluation}
 
+\begin{figure}
+    \includegraphics[width=\textwidth]{correlation_ratio_illustration.pdf}
+    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples}
+\end{figure}
 \section{Conclusion}
 
 Dans ce chapitre, nous avons introduit l'indicateur $I_x(U|\bmu)$, permettant de mesurer s'il existe une relation fonctionnelle entre $U$ et la position du BMU d'une carte. Cet indicateur s'appuie sur la notion de coefficient d'incertitude, une variante normalisée de l'information mutuelle. Le coefficient d'incertitude est une valeur probabiliste. L'indicteur $I_x$ que nous proposons correspond à l'estimation du coefficient d'incertitude par la méthide des histogrammes, en discrétisant l'espace des variables $U$ et $\bmu$, avec une grande taille d'intervalle pour $U$. Ce découpage permet de ne pas prendre en compte le fait que les valeurs de $U$ encodées par une position de BMU $\bmu$ ont une dispersion locale, un bruit. Dans ce cas, l'indicateur permet d'évaluer numériquement si un BMU code pour un seul intervalle de valeur pour $U$ et non plusieurs comme dans le cas d'une carte simple.

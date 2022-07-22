@@ -41,6 +41,7 @@
 \newtheorem{propriete}{Propriété}
 \newtheorem{proposition}{Proposition}
 \parskip=5pt
+
 %draft/release options
 \newif\ifDraft
 \newcommand\comment[1]{\ifDraft {\itshape\color{red}{#1}} \fi} %text displayed in draft mode as comments
@@ -49,39 +50,34 @@
 %switch between draftmode and releasemode
 \ifdefined\draftmode
   \Drafttrue
-  %\Reviewtrue
-\fi
-
-\ifdefined\reviewmode
   \Reviewtrue
 \fi
+\def\bib{
+        {\bibliographystyle{plain}\bibliography{./biblio.bib}}
+    }
 
 
-%\Drafttrue %switch to false if you want to get the release version.
-%\Draftfalse %switch to true if you want to get the draft version.
-%\ifReview \usepackage[lmargin=5cm]{geometry}\fi
-
-%def path for files
+\usepackage{subfiles}
 \input{Notations.tex}
-
 %compile only a chapter
 
 \begin{document}
 \dominitoc
 \include{titlepage}
 \tableofcontents
-\include{00-Introduction/source}
+\subfile{00-Introduction/source}
 \mainmatter
-\include{01-Modularite/source}
-\include{02-Architectures/source}
+\subfile{01-Modularite/source}
+\subfile{02-Architectures/source}
 %Chapitre en plus : multimodalité ?
-\include{03-SOM/source}
-\include{04-Representation/source}
-\include{05-Indicateur/source}
-\include{06-Analyse/source}
-\include{08-Application/source}
-\include{Conclusion}
+\subfile{03-SOM/source}
+\subfile{04-Representation/source}
+\subfile{05-Indicateur/source}
+\subfile{06-Analyse/source}
+\subfile{07-Relaxation/source}
+\subfile{08-Application/source}
+\subfile{Conclusion}
 %Bibliography files
-\bibliography{01-Modularite/biblio_modularite.bib,01-Modularite/biblio_reseaux.bib, 04-Representation/biblio_representation.bib,03-SOM/biblio_SOM.bib,publis.bib}
-\bibliographystyle{plain}
+ \bibliography{01-Modularite/biblio_modularite.bib,01-Modularite/biblio_reseaux.bib, 02-Architectures/biblio.bib, 04-Representation/biblio_representation.bib,03-SOM/biblio_SOM.bib,publis.bib}
+ \bibliographystyle{plain}
 \end{document}

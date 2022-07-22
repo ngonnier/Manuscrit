@@ -1,5 +1,7 @@
-\chapter{Analyse de la relaxation}
-Le processus de relaxation utilisé dans l'algorithme CxSOM est une méthode originale pour construire des connexions bidirectionnelles entre cartes. Deux cartes connectées de cette façon jouent alors un rôle symétrique, contrairement à une connexion unidirectionnelle ou hiérarchique dans laquelle une carte joue le rôle d'entrée et une autre de sortie. Dans cette section, nous évaluons expérimentalement la méthode de relaxation en tant que moyen de trouver une best matching unit (BMU). 
+\chapter{Convergence de la relaxation}
+\graphicspath{{07-Relaxation/}}
+\minitoc
+Le processus de relaxation utilisé dans l'algorithme CxSOM est une méthode originale pour construire des connexions bidirectionnelles entre cartes. Deux cartes connectées de cette façon jouent alors un rôle symétrique, contrairement à une connexion unidirectionnelle ou hiérarchique dans laquelle une carte joue le rôle d'entrée et une autre de sortie. Dans cette section, nous évaluons expérimentalement la méthode de relaxation en tant que moyen de trouver une best matching unit (BMU).
 
 La Best Matching Unit d'une carte de Kohonen correspond à la position où l'activité est maximale. Dans la situation d'une architecture de plusieurs cartes, ayant chacune un BMU, le vecteur de BMUs correspond à la positions ou chacune des activités est maximale. On est donc face à un problème d'optimisation multi-objectif dans lequel on cherche un seul point maximisant chacune des activités, mais dans lequel les activités dépendent les unes des autres. La relaxation est proposée comme heuristique pour trouver ce point, s'il existe. On cherchera donc à répondre aux questions suivantes:
 \begin{itemize}
@@ -8,9 +10,129 @@ La Best Matching Unit d'une carte de Kohonen correspond à la position où l'act
 \item Quels sont les paramètres à prendre en compte dans l'algorithme de relaxation ?
 \end{itemize}
 
-\subsection{Etude de la convergence des BMUs lors de la relaxation}\label{sec:conv}
 
-\subsubsection{Méthode}
+
+\section{Formalisation de l'algorithme de relaxation}
+\subsection{Rappel du formalisme}
+La relaxation cherche à maximiser collectivement l'activité globale dans chaque carte de l'architecture.
+Notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
+La suite $(\mathbf{\bmu})_\tau$ est une suite définie par récurrence par $\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)$ avec $\mathbf{f} = (f\m{0},\cdots,f\m{n}) : [0,1]^N \rightarrow [0,1]^N$ une application non linéaire transformant l'espace des positions des BMUs; $\mathbf{f}$ ne dépend pas de $\tau$. 
+L'algorithme de relaxation est alors une recherche de point fixe de la fonction $\mathbf{f}$.
+
+
+Détaillons l'évolution de cette suite.
+Pour clarifier les notations, définissons pour chaque carte~$i$ $\hat{p}\m{i}_\tau$, comme la position maximisant l'activité globale de la carte $i$:
+\begin{equation}
+\begin{gathered}
+\hat{p}\m{i}_{\tau} = \argmax_{p\m{i}}(a_g\m{i}(p\m{i},\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau))\\
+ i_0, \cdots i_K \: \text{indices des cartes nourrissant la carte $i$}.
+\end{gathered}
+\label{eq:pstar}
+\end{equation}
+$a_g\m{i}$ est une fonction des poids de la carte $\w\ext\m{i}, \w\cont\m{i}$ et de son entrée externe $\inpx\m{i}$. Lors du processus de relaxation, les poids et l'entrée restent fixes. Le calcul de $a_g$ ne dépend pas de $\tau$. Pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ est donc seulement une fonction de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$.
+L'équation d'évolution s'écrit alors: 
+\begin{equation}
+\bmu\m{i}_{\tau+1} = 
+\begin{cases}
+\bmu\m{i}_{\tau} + sgn(\hat{p}\m{i}_{\tau} - \bmu\m{i}_{\tau}) \times \delta \; & \text{si $\hat{p}\m{i}_{\tau} - \bmu\m{i}_{\tau} > \delta$ } \\
+\hat{p}\m{i}_{\tau} \; \text{sinon}	
+\end{cases}
+\label{eq:evolution}
+\end{equation}
+
+En posant $f\m{i}$ la partie droite de l'équation \ref{eq:evolution}, on peut donc écrire: 
+\begin{equation}
+\bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)
+\label{eq:fonction}
+\end{equation}
+Soit, pour l'ensemble des composantes : 
+\begin{equation}
+\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)
+\end{equation}
+
+La relaxation se traduit ainsi par une recherche de point fixe de la suite $(\mathbf{\bmu})_{\tau}$, soit une position $\mathbf{\bmu}$ telle que:
+\begin{equation}
+\mathbf{\bmu} = \mathbf{f}(\mathbf{\bmu})
+\label{eq:suite}
+\end{equation}
+
+Si $f$ admet un point fixe, alors ce point fixe est aussi un point fixe pour la suite $(\mathbf{\bmu})_\tau$. Cependant, rien ne garantit que ce point fixe existe, ni que la suite converge.
+A défaut de preuve, nous avons cherché expérimentalement à vérifier ces propriétés: la suite converge-t-elle, et si oui converge-t-elle vers un unique point fixe ?
+
+Expérimentalement, il semble que si $\mathbf{f}$ admet un unique point fixe et que les poids $\w$ présentent une continuité, alors $(\mathbf{\bmu})_{\tau}$ converge vers ce point fixe. 
+
+L'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dépend de son initialisation.
+L'état initial $(\bmu\m{0}_0, \cdots , \bmu\m{n}_0)$ est défini dans CxSOM par: 
+\begin{equation}
+\begin{cases}
+\bmu\m{0}_0 = \argmax_{p\m{0}} a_e(p\m{0},\inpx\m{0})\\
+\cdots \\
+\bmu\m{n}_0 = \argmax_{p\m{n}} a_e(p\m{n},\inpx\m{n})\\
+\end{cases}
+\label{eq:init}
+\end{equation}
+
+
+
+Dans les sections suivantes, nous utiliserons des entrées formant un cercle en une dimension dans un espace en deux ou trois dimensions. Les entrées d'une carte correspondent à la coordonnée des points sur un des axes $X$,$Y$ et $Z$ en trois dimensions.
+Les architectures étudiées sont des cartes 1D, et 2D lorsque cela est précisé. Les cartes sont connectées réciproquement, comme indiqué en figure \ref{fig:archis}.
+Nous chercherons, sur ce jeu de données, à vérifier si la relaxation converge, et comment les paramètres et l'initialisation de la relaxation influencent les trajectoires et la convergence.
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{archis}
+\caption{Architectures de deux et trois cartes utilisées dans cette section. Les cartes peuvent être en une ou deux dimensions. Dans le cas de cartes en deux dimensions, la position du BMU $\bmu$ est alors un vecteur 2D.}
+\label{fig:archis}
+\end{figure}
+
+\subsection{Quelles propriétés attend-on d'une Best Matching Unit ?}
+
+La notion de Best Matching Unit est définie au sein de l'algorithme d'apprentissage d'une carte de Kohonen, comme l'unité possédant l'activité maximale pour une entrée fixée. Cette activité dépend de l'entrée présentée et des poids de la carte, mais peut aussi dépendre d'autres facteurs pour d'autres modèles de carte, tels que l'état de la carte au temps précédent pour les cartes récurrentes, ou dans notre cas les positions des BMU des cartes adjacentes.
+Dans le modèle classique de carte auto-organisatrice, nous pouvons dégager les propriétés suivantes concernant la BMU:
+\begin{itemize}
+	\item La BMU est seulement relative à l'état de la carte (activités) et sa ou ses entrées. Notons qu'en règle générale, ce BMU est unique. Cependant, plusieurs poids peuvent être égaux dans une carte et correspondre à l'activité maximale. Ce cas est de probabilité nulle pour un espace d'entrée continu. Notons donc que l'existence de plusieurs positions correspondant au maximum de l'activité est un cas dégénéré à prendre en compte, mais peut atteint.
+	\item La recherche du BMU est déterministe. Encore une fois, dans le cas de plusieurs BMU possibles, ce n'est plus vrai, mais la recherche du BMU est alors limitée à un nombre réduit de possibilité.
+	\item Le poids du BMU permet de retrouver une approximation de l'entrée.
+\end{itemize}
+Dans l'algorithme CxSOM, la recherche du BMU est réalisée par une méthode dynamique de relaxation. 
+Pour observer les mêmes propriétés sur la recherche classique par activité dans une carte simple et la recherche par relaxation, il est nécessaire que:
+\begin{itemize}
+	\item La recherche du BMU converge. En effet, s'il n'existe pas de point de convergence, nous ne pouvons pas définir un unique BMU pour la carte. Nous autorisons la convergence vers des cycles limites sur peu de positions.
+	\item La valeur trouvée à l'issue de la relaxation ne dépend pas des conditions de l'expérience, à savoir les conditions initiales de la relaxation. De cette façon, un BMU sera relatif à seulement une carte.
+	\item Le poids externe du BMU approxime l'entrée. En effet, les calculs d'activités s'appuient sur une distances euclidienne entre le poids du BMU et l'entrée. Ce poids devrait donc être une approximation correcte de la valeu d'entrée.
+\end{itemize}
+
+Notons que dans l'algorithme CxSOM, les BMUs sont initialisées à la position du maximum de l'activité externe dans chaque carte. Nous effectuerons l'analyse de la relaxation pour des conditions initiales quelconques, mais il est important de noter que ce choix d'initialisation permettra d'éviter des cas de non convergence.
+
+Nous chercherons donc à évaluer si ces conditions sont remplies pour l'algorithme CxSOM. 
+Nous montrerons qu'il n'existe pas toujours un unique point fixe, notamment lorsque les poids sont aléatoires au début de l'apprentissage, ce qui entraîne alors une non-convergence de la relaxation. Cependant, ces cas de non-convergence n'influencent pas l'apprentissage des cartes, ce qui est notamment permis par l'initialisation des positions au maximum de l'entrée externe.
+On observera expérimentalement qu'à la fin de l'apprentissage, la disposition des poids permet l'existence d'un unique point fixe qui est indépendant de l'initialisation des valeurs de $\bmu\m {i}_{\tau}$.
+
+\subsection{Problématique}
+
+Dans ce chapitre, nous cherchons donc
+
+\section{Etude de l'influence de l'entrée contextuelle sur le BMU}\label{sec:cont}
+
+Dans cette section, nous étudions plus précisément l'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dans le cas de d'une architecture de deux cartes 1D connectées. Les cartes sont $M\m{1}$ et $M\m{2}$ prenant en entrée externe respectivement $\inpx\m{1} = X, \inpx\m{2} = Y$, coordonnées des points d'un cercle 2D.
+Les entrées contextuelles des deux cartes sont à valeurs dans l'espace des positions d'une carte: $\inpc\m{1} = \bmu\m{2}$ et $\inpc\m{2} = \bmu\m{1}$.
+On définit les valeurs $\hat{p}\m{1}$ et $\hat{p}\m{2}$ comme indiqué dans l'équation \ref{eq:pstar}
+\begin{equation} 
+\begin{cases}
+	\hat{p}\m{1}_{\tau} = \argmax_{p\m{1}}(a_g(p\m{1},\bmu\m{2}_{\tau})) \\
+	\hat{p}\m{2}_{\tau} = \argmax_{p\m{2}}(a_g(p\m{2},\bmu\m{1}_{\tau})) \\
+\end{cases}
+\end{equation}
+
+On trace ensuite les valeurs de $\hat{p}\m{1}$ en fonction de son entrée contextuelle $\bmu\m{2} \in [0,1]$, et $\hat{p}\m{2}$ en fonction de $\bmu\m{1} \in [0,1]$ en figure \ref{fig:w006}.
+Cette expérience est réalisée après l'apprentissage. On remarque que, $\hat{p}\m{i}$ varie peu en fonction de l'entrée contextuelle de la carte; tout le processus de relaxation se déroulera donc dans une portion réduite de la carte. Cette propriété favorise la convergence de la relaxation.
+En réalisant les mêmes tracés à des étapes différentes de l'apprentissage, on remarque que la dépendance de $\hat{p}$ à l'entrée contextuelle dépend surtout de l'organisation des poids externes. En effet, l'activité externe est prépondérante dans le calcul de l'activité globale. Les poids externes s'organisent plus rapidement que les poids contextuels dus à la différence de rayons de voisinage. A partir du moment ou les poids externes d'une carte $i$ sont dépliés, les valeurs possible pour $\bmu\m{i}$ restent dans une portion limitée de la carte. Cela permet alors à la relaxation de trouver un point fixe dans cette portion.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{am_w_006}
+\caption{(a): $\hat{p}\m{1}$ et $\hat{p}\m{2}$ en fonction de l'entrée contextuelle de leur carte $\bmu\m{2}$ et $\bmu\m{1}$.(b): les poids externes et contextuels des cartes $1$ et $2$ sont représentés selon leur position dans la carte. On représente également les entrées test $\inpx\m{1}$ et $\inpx\m{2}$ en fonction de leur BMU. Les entrées utilisées pour tracer les figures de gauche sont colorées en rouge sur les figure de droite: $\inpx\m{1}=0.26,\inpx\m{2}=0.06$. Les intervalles dans lequel les valeurs de $\hat{p}$ varient sont reportés sur la figure (b).}
+\label{fig:w006}
+\end{figure}
+
 
 La méthode de relaxation cherche un point de convergence des BMU $\bmu\m{i}$ de l'archchitecture. Nous avons réalisé 1000 itérations de test, à poids figés, à différents temps d'apprentissage, et comptons le nombre de pas nécessaires à la convergence de la relaxation. L'algorithme utilisé pour la relaxation s'arrête automatiquement si la relaxation dépasse $\tau_{max}= 1000$ itérations; on considérera que la relaxation n'a pas atteint un point de convergence si la relaxation atteint ces $\tau_{max}$ itérations.
 Pour cette expérience, les entrées sont des points pris sur un cercle en deux dimensions. $\inpx\m{1}$ est l'abscisse d'un point, $\inpx\m{2}$ l'ordonnée.
@@ -24,7 +146,7 @@ Le premier cas est évité car la limite de 1000 itérations est assez grande pa
 Nous observerons plus précisément les trajectoires dans la section suivante; on s'intéresse ici seulement à la question de la convergence.
 L'étude de la convergence sera réalisée dans des architectures de 2 et 3 cartes, pour des cartes une dimension et deux dimensions.
 
-\subsubsection{Résultats}
+\section{Résultats}
 La figure \ref{fig:conv_evolution} présente l'évolution du taux de convergence au cours de l'apprentissage d'une architecture de 2 cartes et 3 cartes. La figure \ref{fig:conv_evolution2D} trace  cette évolution dans le cas de cartes 2D. Pour tracer cette évolution, on effectue des étapes de tests à intervalles réguliers au cours de l'apprentissage, pendant lesquelles les poids ne sont pas mis à jour. Ces tests sont réalisés sur 1000 entrées externes $\inpx\m{1} = X, \inpx\m{2}=Y$ (et $\inpx\m{3}=Z$ pour trois cartes), prises aléatoirement dans l'espace d'entrée. On compte, pour chaque échantillon de test, le nombre de pas nécessaire à la relaxation. Si ce nombre est égal à $\tau_{max}$, on considère que la relaxation n'a pas convergé. On trace alors, en haut, le pourcentage d'échantillons de test pour lesquel la relaxation converge. En bas, on trace le nombre moyen de pas de relaxation nécessaires à la convergence.
 Dans chaque cas, on répètera 10 fois l'apprentissage complet et les tests, sur le même espace d'entrée mais des éléments différents. Les tracés des figures \ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} sont la moyenne et l'écart type des valeurs obtenues sur ces 10 répétitions.
 
@@ -46,110 +168,20 @@ Chaque point est calculé sur un échantillon de 1000 relaxations au temps t, é
 \label{fig:conv_evolution2D}
 \end{figure}
 
-\subsection{Formalisation de l'algorithme de relaxation}
-
-La relaxation cherche à maximiser de façon \emph{commune} de l'activité globale de chaque carte de l'architecture. Notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
-La suite $(\mathbf{\bmu})_\tau$ est une suite définie par récurrence par $\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)$
-avec $\mathbf{f} = (f\m{0},\cdots,f\m{n}) : [0,1]^N \rightarrow [0,1]^N$ une application non linéaire transformant l'espace des positions des BMUs; $\mathbf{f}$ ne dépend pas de $\tau$. L'algorithme de relaxation est alors une recherche de point fixe de la fonction $\mathbf{f}$.
-Détaillons l'évolution de cette suite. Pour clarifier les notations, définissons pour chaque carte~$i$ $p\star\m{i}_\tau$, comme la position maximisant l'activité globale de la carte $i$:
-\begin{equation}
-\begin{gathered}
-p\star\m{i}_{\tau} = \argmax_{p\m{i}}(a_g\m{i}(p\m{i},\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau))\\
- i_0, \cdots i_K \: \text{indices des cartes nourrissant la carte $i$}.
-\end{gathered}
-\label{eq:pstar}
-\end{equation}
-$a_g\m{i}$ est une fonction des poids de la carte $\w\ext\m{i}, \w\cont\m{i}$ et de son entrée externe $\inpx\m{i}$. Lors du processus de relaxation, les poids et l'entrée restent fixes. Le calcul de $a_g$ ne dépend pas de $\tau$. Pour toute carte $i$, $p\star\m{i}_{\tau}$ est donc seulement une fonction de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$.
-L'équation d'évolution s'écrit alors: 
-\begin{equation}
-\bmu\m{i}_{\tau+1} = 
-\begin{cases}
-\bmu\m{i}_{\tau} + sgn(p\star\m{i}_{\tau} - \bmu\m{i}_{\tau}) \times \delta \; & \text{si $p\star\m{i}_{\tau} - \bmu\m{i}_{\tau} > \delta$ } \\
-p\star\m{i}_{\tau} \; \text{sinon}	
-\end{cases}
-\label{eq:evolution}
-\end{equation}
-
-En posant $f\m{i}$ la partie droite de l'équation \ref{eq:evolution}, on peut donc écrire: 
-\begin{equation}
-\bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)
-\label{eq:fonction}
-\end{equation}
-Soit, pour l'ensemble des composantes : 
-\begin{equation}
-\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)
-\end{equation}
-
-La relaxation se traduit ainsi par une recherche de point fixe de la suite $(\mathbf{\bmu})_{\tau}$, soit une position $\mathbf{\bmu}$ telle que:
-\begin{equation}
-\mathbf{\bmu} = \mathbf{f}(\mathbf{\bmu})
-\label{eq:suite}
-\end{equation}
-
-Si $f$ admet un point fixe, alors ce point fixe est aussi un point fixe pour la suite $(\mathbf{\bmu})_\tau$. Cependant, rien ne garantit que ce point fixe existe, et qu'il sera atteint par la suite. Expérimentalement, il semble que si $\mathbf{f}$ admet un unique point fixe et que les poids $\w$ présentent une continuité, alors $(\mathbf{\bmu})_{\tau}$ converge vers ce point fixe. 
-
-L'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dépend de son initialisation.
-L'état initial $(\bmu\m{0}_0, \cdots , \bmu\m{n}_0)$ est défini dans CxSOM par: 
-\begin{equation}
-\begin{cases}
-\bmu\m{0}_0 = \argmax_{p\m{0}} a_e(p\m{0},\inpx\m{0})\\
-\cdots \\
-\bmu\m{n}_0 = \argmax_{p\m{n}} a_e(p\m{n},\inpx\m{n})\\
-\end{cases}
-\label{eq:init}
-\end{equation}
-
-On montrera qu'il n'existe pas toujours un unique point fixe, notamment lorsque les poids sont aléatoires au début de l'apprentissage, ce qui entraîne alors une non-convergence de la relaxation. Cependant, ces cas de non-convergence n'influencent pas l'apprentissage des cartes en choissant des bons paramètres d'apprentissage. On observera expérimentalement qu'à la fin de l'apprentissage, la disposition des poids permet l'existence d'un unique point fixe, indépendant de l'initialisation des valeurs de $\bmu\m {i}_{\tau}$.
-
-Dans les sections suivantes, nous utiliserons des entrées formant un cercle en une dimension dans un espace en deux ou trois dimensions. Les entrées d'une carte correspondent à la coordonnée des points sur un des axes $X$,$Y$ et $Z$ en trois dimensions.
-Les architectures étudiées sont des cartes 1D, et 2D lorsque cela est précisé. Les cartes sont connectées réciproquement, comme indiqué en figure \ref{fig:archis}.
-Nous chercherons, sur ce jeu de données, à vérifier si la relaxation converge, et comment les paramètres et l'initialisation de la relaxation influencent les trajectoires et la convergence.
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{archis}
-\caption{Architectures de deux et trois cartes utilisées dans cette section. Les cartes peuvent être en une ou deux dimensions. Dans le cas de cartes en deux dimensions, la position du BMU $\bmu$ est alors un vecteur 2D.}
-\label{fig:archis}
-\end{figure}
-
-\subsection{Etude de l'influence de l'entrée contextuelle sur le BMU}\label{sec:cont}
-
-Dans cette section, nous étudions plus précisément l'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dans le cas de d'une architecture de deux cartes 1D connectées. Les cartes sont $M\m{1}$ et $M\m{2}$ prenant en entrée externe respectivement $\inpx\m{1} = X, \inpx\m{2} = Y$, coordonnées des points d'un cercle 2D.
-Les entrées contextuelles des deux cartes sont à valeurs dans l'espace des positions d'une carte: $\inpc\m{1} = \bmu\m{2}$ et $\inpc\m{2} = \bmu\m{1}$.
-On définit les valeurs $p\star\m{1}$ et $p\star\m{2}$ comme indiqué dans l'équation \ref{eq:pstar}
-\begin{equation} 
-\begin{cases}
-	p\star\m{1}_{\tau} = \argmax_{p\m{1}}(a_g(p\m{1},\bmu\m{2}_{\tau})) \\
-	p\star\m{2}_{\tau} = \argmax_{p\m{2}}(a_g(p\m{2},\bmu\m{1}_{\tau})) \\
-\end{cases}
-\end{equation}
-
-On trace ensuite les valeurs de $p\star\m{1}$ en fonction de son entrée contextuelle $\bmu\m{2} \in [0,1]$, et $p\star\m{2}$ en fonction de $\bmu\m{1} \in [0,1]$ en figure \ref{fig:w006}.
-Cette expérience est réalisée après l'apprentissage. On remarque que, $p\star\m{i}$ varie peu en fonction de l'entrée contextuelle de la carte; tout le processus de relaxation se déroulera donc dans une portion réduite de la carte. Cette propriété favorise la convergence de la relaxation.
-En réalisant les mêmes tracés à des étapes différentes de l'apprentissage, on remarque que la dépendance de $p\star$ à l'entrée contextuelle dépend surtout de l'organisation des poids externes. En effet, l'activité externe est prépondérante dans le calcul de l'activité globale. Les poids externes s'organisent plus rapidement que les poids contextuels dus à la différence de rayons de voisinage. A partir du moment ou les poids externes d'une carte $i$ sont dépliés, les valeurs possible pour $\bmu\m{i}$ restent dans une portion limitée de la carte. Cela permet alors à la relaxation de trouver un point fixe dans cette portion.
-
-\begin{figure}
-\includegraphics[width=\textwidth]{am_w_006}
-\caption{(a): $p\star\m{1}$ et $p\star\m{2}$ en fonction de l'entrée contextuelle de leur carte $\bmu\m{2}$ et $\bmu\m{1}$.(b): les poids externes et contextuels des cartes $1$ et $2$ sont représentés selon leur position dans la carte. On représente également les entrées test $\inpx\m{1}$ et $\inpx\m{2}$ en fonction de leur BMU. Les entrées utilisées pour tracer les figures de gauche sont colorées en rouge sur les figure de droite: $\inpx\m{1}=0.26,\inpx\m{2}=0.06$. Les intervalles dans lequel les valeurs de $p\star$ varient sont reportés sur la figure (b).}
-\label{fig:w006}
-\end{figure}
-
-
-
-\subsection{Etude de l'unicité du point fixe}\label{sec:pf}
-
+\section{Etude de l'unicité du point fixe}\label{sec:pf}
 Nous étudions dans cette partie l'évolution de processus de relaxation lancés sur les mêmes poids, pour une entrée externe fixée, mais avec $\mathbf{\bmu}_0$ intialisés à des valeurs aléatoires dans chaque carte.
-En figure \ref{fig:diff_relax_t1_notraj} et \ref{fig:diff_relax_notraj}, nous représentons les valeurs $\lvert p\star\m{1} - p\m{1} \rvert$ et $\lvert p\star\m{2} - p\m{2}\rvert$ en fonction de $p\m{1},p\m{2} \in [0,1]$, au début et fin de l'apprenitssage. On rappelle que $p\star\m{1}$ dépend de $p\m{2}$, et inversement.
+En figure \ref{fig:diff_relax_t1_notraj} et \ref{fig:diff_relax_notraj}, nous représentons les valeurs $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2}\rvert$ en fonction de $p\m{1},p\m{2} \in [0,1]$, au début et fin de l'apprenitssage. On rappelle que $\hat{p}\m{1}$ dépend de $p\m{2}$, et inversement.
 Le point fixe, s'il existe, est alors à une position $p\m{1},p\m{2}$ vérifiant:
 \begin{equation*}
 \begin{cases}
-p\star\m{1} = p\m{1}\\
-p\star\m{2} = p\m{2}\\
+\hat{p}\m{1} = p\m{1}\\
+\hat{p}\m{2} = p\m{2}\\
 \end{cases}
 \end{equation*}
 
 On effectue 200 trajectoires de relaxation, initialisées à $\bmu\m{1}_0,\bmu\m{2}_0$ différents. Leurs valeurs finales sont représentées par un point noir en figures \ref{fig:diff_relax_t1_notraj} et \ref{fig:diff_relax_notraj}. 
-Au début de l'apprentissage, la fonction de relaxation présente plusieurs points d'attraction, représentés par les points noirs en figure \ref{fig:diff_relax_t1_notraj}. Cette non-convergence semble s'expliquer par les valeurs des différences $\lvert p\star\m{1} - p\m{1} \rvert$ et $\lvert p\star\m{2} - p\m{2}\rvert$. Les zones en violet sur chaque figure représentent les positions où ces différences sont nulles, sur la carte 1 et 2. Un point fixe se trouve sur une position telle que les différences sont nulles dans les deux figures. Une telle position semble exister en figure \ref{fig:diff_relax_t1_notraj}, mais peu de trajectoires de relaxation y aboutissent. La figure \ref{fig:champ_0} représente le déplacement à effectuer de $(\bmu\m{1},\bmu\m{2})$ lors de la relaxation en fonction de la position courante. Les trajectoires des relaxations y sont également représentées. Le champ de déplacement ne semble pas permettre de trouver un point de convergence.
-A la fin de l'apprentissage, ce qui est représenté en figure \ref{fig:diff_relax_notraj}, un point fixe semble exister. Ce point correspond à la position où les deux différences $\lvert p\star\m{1} - p\m{1} \rvert$ et $\lvert p\star\m{2} - p\m{2}\rvert$ sont nulles. Les 200 trajectoires mènent au même point, il semble donc être un point de convergence commun à toutes les initialisations pour la relaxation. La figure \ref{fig:champ_9999} présente le champ de déplacement des BMUs en fonction de la position courante. Les trajectoires suivent les zones où l'une ou l'autre des différences est nulle, pour mener à la position stable. 
+Au début de l'apprentissage, la fonction de relaxation présente plusieurs points d'attraction, représentés par les points noirs en figure \ref{fig:diff_relax_t1_notraj}. Cette non-convergence semble s'expliquer par les valeurs des différences $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2}\rvert$. Les zones en violet sur chaque figure représentent les positions où ces différences sont nulles, sur la carte 1 et 2. Un point fixe se trouve sur une position telle que les différences sont nulles dans les deux figures. Une telle position semble exister en figure \ref{fig:diff_relax_t1_notraj}, mais peu de trajectoires de relaxation y aboutissent. La figure \ref{fig:champ_0} représente le déplacement à effectuer de $(\bmu\m{1},\bmu\m{2})$ lors de la relaxation en fonction de la position courante. Les trajectoires des relaxations y sont également représentées. Le champ de déplacement ne semble pas permettre de trouver un point de convergence.
+A la fin de l'apprentissage, ce qui est représenté en figure \ref{fig:diff_relax_notraj}, un point fixe semble exister. Ce point correspond à la position où les deux différences $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2}\rvert$ sont nulles. Les 200 trajectoires mènent au même point, il semble donc être un point de convergence commun à toutes les initialisations pour la relaxation. La figure \ref{fig:champ_9999} présente le champ de déplacement des BMUs en fonction de la position courante. Les trajectoires suivent les zones où l'une ou l'autre des différences est nulle, pour mener à la position stable. 
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}
@@ -160,8 +192,8 @@ A la fin de l'apprentissage, ce qui est représenté en figure \ref{fig:diff_rel
 \centering
 \includegraphics[width=\textwidth]{champ_Y_006_t1_notraj.pdf}
 \end{minipage}
-\caption{Valeur de ${p\star}\m{1} - p\m{1}$, resp. ${p\star}\m{2} - p\m{2}$ à $t=0$ ,lorsque les poids sont encore aléatoiremement disposés dans chaque carte.
- ${p\star}\m{1}$ ne dépend que de $p\m{2}$ : on peut donc tracer cette valeur selon deux dimensions pour chaque carte. Les zones où cette valeur est nulle sont en violet sur le graphique. Les points fixes, s'il existent, sont aux positions de différence nulle pour $M\m{1}$ et $M\m{2}$. Les points noirs représentent les points de convergence pour 200 trajectoires de relaxation, lancées pour différents $\bmu_0\m{1}, \bmu_0\m{2}$.}
+\caption{Valeur de ${\hat{p}}\m{1} - p\m{1}$, resp. ${\hat{p}}\m{2} - p\m{2}$ à $t=0$ ,lorsque les poids sont encore aléatoiremement disposés dans chaque carte.
+ ${\hat{p}}\m{1}$ ne dépend que de $p\m{2}$ : on peut donc tracer cette valeur selon deux dimensions pour chaque carte. Les zones où cette valeur est nulle sont en violet sur le graphique. Les points fixes, s'il existent, sont aux positions de différence nulle pour $M\m{1}$ et $M\m{2}$. Les points noirs représentent les points de convergence pour 200 trajectoires de relaxation, lancées pour différents $\bmu_0\m{1}, \bmu_0\m{2}$.}
  
 \label{fig:diff_relax_t1_notraj}
 \end{figure}
@@ -175,7 +207,7 @@ A la fin de l'apprentissage, ce qui est représenté en figure \ref{fig:diff_rel
 \centering
 \includegraphics[width=\textwidth]{champ_Y_006_notraj.pdf}
 \end{minipage}
-\caption{Valeur de ${p\star}\m{1} - p\m{1}$, resp. ${p\star}\m{2} - p\m{2}$, lorsque les cartes sont organisées telles qu'en figure \ref{fig:w006}. ${p\star}\m{1}$ ne dépend que de $p\m{2}$ : on peut donc tracer cette valeur selon deux dimensions pour chaque carte. Les zones où cette valeur est nulle sont en violet sur le graphique. Les points fixes, s'il existent, sont aux positions de différence nulle pour $M\m{1}$ et $M\m{2}$. Les points noirs représentent les points d'arrivée de la relaxation pour 50 trajectoires de relaxation, lancées pour différents $\bmu_0\m{1}, \bmu_0\m{2}$. La relaxation semble présenter un point de convergence, qui se situe sur un point fixe de la fonction de relaxation.}
+\caption{Valeur de ${\hat{p}}\m{1} - p\m{1}$, resp. ${\hat{p}}\m{2} - p\m{2}$, lorsque les cartes sont organisées telles qu'en figure \ref{fig:w006}. ${\hat{p}}\m{1}$ ne dépend que de $p\m{2}$ : on peut donc tracer cette valeur selon deux dimensions pour chaque carte. Les zones où cette valeur est nulle sont en violet sur le graphique. Les points fixes, s'il existent, sont aux positions de différence nulle pour $M\m{1}$ et $M\m{2}$. Les points noirs représentent les points d'arrivée de la relaxation pour 50 trajectoires de relaxation, lancées pour différents $\bmu_0\m{1}, \bmu_0\m{2}$. La relaxation semble présenter un point de convergence, qui se situe sur un point fixe de la fonction de relaxation.}
 \label{fig:diff_relax_notraj}
 \end{figure}
 
@@ -199,10 +231,10 @@ A la fin de l'apprentissage, ce qui est représenté en figure \ref{fig:diff_rel
 Dans les expériences précédentes, on a utilisé un pas de convergence $\delta=0.05$. Une autre solution est de ne pas utiliser de pas de relaxation, c'est à dire, à chaque itération, déplacer le BMU $\bmu\m{i}$ directement à la position ou l'activité globale est maximale, au lieu de le déplacer de $\delta$ vers cette position.
 L'évolution de la relaxation devient alors:
 \begin{equation}
-\forall i, \bmu\m{i}_{\tau+1} = p\star\m{i}_{\tau}
+\forall i, \bmu\m{i}_{\tau+1} = \hat{p}\m{i}_{\tau}
 \end{equation}
 En figure \ref{fig:diff_nopas}, on trace différentes trajectoires de relaxation, pour une même entrée. Ces relaxation sont effectués après l'apprentissage des données par l'architecture. Le processus de relaxation effectué pendant l'apprentissage n'utilise pas de déplacement $\delta$ non plus. 
-On représente sur cette même figure les différences ${p\star}\m{1} - p\m{1}$ et ${p\star}\m{2} - p\m{2}$. La relaxation semble encore converger vers un point fixe.
+On représente sur cette même figure les différences ${\hat{p}}\m{1} - p\m{1}$ et ${\hat{p}}\m{2} - p\m{2}$. La relaxation semble encore converger vers un point fixe.
 
 
 \begin{figure}
@@ -212,7 +244,7 @@ On représente sur cette même figure les différences ${p\star}\m{1} - p\m{1}$ 
 \begin{minipage}{0.5\textwidth}
 \includegraphics[width=\textwidth]{champ_Y_009}
 \end{minipage}
-\caption{Trajectoires des relaxations $(\bmu\m{1}_{\tau},\bmu\m{2}_\tau)$ dans le champ des différences ${p\star}\m{1} - p\m{1}$ et ${p\star}\m{2} - p\m{2}$, lorsque la relaxation est effectuée sans utiliser de petits déplacements. Les tracés sont effectués après apprentissage. La relaxation semble encore converger vers un point fixe.}
+\caption{Trajectoires des relaxations $(\bmu\m{1}_{\tau},\bmu\m{2}_\tau)$ dans le champ des différences ${\hat{p}}\m{1} - p\m{1}$ et ${\hat{p}}\m{2} - p\m{2}$, lorsque la relaxation est effectuée sans utiliser de petits déplacements. Les tracés sont effectués après apprentissage. La relaxation semble encore converger vers un point fixe.}
 \label{fig:diff_nopas}
 \end{figure}
 
