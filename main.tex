@@ -42,6 +42,16 @@
 \newtheorem{proposition}{Proposition}
 \parskip=5pt
 
+% Calls to \tableofcontents generates the .toc but not the toc (subfile compilation)
+\makeatletter
+\newcommand*{\tableofcontentsfile}{%
+  \begingroup
+    \let\@input\@gobble
+    \@starttoc{toc}%
+  \endgroup
+}
+\makeatother
+
 %draft/release options
 \newif\ifDraft
 \newcommand\comment[1]{\ifDraft {\itshape\color{red}{#1}} \fi} %text displayed in draft mode as comments
