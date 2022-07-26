@@ -8,6 +8,5 @@ figs : $(PDFS_FROM_SVG)
 
 pdf :
 	pdflatex -jobname=chapter-02 source.tex
-	bibtex chapter-02
-	pdflatex -jobname=chapter-02 source.tex
+	biber chapter-02
 	pdflatex -jobname=chapter-02 source.tex

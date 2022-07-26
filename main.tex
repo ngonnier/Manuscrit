@@ -30,6 +30,9 @@
 \usepackage{stmaryrd}
 \usepackage{array}
 \usepackage{url}
+\usepackage[
+  citestyle=ext-authoryear,bibstyle=authortitle,maxcitenames=2,hyperref=true,backend=biber,doi=false,url=false
+]{biblatex}
 \usepackage[ruled,french,frenchkw,onelanguage]{algorithm2e}
 %\usepackage{algorithm}
 %\usepackage{algpseudocode}
@@ -62,16 +65,44 @@
   \Drafttrue
   \Reviewtrue
 \fi
+
 \def\bib{
-        {\bibliographystyle{plain}\bibliography{./biblio.bib}}
+        {\addbibresource{../Biblio/biblio.bib}
+        }
     }
 
+\DeclareCiteCommand{\citetitle}[]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+  \printtext[bibhyperref]{
+  \indexfield{indextitle}
+  \printfield[citetitle]{labeltitle}}
+  }
+{\multicitedelim}
+{\usebibmacro{postnote}}
 
+\DeclareCiteCommand{\cite}[\mkbibparens]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+  \printtext[bibhyperref]{\usebibmacro{cite}}}
+{\multicitedelim}
+{\usebibmacro{postnote}}
+
+\DeclareCiteCommand*{\cite}[\mkbibparens]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+  \printtext[bibhyperref]{\usebibmacro{citeyear}}}
+{\multicitedelim}
+{\usebibmacro{postnote}}
+
+\DeclareOuterCiteDelims{cite}{\bibopenbracket}{\bibclosebracket}
+  
 \usepackage{subfiles}
 \input{Notations.tex}
 %compile only a chapter
 
 \begin{document}
+
 \dominitoc
 \include{titlepage}
 \tableofcontents
@@ -88,6 +119,6 @@
 \subfile{08-Application/source}
 \subfile{Conclusion}
 %Bibliography files
- \bibliography{01-Modularite/biblio_modularite.bib,01-Modularite/biblio_reseaux.bib, 02-Architectures/biblio.bib, 04-Representation/biblio_representation.bib,03-SOM/biblio_SOM.bib,publis.bib}
- \bibliographystyle{plain}
+\addbibresource{./Biblio/biblio.bib}
+ \printbibliography
 \end{document}
