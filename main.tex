@@ -22,7 +22,6 @@
 \usepackage{multicol} %% Pour mettre un texte sur plusieurs colonnes
 \usepackage{scrextend} %Forcer la 4eme  de couverture en page pair
 \usepackage{tikz}
-\usepackage{graphicx}
 \usepackage[absolute]{textpos} 
 \usepackage{colortbl}
 \usepackage{amsmath}
@@ -30,79 +29,23 @@
 \usepackage{stmaryrd}
 \usepackage{array}
 \usepackage{url}
-\usepackage[
-  citestyle=ext-authoryear,bibstyle=authortitle,maxcitenames=2,hyperref=true,backend=biber,doi=false,url=false
-]{biblatex}
 \usepackage[ruled,french,frenchkw,onelanguage]{algorithm2e}
-%\usepackage{algorithm}
-%\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage{subfiles}
+
+\addbibresource{\subfix{Biblio/biblio.bib}}
+\input{Notations.tex}
+%compile only a chapter
 \SetAlCapSkip{1em}
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
-\usepackage{mathtools}
+
 \DeclareMathOperator{\sign}{sgn}
 \newtheorem{propriete}{Propriété}
 \newtheorem{proposition}{Proposition}
 \parskip=5pt
 
-% Calls to \tableofcontents generates the .toc but not the toc (subfile compilation)
-\makeatletter
-\newcommand*{\tableofcontentsfile}{%
-  \begingroup
-    \let\@input\@gobble
-    \@starttoc{toc}%
-  \endgroup
-}
-\makeatother
-
-%draft/release options
-\newif\ifDraft
-\newcommand\comment[1]{\ifDraft {\itshape\color{red}{#1}} \fi} %text displayed in draft mode as comments
-\newcommand\draft[1]{\ifDraft #1 \fi} %text displayed in draft mode only.
-\newif\ifReview
-%switch between draftmode and releasemode
-\ifdefined\draftmode
-  \Drafttrue
-  \Reviewtrue
-\fi
-
-\def\bib{
-        {\addbibresource{../Biblio/biblio.bib}
-        }
-    }
-
-\DeclareCiteCommand{\citetitle}[]
-{\usebibmacro{prenote}}
-{\usebibmacro{citeindex}%
-  \printtext[bibhyperref]{
-  \indexfield{indextitle}
-  \printfield[citetitle]{labeltitle}}
-  }
-{\multicitedelim}
-{\usebibmacro{postnote}}
-
-\DeclareCiteCommand{\cite}[\mkbibparens]
-{\usebibmacro{prenote}}
-{\usebibmacro{citeindex}%
-  \printtext[bibhyperref]{\usebibmacro{cite}}}
-{\multicitedelim}
-{\usebibmacro{postnote}}
-
-\DeclareCiteCommand*{\cite}[\mkbibparens]
-{\usebibmacro{prenote}}
-{\usebibmacro{citeindex}%
-  \printtext[bibhyperref]{\usebibmacro{citeyear}}}
-{\multicitedelim}
-{\usebibmacro{postnote}}
-
-\DeclareOuterCiteDelims{cite}{\bibopenbracket}{\bibclosebracket}
-  
-\usepackage{subfiles}
-\input{Notations.tex}
-%compile only a chapter
-
 \begin{document}
-
 \dominitoc
 \include{titlepage}
 \tableofcontents
@@ -119,6 +62,6 @@
 \subfile{08-Application/source}
 \subfile{Conclusion}
 %Bibliography files
-\addbibresource{./Biblio/biblio.bib}
+
  \printbibliography
 \end{document}
