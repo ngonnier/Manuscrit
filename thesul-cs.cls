@@ -235,7 +235,9 @@
                               \fi
                            \fi
                  \fi}
-\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle,maxcitenames=2,hyperref=true,backend=biber,doi=false,url=false]{biblatex}
+
+         
+\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,hyperref,backend=biber,doi=false,url=false,date=year,isbn=false]{biblatex}
 \RequirePackage{subfiles}
 
 
@@ -1794,7 +1796,7 @@
   }
 {\multicitedelim}
 {\usebibmacro{postnote}}
-%\DeclareCiteCommand{\parencite}[]
+
 \DeclareCiteCommand{\cite}[\mkbibparens]
 {\usebibmacro{prenote}}
 {\usebibmacro{citeindex}%
