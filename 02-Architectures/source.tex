@@ -7,20 +7,50 @@
 \begin{document}
 %\graphicspath{{\subfix{/02-Architectures/figures}}}
 \graphicspath{{./figures},{02-Architectures/figures}}
-\chapter{Architectures de cartes auto-organisatrices et nouveaux comportements}
+\chapter{Architectures de cartes auto-organisatrices}
 \minitoc
 
-\section{Les cartes auto-organisatrices de Kohonen}\label{sec:som001}
 
-Dans cette thèse, nous nous intéressons aux \emph{cartes auto-organisatrices}, abrégées en SOM (Self-Organizing Maps).
+Nous avons établi qu'une piste de recherche pour la construction d'algorithmes d'apprentissage passe par l'assemblage d'éléments existants comme modules d'un système, nous cherchons ainsi dans cette thèse à définir un modèle d'architecture d'apprentissage modulaire, comportant des rétroactions apportant un aspect dynamique a ce système. 
+Nous nous focaliserons dans cette thèse sur la création d'architectures de cartes auto-organisatrices de Kohonen, ou SOM (\emph{Self-Organizing Maps}) comme modules d'une architecture décentralisée. Les cartes de Kohonen sont largement utilisées en tant qu'algorithme d'apprentissage non supervisé sur diverses applications, notamment la réduction de dimension et la visualisation de données. Cependant, peu de travaux ont exploré l'idée de les assembler en architecture comportant des rétroaction, formant ainsi un système dynamique. L'aspect bio-inspiré des cartes de Kohonen et la présence de motifs auto-organisés motivent pourtant cet axe d'utilisation. 
+
+Kohonen écrivait ainsi dans son livre à propos des enjeux des cartes de Kohonen en 1995:
+\begin{quote}
+Systèmes de SOMs.
+Un objectif à long terme de l'auto-organisation est de créer des systèmes autonomes dont les éléments se contrôlent mutuellement et apprennent les uns des autres. De telles éléments de contrôle peuvent être implémentés par des SOMs spécifiques; le problème principal est alors l'interface, en particulier la mise à l'échelle automatique des signaux d'interconnexion entre les modules, et la collecte de signaux pertinents comme interface entre les modules. Nous laisserons cette idée aux recherches futures.
+\cite{Kohonen1995SelfOrganizingM}
+\end{quote}
+
+% Systems of SOMs. A far-reaching goal in self-organization is to create
+% autonomous systems, the parts of which control each other and learn from
+% each other. Such control structures may be implemented by special SOMs;
+% the main problem thereby is the interface, especially automatic scaling of
+% interconnecting signals between the modules, and picking up relevant signals
+% to interfaces between modules. We shall leave this idea for future research. 
+
+
+
+L'idée de trouver de nouveaux paradigmes de calculs non conventionnels dans les SOMs à l'aide de leur assemblage en structure modulaire dynamique rejoint celle de Kohonen sur les systèmes autonomes. Il soulève la question de l'interface entre les modules, qui sera centrale dans notre construction. 
+Le but de cette thèse est ainsi d'une part, de proposer un modèle de carte qui puisse être utilisée en tant que module et de définir l'interface entre modules et d'en extraire des comportements de calcul en émergeant. 
+Avant toute chose, nous pouvons chercher des éléments de réponse à ces deux questions en étudiant les travaux traitant des architectures de cartes de Kohonen ou plus généralement de réseaux d'apprentissage utilisant des règles d'auto-organisation dans leur évolution. Cela nous permettra de privilégier un type d'interface au regard des travaux existants et d'émettre des hypothèses quant au comportements attendus de l'architecture que nous proposerons.
+
+Nous présentons ainsi dans ce chapitre le modèle général d'une carte de Kohonen et ses comportements de base; notre modèle sera ensuite décrit plus en détail au chapitre~\ref{chap:modele}.
+Nous passons ensuite en revue différentes architectures de SOM proposées dans la littérature. 
+Nous analyserons notamment comment la structure d'une architecture définit le type d'apprentissage effectuée par un système. Nous comparerons aussi le choix du modèle d'interfaces entre cartes.
+A l'issue de ce chapitre, nous aurons une vue d'ensemble organisée de différents modèles d'architectures de SOMs existantes et définirons ou se place le modèle que nous étudierons.
+A la lumière des résultats des différents travaux, nous proposerons des hypothèses sur les comportements que nous pouvons attendre de notre modèle d'architecture. 
+Ces hypothèses motivent les expériences conduites dans la suite de cette thèse. 
+
+\section{Les cartes auto-organisatrices de Kohonen comme modules d'une architecture}\label{sec:som001}
+
 Le modèle de cartes auto-organisatrice a été initialement développé par Kohonen \cite{Kohonen1982}; nous utiliserons ainsi les termes cartes de Kohonen et SOM de façon équivalente pour désigner ce modèle initial.
 De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle initial, sur diverses applications.
 On décompte par exemple plus de 11000 travaux utilisant les cartes de Kohonen dans la littérature en 2010.
-Nous présentons dans cette section le modèle de carte de Kohonen et nous interrogerons sur les possibilités qu'il offre en tant que module d'une architecture. 
+Nous présentons dans cette section le modèle de carte de Kohonen et détaillons les possibilités qu'il offre en tant que module d'une architecture. 
 
 \subsection{Carte de Kohonen classique}
 
-Une carte de Kohonen est un algorithme de quantification vectorielle. C'est à dire, le but est de représenter un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes. Dans une SOM, ces prototypes sont disposés sur les noeuds d'un graphe, en général une grille en deux dimensions.
+Une carte de Kohonen est un algorithme de quantification vectorielle. Le but est de représenter un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes. Dans une SOM, ces prototypes sont disposés sur les noeuds d'un graphe, en général une grille en deux dimensions.
 Les noeuds du graphe possèdent alors chacun un prototype et sont \emph{indexés}, en général par un vecteur en deux dimensions lorsque que la carte est une grille.
 Cette indexation et le format de graphe permet de définir une distance dans la carte et une notion de voisinage entre noeuds.
 Nous appelerons carte de Kohonen le graphe assorti de ses prototypes.
@@ -33,18 +63,16 @@ L'apprentissage est ensuite réalisé en trois étapes:
 \item Le prototype de la BMU est déplacé vers l'entrée $\inpx$, ainsi que les prototypes des noeuds voisins de $\bmu$ dans un voisinage défini à l'avance. On peut interpréter cette étape comme le déplacement d'une zone de la carte centrée en $\bmu$.
 \end{enumerate}
 
-L'algorithme de Kohonen repose donc sur à la fois un processus de compétition, avec la selection de la BMU de la carte, et un processus de coopération avec le déplacement des unités voisines de la BMU.
+L'algorithme de Kohonen repose donc à la fois sur un mécanisme de compétition, avec la sélection de la BMU de la carte, et un processus de coopération avec le déplacement des unités voisines de la BMU.
 Toutes les données d'entrées sont tirées dans un même espace $\mathcal{D}$.
-Le processus de mise à jour d'une carte de Kohonen se traduit par l'évolution des prototypes de la carte vers des valeurs réparties dans l'espace d'entrée, de façon à ce que n'importe quel vecteur soit proche d'au moins un prototype.
-Visuellement, cela correspond à un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimension, se dépliant sur des données en deux dimensions. 
-On observe que les valeurs des prototypes à l'issue de l'apprentissage correspondent aux centres de cellules de Voronoï de l'espace d'entrée.
+Le processus de mise à jour des poids d'une carte de Kohonen se traduit visuellement par un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimension, se dépliant sur des données en deux dimensions. On observe d'ailleurs que les valeurs des poids à l'issue de l'apprentissage correspondent aux centres des cellules de Voronoï de l'espace d'entrée.
 A la fin de l'apprentissage, la carte conserve la structure topologique des entrées:
 \begin{itemize}
-\item Elle conserve les distances: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une contiuité des valeurs des prototypes au sein de la carte.
-\item Elle conserve les densités. Une zone de $\mathcal{D}$ présentant plus de vecteurs aura plus d'unités la représentant dans la carte qu'une zone moins dense.
+\item Elle conserve les distances: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une continuité des valeurs des poids au sein de la carte.
+\item Elle conserve les densités. Une zone dense de $\mathcal{D}$ aura plus d'unités correspondant à cette zone de valeurs dans la carte qu'une zone moins dense.
 \end{itemize}
 La figure \ref{fig:SOM} présente par exemple le dépliement d'une carte sur des imagettes MNIST.
-Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension. Les cartes de Kohonen sont ainsi utilisées pour visualiser des données de grande dimension et faire du \emph{clustering}. 
+Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension. Les cartes de Kohonen sont souvent utilisées en pratique pour visualiser des données de grande dimension et faire du \emph{clustering}. 
 
 % La carte de Kohonen est d'inspiration biologique. Le but premier de Kohonen était de développer un modèle informatique inspiré de l'organisation spatiale des neurones dans le cortex humain, dont un exemple est présenté en figure~\ref{fig:v1}. Il s'est notamment inspiré de l'organisation du cortex en colonnes corticales, ensemble de neurones réagissant à un même stimulus.
 
@@ -80,14 +108,15 @@ Par son aspect ordonné, une carte est une représentation en faible dimension d
 \subsection{Aspect topologique de la carte de Kohonen}
 
 La carte de Kohonen se distingue d'autres algorithmes de quantification vectorielle par la topologie introduite par la carte dans l'ensemble des prototypes. Cette topologie dépend du voisinage utilisé par l'algorithme et de la dimension du support de la carte.
-La plupart des algorithmes de SOM de la littérature utilisent comme support une grille en deux dimensions. L'indexation des noeuds est alors un ensemble de positions 2D.
+La plupart des implémentations de SOMs de la littérature utilisent comme support une grille en deux dimensions. L'indexation des noeuds est alors un ensemble de positions 2D.
 
 En théorie, les cartes peuvent être une dimension (ligne), deux dimensions (grilles), ou de dimension plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. En pratique, les grilles deux dimension sont les plus couramment utilisées. Elles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser sur un écran. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le coût de l'algorithme d'apprentissage dépend en effet du nombre de neurones, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen. Les calculs deviennent alors rapidement coûteux.
 Les cartes une dimension sont quant à elles limitées en terme de représentation des données, et sont donc rarement utilisées en pratique. Cependant, elles se prêtent mieux à la représentation graphique que les cartes 2D.
-De plus, les calculs et l'organisation générés par l'algorithme de Kohonen sont assez complexes avec des cartes en une dimension. Les travaux conduits en \cite{cottrell_theoretical_2016,fort_soms_2006} apportent une formalisation mathématique de l'algorithme de Kohonen et prouvent la convergence de cartes une dimensions. Les auteurs se heurtent cependant à la preuve de convergence pour des cartes en deux dimensions.
+Les calculs et l'organisation générés par l'algorithme de Kohonen sont assez complexes avec des cartes en une dimension. Les travaux conduits en \cite{cottrell_theoretical_2016,fort_soms_2006} apportent une formalisation mathématique de l'algorithme de Kohonen et prouvent la convergence de cartes une dimensions. Les auteurs se heurtent cependant à la preuve de convergence pour des cartes en deux dimensions.
 Les processus intervenant dans dans cartes 1D sont donc déjà mathématiquement difficiles à formaliser, difficulté qui augmente fortement avec les dimensions.
-L'étude des cartes 1D permet d'envisager des cas simples dans le cadre de développement d'un nouveau modèle de SOM, ce que nous chercherons à faire dans cette thèse, avant de proposer une extension aux cartes 2D.
-Les cartes de forme autre que des grilles 1D ou 2D sont moins couramment utilisées, mais peuvent avoir des avantages. Ainsi, des cartes structurées en arbre telles que développées en~\cite{koikkalainen_self-organizing_1990} permettant une recherche de BMU structurée. Certains modèles construisent une carte de Kohonen en ajoutant des noeuds au fur et à mesure de l'apprentissage, donnant au final une carte de Kohonen sous forme d'un graphe construit par l'algorithme, âpar exemple en~\cite{alahakoon_dynamic_2000}.
+L'étude des cartes 1D a donc un intérêt, car elle permet d'envisager des cas simples dans le cadre de développement d'un nouveau modèle de SOM, ce que nous chercherons à faire dans cette thèse, avant de proposer une extension aux cartes 2D.
+
+Les cartes de forme autre que des grilles 1D ou 2D sont moins couramment utilisées, mais peuvent avoir des avantages. Ainsi, des cartes structurées en arbre telles que développées en~\cite{koikkalainen_self-organizing_1990} permettant une recherche de BMU structurée. Certains modèles construisent une carte de Kohonen en ajoutant des noeuds au fur et à mesure de l'apprentissage, donnant au final une carte de Kohonen sous forme d'un graphe construit par l'algorithme, par exemple en~\cite{alahakoon_dynamic_2000}.
 
 \begin{figure}
 \centering
@@ -111,19 +140,18 @@ Les cartes de forme autre que des grilles 1D ou 2D sont moins couramment utilis�
 \end{figure}
 
 
+\subsection{Inspiration biologique}
 
-\subsection{Les cartes de Kohonen comme modules d'une architecture d'apprentissage complexe ? }
+% Nous pensons ainsi que les cartes auto-organisatrices sont de bonnes candidates en tant que modules d'une architecture.
+% Nous passerons en revue les modèles d'architecture existant en section suivante.
+% Avant cela, il est intéressant de s'interroger sur les motivations et les intuitions motivant l'utilisation d'une carte de Kohonen en tant que module d'une architecture.
 
-Cette thèse se place dans une démarche de construire un modèle d'architecture permettant un calcul émergent.
-Nous pensons ainsi que les cartes auto-organisatrices sont de bonnes candidates en tant que modules d'une architecture.
-La question d'architecture de cartes de Kohonen a été explorée assez tôt après l'introduction du modèle par Kohonen.
-Associer les cartes en modèle hiérarchique faisait même partie des premiers travaux publiés autour des cartes.
-Mais étonnament peu de travaux, par rapport à la littérature extrêment étendue sur le sujet des cartes de Kohonen, se sont intéressés à l'association de cartes en tant que nouveau modèle à part entière. Nous passerons en revue les modèles d'architecture existant en section suivante. Avant cela, il est intéressant de s'interroger sur les motivations et les intuitions motivant l'utiliation d'une carte de Kohonen en tant que module d'une architecture.
-
-\subsubsection{Inspiration biologique}
-
-Le développement des cartes par Kohonen est intiallement inspiré par les cartes topologiques observées dans les aires cerveau. En effet, si on cartographie la position des neurones par rapport aux stimuli auxquels ils répondent dans certaines zones sensorielles du cerveau, on observe une disposition ordonnée. Les neurones proches réagissent à des stimuli proches. Un exemple est ainsi celui du cortex visuel V1, représenté en figure~\ref{fig:v1}. L'aire associée à l'audition présente aussi une organisation topographique (tonotopic maps), ainsi que de nombreuses autres aires, directement sensorielles ou plus abstraites \cite{Kohonen1995SelfOrganizingM}. 
-Une carte de Kohonen ne doit être considérée comme une modélisation biologiquement plausible d'une aire du cortex cérébral, mais plutot comme une adapation au niveau computationnel d'un concept biologique, ici le concept d'organisation topologiquement correcte dans les cortex sensoriels, tel que le cortex visuel ou auditif.
+Le développement des cartes auto-organisatrices par Kohonen est intiallement inspiré par les cartes topologiques observées dans les aires du cerveau. 
+En effet, de nombreux travaux montrent la présence de cartes topologiquements ordonnées dans différentes aires du cortex cerebral:
+les neurones proches dans le substrat cortical réagissent à des stimuli proches. 
+Un exemple est ainsi celui du cortex visuel V1, représenté en figure~\ref{fig:v1}. Cette organisation se retrouve dans le cortex auditif du chat \cite{Reale1980TonotopicOI}.
+L'aire associée à l'audition présente aussi une organisation topographique (tonotopic maps), ainsi que de nombreuses autres aires, directement sensorielles ou plus abstraites \cite{Kohonen1995SelfOrganizingM}. 
+Une carte de Kohonen ne doit pas être considérée comme une modélisation biologiquement plausible d'une aire du cortex cérébral, mais plutot comme une adapation au niveau computationnel d'un concept biologique, ici le concept d'organisation topologiquement correcte dans les cortex sensoriels, tel que le cortex visuel ou auditif.
 
 \begin{figure}
 \centering
@@ -132,124 +160,91 @@ Une carte de Kohonen ne doit être considérée comme une modélisation biologiq
 \label{fig:v1}
 \end{figure}
 
-En biologie, le cerveau est cartographié en \emph{aires corticales} distinctes selon la fonction principale présumée de la zones du cortex correspondante.
-Le découpage fonctionnel du cerveau fait apparaître des grandes catégories d'aires corticales (voir [Masterton and Berkley, 1974]). Certaines aires sont dites sensorielles car elles reçoivent des entrées sensorielles via le thalamus. Ces aires traitant les sens sont généralement appelées par la première lettre du sens correspondant et par un numéro, par exemple V1, V2, V3, V4 et V5 pour la vue. Certaines aires sont dites motrices et reliées aux muscles, via des structures sous corticales, et permettent ainsi un contrôle moteur.
+A plus grande échelle, le cerveau est cartographié en \emph{aires corticales} distinctes selon la fonction principale présumée de la zones du cortex correspondante.
+Le découpage fonctionnel du cerveau fait apparaître des grandes catégories d'aires corticales. Certaines aires sont dites sensorielles car elles reçoivent des entrées sensorielles via le thalamus. Certaines aires sont dites motrices et reliées aux muscles, via des structures sous corticales, et permettent ainsi un contrôle moteur.
 Enfin, des aires sont identifiées comme traitant des informations venant de plusieurs autres aires.
+Ces aires sont connectées entre elles. Notons que cette connectivité du cerveau peut-être étudiée de plusieurs points de vue: d'un point de vue structurel, en se basant sur des éléments anatomiques, ou fonctionnelles.
+Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par EEG ou IRM fonctionnelle. Il faut noter cependant que ces observations restent une relation statistique ne traduisent pas forcément une relation de cause à effet. 
+La modélisation de la connectivité physique de ces aires à partir des observations reste donc l'objet de différentes théories cherchant à reproduire ces corrélations. 
+Dans tous les cas, la présence d'aire distinctes communicantes fait l'objet d'un consensus.
+Les modèles de base les plus communs sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de réentrées de Edelmann \cite{Edelman1982GroupSA}.
+La zone de convergence divergence suggère que certaines aires corticales servent d'aires associatives pour associer d'autres zones corticales prenant des modalités sensorielles en entrée. Ces aires associatives assemblent les signaux en provenance des zones sensorielles et les propagent vers d'autres zones. 
+La théorie de la ré-entrée postule quant à elle des connexions directes et réciproques entre les neurones de différentes zones sensorielles ou non. Ces connexions sont à l'origine de la coactivation de neurones dans différentes cartes.
+% Un tel traitement de l'information permettrait ainsi d'expliquer l'effet ventriloque \cite{Bonath2007NeuralBO}. Lors de cet effet, une activité apparaît dans les cortices visuel et auditif pour les neurones sensibles à l'emplacement exact de la source des stimuli dans chacune des modalités. Après quelques millisecondes, correspondant au temps de trajet de l'aire visuelle à l'aire auditive via les aires associatives, on observe une activité auditive pour les neurones sensibles à l'emplacement spatial de la source du stimulus visuel.
 
-Ces aires sont connectées entre elles. La connectivité du cerveau peut-être étudiée de deux points de vue: d'un point de vue structurel, en se basant sur des éléments anatomiques, ou fonctionnelles. Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par EEG ou IRM fonctionnelle. Il faut noter cependant que ces observations restent une relation statistique ne traduisent pas une relation de cause à effet. Lorsqu'on parlera de connexions entre aires du cerveau, on parlera de cette deuxième approche.
-La modélisation de la connectivité de ces aires fait l'objet de différentes théories. Le modèle classique du cerveau proposé dans les années 60 [Jones and Powell, 1970] modélise le cortex comme un système de traitement hiérarchique et séquentiel de l'information. Les différents flux sensoriels seraient traités par des aires corticales dédiées, et leur mise en relation dans des aires associative qui s'occuperaient de tâches de plus haut niveau. Ces flux d'informations circuleraient dans les deux sens: une aire de plus haut niveau recoit des flux d'information montant d'une aire sensorielle, et l'aire sensorielle reçoit des flux d'information descendant des aires associatives. Ce modèle de connexion est par exemple modélisé en \cite{damasio_time-locked_1989}, travaux dans lesquels les zones associatives sont désignées par "zones de convergence-divergence".
-Un tel traitement de l'information permettrait ainsi d'expliquer l'effet ventriloque [Bonath et al., 2007]. Lors de cet effet, une activité apparaît dans les cortices visuel et auditif pour les neurones sensibles à l'emplacement exact de la source des stimuli dans chacune des modalités. Après quelques millisecondes, correspondant au temps de trajet de l'aire visuelle à l'aire auditive via les aires associatives, on observe une activité auditive pour les neurones sensibles à l'emplacement spatial de la source du stimulus visuel.
-Cette vision hiérarchique historique du traitement cortical de l'information est cependant remise en question par d'autres observations biologiques. Ainsi, \cite{eckert_cross-modal_2008} suggère l'existence de connexions directes entre les aires sensorielles visuelles et auditives. Le modèle de réentrée \cite{}
+% Le modèle classique du cerveau proposé dans les années 60 [Jones and Powell, 1970] modélise le cortex comme un système de traitement hiérarchique et séquentiel de l'information. Les différents flux sensoriels seraient traités par des aires corticales dédiées, et leur mise en relation dans des aires associatives ui s'occuperaient de tâches de plus haut niveau. 
+% Ces flux d'informations circuleraient dans les deux sens: une aire de plus haut niveau recoit des flux d'information montant d'une aire sensorielle, et l'aire sensorielle reçoit des flux d'information descendant des aires associatives. Ce modèle de connexion est par exemple modélisé en \cite{damasio_time-locked_1989}, travaux dans lesquels les zones associatives sont désignées par "zones de convergence-divergence".
 
+% Cette vision hiérarchique historique du traitement cortical de l'information est cependant remise en question par d'autres observations biologiques. Ainsi, \cite{eckert_cross-modal_2008} suggère l'existence de connexions directes entre les aires sensorielles visuelles et auditives. Des théories telles que la réentrée suggère l'existence de neurones multimodaux au sein d'une aire sensorielle. Anatomiquement, de nombreuses connexions, dites bas niveau, entre les aires corticales dédiées au traitement d'une modalité sensorielles ont été mises en évidence chez différentes espèces, pour des aires à différents niveaux hiérarchiques de traitement de l'information(voir [Calvert and Thesen, 2004b, Cappe et al., 2009, Cappe and Barone, 2005, Foxe and Schroeder, 2005, Kayser and Logothetis, 2007, Macaluso, 2006, Schroeder et al., 2003, Schroeder and Foxe, 2005]).
 
+La carte de Kohonen implémentant des concepts computationnels présents au niveau de l'aire cérébrale, nous pouvons chercher à pousser l'inspiration biologique d'une carte de Kohonen au niveau des connexions entre les aires cérébrales, se transcrivant par des connexions entre plusieurs cartes de Kohonen.
+De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plutôt de développer un modèle computationnel qui ne soit pas biologiquement plausible au niveau neuronal, mais dont la structure du traitement de l'information est inspirée de celle du cerveau, ici la présence de plusieurs aires connectées entre elles, modélisées par l'utilisation de plusieurs cartes de Kohonen en architecture.
 
+\section{Architectures de cartes auto-organisatrices}
 
-% Anatomiquement, de nombreuses connexions, dites bas niveau, entre les aires corticales dédiées au traitement d'une modalité sensorielles ont été mises en évidence chez différentes espèces, pour des aires à différents niveaux hiérarchiques de traitement de l'information(voir [Calvert and Thesen, 2004b, Cappe et al., 2009, Cappe and Barone, 2005, Foxe and Schroeder, 2005, Kayser and Logothetis, 2007, Macaluso, 2006, Schroeder et al., 2003, Schroeder and Foxe, 2005]). L'influence de ces connexions d'un point de vue fonctionnel reste cependant à établir.
-% L'analyse des connexions dans le cortex du primate conduite en \cite{primate_cortex_91} montre l'existence de connexions fonctionnelles entre zones sensorielles telles que 
+Plusieurs travaux dans la littérature informatique autour des SOMs cherchent à construire des architectures de cartes auto-organisatrices.
+Cette section passe en revue certains de ces modèles.
+Nous abordons ces modèles d'un point de vue structurel en s'intéressant notamment à comment s'effectue l'interface entre les cartes dans chacun des modèles. A la lecture des modèles existants, nous avons pu différencier deux grandes classes d'architectures de cartes: les architectures \emph{hiérarchiques feed-forward} et  les architectures \emph{non-hiérarchiques}, qui peuvent elles-même être \emph{centralisées} ou \emph{décentralisées}.
+Nous détaillerons dans cette section ce qu'on appelle architecture hiérarchique et non-hiérarchique et analyserons les comportements d'apprentissage émergeant des différentes structures. L'analyse de ces modèles nous permet de nous situer dans la littérature et d'émettre des hypothèses concernant les comportements attendus d'un tel modèle et ainsi de guider les expériences que nous effectuerons.
 
-
-
-
-% Cette vision hiérarchique initiale du traitement cortical de l'information a été cependant remise en question par d'autres observations biologiques plus récentes. Il a été détecté par IRM une corrélation entre les activités des cortices primaires auditifs et visuels chez le singe [Eckert et al., 2008]. Anatomiquement, de nombreuses connexions, dites bas niveau, entre les aires corticales monomodales ont été mises en évidence chez différentes espèces et pour des aires à différents niveaux de la hiérarchie (voir [Calvert and Thesen, 2004b, Cappe et al., 2009, Cappe and Barone, 2005, Foxe and Schroeder, 2005, Kayser and Logothetis, 2007, Macaluso, 2006, Schroeder et al., 2003, Schroeder and Foxe, 2005]). L’intérêt de ces connexions reste à établir car elles ne représentent qu’un faible pourcentage des connexions reçues au sein d’une aire monomodale. Cependant, il a été montré que l’ensemble de ces connectivités bas niveau dans V1 était aussi importante, en nombre, que la connectivité descendante provenant de MT dont il a été prouvé l’influence sur l’activité de V1 [Cappe et al., 2009]. La structuration de cette connectivité bas niveau est encore mal comprise, des connexions bas niveau de types montant et descendant mais pas forcément réciproques, ayant été observées. Il semblerait cependant que ces connexions bas niveau présentent également des propriétés topographiques [Batardiere et al., 1998, Hall and Lomber, 2008] similaires à celles observées pour les connexions entre aires de différents niveaux de hiérarchie (voir section 1.3). Des neurones multimodaux ont été trouvés dans des aires supposées exclusivement monomodales comme, par exemple, dans le cortex visuel chez le rat [Barth et al., 1995] ou dans le cortex auditif chez le singe [Cappe et al., 2007, Kayser et al., 2008, Schroeder et al., 2001, Watanabe and Iwai, 1991] et chez le furet [Bizley and King, 2008, Bizley et al., 2007]. Les neurones multimodaux, au sein des aires monomodales, semble être localisés à la frontière entre les aires monomodales [Wallace et al., 2004]. Une telle organisation est semblable à celle observée dans les aires multimodales (voir section 2.4.1). Ces nouvelles découvertes tendraient à prouver que la structure corticale est générique. Chaque aire, peu importe son niveau dans la hiérarchie, recevrait des connexions montantes et des connexions corticales provenant d’autres aires corticales de différents niveaux de hiérarchie et de différentes modalités. Dans une telle architecture, les propriétés fonctionnelles monomodales ou multimodales de chaque aire corticale dépendraient principalement de la connectivité montante. La classification des aires comme monomodales et multimodales deviendrait alors floue car le traitement de l’information serait dès le départ multimodal.
-
-Nous cherchons alors à pousser l'inspiration biologique d'une carte de Kohonen au niveau des connexions entre les aires cérébrales. De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plutôt de développer un modèle computationnel qui ne soit pas biologiquement plausible au niveau neuronal, mais dont la structure du traitement de l'information rappelle celle du cerveau. 
-
-% Ces connexions à l'échelle des aires cérébrales peuvent être rétroactives, c'est à dire que l'activation entre deux zones se fait dans les deux sens. Par exemple, \cite{primate_cortex_91}: zones dans le cortex du primate. La plupart des connexions est établie dans les deux sens.
-% La notion d'aire cérébrale renvoie à un aspect modulaire du cerveau. Modules préexistants mais flexibles: ainsi certaines zones qui s'avèrent non utilisées, suite par exemple à la perte d'un sens, se voient réorganisées au profit d'autre zones. On peut donc relier le cerveau à un modèle modulaire, avec des modules apprenant et pouvant se réorganiser.
-
-% Ainsi, de la même façon que les cartes auto-organisatrices rappellent l'organisation du cerveau sans chercher à le modéliser, l'architecture biologique observé dans le cerveau justifie l'idée de créer des architectures modulaires de cartes auto-organisatrices.
-
-% On peut explorer plus en détail la notion de modules dans le cerveau. Des zones sont directement liées à des entrées externes, des zones sensorielles, de bas niveau. Le cerveau présente ensuite  d'autres aires liées à ces zones sensorielles, qui apportent de plus en plus d'abstraction dans les représentations des sens. Des aires sont aussi dédiées à l'assocation de plusieurs aires. On parle alors d'architecture hiérarchique, en référence à cette structure de zones sensorielles vers zones abstraites. Cependant, des connexions entre aires peuvent exister dans les deux sens. 
-
-\subsubsection{Systèmes autonomes de cartes auto-organisatrices}
-
-Un des enjeux de l'intelligence artificielle est de construire des systèmes autonomes, en robotique par exemple.
-Les cartes auto-organisatrices ont déjà comme avantage d'être un modèle d'apprentissage non-supervisé: l'ensemble des neurones et des poids réagit aux données présentées pour en dégager des représentations, sans intervention ou retour extérieur. 
-Ensuite s'arrête l'aspect autonome: l'utilisation des cartes pour des tâches applicatives nécessite une intervention extérieure.
- Il faut par exemple étiquetter les poids pour pouvoir faire de la classification d'entrées. 
- La reconstruction d'image utilise la carte comme donnée pour faire du post processing de reconstruction. Utilisée comme algorithme de machine learning, la carte n'est pas un système autonome. 
-
-Kohonen écrivait ainsi dans son livre à propos des enjeux des cartes de Kohonen en 1995:
-\begin{quote}Systems of SOMs. A far-reaching goal in self-organization is to create
-autonomous systems, the parts of which control each other and learn from
-each other. Such control structures may be implemented by special SOMs;
-the main problem thereby is the interface, especially automatic scaling of
-interconnecting signals between the modules, and picking up relevant signals
-to interfaces between modules. We shall leave this idea for future research. \cite{Kohonen1995SelfOrganizingM}
-\end{quote}
-L'idée d'un système de SOMs s'inscrit dans une recherche de système autonome. En introduisant des connexions entre cartes, on autorise le système à s'auto-activer au lieu de simplement réagir à des entrées, ce qui est nécessaire pour créer un système dynamique. Nous chercherons donc à créer un système de SOMs qui réagit à des entrées, mais qui peut ensuite s'auto-activer.
-
-\subsubsection{Notion de mémoires}
-
-De la même manière que les aires du cerveau, on observe différent types de mémoires interagissant dans un cerveau: mémoire épisodique, mémoire à long terme. Le temps et la mémoire est en quelque sorte spacialisé grâce aux échelles et aux temps de connexions dans le cerveau. 
-La notion de mémoire se rapporte finalement aux architectures et systèmes autonomes. Les mêmes éléments de cerveau sont utilisés dans des cadre sensoriels et de mémoire. 
-Des systèmes autonomes doivent présenter une mémoire. 
-La notion temporelle a donc tout intéret à être intégrée à une architecture de cartes auto-organisatrices dans le cadre de rechercher des systèmes plus autonomes.
-
-
-Ainsi, les cartes de Kohonen, par leur aspect non-supervisé et leur d'inspiration biologique sont des candidates naturelles à la construction d'architectures mdodulaires d'apprentissage. Le but de cette thèse est ainsi de construire une arhcitecture modulaire. L'enjeu est maintenant de déterminer la façon dont il convient d'interfacer les cartes dans ces modules, et pour quelle domaine d'application. 
-
-
-
-\section{Architectures de cartes}
-
-Plusieurs travaux dans la littérature autour des SOMs proposent des architectures de cartes auto-organisatrices.
-Cette section passe en revue certains de ces modèles, en se concentrant sur ceux proposant une architecture générique de cartes. C'est-à-dire, une structure proposant un nouveau comportement ou des nouvelles performances par la mise en relation de plusieurs cartes de Kohonen.
-Nous abordons ces modèles d'un point de vue structurel en s'intéressant notamment à comment s'effectue l'interface entre les cartes dans chacun des modèles.
-A la lecture des modèles existants, nous avons pu différencier deux grandes classes d'architectures de cartes: les architectures \emph{hiérarchiques feed-forward} et  les architectures \emph{non-hiérarchiques}. Nous cherchons dans cette thèse à développer un modèle non-hiérarchique de cartes. Nous détaillons dans cette section ce qu'on appelle architecture hiérarchique et non-hiérarchique.
-
-% Dans cette section, nous passons en revues les modèles existantes permettant, d'une façon ou d'une autre, de connecter des cartes entre elle. Nous étudierons d'un coté les modèles d'architectures de plusieurs cartes communiquant via des interfaces; nous étudierons également les modèles de cartes récurrentes. Les cartes récurrentes sont appliquées à des motifs temporels et ont la caractéristique d'utiliser des éléments de leur état passé pour calculer leur état à un instant donné. La notion de communication est ici encore présente et peut nous servir d'inspiration pour développer une architecture de cartes. Par ailleurs, nous avons mentionné que le traitement de données temporel doit pouvoir être intégrée dans une architecture de carte visant à être autonome. Il s'agit ici de trouver une méthode d'interface entre carte qui puisse à la fois connecter des cartes auto-organisatrices et introduire des connections récurrentes dans le temps. 
 \subsection{Architectures hiérarchiques de cartes}
 
-Dès les début du développement des SOMs dans les années 90 par les travaux de Kohonen, des travaux proposent des architectures à base de cartes auto-organisatrices. Ces premiers travaux font apparaître des architecture qu'on peut qualifier de hiérarchiques. 
-Toutes les architectures hiérarchiques comportent plusieurs cartes, et ont comme point commun qu'il est possible de définir des \emph{niveaux} dans l'architecture, comprenant une ou plusieurs cartes. L'apprentissage des cartes dans toutes ces architectures est effectuée niveau par niveau. Nous les qualifierons ainsi d'architecture \emph{feed-forward}.
+Dès les débuts du développement des SOMs dans les années 1980 des travaux proposent des architectures à base de cartes auto-organisatrices. Ces premiers travaux font apparaître des architectures qu'on peut qualifier de hiérarchiques.
+Toutes les architectures hiérarchiques comportent plusieurs cartes, et ont comme point commun qu'il est possible de définir des \emph{niveaux} dans l'architecture, comprenant une ou plusieurs cartes. L'apprentissage des cartes dans toutes ces architectures est effectuée niveau par niveau. Nous les qualifierons ainsi d'architecture \emph{feed-forward}. 
 
 \subsubsection{Architectures hiérarchique par sélection}
-Certains travaux s'appuient sur une architecture hiérarchique qu'on peut qualifier de "selective", dont le principe général est illustrée en figure \ref{fig:hsom_selective}.
+
+Certains travaux s'appuient sur une architecture hiérarchique qu'on peut qualifier de "sélective", dont le principe général est illustrée en figure \ref{fig:hsom_selective}.
 Le premier niveau d'une telle architecture est une carte classique, prenant des données en entrée. Après apprentissage du premier niveau, le second niveau est composé de plusieurs cartes.
 L'activation ou le BMU de la carte du premier niveau à une entrée permet de sélectionner une carte du deuxième, à laquelle sera présentée cette même entrée. 
 Chacune des cartes du deuxième niveau est alors entrainée sur un sous-ensemble des données d'entrée. 
 Le premier niveau n'est plus mis à jour lors de cette phase.
 Le processus est répété ainsi de suite si besoin sur d'autres niveaux. Les niveaux supérieurs ont alors plus de cartes que les niveaux inférieurs.
-
 Ce procédé est retrouvé dans \cite{barbalho_hierarchical_2001,suganthan_pattern_2001}
 \cite{miikkulainen_script_1992} pour de la classification de phrases, \cite{dittenbach_growing_2000,ordonez_hierarchical_2010,zhao_stacked_2015}. 
-La façon de sélectionner une carte d'un niveau différent en fonction des travaux.
-Elle repose par exemple sur la position du BMU de la carte du premier niveau en \cite{barbalho_hierarchical_2001}. En \cite{??}, les neurones d'une carte 
-\cite{zhao_stacked_2015} filtre l'entrée 
 
+
+La façon de sélectionner une carte d'un niveau différent en fonction des travaux.
+\cite{barbalho_hierarchical_2001} utilisent la position du BMU calculée au premier niveau pour choisir la carte du second niveau à utiliser.
+\cite{zhao_stacked_2015} au contraire filtre l'entrée 
+En \cite{??}, les neurones d'une carte 
 \begin{figure}
     \includegraphics[width=\textwidth]{HSOM_selective.pdf}
     \caption{Exemple d'architecture hiérarchique sélective. La carte du premier niveau est entraînée sur tout l'espace d'entrée. Après apprentissage, la carte permet de filtrer les entrées pour les renvoyer vers une carte du niveau suivant. Dans cet exemple, la position du BMU de la carte du niveau 1 permet de sélectionner une carte du niveau 2, comme c'est le cas en \cite{barbalho_hierarchical_2001}. 
     L'entrée permet d'entraîner une carte du deuxième niveau. Chacune des cartes du niveau 2 apprend alors sur un sous-espace d'entrée.\label{fig:hsom_selective}}
 \end{figure}
 
+Dans ce type d'architecture, c'est un processus extérieur aux cartes qui permet de sélectionner la carte du niveau suivant. Il ne s'agit donc pas a proprement parler d'une architecture de cartes, mais plutôt d'un ensemble de cartes qui collaborent entre elles. Pour parler d'architecture, on attendrait plutôt une structure avec une entrée puis des interfaces entre cartes.
+
 \subsubsection{Architectures hiérarchiques par transmission de représentation intermédiaire}
 
-D'un autre coté, un ensemble de travaux repose sur la transmission entre couches de cartes d'information sur la couche précédente. Contrairement aux architectures selectives, la deuxième couche de carte ne prend plus comme entrée un élément de l'espace d'entrée de l'architecture mais travaille sur des éléments des cartes des couches précédentes.
+D'un autre coté, un ensemble de travaux repose sur la transmission entre couches de cartes d'une information de la couche précédente. Contrairement aux architectures par sélection, la deuxième couche de carte ne prend plus comme entrée un élément de l'espace d'entrée de l'architecture mais travaille sur des éléments des cartes des couches précédentes, tels que la position, le poids du BMU ou une intensité d'activité neuronale. 
 Ces éléments sont une représentation latente intermédiaire de l'entrée, transmise à la couche supérieure. Les niveaux supérieurs de ce type d'architecture ont moins de cartes que les premiers niveaux, et peuvent être considérés comme traitant l'information à un niveau plus abstrait que les cartes du premier niveau.
-L'architecture  HSOM \cite{lampinen_clustering_1992} proposée dès 1990 est composée de deux cartes: une carte apprenant sur des entrées $x$, et un carte prenant comme entrée la position du BMU de la première carte; cette architecture est illustrée en figure~\ref{fig:hsom}. La position du BMU est ici la représentation intermédiaire transmise aux cartes du niveau suivant.
-Comme les cartes s'organisent de façon à conserver les distances dans l'espace d'entrée au sein de la carte, deux éléments faisant partie d'un même groupe de données (cluster) auront des BMUs proches dans la première carte, et leurs BMU dans la seconde carte le seront également. Les auteurs notent ainsi que l'architecture HSOM permet de bien détecter des clusters de données, avec une séparation des clusters un peu meilleure qu'une SOM classique.
-Par le choix de la position du BMU comme vecteur de transmission d'information, les auteurs de HSOM epxloitent totalement l'aspect topologique qu'offrent les cartes de Kohonen. D'autres travaux par la suite implémentent des modèles similaires, sur des architectures comportant plus de cartes que HSOM: \cite{hagenauer_hierarchical_2013}
+L'architecture  HSOM \cite{lampinen_clustering_1992} proposée dès 1992 est composée de deux cartes: une carte apprenant sur des entrées $x$, et un carte prenant comme entrée la position du BMU de la première carte; cette architecture est illustrée en figure~\ref{fig:hsom}. La position du BMU est ici la représentation intermédiaire transmise aux cartes du niveau suivant.
+Comme les cartes s'organisent de façon à conserver les distances dans l'espace d'entrée au sein de la carte, deux éléments faisant partie d'un même groupe de données (cluster) auront des BMUs proches dans la première carte; par conséquent, leurs BMU dans la seconde carte le seront également. 
+Les auteurs notent que l'architecture HSOM permet de bien détecter des clusters de données, avec une séparation des clusters un peu meilleure qu'une SOM classique. La présence de la carte intermédiaire change un peu la façon de séparer les données par rapport à une SOM classique; les auteurs notent une meilleure séparation des clusters dans HSOM, mais une moins bonne quantification vectorielle au sein d'un cluster. Le fait d'utiliser deux SOMs permet d'extraire une représentation un peu différente que celle extraite par une SOM classique.
+Par le choix de la position du BMU comme vecteur de transmission d'information, les auteurs de HSOM epxloitent totalement l'aspect topologique qu'offrent les cartes de Kohonen. D'autres travaux par la suite implémentent des modèles similaires transmettant la position du BMU entre cartes, sur des architectures comportant plus de cartes que HSOM: \cite{hagenauer_hierarchical_2013}.
 
 
 Travaux entre 2000 et 2010:
 \cite{dittenbach_growing_2000,yamaguchi_adaptive_2010,gunes_kayacik_hierarchical_2007,wang_comparisonal_2007}
 
-On observe un regain de publications sur les architectures de cartes auto-organisatrices après 2015, cette fois sous la terminologie de “Deep SOM”. 
-Ces travaux s'inspirent des réseaux de neurones profonds (deep learning), ayant connu un fort développement cette année la \cite{lecun_deep_2015}. Ils s'intéressent souvent à l'apprentissgage d'image par des SOMs. \cite{Liu2015DeepSM,hankins_somnet_2018,wickramasinghe_deep_2019,aly_deep_2020,sakkari_convolutional_2020,dozono_convolutional_2016,nawaratne_hierarchical_2020,mici_self-organizing_2018} et sont présentés comme des "SOMs convolutionnelles". Ces architectures de SOMs se rattachent en fait aux SOMs hiérarchiques telles que HSOM.
+On observe un regain de publications sur les architectures de cartes auto-organisatrices après 2015, cette fois sous la terminologie de “Deep SOM”. La plupart des travaux implémentant des Deep SOM implémentent en fait des cartes hiérarchiques.
+Ces travaux s'inspirent des réseaux de neurones profonds (deep learning), ayant connu un fort développement cette année là \cite{lecun_deep_2015}. 
+Ils s'intéressent souvent à l'apprentissage d'image par des SOMs. \cite{Liu2015DeepSM,hankins_somnet_2018,wickramasinghe_deep_2019,aly_deep_2020,sakkari_convolutional_2020,dozono_convolutional_2016,nawaratne_hierarchical_2020,mici_self-organizing_2018} et sont présentés comme des "SOMs convolutionnelles".
+Ces architectures de SOMs sont très proches des SOMs hiérarchiques telles que HSOM.
 
 
 Le modèle introduit en \cite{Liu2015DeepSM} est par exemple illustré en figure~\ref{fig:dsom} et s'inspire des réseaux de neurones convolutionnels.
 Le but d'une telle architecture est de classifier des images. Une fenêtre est déplacée sur l'image d'entrée, et chaque imagette nourrit alors une carte d'une première couche, donnant $N_{maps}  \times N_{maps}$ positions de BMU $j_{p,q}$. Ces positions représentées comme des valeurs en une dimension sont assemblées en une image intermédiaire, chaque pixel prenant la valeur du BMU de la carte correspondante. Une deuxième étape de fenêtrage peut alors être appliquée sur cette image, et ainsi de suite. La dernière couche du réseau est composée d'une SOM qui effectue alors la tache de classification de l'image intermédiaire, vue comme une représentation abstraite  de l'entrée.
-L'interface entre les couches "convolutionnelles" est créée à partir des BMUs des SOMs: l'architecture DSOM s'inscrit ainsi directement dans la lignée de HSOM, à la différence qu'un vecteur de positions de BMUs est utilisé comme entrée pour la couche suivante et non un BMU seul.
-le auteurs montrent que ce modèle est meilleure qu'une SOM classique dans des taches de classification sur MNIST; les couches supérieures 
+L'interface entre les couches "convolutionnelles" est créée à partir des BMUs des SOMs: l'architecture DSOM s'inscrit ainsi directement dans la lignée de HSOM, à la différence qu'un vecteur de positions de BMUs est utilisé comme entrée pour la couche suivante et non la position d'un seul BMU.
+le auteurs montrent que ce modèle est meilleure qu'une SOM classique dans des taches de classification sur MNIST; les couches supérieures apportent un niveau d'abstraction tandis que les couches inférieures apprennent les motifs.
 
-D'autres représentations sont choisies dans les travaux 
+%D'autres représentations sont choisies dans les travaux 
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{hsom.pdf}
+    \includegraphics[width=\textwidth]{HSOM.pdf}
     \caption{Architecture HSOM \cite{lampinen_clustering_1992}. L'apprentissage des positions du BMU de la première couche par la seconde permet de mieux détecter les ensembles de données, dans une tâche de clustering. La deuxième couche est vue comme un niveau plus abstrait que la première. \label{fig:hsom}}
 \end{figure}
 
@@ -258,62 +253,65 @@ D'autres représentations sont choisies dans les travaux
     \caption{Architecture DSOM de SOM "convolutionnelle" \cite{liu_deep_2015}. Les auteurs utilisent les positions des BMUs de la couche de carte $j_{p,q}$ comme valeurs d'entrée pour les couches suivantes, dans la lignée de HSOM \cite{lampinen_clustering_1992}. Les couches sont entraînées les unes après les autres. Cette architecture est \emph{feedforward}, \emph{hiérarchique} mais pas par sélection. \label{fig:dsom}}
 \end{figure}
 
-Toutes les architectures, sélective ou par transmisson de représentation, sont feed-forward: les couches sont apprises les unes après les autres, et ne se prêtent ainsi pas à un apprentissage en ligne.
+Toutes les architectures présentées ici, qu'elles soient sélectives ou par transmission de représentation, sont feed-forward: les couches sont apprises les unes après les autres. Par conséquent, elles ne se prêtent pas à un apprentissage en ligne, tout comme une carte de Kohonen classique.
 La plupart des travaux sont appliquées à des tâches de classification qu'on pourrait réaliser avec une SOM classique.
-La motivation d'utiliser une architecture plutôt qu'une SOM est que la couche finale du réseau possède de meilleurs performances en terme de classification que si on avait utilisé une SOM simple. Les cartes intermédiaires jouent alors le rôle de “routeurs” pour selectionner le BMU de la couche finale.
+La motivation d'utiliser une architecture plutôt qu'une SOM est alors que la couche finale du réseau possède de meilleurs performances en terme de classification que si on avait utilisé une SOM simple.
 
-Aly ? evoque des perfs similaire à un réseau de deep learning supervisé
-Note : pour une tache de classification, une carte peut eytre comparée à un algo supervisé: la phase de choix de la classe est gérée par un algorithme supervisé après entrainement de la carte.
+% Aly ? evoque des perfs similaire à un réseau de deep learning supervisé
+% Note : pour une tache de classification, une carte peut eytre comparée à un algo supervisé: la phase de choix de la classe est gérée par un algorithme supervisé après entrainement de la carte.
+
+Nous pouvons conclure de ces travaux qu'il existe différentes façon de transmettre des information entre couches. Les plus courantes sont la transmission de la position du BMU comme entrée pour la carte suivante, ou un caclul d'activation prenant en compte l'activation de la couche précedente par une connexion neurone à neurone.
+La transmission de la position du BMU nous semble particulièrement intéressante car elle exploite totalement l'aspect topologique d'une carte de Kohonen. Par ailleurs, il s'agit d'une valeur de faible dimension, donc se prêtant à des calculs. Les architectures telles que Deep SOM nous montrent qu'une architecture utilisant seulement ce type d'information comme interface est capable de bonnes performances en reconnaissance d'image.
+Le champ d'application des architectures feed-forward est le même qu'une SOMs classique: quantification vectorielle et classification. Les performances surpassent alors celles d'un SOM classique.La présence de couche multiples créée un nouveau niveau d'abstraction.
+
+Nous pouvons donc considérer ces architectures comme des améliorations de carte auto-organisatrices sur des applications spécifiques. Elles n'ont pas la capacité de faire d'autres types de calcul que ceux originalement réalisés dans une SOM. L'aspect uniquement feed-forward en est la cause: les cartes intermédiaires agissent comme des filtres intermédiaires de l'information donnée en entrée, mais la couche finale reste une carte auto-organisatrice classique.
+Cela nous amène à étudier des architectures comportant des boucles de rétroaction; nous qualifierons ces architectures de non-hiérarchique. Ces architecture, nous le verrons, créent de nouveaux comportements à partir de SOMs.
 
 
-Ces travaux montrent plusieurs choses:
-\begin{itemize}
-    \item Il existe différentes façon de transmettre des information entre couches. Les plus courantes sont la transmission de la position du BMU comme entrée pour la carte suivante, ou un caclul d'activation prenant en compte l'activitation de la couche précedente (connexion tous à tous).
-    La transmission de la position du BMU , notamment dans l'archi DSOM, montre que ce paradigme permet des bonne capacités de calcul + exploite l'aspect topologique des cartes.
-    \item Ces architectures sont utilisées dans le meme cadre d'application que les SOMs classiques, pour notamment de la classification; les performances surpassent alors celles d'un SOM classique.La présence de couche multiples créée un nouveau niveau d'abstraction.
-\end{itemize}
+% C'est l'avenement du deep learning qui a poussé à créer des archi de SOMs. De la meme facon que les réseaux profonds ont étendu les capacités d'apprentissage du perceptron, les couhes de SOM montrent la meme ppté.
+% Est-ce que la recherche actuelle sur l'apprentissage non supervisé poussera à remettre les SOM au gout du jour ? Est-ce qu'on ne fait pas de deep som, simplement parce que les outils n'ont pas été développés comme ceux du deep learning ? L'aspect non linéaire d'une SOM peut pourtant etre prometteuse dans ce cadre d'applis.
+% Il s'agit par contre d'archiectures completement feed forward: on ne peut pas vraiment parler d'archi modulaires. Les couches sont apprises les unes après les autres.
+% On fera référence à ce type d'archis comme des archis hiérarchiques.
+% ces arhcitectures montrent des capacités d'apprentissage de motifs à plus grande echelle qu'une carte simple.
 
-
-C'est l'avenement du deep learning qui a poussé à créer des archi de SOMs. De la meme facon que les réseaux profonds ont étendu les capacités d'apprentissage du perceptron, les couhes de SOM montrent la meme ppté.
-Est-ce que la recherche actuelle sur l'apprentissage non supervisé poussera à remettre les SOM au gout du jour ? Est-ce qu'on ne fait pas de deep som, simplement parce que les outils n'ont pas été développés comme ceux du deep learning ? L'aspect non linéaire d'une SOM peut pourtant etre prometteuse dans ce cadre d'applis.
-Il s'agit par contre d'archiectures completement feed forward: on ne peut pas vraiment parler d'archi modulaires. Les couches sont apprises les unes après les autres.
-On fera référence à ce type d'archis comme des archis hiérarchiques.
-ces arhcitectures montrent des capacités d'apprentissage de motifs à plus grande echelle qu'une carte simple.
-
-\begin{itemize}
-    \item Historique de l'assemblage des SOMs en architectures feedforward ? 
-    \item Quels sont les avantages apportés par les deep SOMs par rapport à des Soms classiques
-    \item Quels sont les avantages des deep SOM par rapport aux réseaux de deep Learning 
-    \item Pourquoi ne sont elles pas plus utilisées maintenant ?
-\end{itemize}
+% \begin{itemize}
+%     \item Historique de l'assemblage des SOMs en architectures feedforward ? 
+%     \item Quels sont les avantages apportés par les deep SOMs par rapport à des Soms classiques
+%     \item Quels sont les avantages des deep SOM par rapport aux réseaux de deep Learning 
+%     \item Pourquoi ne sont elles pas plus utilisées maintenant ?
+% \end{itemize}
 
 \subsection{Structures de cartes auto-organisatrices non-hiérarchiques}
 
-Face aux architectures hiérarchiques présentées précédemment, nous avons relevé dans la littérature des modèles que nous qualifierons de \emph{non-hiérarchiques}.
-Ces architectures sont souvent proposées sous la motivation d'inspiration biologique. 
-De nombreux travaux de biologie observent en effet des co-activations entre les zones du cerveaux. Le cortex cérébral est ainsi être considéré comme un reseaux de neurone modulaires, avec des régions s'activant entre elles, voir la section~\ref{sec:motivations}. Ces coactivations aient été observées expérimentalement et plusieurs modèles en neurosciences computationnelles ont été proposés pour expliquer ce phénomènes. Les modèles les plus communs sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de réentrées de Edelmann \cite{Edelman1982GroupSA}.
-La zone de convergence divergence propose que certaines aires corticales servent d'aires associatives pour associer d'autres zones corticales prenant des modalités sensorielles en entrée. Ces aires associatives assemblent les signaux en provenance des zones sensorielles et les propagent vers d'autres zones. 
-La théorie de la ré-entrée postule quant à elle des connexions directes et réciproques entre les neurones de différentes zones sensorielles ou non. Ces connexions sont à l'origine de la coactivation de neurones dans différentes cartes.
-Les travaux comportant des cartes associatives liant des cartes sensorielles se désignent souvent comme hiérarchiques: en effet, les cartes associatives forment un niveau d'apprentissage différent des cartes sensorielles, apportant une hiérarchie dans l'apprentissage. 
-Nous les classons ici dans la catégorie non-hiérarchique. Bien que des niveaux de cartes peuvent être isolés dans ces architectures, les connexions entre les cartes de deux niveaux sont bidirectionnelles, la carte associative étant à l'origine de l'activation de cartes sensorielles, et réciproquement.
-Nous les différencions ainsi des cartes hiérarchiques feed-forward que nous avons listé au paragraphe précédent, et n'ont pas le même champ d'application.
+% Face aux architectures hiérarchiques présentées précédemment, nous avons relevé dans la littérature des modèles que nous qualifierons de \emph{non-hiérarchiques}. Cette non-hiérarchie se caractérise par l'existence de boucles de rétroaction entre cartes.
+Les architectures non-hiérarchiques de SOMs sont des architectures comportant plusieurs cartes communiquant entre elles et dont le schéma de connexion comporte des boucles de rétroaction: une carte A reçoit de l'information d'une carte B, qui elle même reçoit de l'information de la carte A.
+Ces architectures sont souvent proposées par une motivation d'inspiration biologique, dans le domaine des neurosciences computationnelles, en s'appuyant sur les théories mentionnées précédemment de la réentrée \cite{Edelman1982GroupSA} et des zones de convergence-divergence (CDZ) \cite{damasio_time-locked_1989}.
+L'assemblage de réseaux de neurones en architecture fait l'objet de nombreux travaux dans le domaine des neurosciences computationnelles, (exemples). Nous ne détaillerons pas ces travaux ici, nous intéressant spécifiquement aux modèles computationnels destinés à être appliqués en informatique et non modélisant finement la biologie.
 
-\subsubsection{Structures comportant des cartes associatives}
+Nous avons pu distinguer deux types d'architectures non-hiérarchiques dans l'état de l'art.
+Certaines architectures comportent des cartes sensorielles qui sont reliées via des cartes associatives ne prenant pas d'entrées sensorielles mais seulement des éléments de connexion interne. Ces architectures sont \emph{centralisées} dans la mesure ou ces cartes associatives centralisent l'information  montant des cartes sensorielles et la redistribuent. Ces architectures centralisées sont souvent désignées par leurs auteurs comme hiérarchiques: en effet, les cartes associatives forment un niveau d'apprentissage différent des cartes sensorielles, apportant une hiérarchie dans l'apprentissage. Nous les classons ici dans la catégorie non-hiérarchique. Bien que des niveaux de cartes peuvent être isolés dans ces architectures, les connexions entre les cartes de deux niveaux sont bidirectionnelles, la carte associative étant à l'origine de l'activation de cartes sensorielles, et réciproquement.
+Nous les différencions ainsi des cartes hiérarchiques feed-forward que nous avons listé au paragraphe précédent.
+Le second type d'architectures non-hiérarchiques sont celles utilisant des connexions directes entre cartes sensorielles. Ces architectures sont \emph{décentralisées}: il n'existe pas de module par lequel toute l'information transite.
 
-l'idée d'assembler des cartes prenant en entrée une modalité sensorielle par une carte associative a été explorée dans des architectures telles que \cite{dominey13} et \cite{escobar-juarez_self-organized_2016}.
-Dans ces deux travaux, les auteurs construisent une architecture se voulant une modélisation du cadre CDZ, mais avec des cartes auto-organisatrices classiques, en transmettant les positions des BMU entre les cartes multimodales. 
+Un point commun de toutes ces architectures non-hiérarchique est leur champ d'application: contrairement aux architectures hiérarchiques feed-forward qui cherchent à améliorer les performances de classification ou de clustering d'une SOM classique, les SOM non-hiérarchiques que nous avons relevées dans la littératures sont plutôt appliquées à des tâches de \emph{mémoire associative} sur des données \emph{multimodales}. Ces cartes sont des systèmes dynamiques et ont la capacité de générer une valeur de sortie de façon autonome. Dans la mémoire associative, elles sont alors utilisées pour prédire une modalité a partir d'une autre.
+
+\subsubsection{Architecture comportant une carte associative: architecture centralisée}
+
+L'idée d'assembler des cartes prenant en entrée une modalité sensorielle par une carte associative a été explorée en \cite{dominey13} et \cite{escobar-juarez_self-organized_2016}.
+Dans ces deux travaux de neuroscience computationnelles, les auteurs construisent une architecture se voulant une modélisation du cadre CDZ, mais avec des cartes auto-organisatrices classiques, en transmettant les positions des BMU entre les cartes multimodales. 
 Chacune des cartes possède plusieurs couches, chacune prenant une modalité en entrée. Une activité est calculée sur ces modalités en une activité commune. La position du BMU, en l'occurence un vecteur 3D, sera utilisée comme modalité hiérarchique pour connecter des cartes entre elle. Les auteurs assemblent alors plusieurs cartes sensorielles grâce à des cartes associatives.
 Dans le cas d'une hiérarchie de cartes, les auteurs entrainent les couches de l'architecture séparément: les cartes modales du premier niveau sont apprises, puis la carte amodale les connectant est apprise dans un second temps. 
 Une fois toute les cartes apprises, la structure est utilisée pour activer une ou des modalités en activant la carte amodale. Cette carte représente la zone de convergence divergence des modèles cérébraux. 
 Dans ce modèle, les cartes sensorielles sont d'abord entraînée, puis les cartes associatives sont apprises dans un second temps. Nous l'avons quand même classée comme non-hiérarchique, car une fois que toutes les connexions sont apprises, elle permet des rétroactions entre cartes. 
 
-Citons également l'architecture bijama développée en \cite{menard05,khouzam_2013}, et l'architecture \cite{lefort_active_2015}
-Cette architecture repose sur des calcul complètement locaux. 
-Des cartes apprenant des modalités sont assemblées en une carte associative, apprenant à associer les activités. Les connexions sont faites par groupes de neurones. Comme l'archi est completement locales, on n'a pas directement la notion de BMU, mais l'idée est tjs de renforcer les connexions et d'autoriser la coactivation de groupes de neurones qui s'activent en meme temps dans différentes cartes.
+Les travaux conduits précédemment dans notre équipe de recherche sur les architectures de cartes auto-organisatrices se classent dans cette catégorie. Ainsi, l'architecture bijama développée en \cite{menard05,khouzam_2013},associe des cartes modales par une carte associative par des connexions neurone à neurones, en renforcant les connexions entre les groupes de neurones s'activant au même moment dans les cartes modales, via la carte associative.
+Notons que Bijama repose sur des calculs complètement locaux, y compris au sein d'une carte auto-organisatrice.
+
+
 
 \begin{figure}
     \includegraphics[width=\textwidth]{archi_associative.pdf}
-    \caption{Exemple général d'architecture comportant une carte associative. Ces architectures sont utilisées dans des tâches de traitement de données multimodales.
+    \caption{Exemple général d'architecture décentralisée comportant une carte associative. Ces architectures sont utilisées dans des tâches de traitement de données multimodales.
      Des cartes appelées cartes \emph{sensorielles} ou \emph{modales} prennent des entrées dans plusieurs modalités. Une carte \emph{associative} reçoit des connexions montantes de ces cartes et apprend à associer les activités. Les cartes sensorielles sont connectées à la carte associative par des connexions descendantes pouvant générer une activation dans la carte. Dans la plupart des modèles, les connexions montantes et descendantes n'ont pas le même rôle: les cartes sensorielles ne s'influencent pas entre elles lors de l'apprentissage.
      Lors de l'utilisation de l'architecture pour de la génération d'entrée sensorielle, alors les connexions descendantes permettent à la carte associative d'activer une carte sensorielle. \label{fig:archi_associative}
      }
@@ -327,35 +325,47 @@ Des cartes apprenant des modalités sont assemblées en une carte associative, a
     Après apprentissage, l'activation de la carte MCMM produit des mouvements coordonées tête/mains~\cite{dominey13}\label{fig:mmcm}}
 \end{figure}
 
-Les deux modèles mentionnés ci dessus rentrent dans la catégorie non-hiérarchique pour leur possibilité d'activation d'une carte par l'autre. Encore une fois, la position du BMU apparaît chez \cite{dominey13} comme le vecteur de transmission d'information  entre cartes, et suffit pour que la co-activation des cartes permettent de réaliser de la mémoire associative. Le modèle SOIMA privilégie la connexion neurone à neurone entre la carte associative et la carte modale, avec une règle d'apprentissage Hebbienne.
+Les modèles mentionnés ci dessus rentrent dans la catégorie non-hiérarchique pour leur possibilité d'activation d'une carte par l'autre. Encore une fois, la position du BMU apparaît chez \cite{dominey13} comme le vecteur de transmission d'information  entre cartes, et suffit pour que la co-activation des cartes permettent de réaliser de la mémoire associative. Le modèle SOIMA et le modèle Bijama privilégient la connexion neurone à neurone entre la carte associative et la carte modale, avec une règle d'apprentissage Hebbienne.
 Cette mémoire associative est utilisée dans un cadre de données multimodales, avec une notion d'activation d'une carte par l'autre, contrairement aux architectures hiérarchiques citées en section précédentes, utilisées plutot pour des tâches de classification, autrement dit des tâches supervisées.
-Dans ces exmples architectures présentées ici, on considère les cartes comme des représentations de leur espace de données qui permettent de la coactivation entre carte: une carte de Kohonen prend une fonction générative.
+Dans ces exemples architectures présentées ici, on considère les cartes comme des représentations de leur espace de données qui permettent de la coactivation entres cartes: une carte de Kohonen prend une fonction générative.
 
-\subsubsection{Structures non-hiérarchiques décentralisées}
+La présence de cartes associatives au sein d'une architectures crée une centralisation de l'information multimodales sur une carte, ce qui nous amène à parler d'apprentissage centralisé. Chaque carte sensorielle ne reçoit aucune information directe d'autres cartes de l'architectures, sauf de la carte associative.
+
+Face aux architectures centralisées, nous pouvons imaginer des architectures décentralisées implémentant des connexions directes entre cartes modales.
+
+\subsubsection{Architectures non-hiérarchiques décentralisées}
+
+Nous avons relevé peu de travaux portant sur des architectures décentralisées, c'est-à-dire comportant des connexions directes entre cartes sensorielles. Un exemple générique d'architecture décentralisée est tracée en figure~\ref{fig:archi_decentralisee}. Les architectures proposées dans tous les travaux que nous avons relevés sont appliquées à de l'apprentissage multimodale.
+
+Une première façon d'associer des cartes de Kohonen est de connecter les neurones d'une carte aux neurones d'une autre par des connexions pondérées. C'est par exemple ce qui est proposé dans \cite{khacef_brain-inspired_2020}. Les auteurs utilisent ici des cartes de Kohonen à spikes, plus directement inspirées de la biologie que les cartes de Kohonen classiques, mais les mêmes principes d'auto-organisation se retrouvent entre les deux modèles. Dans ces travaux, les auteurs apprennent ainsi deux modalités d'un espace multimodale sur deux cartes auto-organisatrices, l'image et le son, puis dans un second temps apprennent les connexions entre neurones en mettant leurs poids à jour à partir des paires d'entrées image-son. Les neurones de chaque carte s'activant sur une même paire d'entrées voient le poids de leur connexion se renforcer, et inversement.
+Les auteurs montrent que cette architecture permet d'apprendre les associations d'entrées et peut générer une entrée à partir de l'autre. 
+Ce modèle est très simple mais sa mise à jour doit être réalisée en plusieurs étapes: d'abord les poids des cartes, puis les poids des connexions. Cet apprentissage en deux temps était également présent dans l'architecture centralisée de \cite{dominey13}.
+
+Nous remarquons par contre deux modèles qui cherchent à créer une architecture décentralisée de carte dont l'apprentissage est réalisé d'une seule traite. 
 
 \begin{figure}
     \includegraphics[width=0.9\textwidth]{archi_decentralisee.pdf}
-    \caption{Exemple général d'architecture décentralisée de cartes. Chacune des carte de l'architecture prend une entrée sensorielle A,B,C. Des connexions entre cartes permettent l'apprentissage d'associations entre modalités. Chacune des cartes peut donc être vue comme une carte multimodale. La façon de gérer les rétroactions entre cartes varie en fonction des travaux et est une problématique majeure dans la construction d'une telle architecture. Ainsi, les cartes apprennent à associer leurs activités après avoir appris les modalités en \cite{khacef_brain-inspired_2020}, ou conjointement en \cite{johnsson_associative_2009}.}
+    \caption{Exemple général d'architecture décentralisée de cartes. Chacune des carte de l'architecture prend une entrée sensorielle A,B,C. Des connexions entre cartes permettent l'apprentissage d'associations entre modalités. Chacune des cartes peut donc être vue comme une carte multimodale. La façon de gérer les rétroactions entre cartes varie en fonction des travaux et est une problématique majeure dans la construction d'une telle architecture. Ainsi, les cartes apprennent à associer leurs activités seulement après avoir appris les modalités en \cite{khacef_brain-inspired_2020} et conjointement en \cite{johnsson_associative_2009} et \cite{baheux_towards_2014}.\label{fig:archi_decentralisee}}
 \end{figure}
 
-Une autre version d'architecture de cartes non-hiérarchiques est développée en \cite{johnsson_associating_2008,johnsson_associative_2009}, sous le nom de A-SOM, \emph{associative self-organizing map}. Encore une fois, le but d'une telle architecture est de faire de l'apprentissage multimodal, en apprenant à associer les activités de cartes sur différentes modalités.
-La particularité de A-SOM, par rapport à tous les modèles précédemment étudiés, est que l'apprentissage de toutes les cartes et de leurs interaction est réalisé simultanément. 
-Cette propriété est intéressante
+Une telle version d'architecture de cartes non-hiérarchiques est développée en \cite{johnsson_associating_2008,johnsson_associative_2009}, sous le nom de A-SOM, \emph{associative self-organizing map}. Encore une fois, le but d'une telle architecture est de faire de l'apprentissage multimodal, en apprenant à associer les activités de cartes sur différentes modalités. La particularité de A-SOM, par rapport à tous les modèles précédemment étudiés, est que l'apprentissage de toutes les cartes et de leurs interaction est réalisé simultanément. Ce modèle décentralisé inclut la possibilité de créer une version d'architecture centralisée à partir des règles d'associations, par exemple \cite{buonamente_hierarchies_2016}. Ainsi, un modèle d'architecture décentralisé est intéressant pour la recherche de nouveaux comportements dans la mesure ou il n'impose pas de structure spécifique pour l'architecture. La structure des connexions entre cartes devient alors un paramètre sur lequel on peut complètement agir, contrairement aux architectures centralisées.
+Une carte du modèle A-SOM possède plusieurs couches de poids. L'une de ces couches est relative à l'entrée de la SOM provenant du capteur. L'autre couche de poids reçoit une entrée provenant d'une autre carte de l'architecture. L'information transmise ici est l'activation de tous les neurones de l'autre carte. chaque carte reçoit ainsi $N\times M$ valeurs d'activité. L'interface entre cartes utilisée en A-SOM est donc le champ d'activation des neurones.
+
 \begin{figure}
     \centering\includegraphics[width=0.7\textwidth]{A-SOM.pdf}
     \caption{Le modèle A-SOM \cite{johnsson_associative_2009} associe les activités de différentes cartes. Chacune des cartes prend une modalité A,B,C en entrée. Contrairement aux modèles précédemment cites, les trois cartes apprennent simultanément. L'association est prise en compte lors du calcul des activités de chaque carte.\label{fig:asom}}
 \end{figure}
-\cite{buonamente_hierarchies_2016,Buonamente2013SimulatingAW}: version hiérarchique et version recurrente de asom.
 
-En \cite{khacef_brain-inspired_2020}, les auteurs passent en revue d'autres modèles de neurosciences computationnelles implémentant de telles architectures au vu de leur plausibilité biologique, et proposent également une architecture de deux cartes auto-organisatrices impulsionnelles pour faire de la fusion de données, en s'inspirant quant à eux de la théorie de la réentrée. Comme en \cite{dominey13}, les connexions entre cartes sont apprises après apprentissage de chacune. Chaque neurone des deux cartes est connecté aux neurones de l'autre carte par une synapse et un poids synaptique. L'algorithme de mise à jour augmente les poids synaptiques lorsque les neurones aux extrémités de la synapse s'activent en même temps, c'est à dire que les deux neurones sont BMUs en même temps. Après apprentissage, les cartes ont une mémoire associative et autorisent la coactivation entre cartes.
-
-Modèles de \cite{khouzam,menard05}, lefort
-A mettre avant ou après les cartes récurrentes, peut etre dans "maintenant qu'on a défini ou on va, on cite les travaux sur lesquels on se base directement et on les place dans la zoologie des cartes ??
+L'architecture développée en \cite{lefort_active_2015} implémente également une architecture décentralisée pour de l'apprentissage multimodal. De façon similaire à A-SOM, les auteurs associent plusieurs poids aux neurones d'une carte, chacun des poids étant relatif à un type d'entrée: l'entrée modale et l'entrée venant d'autres cartes. L'information transmise dans ce cas est une partie de l'activité des neurones, celle située dans un carré centré à la même position que le neurone courant. L'information transmises est ainsi également un champ d'activation. Ce choix d'interface associe donc les régions des cartes préalablement à l'apprentissage.
 
 \subsubsection{Des modèles multi-cartes incluant des connexions temporelles}
 
-Certains modèles s'appuient sur plusieurs cartes de Kohonen connectées avec une notion de traitement de séquences, comme \cite{parisiLL}. Les auteurs développent une architecture de deux réseaux auto-organisés appelés \emph{grow when required networks}. Ces réseaux sont des versions incrémentales de cartes de Kohonen dans lesquelles des neurones sont ajoutés au cours de l'apprentissage. Le processus de recherche de BMU reste similaire.
-cette architecture utilise deux réseaux GWR pour apprendre des séquences, formant une mémoire épisodique et une mémoire sémantique.
+Certains modèles s'appuient sur plusieurs cartes de Kohonen connectées, en y ajoutant une notion de traitement de séquences.
+Les travaux autour du modèle A-SOM mentionné précédemment en ont ainsi dérivé une version récurrente \cite{Buonamente2015DiscriminatingAS}. Cette version récurrente est similaire à la version multicarte, en intégrant simplement 
+
+
+en \cite{parisiLL}, les auteurs développent une architecture de deux réseaux auto-organisés appelés \emph{grow when required networks}. Ces réseaux sont des versions incrémentales de cartes de Kohonen dans lesquelles des neurones sont ajoutés au cours de l'apprentissage, le processus de recherche de BMU restant ensuite similaire à une SOM classique.
+Cette architecture utilise deux réseaux GWR pour apprendre des séquences, formant une mémoire épisodique et une mémoire sémantique.
 La carte associée à la mémoire épisodique (G-EM) est une version récurrente du GWR, dans laquelle des connexions temporelles entre neurones sont mises à jour en supplément des poids associés aux neurones. Le BMU est alors choisi en fonction de l'entrée courante ainsi que des BMUs précédent. 
 La deuxième carte est une version classique du GWR. Elle prend en entrée une séquence de BMUs de la carte G-EM, ainsi que la classe de la séquence courante, afin de mettre à jour ses poids. 
 Cette architecture associe ainsi des connexions temporelles récurrentes sur une carte ainsi que des connexions entre cartes.
@@ -364,7 +374,8 @@ Le concept d'apprentissage sur le long terme s'intéresse à des systèmes étan
 Dans la plupart des applications en robotique, les entrées présentées à une structure d'apprentissage sont par ailleurs des entrées ayant une relation temporelle. Deux images recues successivement par un capteur visuel seront proches dans l'espace des images. Pour une SOM par exemple, cela pose problème. Les arhcitectures de lifelong learning cherchent donc à addresser ces problèmes pour créer une structure autonome, évoluant dans le temps et permettant de réaliser la tâche pour laquelle elle est concue tout en continuant à etre mise à jour, sans oublier les données vues au début de l'apprentissage.
 Les auteurs utilisent GDM pour de la reconnaissance d'objets. Cependant, lors de l'apprentissage, les données ne sont pas présentées après un tirage aléatoire dans l'espace, mais sont présentés classe par classe: tous les objets d'une meme classe d'abord, etc. Les auteurs montrent que l'architecture est capable de bien prédire la classe d'un objet lors d'un test sur toutes les classes apprises. A titre de comparaison, une SOM classique apprendrait la classe du premier objet, puis l'oblierait pour se redéplier entièrement sur la deuxième classe, etc. A terme, seule la dernière classe apprise est gardée en mémoire.
 
-La motivation de ce modèle multicarte est intéressante: il s'agit cette fois de voir les deux cartes comme de l'apprentissage à différentes échelles temporelles. L'architecture mélange connexions récurrentes et connexions intercartes, ce qui est pertinent dans le cadre de l'apprenitssage de séquence, et dans le but de création de systèmes autonomes de cartes auto-organisatrices évoquées par Kohonen.
+
+La motivation de ces modèle multicartes est intéressante: il s'agit cette fois de voir les deux cartes comme de l'apprentissage à différentes échelles temporelles. L'architecture mélange connexions récurrentes et connexions intercartes, ce qui est pertinent dans le cadre de l'apprenitssage de séquence, et dans le but de création de systèmes autonomes de cartes auto-organisatrices évoquées par Kohonen.
 
 
 \begin{figure}
@@ -373,14 +384,11 @@ La motivation de ce modèle multicarte est intéressante: il s'agit cette fois d
     \caption{Architecture \emph{à double mémoire} proposée en \cite{parisiLL}. La couche de mémoire épisodique est un réseau \emph{grow when required (GWR)}, un réseau auto-organisé similaire à une carte de Kohonen, à la différence que les neurones sont ajoutés au fur et à mesure de l'apprentissage. La couche de mémoire sémantique est également un réseau GWR, entraîné à partir des BMUs de la couche épisodique et de la classe de la séquence jouée. L'architecture apprend à reconnaitre plusieurs séquences.\label{fig:gdm_parisi}}
 \end{figure}
 
-Cet exemple nous amène à pousser la bibliographie de cette thèse sur les cartes de Kohonen récurrentes. On voit en effet la similarité existant dans le traitement de séquences, ou le choix d'un BMU doit prendre en compte le contexte des états précédents, aux modèles multimodals dans lequel le choix d'un BMU doit prendre en compte le contexte des entrées d'autres modalités.
+Ces exemples nous amènent à pousser la bibliographie de cette thèse sur les cartes de Kohonen récurrentes. On voit en effet la similarité existant dans le traitement de séquences, ou le choix d'un BMU doit prendre en compte le contexte des états précédents, aux modèles multimodals dans lequel le choix d'un BMU doit prendre en compte le contexte des entrées d'autres modalités. 
 
-Travaux de Baheux, ménard, bassem ? 
-Ces architectures sont principalement utilisées pour de la génération d'entrée, dans un contexte de mémoire associative. Ou pour de l'apprentissage "lifelong".
-
-Associative self organizing maps : version multi-cartes récurrente présentée en \cite{Buonamente2015DiscriminatingAS}, qui soutiennent l'idée qu'une architecture multi-cartes est naturellement liée aux traitement de données séquentielles.
 
 \subsection{Cartes auto-organisatrices récurrentes}
+
 \begin{figure}
    \centering\includegraphics[width=0.6\textwidth]{movment_002.pdf}
    \caption{L'image présentée à un réseau (en bleu) correspond à un instant d'une séquence. L'objectif de l'apprentissage non-supervisé de séquences est d'extraire une représentation d'une séquence d'entrée. Une utilisation commune est la classification de mouvements. La séquence "tirer" sera différente de la séquence "marcher".\label{fig:mouvement}}
@@ -420,10 +428,11 @@ Nous cherchons à développer une architecture plus générale de cartes auto-or
 Cependant, nous notons que la position du BMU comme interface entre couche de cartes permet des capacités de calcul.
 Nombre de ces architectures sont développées directement dans un but applicatif. On peut ainsi faire la distinction entre un modèle d'architecture, tel que HSOM, qui est générique et applicable à tout type de données, et une structure appliquée, développées spécifiquement pour un type de données.
 
-Opposées à ces arhcitectures hiérarchiques, des architectures reposent sur de l'interaction entre cartes, avec des boucles de rétroaction.
+Opposées à ces architectures hiérarchiques, des architectures reposent sur de l'interaction entre cartes, avec des boucles de rétroaction.
 Ces architectures sont moins présentes dans la littérature que les deep SOM, et cherchent en général à se rapprocher d'un contexte biologique, telle que CDZ dominey.
 Nous nous placons plutot dans la lignées des cartes non-hiérarchiques, sans vouloir cependant copier un aspect biologique.
 De façon intéressante, nous remarquons que plusieurs structures non hiérarchiques sont associées à l'apprentissage de données temporelles. Ces architectures se rapprochent des modèles appélés cartes auto-organisatrices récurrentes, dans lesquels des éléments de calcul d'une carte à une itération données sont réutilisés pour le calcul des itérations suivantes. Ces modèles permettent à une 
+Ces architectures non-hiérarchiques dynamiques se divisent en architectures centralisées et décentralisées. La décentralisation des calculs va dans un sens de l'informatiuqe non conventionnelle.
 
 Ces modèles soulèvent également une problématique dans les algorithmes d'apprentissage d'architecture non-hiérarchiques comportant des rétroactions. Dans le cas des neurones impulsionnels, les impulsions des neurones arrivent en différé, une connexion réciproque entre neurones ne pose pas de problème: les neurones sont traités dans l'ordre des impulsions. Dans le cas de cartes de Kohonen, qui ne repose pas sur des séries de spikes, l'information arrive simultanément dans les différentes cartes. L'activité de la carte A influence l'activité de la carte B, mais l'activité de la carte B influence également celle de la carte A, formant une boucle de rétroaction potentiellement infinie. Les deux architectures mentionnées font le choix d'apprendre d'abord les cartes sensorielles de façon indépendante, puis d'apprendre seulement leurs connexions dans un second temps, cassant ainsi la boucle infinie. 
 La rétroaction est ensuite utilisée en phase applicative pour générer une modalité: seule une des cartes sensorielle prend une entrée, l'autre carte est considérée comme la sortie de l'architecture et réagit à l'activité des autres cartes. Les rétro-actions ne sont alors pas non plus un problème en phase d'application.
@@ -445,11 +454,9 @@ Les architectures hiérarchiques nous paraissent de bonnes candidates a amélior
 
 Dans cette thèse, nous chercherons à développer un modèle d'architecture non-hiérarchique de SOM. Peu de travaux ont exploré l'idée d'associer des SOMs en architectures comportant des rétroactions, et non seulement en architecture hiérarchiques.
 Les choix pour la construction d'une telle architecture se situent au niveau de l'interface entre cartes. De nombreux travaux autour des cartes de Kohonen utilisent la position du BMU comme vecteur de l'information transmise entre plusieurs cartes. 
-Nous faisons ce choix également. Il apparaît comme une valeur peu coûteuse à communiquer entre cartes, mais qui contient beaucoup d'information sur l'état d'une carte. Cette valeur se présente également comme un cadre homogène de communication intercarte: quelles que soient les entrées sur lesquelles apprend une carte, il sera toujours possible de la connecter à d'autres cartes de l'architecture. Enfin, on retrouve l'utilisation de la position du BMU à la fois dans des architectures multicartes comme HSOM et dans les cartes récurrentes comme SOMSD. Le cadre choisi permettrait donc d'intégrer à la fois des cartes classiques et des cartes récurrentes au sein d'une même architecture, offrant encore plus de possibilités de calcul. Par leur motivation de développement d'un système multi-som, nos travaux se rapprochent beaucoup des travaux conduits sur l'architecture A-SOM \cite{johnsson_associating_2008, johnsson_associative_2009,gil_sarasom_2015, Buonamente2015DiscriminatingAS}, à la différence que le modèle étudié est différent.
-Par ce choix de modèle, notre étude se rapprochent des travaux sur les cartes récurrentes conduits en \cite{hagenbuchner_self-organizing_2003,Strickert2003UnsupervisedRS,fix20} sur le traitement de séquence par transmission de la position du BMU.
-Nos travaux font ainsi à \cite{baheux_towards_2014} sur des architectures récurrentes multimodales utilisant la transmission de la postion du BMU entre des cartes de Kohonen. 
-%lifelong learning = ouverture ? 
-% 
+Nous faisons ce choix également. Il apparaît comme une valeur peu coûteuse à communiquer entre cartes, mais qui contient beaucoup d'information sur l'état d'une carte. Cette valeur se présente également comme un cadre homogène de communication intercarte: quelles que soient les entrées sur lesquelles apprend une carte, il sera toujours possible de la connecter à d'autres cartes de l'architecture. Enfin, on retrouve l'utilisation de la position du BMU à la fois dans des architectures multicartes comme HSOM et dans les cartes récurrentes comme SOMSD. Le cadre choisi permettrait donc d'intégrer à la fois des cartes classiques et des cartes récurrentes au sein d'une même architecture, offrant encore plus de possibilités de calcul. Par leur motivation, qui est le développement d'un système multi-som, nos travaux se rapprochent des travaux conduits sur l'architecture A-SOM \cite{johnsson_associating_2008, johnsson_associative_2009,gil_sarasom_2015, Buonamente2015DiscriminatingAS}. Notre modèle de carte et d'interface est par contre différent.
+Le choix de modèle et d'interface rapproche notre étude des travaux sur les cartes récurrentes conduits en \cite{hagenbuchner_self-organizing_2003,Strickert2003UnsupervisedRS,fix20} sur le traitement de séquence par transmission de la position du BMU.
+Nos travaux font ainsi suite à \cite{baheux_towards_2014} sur des architectures récurrentes multimodales utilisant la transmission de la postion du BMU entre des cartes de Kohonen. 
 
 \ifSubfilesClassLoaded{
     \printbibliography
