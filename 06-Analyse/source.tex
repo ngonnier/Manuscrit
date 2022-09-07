@@ -1,6 +1,12 @@
-\part{Expériences de validation et applications}
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{
+    \dominitoc
+    \tableofcontentsfile
+}{}
+\begin{document}
+
 \chapter{Analyse de l'auto-organisation de CxSOM}\label{chap:analyse}
-\graphicspath{{06-Analyse/}}
+\graphicspath{{06-Analyse/},{./}}
 \minitoc
 
 \section{Introduction}
@@ -18,7 +24,7 @@ A l'issue de ce chapitre, nous serons donc en mesure de construire des architect
 
 \subsection{Méthode expérimentale}
 
-Nous réaliserons dans ce chapitre des expériences sur différentes structures de données d'entrées. Ces entrées sont tirées de modèles géométriques, nous permettant de définir des propriétés et de maîtriser les dépendances entre entrées. 
+Nous réaliserons dans ce chapitre des expériences sur différentes structures de données d'entrées. Ces entrées sont tirées de modèles géométriques, nous permettant de définir des propriétés et de maîtriser les dépendances entre entrées.
 
 Nous réutiliserons l'expérience présentée au chapitre représentation, sur des données disposée en cercle. Cette disposition est symétrique et laisse deux possibilités pour chaque entrée en sachant la première.
 Nous faisons varier cette propriété en observant le comportement de deux cartes sur des entrées identiques (cas dégénéré), et sur des entrées indépendantes, prises aléatoirement. Entre ces deux cas dégénéré, nous observerons le comportement d'une architecture sur des exemples d'entrées différentes, dont les relations sont représentées en figure.
@@ -59,6 +65,7 @@ L'analyse paramétrique sera menée sur l'expérience du cercle. Nous avons en e
 
 \section{Quels comportements sont caratréristiques d'un apprentissage ?}
 Dans ce chapitre, nous analyserons ces comportements plus en détail, et identifierons les comportements \emph{systémiques} émergeant d'une architecture simple à deux et trois cartes.
+
 \subsection{Quantification vectorielle sur les entrées externes}
 
 On veut d'abord que les poids externes de la carte encodent l'information de l'entrée. Ce sont en effet ces poids qui nous permettrons de faire de la prédiction ensuite.
@@ -180,12 +187,23 @@ Nous avons identifié les comportements générés dans CxSOM qui montrent un ap
 maj du 5 juillet:
 2som2D in4D simulée, et code pour les affichage faits.
 
-Les comportements d'une architecture de carte ont été mis en lumière sur des cartes 1D et des entrées 1D. Nous présentons dans cette section les comportements observés sur une architecture de deux cartes de type grille en deux dimensions.
-
-Nous travaillons à présent sur des entrées en deux dimensions. Ces entrées sont les coordonnées 4D d'une sphere 3D tournée dans l'espace 4D, similairement au cercle. Nous prenons une architecture de deux cartes, prenant chacune une paire d'entrées $X,Y$ et $Z,T$. Les entrées ayant un rôle symétrique, la paire choisie importe peu.
+Les comportements d'une architecture de carte ont été mis en lumière sur des cartes 1D et des entrées 1D. Nous présentons dans cette section les comportements observés sur une architecture de deux cartes de type grille en deux dimensions. 
+Nous travaillons à présent sur des entrées en deux dimensions. Ces entrées sont les coordonnées 4D d'une sphere 3D dont on a effectuée une rotation dans l'espace en 4D, de la même façon que les entrées en 3D se trouvaient sur un cercle 2D dont on a effectué une rotation dans l'espace.
+Nous prenons une architecture de deux cartes, prenant chacune une paire d'entrées $X,Y$ et $Z,T$. Les entrées ayant un rôle symétrique, la paire choisie importe peu.
+Nous attendons de retrouver les comportements des cartes en une dimension sur les cartes en deux dimensions. Les entrées considérées étant similaires aux expériences précédentes, on devrait retrouver les comportements.
 
 Ces cartes apprennent sur une sphere qui est "tournée" dans l'espace 4D, Ainsi, si on trace n'importe quel groupe de 3 coordonnée, ca fait un truc sphérique. Chaque carte prend deux coordonnées.
 On a un U en 2 dimensions (coordonnées polaires d'une sphere)
 Voici les vidéos des tracés des poids externes et contextuels (2D) de chaque carte.
 Voici le tracé des erreurs de quantification dans chaque carte, ainsi que uv.
 Il semble que bien qu'on retrouve le comportement en sous indices, on n'apprend pas spécialement de relations sur des cartes 2D. Selon moi, il faudrait d'explorer un grand nombre de paramètres pour éventuellement trouver un comportement émergeant. L'existence d'un tel comportement n'est pas exclu mais rien ne le garantit.
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{}
+\end{figure}
+
+\ifSubfilesClassLoaded{
+    \printbibliography
+    %\externaldocument{../main.tex}   
+}{}
+\end{document}
