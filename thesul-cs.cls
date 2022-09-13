@@ -1571,7 +1571,7 @@
     \setlength\marginparwidth   {.8in}%
     \addtolength\marginparwidth {.5\evensidemargin}%
     }%
-\SetRealMargins{30mm}{20mm}%  \textwidth=210mm-50mm=160mm
+\SetRealMargins{35mm}{20mm}%  \textwidth=210mm-50mm=160mm
 \newif\if@draft
 \@draftfalse
 \newif\if@nnex@in@l@stp@rt
