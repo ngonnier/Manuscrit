@@ -78,6 +78,8 @@
        \fi
     \fi
     }
+
+   
 \AtBeginDocument{\@test@iffrench
                  \let\annexe\Annexe
                  \let\annexes\Annexes
@@ -233,6 +235,12 @@
                               \fi
                            \fi
                  \fi}
+
+         
+\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,hyperref,backend=biber,doi=false,url=false,date=year,isbn=false]{biblatex}
+\RequirePackage{subfiles}
+
+
 \newcommand\ShowLogos{%
         \message{*** \string\ShowLogos\space is now the default ******^^J}}
 \newcommand\ShowLogoUL{\@logos@true\@logo@ul@true}
@@ -1563,7 +1571,7 @@
     \setlength\marginparwidth   {.8in}%
     \addtolength\marginparwidth {.5\evensidemargin}%
     }%
-\SetRealMargins{30mm}{20mm}%  \textwidth=210mm-50mm=160mm
+\SetRealMargins{35mm}{20mm}%  \textwidth=210mm-50mm=160mm
 \newif\if@draft
 \@draftfalse
 \newif\if@nnex@in@l@stp@rt
@@ -1753,6 +1761,61 @@
 \def\@annex[#1]#2{\ifx\dominitoc\@undefined\else\stepcounter{mtc}\fi
                   \@generic@chapter{annex}[#1]{#2}}
 \newcommand\@sannex[1]{\@generic@schapter{annex}[#1]}
-\endinput
+
+
+% Calls to \tableofcontents generates the .toc but not the toc (subfile compilation)
+\makeatletter
+\newcommand*{\tableofcontentsfile}{%
+  \begingroup
+    \let\@input\@gobble
+    \@starttoc{toc}%
+  \endgroup
+}
+\makeatother
+
+
+%draft/release options
+\newif\ifDraft
+\newcommand\comment[1]{\ifDraft {\itshape\color{red}{#1}} \fi} %text displayed in draft mode as comments
+\newcommand\draft[1]{\ifDraft #1 \fi} %text displayed in draft mode only.
+\newif\ifReview
+%switch between draftmode and releasemode
+\ifdefined\draftmode
+  \Drafttrue
+  \Reviewtrue
+\fi
+
+%bibliographie options
+
+\DeclareCiteCommand{\citetitle}[]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+  \printtext[bibhyperref]{
+  \indexfield{indextitle}
+  \printfield[citetitle]{labeltitle}}
+  }
+{\multicitedelim}
+{\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\cite}[\mkbibparens]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+  \printtext[bibhyperref]{\usebibmacro{cite}}}
+{\multicitedelim}
+{\usebibmacro{postnote}}
+
+\DeclareCiteCommand*{\cite}[\mkbibparens]
+{\usebibmacro{prenote}}
+{\usebibmacro{citeindex}%
+  \printtext[bibhyperref]{\usebibmacro{citeyear}}}
+{\multicitedelim}
+{\usebibmacro{postnote}}
+
+\DeclareOuterCiteDelims{cite}{\bibopenbracket}{\bibclosebracket}
+\DefineBibliographyExtras{french}{\restorecommand\mkbibnamefamily}
+
+% autres commandes
+
 %%
 %% End of file `thesul.cls'.
+

@@ -22,7 +22,6 @@
 \usepackage{multicol} %% Pour mettre un texte sur plusieurs colonnes
 \usepackage{scrextend} %Forcer la 4eme  de couverture en page pair
 \usepackage{tikz}
-\usepackage{graphicx}
 \usepackage[absolute]{textpos} 
 \usepackage{colortbl}
 \usepackage{amsmath}
@@ -31,61 +30,39 @@
 \usepackage{array}
 \usepackage{url}
 \usepackage[ruled,french,frenchkw,onelanguage]{algorithm2e}
-%\usepackage{algorithm}
-%\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage{subfiles}
+
+\addbibresource{\subfix{Biblio/biblio.bib}}
+\input{Notations.tex}
+%compile only a chapter
 \SetAlCapSkip{1em}
 \SetKwInput{KwInput}{Input}
 \SetKwInput{KwOutput}{Output}
-\usepackage{mathtools}
+
 \DeclareMathOperator{\sign}{sgn}
 \newtheorem{propriete}{Propriété}
 \newtheorem{proposition}{Proposition}
 \parskip=5pt
-%draft/release options
-\newif\ifDraft
-\newcommand\comment[1]{\ifDraft {\itshape\color{red}{#1}} \fi} %text displayed in draft mode as comments
-\newcommand\draft[1]{\ifDraft #1 \fi} %text displayed in draft mode only.
-\newif\ifReview
-%switch between draftmode and releasemode
-\ifdefined\draftmode
-  \Drafttrue
-  %\Reviewtrue
-\fi
-
-\ifdefined\reviewmode
-  \Reviewtrue
-\fi
-
-
-%\Drafttrue %switch to false if you want to get the release version.
-%\Draftfalse %switch to true if you want to get the draft version.
-%\ifReview \usepackage[lmargin=5cm]{geometry}\fi
-
-%def path for files
-\input{Notations.tex}
-
-%compile only a chapter
 
 \begin{document}
 \dominitoc
 \include{titlepage}
 \tableofcontents
-\include{00-Introduction/source}
+%\subfile{00-Introduction/source}
+\subfile{01-Modularite/source}
 \mainmatter
-\part{Approche modulaire pour construire des réseaux de neurones bio-inspirés}
-\include{01-Modularite/source}
-\include{01bis-Architectures/source}
-%Chapitre en plus : multimodalité ?
-\part{Un nouveau modèle multi-cartes: CxSOM et ses méthodes d'analyse}
-\include{02-SOM/source}
-\include{03-Representation/source}
-\include{03-Indicateur/source}
-\part{Expériences de validation et application}
-\include{04-Analyse/source}
-\include{05-Application/source}
-\include{Conclusion}
-%Bibliography files
-\bibliography{01-Modularite/biblio_modularite.bib,01-Modularite/biblio_reseaux.bib, 03-Representation/biblio_representation.bib,02-SOM/biblio_SOM.bib,publis.bib}
 
-\bibliographystyle{plain}
+\subfile{02-Architectures/source}
+%Chapitre en plus : multimodalité ?
+\subfile{03-SOM/source}
+\subfile{04-Representation/source}
+\subfile{05-Indicateur/source}
+\subfile{06-Analyse/source}
+\subfile{07-Relaxation/source}
+\subfile{08-Application/source}
+\subfile{Conclusion}
+%Bibliography files
+
+ \printbibliography
 \end{document}
