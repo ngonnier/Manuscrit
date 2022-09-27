@@ -10,10 +10,10 @@
 \chapter{Architectures de cartes auto-organisatrices}
 \minitoc
 
-
-% Nous avons établi qu'une piste de recherche pour la construction d'algorithmes d'apprentissage passe par l'assemblage d'éléments existants comme modules d'un système, nous cherchons ainsi dans cette thèse à définir un modèle d'architecture d'apprentissage modulaire, comportant des rétroactions apportant un aspect dynamique a ce système. 
 Nous nous concentrerons dans cette thèse sur la création d'architectures de cartes auto-organisatrices ou SOM (\emph{Self-Organizing Maps}) comme modules d'une architecture décentralisée.
-Les cartes auto-organisatrices et notamment le modèle de Kohonen sont largement utilisées en tant qu'algorithme d'apprentissage non supervisé sur diverses applications, notamment la réduction de dimension et la visualisation de données. Cependant, peu de travaux ont exploré l'idée de les assembler en architecture comportant des rétroactions, formant ainsi un système dynamique. 
+Les cartes auto-organisatrices et notamment le modèle de Kohonen sont largement utilisées en tant qu'algorithme d'apprentissage non supervisé sur diverses applications, notamment la réduction de dimension et la visualisation de données. 
+%Cet algorithme permet de faire du \emph{Manifold learning}
+Cependant, peu de travaux ont exploré l'idée de les assembler en architecture comportant des rétroactions, formant ainsi un système dynamique. 
 L'aspect bio-inspiré des cartes de Kohonen et la présence de motifs auto-organisés motivent pourtant cet axe d'utilisation en tant que système dynamique, motivations que nous présentons dans ce premier chapitre.
 
 Kohonen écrivait par exemple dans son livre à propos des enjeux des cartes de Kohonen en 1995:
@@ -21,13 +21,6 @@ Kohonen écrivait par exemple dans son livre à propos des enjeux des cartes de 
 Un objectif à long terme de l'auto-organisation est de créer des systèmes autonomes dont les éléments se contrôlent mutuellement et apprennent les uns des autres. De tels éléments de contrôle peuvent être implémentés par des SOMs spécifiques; le problème principal est alors l'interface, en particulier la mise à l'échelle automatique des signaux d'interconnexion entre les modules et la collecte de signaux pertinents comme interface entre les modules. Nous laisserons cette idée aux recherches futures.
 \cite{Kohonen1995SelfOrganizingM}
 \end{quote}
-
-% Systems of SOMs. A far-reaching goal in self-organization is to create
-% autonomous systems, the parts of which control each other and learn from
-% each other. Such control structures may be implemented by special SOMs;
-% the main problem thereby is the interface, especially automatic scaling of
-% interconnecting signals between the modules, and picking up relevant signals
-% to interfaces between modules. We shall leave this idea for future research. 
 
 L'idée de trouver de nouveaux paradigmes de calculs non conventionnels dans les SOMs à l'aide de leur assemblage en structure modulaire dynamique rejoint l'idée de Kohonen sur les systèmes autonomes. 
 Il soulève la question de l'interface entre les modules, qui sera centrale dans notre construction. 
@@ -66,40 +59,14 @@ L'algorithme de Kohonen repose donc à la fois sur un mécanisme de compétition
 Toutes les données d'entrées sont tirées dans un même espace $\mathcal{D}$. L'utilisation de distances est la version originale de l'algorithme de Kohonen; elle est remplacée dans de nombreux modèles de cartes par le calcul d'une fonction d'activité liant les poids des n\oe{}uds et les entrées. 
 
 
-Le processus de mise à jour des poids d'une carte de Kohonen se traduit visuellement par un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions. On observe d'ailleurs que les valeurs des poids à l'issue de l'apprentissage correspondent aux centres des cellules de Voronoï de l'espace d'entrée.
+Le processus de mise à jour des poids d'une carte de Kohonen se traduit visuellement par un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions. 
 A la fin de l'apprentissage, la carte conserve la structure topologique des entrées:
 \begin{itemize}
 \item Elle conserve les distances~: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une continuité des valeurs des poids au sein de la carte.
 \item Elle conserve les densités. Une zone dense de $\mathcal{D}$ aura plus d'unités correspondant à cette zone de valeurs dans la carte qu'une zone moins dense.
 \end{itemize}
 La figure \ref{fig:SOM} présente par exemple le dépliement d'une carte sur des imagettes MNIST.
-Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension. 
-
-%Les cartes de Kohonen sont souvent utilisées en pratique pour visualiser des données de grande dimension et faire du \emph{clustering}. 
-
-% La carte de Kohonen est d'inspiration biologique. Le but premier de Kohonen était de développer un modèle informatique inspiré de l'organisation spatiale des neurones dans le cortex humain, dont un exemple est présenté en figure~\ref{fig:v1}. Il s'est notamment inspiré de l'organisation du cortex en colonnes corticales, ensemble de neurones réagissant à un même stimulus.
-
-% \draft{
-% (Kohonen book 1995)
-% In an attempt to implement a learning principle that would
-% work reliably in practice, effectively creating globally ordered maps of various
-% sensory features onto a layered neural network, this author formalized the
-% self-organizing process in 1981 and 1982 into an algorithmic form that is
-% now being called the Self-Organizing (Feature) Map (SOM) [2.27 -29J. In the
-% pure form, the SOM defines an "elastic net" of points (parameter, reference,
-% or codebook vectors) that are fitted to the input signal space to approximate
-% its density function in an ordered way. The main applications of the SOM
-% are thus in the visualization of complex data in a two-dimensional display,
-% and creation of abstractions like in many clustering techniques.
-
-% Motivations de Kohonen: capacité des régions du cerveau à s'auto organiser. Note que certes il doit y avoir un prédetermination génétique, mais qu'on observe une réorganisation des mapping lors de déficiences par ex. 
-
-% find abstract self-
-% organizing processes in which maps resembling the brain maps are formed,
-% whereas it is of less interest whether the maps are formed by evolution, post-
-% natal growth, or learning.
-
-% }
+Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension.
 
 \begin{figure}
 \centering
@@ -115,7 +82,6 @@ La plupart des implémentations de SOMs de la littérature utilisent comme suppo
 
 En théorie, les cartes peuvent être une dimension (ligne), deux dimensions (grilles), ou de dimensions plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. En pratique, les grilles deux dimensions sont les plus couramment utilisées. Elles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser sur un écran. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le coût de l'algorithme d'apprentissage dépend en effet du nombre de neurones, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen. Les calculs deviennent alors rapidement coûteux.
 Les cartes une dimension sont quant à elles limitées en termes de représentation des données et sont donc rarement utilisées en pratique. Cependant, elles se prêtent mieux à la représentation graphique que les cartes 2D.
-%Les calculs et l'organisation générés par l'algorithme de Kohonen sont assez complexes avec des cartes en une dimension. 
 Les travaux conduits en \cite{cottrell_theoretical_2016,fort_soms_2006} apportent par exemple une formalisation mathématique de l'algorithme de Kohonen et prouvent la convergence de cartes une dimension. Les auteurs se heurtent cependant à la preuve de convergence pour des cartes en deux dimensions. Donc, les processus intervenant dans des cartes 1D sont déjà mathématiquement difficiles à formaliser, difficulté qui augmente fortement avec les dimensions.
 L'étude des cartes 1D a ainsi l'intérêt d'envisager un modèle simplifié dans le cadre de développement d'un nouveau modèle de SOM, ce que nous chercherons à faire dans cette thèse, avant de proposer une extension aux cartes 2D.
 
@@ -146,9 +112,6 @@ Les SOM en deux dimensions sont les plus communément utilisées dans la littér
 
 \subsection{Inspiration biologique}
 
-% Nous pensons ainsi que les cartes auto-organisatrices sont de bonnes candidates en tant que modules d'une architecture.
-% Nous passerons en revue les modèles d'architecture existant en section suivante.
-% Avant cela, il est intéressant de s'interroger sur les motivations et les intuitions motivant l'utilisation d'une carte de Kohonen en tant que module d'une architecture.
 
 Le développement des cartes auto-organisatrices par Kohonen est initiallement inspiré par les cartes topologiques observées dans les aires du cerveau. 
 Le cerveau est cartographié en \emph{aires corticales} distinctes selon la fonction principale présumée de la zone du cortex correspondante.
@@ -171,7 +134,7 @@ Les aires du cerveau sont connectées entre elles. Notons que cette connectivit�
 Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par éléctroencéphalographie ou IRM fonctionnelle. Il faut noter cependant que ces observations traduisent une relation statistique et pas forcément une relation de cause à effet. 
 La modélisation de la connectivité physique de ces aires à partir des observations reste donc l'objet de différentes théories cherchant à reproduire ces corrélations. 
 Dans tous les cas, la présence d'aires distinctes communicantes fait l'objet d'un consensus.
-Les modèles de base les plus communs pour cette communication entre neurones sont la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de rée-ntrées de Edelmann \cite{Edelman1982GroupSA}.
+Des modèles communs pour cette communication entre neurones sont par exemple la zone de convergence-divergence de Damasio (CDZ) \cite{damasio_time-locked_1989}, et le modèle de boucles de rée-ntrées de Edelmann \cite{Edelman1982GroupSA}.
 La zone de convergence divergence suggère que certaines aires corticales servent d'aires associatives pour associer d'autres zones corticales prenant des modalités sensorielles en entrée. Ces aires associatives assemblent les signaux en provenance des zones sensorielles et les propagent vers d'autres zones. 
 La théorie de la ré-entrée postule quant à elle des connexions directes et réciproques entre les neurones de différentes zones sensorielles ou non. Ces connexions sont à l'origine de la coactivation de neurones dans différentes cartes.
 % Un tel traitement de l'information permettrait ainsi d'expliquer l'effet ventriloque \cite{Bonath2007NeuralBO}. Lors de cet effet, une activité apparaît dans les cortices visuel et auditif pour les neurones sensibles à l'emplacement exact de la source des stimuli dans chacune des modalités. Après quelques millisecondes, correspondant au temps de trajet de l'aire visuelle à l'aire auditive via les aires associatives, on observe une activité auditive pour les neurones sensibles à l'emplacement spatial de la source du stimulus visuel.
@@ -185,8 +148,20 @@ De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plut�
 
 \section{Architectures de cartes auto-organisatrices}
 
-Plusieurs travaux dans la littérature informatique autour des SOMs cherchent ainsi à construire des architectures de cartes auto-organisatrices. Cette section passe en revue certains modèles.
-Nous abordons ces modèles d'un point de vue structurel en s'intéressant notamment à comment s'effectue l'interface entre les cartes dans chacun des modèles. A la lecture des modèles existants, nous avons pu différencier deux grandes classes d'architectures de cartes~: les architectures \emph{hiérarchiques feed-forward} et  les architectures \emph{non-hiérarchiques}, qui peuvent elles-mêmes être \emph{centralisées} ou \emph{décentralisées}.
+Plusieurs travaux dans la littérature informatique autour des SOMs cherchent ainsi à construire des architectures de cartes auto-organisatrices, que nous passons en revue dans cette section.
+Nous abordons ces modèles d'un point de vue structurel en s'intéressant notamment à comment s'effectue l'interface entre les cartes dans chacun des modèles.
+
+Il s'agit d'abord de différencier les architectures appliquées au traitement d'un problème particulier et les architectures génériques de cartes de Kohonen. 
+Pour résoudre un problème compliqué, une démarche courante est de le décomposer en sous-problèmes et de créer des algorithmes pour résoudre ces sous-problèmes. Par construction, l'assemblage des résultats de chacun de ces sous-problème permettrait de résoudre le problème général.
+Nous différencions cette vision d'architecture appliquée de la notion d'architecture modulaire générique. Dans ce deuxième cas, la notion d'architecture cherche à proposer un cadre de calcul utilisable sur n'importe quelles données d'application. Ce cadre de calcul composé d'éléments de même type communiquant entre eux et forme ainsi un nouveau modèle. C'est cette deuxième approche que nous étudions dans cette thèse. 
+
+A la revue des modèles existants, nous avons pu différencier deux grandes classes d'architectures de cartes~: les architectures \emph{hiérarchiques} et  les architectures \emph{non-hiérarchiques}.
+La connectivité d'une architecture de cartes auto-organisatrice peut se représenter comme un graphe orienté, dans lequel les n\oe{}uds correspondent à une carte. Lorsque la carte B utilise des informations provenant de la carte A lors de son apprentissage, une arête de A vers B est présente dans le graphe. Ce graphe est le graphe de connexion de l'architecture.
+
+Une architecture est dite hiérarchique lorsque son graphe de connexion peut se représenter comme un arbre. Toutes les connexions sont alors dans un même sens~: de la racine vers les feuilles ou inversement.
+
+Une architecture est non-hiérarchique lorsqu'il existe au moins une boucle dans le graphe de connexions. Celle boucle peut être une connexion bidirectionnelle entre deux cartes ou une boucle sur plus de n\oe{}uds. Ces boucles implémentent des rétroactions entre les cartes de l'architecture.
+
 Nous détaillerons dans cette section ce qu'on appelle architecture hiérarchique et non-hiérarchique et analyserons les comportements d'apprentissage émergeant des différentes structures. L'analyse de ces modèles nous permet de nous situer dans la littérature et d'émettre des hypothèses concernant les comportements attendus d'un tel modèle et ainsi de guider les expériences que nous effectuerons.
 
 \subsection{Architectures hiérarchiques de cartes}
@@ -250,7 +225,6 @@ Les auteurs montrent que ce modèle est meilleur qu'une SOM classique dans des t
 \end{figure}
 
 Toutes les architectures présentées ici, comme pour les architectures sélectives, sont feed-forward: les couches sont entraînées les unes après les autres. 
-Par conséquent, elles ne se prêtent pas à un apprentissage en ligne, tout comme une carte de Kohonen classique.
 La plupart des travaux sont appliqués à des tâches de classification qu'on pourrait réaliser avec une SOM classique.
 La motivation d'utiliser une architecture plutôt qu'une SOM est alors que la couche finale du réseau possède de meilleures performances en termes de classification que si on avait utilisé une SOM simple.
 
