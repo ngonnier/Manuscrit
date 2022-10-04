@@ -153,27 +153,35 @@ Nous abordons ces modèles d'un point de vue structurel en s'intéressant notamm
 Il s'agit d'abord de différencier les architectures appliquées au traitement d'un problème particulier et les architectures génériques de cartes de Kohonen.
 Pour résoudre un problème compliqué, une démarche courante est de le décomposer en sous-problèmes et de créer des algorithmes pour résoudre ces sous-problèmes. L'assemblage des résultats de chacun de ces sous-problèmes donne alors souvent une solution pour résoudre le problème général.
 Nous différencions cette vision d'architecture appliquée de la notion d'architecture générique. 
-Dans cette deuxième approche, on entend par modèle d'architecture le cadre de calcul sous-jacent au modèle appliqué ou non qui est défini par ses règles de construction. Ce cadre est générique et utilisable sur n'importe quelles données d'application. C'est cette deuxième approche que nous étudions dans cette thèse.
-Nous nous concentrons plus particulièrement sur les architectures modulaires. 
+Dans cette deuxième approche, on entend par modèle d'architecture le cadre de calcul sous-jacent au modèle, appliqué ou non, défini par ses règles de construction. Ce cadre est générique et utilisable sur n'importe quelles données d'application. C'est cette deuxième approche que nous étudions dans cette thèse. Nous nous concentrons particulièrement sur les architectures modulaires.
 Le principe d'une architecture modulaire est d'assembler un nombre variable d'éléments de même type, des modules, dans une architecture. Ici les modules seront des cartes auto-organisatrices, dont le modèle a été adapté pour permettre la construction d'architectures.
 
 \subsection{Méthode d'analyse}
 
-L'étude des architectures développées dans les travaux précédents nous amènent à différencier les structures selon plusieurs aspects. D'un point de vue structurel, nous les classerons selon leur structure, leur mode de communication et les attributs servant de vecteur de transmission d'information entre modules. Nous y ajouterons leurs différences lors de la séquence de mise à jour dans un contexte d'apprentissage.
-
+L'étude des architectures développées dans les travaux précédents nous amènent à différencier les structures selon plusieurs aspects. Nous les classerons d'abord selon leur structure: hiérarchique et non-hiérarchique.
+Nous analyserons dans ce cadre leur mode de communication et les attributs servant de vecteur de transmission d'information entre modules. Nous y ajouterons leurs différences lors de la séquence de mise à jour dans un contexte d'apprentissage.
 
 \paragraph{Architectures hiérarchiques et non-hiérarchiques}
 
 Nous distinguerons deux structures d'architectures de cartes~: les architectures \emph{hiérarchiques} et  les architectures \emph{non-hiérarchiques}.
 La structure d'une architecture de cartes auto-organisatrice peut se représenter comme un graphe orienté, dans lequel les n\oe{}uds correspondent à un module, c'est-à-dire une carte. Lorsque la carte B utilise des informations provenant de la carte A lors de son apprentissage, une arête de A vers B est présente dans le graphe. Ce graphe est le graphe de connexion de l'architecture.
 
-Une architecture est dite hiérarchique lorsque son graphe de connexion peut se représenter comme un arbre. Toutes les connexions sont alors dans un même sens~: de la racine vers les feuilles ou inversement.
-Une architecture est non-hiérarchique lorsqu'il existe au moins une boucle dans le graphe de connexions. Celle boucle peut être une connexion bidirectionnelle entre deux cartes ou une boucle sur plus de n\oe{}uds. Ces boucles implémentent des rétroactions entre les cartes de l'architecture.
-Ces deux types d'architectures se ressemblent dans leur conception: notons qu'une architecture hiérarchique se classe comme un cas particulier d'architecture hiérarchique. Néanmoins, les architectures non-hiérarchiques doivent répondre à plus de problèmes de construction, notamment la gestion des rétroactions dans les méthode de communication et d'apprentissage.
+Une architecture est dite hiérarchique lorsqu'il n'existe pas de cycle dans le graphe de connexions. Dans ce cas, les arêtes sont orientées dans le même sens et on peut définir des niveaux de cartes. Toutes les cartes d'un même niveau ne sont pas connectées entre elles, ont au moins une connexion arrivant du niveau précédent et/ou une connexion sortant vers le niveau suivant.
+Une architecture est non-hiérarchique lorsqu'il existe au moins une boucle dans le graphe de connexions. Celle boucle peut être une connexion bidirectionnelle entre deux cartes ou une boucle comprennant plus de n\oe{}uds. Ces boucles implémentent des rétroactions entre les cartes de l'architecture.
+Au sein des architectures non-hiérarchiques, nous verrons qu'il existe deux paradigmes que nous détaillerons dans la section correspondante: les architectures centralisées et décentralisées.
+
+
+Ces types d'architectures se ressemblent dans leur conception~: une architecture hiérarchique est ainsi un cas particulier d'architecture non-hiérarchique, plus largement toute architecture est un cas particulier d'architecture décentralisée. Une architecture décentralisée est donc le modèle le plus générique d'architecture modulaire. 
+La construction d'une architecture la plus générique possible amène des contraintes supplémentaires, notamment la gestion des rétroactions dans les méthodes de communication et d'apprentissage dans les architectures non-hiérarchiques. Nous classerons donc les modèles du plus spécifique au plus générique. Une architecture hiérarchique peut donc être construite à partir d'un modèle non-hiérarchique~; nous verrons en effet que les modèles hiérarchiques et non-hiérarchiques se rejoignent dans leur conception, sans qu'à l'origine ces modèles ne s'inspirent directement les uns des autres.
+
+\begin{figure}
+    \centering\includegraphics[width=0.8\textwidth]{structures_002.pdf}
+    \caption{Exemples de connexions dans des architectures hiérarchiques et non-hiérarchiques centralisées et décentralisées. Un rectangle correspond à un module, ici une carte auto-organisatrice. \label{fig:graphe}}
+    \end{figure}
 
 \paragraph{Granularité du calcul et temporalité de l'apprentissage}
 
-Nous analyserons les architectures de cartes sous le prisme de leur mode de connexion entre cartes. Cette communication est réalisée soit par une surcouche algorithmique, soit interne à l'organisation d'une carte.
+Au sein du classement structurel, nous analyserons les architectures de cartes sous le prisme de leur mode de connexion entre cartes. Cette communication est réalisée soit par une surcouche algorithmique, soit interne à l'organisation d'une carte.
 Cette surcouche algorithmique se présente sous forme de sélection ou ajout de cartes pour l'apprentissage des données d'entrées. Nous présenterons des exemples de modèles de ce type dans le paragraphe suivant. La communication effectuée par une telle surcouche est alors globale à l'architecture.
 La communication est interne à l'organisation d'une carte lorsque les données transmises sont directement prises en compte dans l'algorithme de mise à jour. Ainsi, les cartes ou les n\oe{}uds implémentant une telle communication prennent en tant qu'entrée des éléments de sortie des autres cartes, telles que la position du BMU, son poids ou une activité neuronale. La communication réalisée de cette manière est donc plutôt locale à une carte.
 Au sein d'une méthode de connexion, les éléments transmis entre cartes varient. Certaines architectures utilisent ainsi la position du BMU, son poids, ou encore un ensemble d'activités de neurones d'une carte.
@@ -184,38 +192,58 @@ Un apprentissage complet est d'abord effectué sur un groupe avant de passer à 
 Les mises à jour peuvent au contraire être réalisées en une seule étape, lors de laquelle les éléments seront tous mis à jour en tenant en compte des dépendances. Dans ces cas, ces mises à jour peuvent être synchrones~: une itération d'apprentissage peut être définie de façon globale à toute l'architecture, lors de laquelle tous les éléments seront mis à jour au moins une fois. Les signaux lançant l'opération de mise à jour d'une carte sont régis par un processus extérieur aux cartes.
 Les mises à jour asynchrones sont quant à elles effectuées seulement lorsqu'un signal déclenchant la mise à jour est transmis à un élément (carte ou neurone). C'est notamment le cas dans les réseaux de neurones impulsionnels, dans lequel les paramètres d'un neurone sont mis à jour seulement lorsqu'une impulsion lui parvient. Ce mode de mise à jour repose encore plus sur une notion de calcul local.
 
-Nous verrons ainsi que les modèles existants d'architecture de cartes se placent dans ces quelques catégories.
-Nous observerons que des architectures partageant certains de ces élements de structure sont utilisés dans des champs d'application similaires. Nous pourrons donc conclure sur la relation qu'il existe entre structure d'une architecture et comportement d'apprentissage généré par cette architecture.
+Nous verrons ainsi que les modèles existants d'architecture de cartes se placent dans ces quelques catégories. Cette taxonomie générale est décrite en figure~\ref{fig:structure}.
 L'analyse de ces modèles nous permet de nous situer dans la littérature et d'émettre des hypothèses concernant les comportements attendus d'un tel modèle et ainsi de guider les expériences que nous effectuerons.
+
+% \begin{table}
+%     \begin{tabular}{l|llllllllllll}
+%         \toprule
+%         \multicolumn{1}{l|}{Structure} & \multicolumn{6}{c|}{Hiérarchique} &  \multicolumn{6}{c}{Non-Hiérarchique} \\
+%        \midrule
+%        \multicolumn{1}{l|}{Mode de transmission}& \multicolumn{2}{l|}{Par sélection} & \multicolumn{10}{l}{Transmission de représentation interne}\\
+%        \multicolumn{1}{l|}{\emph{Granularité}} & \multicolumn{2}{l|}{\emph{Surcouche Algorithmique}} & \multicolumn{10}{c}{\emph{Locale à une carte}}\\
+%         \midrule
+%         \multicolumn{1}{l|}{Mises à jour \hfill} & \multicolumn{6}{l|}{Séquentielles \hfill} &  \multicolumn{4}{l|}{Synchrones} &  \multicolumn{2}{l}{(Asynchrones)} \\
+%         \midrule
+%         Elements transmis & \multicolumn{12}{l}{Position du BMU, poids du BMU, activités ...}
+%     \end{tabular}
+% \end{table}
+
+\begin{figure}
+\centering\includegraphics[width=\textwidth]{structures.pdf}
+\caption{Taxonomie des architectures de cartes présentées dans ce chapitre. Nous analyserons comment leurs caractéristiques structurelles: hiérarchiques ou non-hiérarchiques, centralisées, décentralisées, façonne leur comportement d'apprentissage. Nous analyserons également leur interface de communication. Nous n'avons pas relevé d'architecture non-hiérarchique s'appuyant sur le principe de sélection, car ce principe est fondamentalement hiérarchique. \label{fig:taxo}}
+\end{figure}
+
+
 
 \subsection{Architectures hiérarchiques de cartes}
 
-Dès les débuts du développement des SOMs, des travaux proposent des architectures à base de cartes auto-organisatrices. Ces premiers travaux font apparaître des architectures qu'on peut qualifier de hiérarchiques.
-Toutes les architectures hiérarchiques comportent plusieurs cartes, et ont comme point commun qu'il est possible de définir des \emph{niveaux} dans l'architecture, comprenant une ou plusieurs cartes. 
-La mise à jour des cartes dans toutes ces architectures est effectuée séquentiellement: le processus d'apprentissage est réalisé du début à la fin sur l'ensemble des cartes, non connectées, du premier niveau. Une fois ce niveau organisé, une nouvelle phase d'apprentissage est entièrement réalisée sur le deuxième niveau, en prenant en compte les sorties du premier, etc.
-Nous les qualifierons ainsi d'architectures \emph{ascendantes} dans la mesure où l'information passe dans un seul sens.
+Dès les débuts du développement des SOMs, des travaux proposent des architectures à base de cartes auto-organisatrices. Ces premiers travaux font apparaître des architectures hiérarchiques. 
+Les architectures hiérarchiques peuvent être divisées en deux catégories. La première est celle des architectures sélectives, dans laquelle le premier niveau est généralement une carte seule~; le nombre de cartes augmente au fur et à mesure des niveaux. Toutes les cartes ont pour entrée des données du même ensemble et la transmission de données entre carte repose sur la sélection d'une carte d'un niveau en fonction de l'activation du premier niveau. L'autre catégorie est celle des architectures par transmission de représentation. Dans ce cas, les cartes du deuxième niveau prennent en entrée la sortie du premier niveau et non les données d'entrées. Le nombre de cartes diminue alors au fiera de sélectives. 
+Toutes les architectures présentées peuvent être séparcours des niveaux le dernier niveau formant une représentation plus abstraite de l'espace d'entrée.
+La mise à jour des cartes dans toutes ces architectures est effectuée séquentiellement~: le processus d'apprentissage est réalisé du début à la fin sur l'ensemble des cartes, non connectées, du premier niveau. Une fois ce niveau organisé, une nouvelle phase d'apprentissage est entièrement réalisée sur le deuxième niveau, en prenant en compte les sorties du premier, etc. Nous les qualifierons ainsi d'architectures \emph{ascendantes} dans la mesure où l'information y est transmise seulement dans un seul sens.
 
-\subsubsection{Communication par sélection: surcouche algorithmique}
+\subsubsection{Architecture hiérarchique par sélection}
 
-Certains travaux s'appuient sur des architectures hiérarchiques qu'on qualifiera de "sélectives". 
-Toutes les architectures présentées peuvent être séparées en niveaux, dont un niveau d'entrée, un niveau de sortie et des niveaux intermédiaires. 
+Le mode de communication de carte par sélection se retrouve dans les architecture dont le nombre de cartes augmente au cours des niveaux.
 
-L'exemple de l'architecture sélective \cite{barbalho_hierarchical_2001} est ainsi illustrée en figure \ref{fig:hsom_selective}. Ce modèle est décliné en une version dynamique dans laquelle les paramètres des cartes dépendent des données, en \cite{Costa2016ANS}.
+Prenons en exemple l'architecture sélective \cite{barbalho_hierarchical_2001} en figure \ref{fig:hsom_selective}. Ce modèle est décliné en une version dynamique dans laquelle les paramètres des cartes dépendent des données, en \cite{Costa2016ANS}.
 Le premier niveau de cette architecture est une carte classique, prenant des données $X$ dans un espace d'entrée $\mathcal{D}$.
 La première étape de l'apprentissage est une étape d'apprentissage complet de la carte du premier niveau.
 Après apprentissage du premier niveau, le second niveau est composé de plusieurs cartes~; chacune de ces cartes est associée à un des n\oe{}uds de la première.
 Pour la deuxième phase de l'apprentissage, les données d'entrées sont réparties en sous-ensemble, tel que chaque sous-ensemble $\mathcal{D}_i$ est l'ensemble des entrées $X_t$ ayant $i$ pour position du BMU associé à l'entrée. Cette répartition est effectuée lors d'un passage de test des entrées, pendant lequel les poids ne sont pas mis à jour.
 Chaque carte $i$ du deuxième niveau est alors entrainées sur son espace $\mathcal{D_i}$; les cartes du premier niveau n'étant plus mises à jour.
 Dans la version de \cite{barbalho_hierarchical_2001}, l'architecture de carte est définie à l'avance. Dans la version dynamique, l'ajout de niveau hiérarchique est soumis à la condition que la carte enfant d'un n\oe{}ud doit permettre de réduire d'au moins 20\% l'erreur de quantification sur le sous-espace associé. Autrement dit, si tous les points ayant le même BMU sont a proximité immédiate du poids du BMU, aucune carte n'est générée pour le niveau suivant. Dans cette version dynamique, les auteurs font également varier la taille de la carte d'un niveau en fonction de la cardinalité du sous-ensemble de données utilisé pour l'apprentissage de cette carte.
-L'ensemble des cartes, non seulement le dernier niveau, forme alors une cartographie plus précise de l'espace d'entrée: l'erreur de quantification vectorielle y est plus faible.
+L'ensemble des prototypes des cartes, non seulement ceux du dernier niveau, forment alors une cartographie plus précise de l'espace d'entrée~: l'erreur de quantification vectorielle y est plus faible.
 
 Ce processus est sélectif dans la mesure ou chaque carte se voit sélectionnée pour l'apprentissage d'une entrée en fonction de l'état du niveau précédent. Dans ces travaux, la position du BMU est utilisée comme information pour la sélection. 
 Dans ce type d'architecture, c'est un processus extérieur aux cartes qui permet de sélectionner la carte du niveau suivant, ou de créer ou non des cartes à ajouter à l'architecture. L'algorithme de mise à jour des poids de l'architecture est ainsi sous la dépendance d'un processus global.
 
-Ce procédé sélectif est retrouvé dans d'autres architectures telles que \cite{suganthan_pattern_2001}, \cite{miikkulainen_script_1992} pour de la classification de phrases, \cite{dittenbach_growing_2000,ordonez_hierarchical_2010}, ou encore en \cite{zhao_stacked_2015} pour de la détection d'arrière-plan. La façon de sélectionner une carte d'un niveau diffèrent ensuite en fonction des travaux. 
+Ce procédé de sélection se retrouve dans de nombreux travaux. Les auteurs de \cite{zhao_stacked_2015} développentt un ensemble de cartes et leur règles de communication spécifiquement adapté à de la détection d'arrière plan.
 
-L'architecture utilisée en \cite{zhao_stacked_2015} utilise plusieurs couches de cartes pour du traitement de séquence. Les auteurs, pour chaque niveau,
-Leur architecture est spécifiquement développée ici pour l'application de détection d'arrière-plan.
+\cite{miikkulainen_script_1992} traite des données à structure hiérarchique: leur architecture est spécifique à
+
+Ce procédé sélectif est retrouvé dans d'autres architectures telles que \cite{suganthan_pattern_2001}, \cite{miikkulainen_script_1992} pour de la classification de phrases, \cite{dittenbach_growing_2000,ordonez_hierarchical_2010}, ou encore en \cite{zhao_stacked_2015} pour de la détection d'arrière-plan. La façon de sélectionner une carte d'un niveau diffèrent ensuite en fonction des travaux. 
 
 \begin{figure}
     \includegraphics[width=\textwidth]{HSOM_selective.pdf}
@@ -224,14 +252,13 @@ Leur architecture est spécifiquement développée ici pour l'application de dé
     \label{fig:hsom_selective}}
 \end{figure}
 
-
-Les connexions permettent à chacune des cartes de se spécialiser sur une partie de l'espace d'entrée.
-
-Face à ces structures sélectives, certaines structures présentent une interface entre cartes gérée directement au niveau du processus d'auto-organisation de la carte.
-Cette gestion des connexions qui était collective dans les architectures sélectives devient locale: une carte a seulement accès aux élements d'information transmis. Ce traitement local de l'information se rapproche plus de notre approche modulaire.
+En terme d'application, les architectures sélectives permettent à chacune des cartes de se spécialiser sur une partie de l'espace d'entrée. 
+En général, le premier niveau seul est une représentation moins précise de l'espace d'entrée. L'augmentation et la séparation des cartes dans les niveaux supérieurs permet une meilleure précision de quantification vectorielle du modèle appris.
 
 \subsubsection{Architectures hiérarchiques par transmission de représentation intermédiaire}
 
+Face à ces structures sélectives, certaines structures présentent une interface entre cartes gérée directement au niveau du processus d'auto-organisation de la carte.
+Cette gestion des connexions qui était collective dans les architectures sélectives devient locale: une carte a seulement accès aux élements d'information transmis. Ce traitement local de l'information se rapproche plus de notre approche modulaire.
 Les architectures que nous positionnons dans cette section restent hiérarchiques et ascendantes. Les connexions entre carte s'apparentent à un arbre.
 
 Contrairement aux architectures par sélection, la deuxième couche de carte ne prend plus comme entrée un élément de l'espace d'entrée de l'architecture, mais travaille sur des éléments des cartes des couches précédentes, tels que la position, le poids du BMU ou une intensité d'activité neuronale. 
@@ -274,11 +301,17 @@ Toutes les architectures présentées ici, comme pour les architectures sélecti
 La plupart des travaux sont appliqués à des tâches de classification qu'on pourrait réaliser avec une SOM classique.
 La motivation d'utiliser une architecture plutôt qu'une SOM est alors que la couche finale du réseau possède de meilleures performances en termes de classification que si on avait utilisé une SOM simple.
 
+\subsubsection{Discussion}
 Nous pouvons conclure de ces travaux qu'il existe différentes façons de transmettre des informations entre couches. Les plus courantes sont la transmission de la position du BMU comme entrée pour la carte suivante, ou un calcul d'activation prenant en compte l'activation de la couche précédente par une connexion neurone à neurone.
 La transmission de la position du BMU dans HSOM, Deep SOM et de nombreux autres travaux nous semble particulièrement intéressante car elle exploite totalement l'aspect topologique d'une carte de Kohonen. Par ailleurs, il s'agit d'une valeur de faible dimension, donc se prêtant à des calculs. Les architectures telles que Deep SOM nous montrent qu'une architecture utilisant seulement ce type d'information comme interface est capable de bonnes performances en reconnaissance d'image.
-Le champ d'application des architectures ascendantes est le même qu'une SOMs classique~: quantification vectorielle et classification. Leurs performances dans ces domaines surpassent alors celles d'un SOM classique, la présence de couche multiples créant un nouveau niveau d'abstraction.
 
-Nous pouvons donc considérer ces architectures comme des améliorations de carte auto-organisatrices sur des applications spécifiques. Elles n'ont pas la capacité de faire d'autres types de calcul que ceux originalement réalisés dans une SOM.
+Le champ d'application des architectures ascendantes est le même qu'une SOMs classique~: quantification vectorielle et classification. Notons par contre que le type d'architecture définit le champ d'application~: 
+dans le cas des architecture sélectives, le but est de plutot faire de la quantification vectorielle plus précise qu'une SOM, en ajoutant des cartes donc plus de n\oe{}uds et en séparant ces cartes. Un autre champ d'application est de pouvoir traiter des données hiérarchiques dont la structure est connue au préalable.
+Dans le cas des architectures par transmission de représentation, le champ d'application est plutôt dans l'amélioration de la classification d'une SOM. La dernière couche du réseau est une représentation plus abstraite de l'espace d'entrée.
+
+Dans les deux cas, il s'agit d'améliorer les performance sur une tâche pouvant être réalisée par une SOM: quantification vectorielle, classification.
+Nous pouvons donc considérer ces architectures comme des améliorations de carte auto-organisatrices sur des applications spécifiques.
+Elles n'ont pas la capacité de faire d'autres types de calcul que ceux originalement réalisés dans une SOM.
 L'aspect uniquement feed-forward en est la cause: les cartes intermédiaires agissent comme des filtres intermédiaires de l'information donnée en entrée, mais la couche finale reste une carte auto-organisatrice classique.
 Cela nous amène à étudier des architectures comportant des boucles de rétroaction~; nous qualifierons ces architectures de non-hiérarchiques. Ces architectures, nous le verrons, permettent de diversifier les comportements d'apprentissage qu'il est possible d'obtenir avec des SOMs en apportant un aspect dynamique au système par les rétroactions.
 
