@@ -377,7 +377,7 @@ Ces architectures permettent de diversifier les comportements d'apprentissage qu
 %     \item Pourquoi ne sont elles pas plus utilisées maintenant ?
 % \end{itemize}
 
-\subsection{Structures de cartes auto-organisatrices non-hiérarchiques}
+\subsection{Architectures non-hiérarchiques de cartes auto-organisatrices}
 
 Les architectures non-hiérarchiques de SOMs sont des architectures comportant plusieurs cartes communiquant entre elles et dont le schéma de connexion comporte des boucles de rétroaction~: une carte A reçoit de l'information d'une carte B, qui elle-même reçoit de l'information de la carte A.
 % Ces architectures sont souvent proposées par une motivation d'inspiration biologique, en s'appuyant sur les théories mentionnées précédemment de la réentrée \cite{Edelman1982GroupSA} et des zones de convergence-divergence (CDZ) \cite{damasio_time-locked_1989}.
@@ -524,46 +524,48 @@ Cette prédiction de modalité est utilisée dans les différents travaux prése
 
 \subsection{Connexions temporelles et architectures de cartes auto-organisatrices}
 
-La capacité de traitement de séquences est un des enjeux de l'application des d'architectures de cartes. Nous avons également relevé des architectures cherchant à unir données spatiales et temporelles en un seul algorithme d'apprentissage. L'objectif d'un algorithme implémentant l'apprentissage de séquence est alors soit de prédire l'élement suivant d'une séquence de données, soit d'extraire des motifs temporels ou spatio-temporels se répétant dans les séquences de données d'entrée.
+La capacité de traitement de séquences est un des enjeux de l'application des d'architectures de cartes. Nous avons également relevé des architectures cherchant à unir données spatiales et temporelles en un seul algorithme d'apprentissage. L'objectif d'un algorithme implémentant l'apprentissage de séquence est alors soit de prédire l'élement suivant d'une séquence de données, soit d'extraire des motifs temporels ou spatio-temporels se répétant dans les séquences de données d'entrée. La figure~\ref{fig:mouvement} illustre par exemple ce qu'on attend de l'apprentissage de séquences d'images d'un sportif~: en s'appuyant sur la succession des images présentées à l'algorithme, le but est d'extraire des catégories de mouvements comme "tirer" ou "marcher",ce qui correspond à de la classification des séquences, ou de pouvoir compléter la vidéo en prédisant l'image suivante dans la séquence.
 Ainsi, la création d'architectures pour le traitement de données multimodales se rapproche de la question du traitement de séquence. Rappelons également que l'enjeu de la multimodalité se situe en robotique, application dans laquelle les données sont généralement séquentielles.
 
 
 Cette similarité entre données multimodales et séquentielles n'est pas seulement présente au niveau des objectifs d'applications des architectures de cartes auto-organisatrices mais bien dans la structure même du traitement des données. 
-Une solution pour faire de l'apprentissage de séquence est de fournir en entrée d'un réseau non plus une donnée instantanée mais une suite de taille fixe de données, sous forme de fenêtre temporelle.
-Une autre solution au contraire est de prendre en compte l'état du réseau à l'instant précédent pour effectuer la mise à jour du réseau à l'état courant. Cette solution, implémentée dans de nombreux modèles d'apprentissage, se rapproche de la notion de transmission d'information entre modules d'une architecture, les modules étant ici les états de la carte à deux instants. Ces réseaux prenant en compte leur instant précédent pour calculer leur état actuels sont appelés réseaux récurrents, ou récursifs. Citons par exemple, en Deep Learning, les RNN (\emph{recurrent neural networks}), dont les neurones reçoivent leur état précédent en entrée.
-Plusieurs modèles de cartes récurrentes, destiné à l'apprentissage de séquence, ont ainsi été proposés dans la littérature.
+Une solution pour faire de l'apprentissage de séquence peut être de fournir en entrée d'un réseau non plus une donnée instantanée mais une suite de taille fixe de données, sous forme de fenêtre temporelle.
+Une autre solution au contraire est de prendre en compte l'état du réseau à l'instant précédent pour effectuer la mise à jour du réseau à l'état courant. Cette solution, implémentée dans de nombreux modèles d'apprentissage, se rapproche de la notion de transmission d'information entre modules d'une architecture, les modules étant ici les états de la carte à deux instants. 
+Ces réseaux prenant en compte leur instant précédent pour calculer leur état actuels sont appelés réseaux récurrents ou récursifs. Citons par exemple, en Deep Learning, les RNN (\emph{Recurrent neural networks}), dont les neurones utilisent leur état précédent dans le calcul de leur activité courante.
+Plusieurs modèles de cartes auto-organisatrices récurrentes, destiné à l'apprentissage de séquence, ont ainsi été proposés dans la littérature.
 
 
-L'analyse des cartes récurrentes apparaît ainsi à la fois comme un enjeu de création d'une architecture générale de cartes auto-organisatrices - il s'agit de créer un modèle qui permet d'associer des modules \emph{et} de se laisse la possibilité d'y intégrer des connexions récurrentes au même titre qu'une connexion intercarte, et comme une source supplémentaire sur laquelle s'appuyer pour catégoriser les mode de transmission d'information entre cartes existants. Dans cette section, nous passons en revue différents modèles de cartes récurrentes et nous intéresserons aux modèles multicartes implémentant des connexions récurrentes au même titre que des connexions intercartes.
-
-
-\subsection{Cartes auto-organisatrices récurrentes}
+L'analyse des cartes récurrentes apparaît ainsi à la fois comme un enjeu de création d'une architecture générale de cartes auto-organisatrices dans la mesure où il s'agit de créer un modèle qui permet d'associer des modules \emph{et} se laisse la possibilité d'y intégrer des connexions récurrentes au même titre qu'une connexion intercartes, et comme une source supplémentaire sur laquelle s'appuyer pour catégoriser les mode de transmission d'information entre cartes. Dans cette section, nous passons en revue différents modèles de cartes récurrentes et nous intéresserons aux modèles multicartes implémentant des connexions récurrentes au même titre que des connexions inter-cartes.
 
 \begin{figure}
-   \centering\includegraphics[width=0.6\textwidth]{movment_002.pdf}
-   \caption{L'image présentée à un réseau (en bleu) correspond à un instant d'une séquence. L'objectif de l'apprentissage non-supervisé de séquences est d'extraire une représentation d'une séquence d'entrée. Une utilisation commune est la classification de mouvements. La séquence "tirer" sera différente de la séquence "marcher".\label{fig:mouvement}}
-\end{figure}
-
-On appelle réseaux récurrents des réseaux de neurones qui prennent en compte leur état précédent pour calculer leur état actuel. Ces réseaux sont utilisés pour le traitement et l'apprentissage de signaux temporels. 
-
-Nous nous intéressons aux architectures multicartes, mais les cartes récurrentes répondent à des problèmes très similaire à ceux rencontrés dans la conception d'architectures de cartes pour faire de la mémoire associative, comme vu en section précédente.
-Dans une carte récurrente, le problème principal est de trouver comment communiquer à la carte de l'information sur son état précédent et comment utiliser cette information dans l'apprentissage de l'état courant. Cela rejoint la problématique posée dans les architectures de cartes de Kohonen, qui est de comment communiquer à une autre carte son état, afin de l'utiliser dans l'apprentissage de l'état courant. L'étude des modèles de cartes récurrentes existant nous permettrons de compléter cette bibliographie. 
-
-Notre volonté de créer un modèle général d'architecture de cartes auto-organisatrice motive également le fait de s'intéresser aux cartes récurrentes. On souhaite en effet créer un modèle qui puisse unir cartes récurrentes et cartes normales au sein d'une même architecture. L'aspect bio-inspiré du modèle et son aspect multimodal ciblent plutot des applications d'un tel réseau en robotique. Or, la plupart des données traitées par des réseaux de neurones, en particulier dans les applications robotiques, sont temporelles : vidéos, signaux sonores, capteurs de position. Il est donc important de s'appuyer autant sur les modèles de cartes récurrentes existantes que sur les architectures afin de créer un modèle général.
-
-Les modèles de cartes récurrentes existant dans la littérature se classent en catégories similaires aux modèles multicartes que nous avons listé.
-D'une part, certains modèles de cartes utilisent l'état précédent de la carte lors du calcul de \emph{l'activité} de l'état courant. De l'autre, des modèles réutilisent plutôt des éléments de la carte à l'instant précédent directement en tant qu'\emph{entrée} de l'état courant.
+    \centering\includegraphics[width=0.6\textwidth]{movment_002.pdf}
+    \caption{L'image présentée à un réseau (en bleu) correspond à un instant d'une séquence. L'objectif de l'apprentissage non-supervisé de séquences est d'extraire une représentation d'une séquence d'entrée. Une utilisation commune est la classification de mouvements. La séquence "tirer" sera différente de la séquence "marcher".\label{fig:mouvement}}
+ \end{figure}
 
 
-Parmi les premiers travaux autour des cartes auto-organisatrices, l'Hypermap \cite{Kohonen1991THEHA}, dérivée ensuite en \emph{recurrent SOM} \cite{varsta_temporal_2001} conditionnent la recherche de BMU d'une carte à un contexte dépendant de l'état précédent, lié à l'entrée précédente dans la séquence. Ce contexte repose sur la limitation d'une zone de la carte dans laquelle faire la recherche du BMU. 
+\subsubsection{Cartes auto-organisatrices récurrentes}
 
-D'autres travaux reposent sur la transmission d'un contexte en tant qu'entrée complétant l'entrée courante. 
+
+
+Les modèles de cartes récurrentes existant dans la littérature s'appuient sur la transmission de représentation interne entre itérations. 
+L'information transmise entre ces états rejoint les mécanismes relevés dans les architectures multi-cartes: transmission du BMU en tant qu'entrée, transmission d'une activité, transmission du poids du BMU.
+
+Parmi les premiers travaux autour des cartes auto-organisatrices, les cartes de Kohonen Temporelles TKM, dérivées ensuite en \emph{recurrent SOM} \cite{varsta_temporal_2001} utilisent l'activité $a$ d'une carte à l'instant précédent dans le calcul de l'activité à l'instant courant par un modèle d'intégrateur à fuite.
+$$a(p,t) = (1-\alpha)a(p,t-1) + \alpha(\inpx_t - \w(p,t)) $$
+avec $a$ équivalent ici à une distance modifiée entre un prototype et l'entrée.
+Le BMU est alors calculé par $\Pi_t = min(|| a(p,t) || ^2)$.
+Le calcul de l'activité revient donc, au lieu de chercher la position donc le prototype $\w(p)$ est le plus proche de l'entrée $\inpx_t$, à chercher une position pour laquelle la distance entre le prototype et l'entrée est faible et pour laquelle la distance calculée par rapport aux entrées précédentes l'était aussi. Il s'agit d'un intégrateur à fuite dans la mesure ou l'influence d'un instant sur les suivants décroit au cours du temps.
+
+D'autres travaux reposent sur la transmission d'une information en tant qu'entrée, prise en compte dans le calcul de l'activité.
 Ainsi, les \emph{recursive SOMs} de \cite{Voegtlin2002RecursiveSM} prennent deux entrées~: l'élément de la séquence ainsi qu'un vecteur contenant l'ensemble des activations des neurones de la carte à l'état précédent.
-MSOM, de \cite{Strickert2005MergeSF} s'appuie sur le poids du BMU. A chaque instant, l'entrée de contexte à transmettre à l'état suivant est définie comme une combinaison linéaire entre le poids du BMU courant et le contexte courant.
-Le modèle SOMSD \cite{hagenbuchner_self-organizing_2003, hammer_recursive_2004,hammer_self-organizing_2005, fix20} réduit ce contexte à la position de la Best Matching Unit.
-Les travaux de \cite{Buonamente2013SimulatingAW} proposent une version récurrente du modèle A-SOM présenté en section précédente. Le contexte considéré est alors un ensemble d'activités de neurones.
-Les mécanismes de transmission de contexte entre instants dans les cartes récurrentes s'appuient sur les mêmes mécanismes que ceux proposé dans le cadre d'architectures de cartes~: sélection de région de la carte, transmission d'activation, et enfin transmission du BMU.
-Les travaux menés en \cite{fix20} sur le modèle SOMSD montrent qu'une carte récurrente parvient à différencier ses BMUs en fonction de la position de l'entrée dans une séquence et non seulement de la valeur de l'entrée.
+Les travaux de \cite{Buonamente2013SimulatingAW} proposent une version récurrente du modèle A-SOM présenté en section précédente. Le contexte considéré est alors également un ensemble d'activités de neurones. 
+MSOM, proposée en \cite{Strickert2005MergeSF} s'appuie sur le poids du BMU. 
+A chaque instant, l'entrée de contexte à transmettre à l'état suivant est définie comme une combinaison linéaire entre le poids du BMU courant et le contexte courant.
+Enfin, le modèle SOMSD, initialement proposé pour le traitement de données structurées \cite{hagenbuchner_self-organizing_2003} puis étendu au traitement de séquences en \cite{hammer_recursive_2004,hammer_self-organizing_2005} réduit ce contexte à la position de la Best Matching Unit.
+
+
+Les mécanismes de transmission de contexte entre instants dans les cartes récurrentes s'appuient donc sur les mêmes mécanismes que ceux proposé dans le cadre d'architectures de cartes~: sélection de région de la carte, transmission d'activation, et enfin transmission du BMU.
+% Les travaux menés en \cite{fix20} sur le modèle SOMSD montrent qu'une carte récurrente parvient à différencier ses BMUs en fonction de la position de l'entrée dans une séquence et non seulement de la valeur de l'entrée.
 
 \subsubsection{Architectures incluant des connexions temporelles}
 
@@ -585,8 +587,15 @@ Notre démarche s'inscrit dans un objectif d'allier connexions temporelles et co
 Les travaux autour du modèle A-SOM mentionné précédemment en ont ainsi dérivé une version récurrente \cite{Buonamente2015DiscriminatingAS}. Cette version récurrente est similaire à la version multicarte. Au lieu de considérer l'activité d'une autre carte pour le calcul de l'activité courante d'une carte, les auteurs utilisent l'activité de la même carte à l'état précédent.
 Cette structure est appliquée à la prédiction de mouvement. De la même façon qu'une architecture est capable, à partir d'une modalité, de prédire les valeurs correspondant à l'autre modalité, l'architecture incluant une version récurrente peut prédire la fin d'une séquence à partir de son début. La motivation de développer une version récurrente de A-SOM est alors de pouvoir développer des architectures comportant connexions récurrente et connexions intercartes. Nous n'avons pas encore relevé cependant de travaux les intégrant effectivement dans une architecture multicartes.
 
-Les travaux menés en \cite{baheux_towards_2014} ont également cherché à insérer des connexions temporelles au sein d'une architecture de deux cartes, présentée en \ref{fig:baheux}. Chaque carte est composée de deux couches de poids. Une des cartes prend une entrée correspondant à l'observation courante, relative à une première couche de poids, comme une SOM classique. La deuxième couche de poids est relative à l'information interne descendant de la seconde carte, qui est la position du BMU de la deuxième carte. 
-La seconde carte recoit deux entrées de la première~: une entrée est la position du BMU de l'état précédent et la seconde la position du BMU de l'état courant. Une activité est calculée sur chaque couche de poids relativement à son entrée et ces deux activités sont fusionnées en une activité globale à chaque carte.
+Les travaux menés en \cite{baheux_towards_2014} (voir figure~\ref{fig:baheux}) ont également cherché à insérer des connexions temporelles au sein d'une architecture de deux cartes. Chaque carte est composée de deux couches de poids. Une des cartes prend une entrée $\inpx(t)$ correspondant à l'observation courante, relative à une première couche de poids, comme une SOM classique. La deuxième couche de poids est relative à l'information interne descendant de la seconde carte, qui est la position du BMU $\bmu_2$ de la deuxième carte. 
+La seconde carte recoit deux entrées de la première~: une entrée est la position du BMU $bmu_1(t-1)$ de l'état précédent et la seconde la position du BMU $\bmu_1(t)$ de l'état courant. 
+Une activité $a$, gaussienne, est calculée sur chaque couche de poids relativement à son entrée et ces deux activités sont fusionnées en une activité globale à chaque carte :
+$$
+\begin{cases}
+    a_1(t,p) = a(\bmu_2(t),p) + a(\inpx(t),p)\\
+    a_2(t,p) = a(\bmu_1(t),p) + a(\bmu_1(t-1),p)
+\end{cases} 
+$$
 Comme chaque carte reçoit en entrée la position de l'état courant du BMU de l'autre carte, il existe une boucle de rétroaction entre carte. Les auteurs laissent alors "résonner" les activités en déplacement petit à petit les BMUs de chaque carte, jusqu'à obtenir un état stable pour les activités, qui est utilisé pour déterminer le BMU final servant à la mise à jour des poids. 
 Ce modèle permet alors d'apprendre des séquences d'entrée. Alors qu'une carte simple différencierait les BMUs en fonction de la valeur de l'entrée, ce modèle génère une différenciation des BMUs en fonction de la position d'un élément dans la séquence en plus de sa valeur. 
 
@@ -602,8 +611,6 @@ Ce modèle permet alors d'apprendre des séquences d'entrée. Alors qu'une carte
     \includegraphics[width=0.8\textwidth]{baheux.pdf}
     \caption{Structures de deux cartes auto-organisatrices communicantes, \cite{baheux_towards_2014}. Chaque carte est composée de trois couches d'activités, représentées séparément sur le schéma: sur la première carte, une activité est relative à l'entrée $o$, l'observation. L'autre activité reçoit une entrée descendant de la seconde carte. Ces deux activités sont fusionnées en une activité globale servant à déterminer un BMU. La seconde carte reçoit ensuite deux entrées venant de la première carte : le BMU de l'état courant et le BMU de l'état précédent. Un système de résonance est mis en place pour gérer les boucles de rétroactions entre BMUs, comme chaque carte reçoit le BMU de l'état courant de l'autre carte en entrée. Ce principe laisse évoluer dynamiquement les activités vers un état stable, utilisé ensuite pour la détermination du BMU final.\label{fig:baheux}}
 \end{figure}
-
-Ces exemples nous amènent à pousser la bibliographie de cette thèse sur les cartes de Kohonen récurrentes. On voit en effet la similarité existant dans le traitement de séquences, ou le choix d'un BMU doit prendre en compte le contexte des états précédents, aux modèles multimodaux dans lequel le choix d'un BMU doit prendre en compte le contexte des entrées d'autres modalités. 
 
 
 
