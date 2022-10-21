@@ -237,7 +237,7 @@
                  \fi}
 
          
-\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,hyperref,backend=biber,doi=false,url=false,date=year,isbn=false]{biblatex}
+\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,hyperref,backend=biber,doi=false,url=false,date=year,isbn=false,maxcitenames=1]{biblatex}
 \setlength\bibitemsep{1.5\itemsep}
 \RequirePackage{subfiles}
 
