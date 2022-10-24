@@ -237,8 +237,13 @@
                  \fi}
 
          
-\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,hyperref,backend=biber,doi=false,url=false,date=year,isbn=false,maxcitenames=1]{biblatex}
+\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,backend=biber,doi=false,url=false,date=year,isbn=false,maxcitenames=2]{biblatex}
 \setlength\bibitemsep{1.5\itemsep}
+\RequirePackage[colorlinks = true,
+linkcolor = blue,
+urlcolor  = blue,
+citecolor = blue,
+anchorcolor = blue]{hyperref}
 \RequirePackage{subfiles}
 
 
