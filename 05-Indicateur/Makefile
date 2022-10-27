@@ -1,5 +1,5 @@
 # Adapt this path if needed.
-FIGS = $(wildcard *.svg)
+FIGS = $(wildcard ./figures/*.svg)
 PDFS_FROM_SVG = $(patsubst %.svg, %.pdf, $(FIGS))
 
 figs : $(PDFS_FROM_SVG)

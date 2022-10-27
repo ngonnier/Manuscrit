@@ -4,7 +4,6 @@
     \tableofcontentsfile
 }{}
 \begin{document}
-
 \chapter{Analyse de l'auto-organisation de CxSOM}\label{chap:analyse}
 \graphicspath{{06-Analyse/},{./}}
 \minitoc
@@ -13,28 +12,30 @@
 
 Cette thèse s'inscrit dans une démarche expérimentale d'analyse d'un système complexe.
 Nous avons proposé un modèle de connexions de cartes auto-organisatrices au sein d'une architecture complète.
-Ce modèle s'appuie sur des modèles de connexions entre cartes existant dans la littérature, utilisés notamment dans le cadre des cartes récurrentes: la transmission de la position du BMU entre cartes.
-La démarche expérimentale est constructive: nous proposons un modèle qui semble pertinent au regard des résultats existants dans la littératures. Nous cherchons ensuite à évaluer la pertinence du modèle et identifier des comportements.
+Ce modèle s'appuie sur des modèles de connexions entre cartes existant dans la littérature, utilisés notamment dans le cadre des cartes récurrentes~: la transmission de la position du BMU entre cartes.
+La démarche expérimentale est constructive~: nous proposons un modèle qui semble pertinent au regard des résultats existants dans la littérature. Nous cherchons ensuite à évaluer la pertinence du modèle et identifier des comportements.
 Nous avons présenté ce modèle et les méthodes de représentations sur lesquelles nous nous appuierons.
 L'expérience présentée en exemple du chapitre représentations a permis d'identifier quelques comportements élémentaires émergeant des connexions entre cartes.
 
-A partir des comportements que nous observerons sur plusieurs ensembles de données, nous chercherons d'abord à définir comment s'effectue l'apprentissage multimodale dans une structure de cartes.
+\`{A} partir des comportements que nous observerons sur plusieurs ensembles de données, nous chercherons d'abord à définir comment s'effectue l'apprentissage multimodal dans une structure de cartes.
 Une fois ces comportements définis, nous effectuerons une analyse paramétrique sur des petites architectures.
-A l'issue de ce chapitre, nous serons donc en mesure de construire des architecture de 2 et 3 cartes et d'identifier leur capacité d'apprentissage. Nous concluerons sur la scalabilité du modèle à des architectures comportant un plus grand nombre de carte.
+A l'issue de ce chapitre, nous serons donc en mesure de construire des architectures de 2 et 3 cartes et d'identifier leur capacité d'apprentissage. Nous conclurons sur la scalabilité du modèle à des architectures comportant un plus grand nombre de cartes.
 
 \subsection{Méthode expérimentale}
 
-Nous réaliserons dans ce chapitre des expériences sur différentes structures de données d'entrées. Ces entrées sont tirées de modèles géométriques, nous permettant de définir des propriétés et de maîtriser les dépendances entre entrées.
-
+L'utilisation de modèles artificiels d'entrée nous permettent de maitriser les dépendances entre modalités et ainsi de déterminer un lien de causalité entre type de dépendance et organisation. Cela nous permettra également de mesurer l'apprentissage de cette dépendance connue au sein des structures de cartes.
 Nous réutiliserons l'expérience présentée au chapitre représentation, sur des données disposée en cercle. Cette disposition est symétrique et laisse deux possibilités pour chaque entrée en sachant la première.
-Nous faisons varier cette propriété en observant le comportement de deux cartes sur des entrées identiques (cas dégénéré), et sur des entrées indépendantes, prises aléatoirement. Entre ces deux cas dégénéré, nous observerons le comportement d'une architecture sur des exemples d'entrées différentes, dont les relations sont représentées en figure.
-Nous choississons d'ajouter du bruit aux données: le cercle sera en fait un anneau, etc.
+Nous ferons varier cette propriété de dépendance en observant également le comportement de deux cartes sur des entrées identiques (cas dégénéré), et sur des entrées totalement indépendantes, prises aléatoirement dans un carré $[0,1]^2$.
+Entre ces deux cas dégénérés, nous observerons le comportement d'une architecture sur des exemples implémentant des dépendances variée. Dans un premier cas, nous prenons $X\m{2}$ est fonction de $X\m{1}$ mais pas l'inverse.
+Nous considérerons un deuxième cas ou la dépendance entre $X\m{1}$ $X\m{2}$ est bijective sur un sous ensemble du domaine d'entrée seulement.
+Enfin, une carte de Kohonen classique a comme propriété d'être résistante au bruit des données. Ainsi, une carte 1D se dépliant sur un anneau fin en 2D prendra une structure du cercle. Nous voulons vérifier comment cette propriété se vérifie sur l'apprentissage de données par trois cartes~; nous prendrons ainsi des points sur un anneau fin.
 
-Nous élargissons également le jeu de données disponible à des entrées géométriques en trois dimensions. L'architecture de cartes utilisée sera alors une archiecture de trois cartes reliées réciproquement.
-Ces entrées sont un cercle pivoté en trois dimensions, une surface quelconque, une sphere, et une repartition en volumes. Dans chacun de ces cas, le $U$ générant les entrées est de dimension différente: 1 pour une courbe,  2 pour une surface, 3 pour un volume.
+Nous élargissons également le jeu de données disponible à des entrées géométriques en trois dimensions. L'architecture de cartes utilisée sera alors une architecture de trois cartes reliées réciproquement.
+Ces entrées sont un cercle pivoté en trois dimensions, une surface quelconque, une sphère, et une répartition en volumes. Dans chacun de ces cas, le $U$ générant les entrées est de dimension différente~: 1 pour une courbe,  2 pour une surface, 3 pour un volume.
 
-Les architectures étudiées sont des architectures de cartes en une dimension. Nous choisissons d'identifier les comportements d'apprentissage sur des cartes en une dimension, facilement tracables, puis nous observerons si des cartes 2D présentent les mêmes comportements.
+Les architectures étudiées sont des architectures de cartes en une dimension. Nous choisissons d'identifier les comportements d'apprentissage sur des cartes en une dimension, facilement traçables, afin d'identifier des comportements et si ceux ci traduisent un apprentissage. Nous analyserons ensuite si ces comportements se retrouvent sur des cartes en deux dimensions.
 
+Nous mènerons en derinère section une analyse paramétrique sur l'architecture de cartes. 
 L'analyse paramétrique sera menée sur l'expérience du cercle. Nous avons en effet observé que le comportement des cartes selon différentes courbes est générique. Nous nous restreignons alors à étudier les paramètres du modèle sur un exemple particulier.
 
 \begin{figure}
@@ -63,7 +64,7 @@ L'analyse paramétrique sera menée sur l'expérience du cercle. Nous avons en e
 	
 \end{figure}
 
-\section{Quels comportements sont caratréristiques d'un apprentissage ?}
+\section{Quels comportements sont caractéristiques d'un apprentissage ?}
 Dans ce chapitre, nous analyserons ces comportements plus en détail, et identifierons les comportements \emph{systémiques} émergeant d'une architecture simple à deux et trois cartes.
 
 \subsection{Quantification vectorielle sur les entrées externes}
@@ -103,7 +104,7 @@ Deux zones adjacentes correspondent par ailleurs à des segments de valeur d'ent
 	\includegraphics[width=0.7\textwidth]{3som_cercle_w.pdf}
 \end{figure}
 
-Cherchons à généraliser ce comportement: la disposition en zones traduit elle l'existence de l'apprentissage d'une relation entre entrée ?
+Cherchons à généraliser ce comportement~: la disposition en zones traduit elle l'existence de l'apprentissage d'une relation entre entrée ?
 Nous tracons la représentation cartographique des poids des deux cartes sur d'autres dispositions d'entrées: 
 \begin{itemize}
 	\item Lorsque $\inpx\m{1} = \inpx\m{2}$. La relation entre les deux entrées est alors une bijection. On s'attend à ce qu'on n'ai pas besoin de zones.
