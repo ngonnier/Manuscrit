@@ -23,7 +23,7 @@ Nous définirons dans ce chapitre des indicateurs permettant d'évaluer l'appren
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{xu_yu_both_chap4.pdf}
-    \caption{Rappel: comparaison de $U$ en fonction de $\bmu\m{1}$ dans l'expérience exemple à deux cartes, sur des entrées sous forme de cercle. Ce nuage de point fait apparaître une relation semblant bijective entre $U$ et $\bmu\m{1}$. Nous définiront un indicateur permettant de représenter numériquement cette propriété.
+    \caption{Rappel~: comparaison de $U$ en fonction de $\bmu\m{1}$ dans l'expérience exemple à deux cartes, sur des entrées sous forme de cercle. Ce nuage de point fait apparaître une relation semblant bijective entre $U$ et $\bmu\m{1}$. Nous définiront un indicateur permettant de représenter numériquement cette propriété.
     \label{fig:upi_chap4}}
 \end{figure}
 
@@ -32,7 +32,7 @@ Nous définirons dans ce chapitre des indicateurs permettant d'évaluer l'appren
 Plusieurs méthodes permettent d'évaluer une relation statistique existant entre deux signaux. Citons notamment la corrélation croisée, le ratio de corrélation et l'information mutuelle.
 La corrélation croisée cherche une ressemblance entre deux signaux de façon linéaire. Une bonne corrélation croisée traduit ainsi l'existence d'une relation linéaire entre deux signaux.
 Le ratio de correlation est un rapport mesurant l'existence d'une relation fonctionnelle non-linéaire entre les deux variable. 
-Enfin, l'information mutuelle permet d'evaluer une relation statistique quelconque entre les variables.
+Enfin, l'information mutuelle permet d'évaluer une relation statistique quelconque entre les variables.
 
 \begin{itemize}
     \item Avantages du correlation ratio: mesure précisément une relation fonctionnelle quelconque, est à valeur dans 0,1. Désavantages: besoin de passer par l'estimation des densités de proba, en particulier $U|\bmu$, donc peu pratique quand la dimension augmente.
@@ -58,7 +58,7 @@ Outre les entropies jointes et conditionnelles, l'existence d'une relation stati
 \end{equation}
 Cette valeur mesure la quantité d'information moyenne partagée entre les distributions $X$ et $Y$: en moyenne, quelle information sur la valeur de $Y$ donne une valeur de $X$ et inversement, quelle information sur la valeur de $X$ donne une valeur de $Y$.
 
-L'information mutuelle possède les propriété suivantes:
+L'information mutuelle possède les propriétés suivantes:
 \begin{enumerate}
 \item $I(X,Y) = 0 \Leftrightarrow \textrm{X et Y sont indépendantes}$. L'information mutuelle peut être vue une mesure de la distance entre la distribution jointe de $(X,Y)$, $P(X,Y)$ et la distribution dans laquelle les deux variables sont indépendantes, $P(X)P(Y)$.
 \item Elle s'exprime à partir de l'entropie : $I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$
@@ -67,7 +67,7 @@ L'information mutuelle possède les propriété suivantes:
 \end{enumerate}
 
 Lors de l'analyse de CxSOM, on s'interroge sur l'information que portent les positions des BMUs $\bmu$ d'une carte sur le modèle d'entrée.
-Les éléments de la carte ont été définis en termes statistiques; on peut donc utiliser l'information mutuelle comme une représentation de l'information partagée entre la position du BMU d'une carte et la variable paramétrant le modèle d'entrée, $U$.
+Les éléments de la carte ont été définis en termes statistiques~; on peut donc utiliser l'information mutuelle comme une représentation de l'information partagée entre la position du BMU d'une carte et la variable paramétrant le modèle d'entrée, $U$.
 
 
 \section{Utilisation du ratio de corrélation comme mode d'évaluation}
@@ -102,7 +102,7 @@ Par la définition des variances conditionnelles, on a
 $$Var(Y) = \mathbb{E}(Var(Y|X)) + Var(\mathbb{E}(Y|X))$$
 Soit~:
 $$\eta(Y|X) = 1 - \frac{\mathbb{E}(Var(Y|X))}{Var(Y)}$$
-$\mathbb{E}(Var(Y|X))$ représente la moyenne des écarts de $Y$ à sa valeur moyenne $\mathbb{E}(Y|X)$ pour une valeur de $X$ donnée. Lorsque la dépendance entre $Y$ et $X$ est fonctionnelle, les valeurs de $Y$ sont très proches de $\mathbb{E}(Y|X)$ pour chaque valeur de $X$ et $\mathbb{E}(Var(Y|X))$ est faible partout. La variance est nulle lorsqu'une valeur de $X$ correspond à un seul point pour $Y$, c'est à dire une relation fonctionnelle. Inversement, quand $Y$ et $X$ sont indépendantes, $\mathbb{E}(Var(Y|X)) = Var(Y)$ et le ratio de corrélation tombe ainsi à 0.
+$\mathbb{E}(Var(Y|X))$ représente la moyenne des écarts de $Y|X=x_i$ à sa valeur moyenne en $x_i$ $\mathbb{E}(Y|X=x_i)$ pour une valeur de $X = x_i$ donnée. Lorsque la dépendance entre $Y$ et $X$ est fonctionnelle, les valeurs de $Y|X$ sont très proches de $\mathbb{E}(Y|X)$ pour chaque valeur de $X$ et $\mathbb{E}(Var(Y|X))$ est faible partout. La variance est nulle lorsqu'une valeur de $X$ correspond à un seul point pour $Y$, c'est à dire une relation fonctionnelle. Inversement, quand $Y$ et $X$ sont indépendantes, $\mathbb{E}(Var(Y|X)) = Var(Y)$ et le ratio de corrélation tombe ainsi à 0.
 Le ratio de corrélation n'est pas symétrique. Par le fait qu'il s'appuie sur un rapport, il n'est pas sensible à une transformation linéaire de $Y$.
 
 \begin{figure}
@@ -113,29 +113,45 @@ Le ratio de corrélation n'est pas symétrique. Par le fait qu'il s'appuie sur u
 
 \subsection{\'Evolution du ratio de corrélation au cours de l'apprentissage des cartes CxSOM}
 
-Nous utilisons le ratio de corrélation pour mesurer la dépendance fonctionnelle existant dans chaque carte entre les valeurs de $U$ et l'ensemble des BMU d'une carte $\bmu\m{i}$ et .
+Nous utilisons le ratio de corrélation pour mesurer la dépendance fonctionnelle existant dans chaque carte entre les valeurs de $U$ et l'ensemble des BMU d'une carte $\bmu\m{i}$.
 Les valeurs $\bmu\m{1}$ et $\bmu\m{2}$ étant des valeurs discrètes, $\mathbb{E}(U|\bmu\m{i})$ est estimée par la moyenne des valeurs de $U$ ayant pour BMU la même valeur $\bmu\m{i}$. 
 En figure~\ref{fig:cr_xp}, nous traçons les distributions de $U$ en fonction de $\bmu\m{1}$ et $\bmu\m{2}$, dans le cas de l'architecture CxSOM et des cartes simples. Nous y représentons la fonction $\mathbb{E}(U|\bmu\m{i})$ en rouge.
 Le ratio de corrélation apparaît ici comme une bonne mesure de la relation fonctionnelle existant entre $U$ et $\bmu$. Le ratio de corrélation est très proche de 1 dans chaque carte de CxSOM, traduisant le fait que $U$ est une fonction du BMU dans chaque carte.
 
-La figure~\ref{fig:cr_bruit} présente les mêmes paramètres tracés dans le cas ou l'expérience est réalisée sur des données bruitées, en l'occurence un anneau. $U$ n'est alors plus vraiment une fonction du BMU, mais en reste proche. Le ratio de corrélation traduit correctement cette proximité et reste plus élevé dans chaque carte que pour une carte seule. 
+La figure~\ref{fig:cr_bruit} présente les mêmes paramètres tracés dans le cas ou l'expérience est réalisée sur des données bruitées, en l'occurence un anneau. $U$ n'est alors plus vraiment une fonction du BMU, mais en reste proche. 
+Le ratio de corrélation traduit correctement cette proximité et reste plus élevé dans chaque carte que pour une carte seule.
+
+Enfin, nous tracons en figure~\ref{fig:cr_evol} l'évolution du ratio de corrélation sur les 200 premiers pas d'apprentissage de deux cartes sur un cercle, connectées et non connectées. Les mesures sont réalisées sur 10 expériences réalisées sur des distributions d'entrées identiques et moyennées.
+Nous remarquons que $\eta$ reste inférieur dans le cas ou les cartes sont connectées que non connectées. 
+Remarques:
+\begin{itemize}
+    \item Semble rester a peu près constant pendant tout l'apprentissage. Traduit le fait que dès le début de l'apprentissage, la relaxation différencie les BMUs en fonction des deux valeurs d'entrées, même quand les poids ne sont pas organisés.
+    \item Pas d'information sur l'organisation topologique des poids ici: le coefficient ne traduit pas l'organisation de la carte.
+    \item Grande variabilité de la valeur de $\eta$ entre les expériences, traduite ici par l'écart à la moyenne.
+    \item On voit qu'entre la carte $M\m{1}$ et $M\m{2}$, $\eta$ prend une valeur bien différente, alors que la qualité de la relation est semblable. On peut donc difficilement utiliser $\eta$ de façon absolue, mais plutôt pour comparer des valeurs.
+\end{itemize}
 
 \begin{figure}
     \includegraphics[width=\textwidth]{correlation_ratio_xp0.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples}
+    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples \label{fig:cr_xp}}
 \end{figure}
 
 \begin{figure}
     \includegraphics[width=\textwidth]{correlation_ratio_anneau_xp0.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples dans le cas ou les données sont bruitées.}
+    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples dans le cas ou les données sont bruitées.\label{fig:cr_bruit}}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{correlation_ratio_evolution_totale.pdf}
+    \caption{Evolution du ratio de corrélation pendant l'apprentissage des cartes\label{fig:cr_evol}}
 \end{figure}
 
 \subsection{Discussion}
 Bonne mesure de la relation existant entre $U$ et $\bmu$
-Ratio de corrélation applicable à des variables catégorielles donc passe nécessairement par de la discrétisation.
-En grande dimension, estimation limitée par l'explosion de la dimension.
+Variable BMU discrète, variable U peut être continue
+Très bien pour des dimensions plus grandes.
 
-A mettre dans conclu géénrale: 
+A mettre dans conclu générale: 
 Néanmoins, il est montré (?) que  les variables restent sur des manifolds de dimension réduite - d'ou déjà l'intéret des cartes de kohonen et que ca marche. Donc les calculs de discretisation n'augmenteront pas de facon explosive au cours des dimensions ....
 
 
@@ -249,7 +265,7 @@ Nous appliquerons dans la section suivante ces deux indicateurs à l'étude de l
     \end{figure}
 
 
-\section{Application de l'indicateur $I_x$ au cas d'exemple multimodal simple}
+\subsection{Application de l'indicateur $I_x$ au cas d'exemple multimodal simple}
 
 Nous avons défini deux indicateurs à partir du coefficient d'incertitude. Premièrement, $I_x$, coefficient estimé par histogrammes avec de larges intervalles dans le découpage de $U$, permettant d'évaluer si $U$ est une fonction de $\bmu$, et autorisant une variation locale de $U$ pour une position de BMU.
 En second lieu, $UC$, le coefficient d'incertitude estimée de façon précise avec une méthode d'estimation telle que les KNN de Kraskov.
@@ -260,13 +276,13 @@ Le fait d'utiliser un indicateur numérique permet de tracer l'évolution de cet
 Nous traçons cette évolution au cours de l'apprentissage dans un système de deux cartes apprenant sur le cercle en deux dimensions, l'exemple présenté au chapitre précédent.
 Nous chercherons à vérifier que $I_x$ reflète bien la qualité de l'apprentissage dans une carte, puis nous utiliserons $UC$ pour évaluer l'information réellement portée par les cartes.
 
-\subsection{Méthode expérimentale}
+\subsubsection{Méthode expérimentale}
 
 Pour cette expérience, une phase de test sur 5000 entrées est réalisée à intervalles réguliers lors de l'apprentissage, en utilisant le même jeu d'entrées pour chaque test. Chaque phase de test donne alors un ensemble d'entrées $\inpx\m{1}, \inpx\m{2}, U$ et un ensemble de réponses des cartes $\bmu\m{1}, \bmu\m{2}$. On peut alors estimer $I_x(U|\bmu\m{1})$ et $I_x(U|\bmu\m{2})$ sur chaque itération considérée et tracer la courbe de l'évolution de l'indicateur au long de l'apprentissage. 
 Ces calculs sont réalisés sur 100 apprentissages séparé, prenant des entrées d'apprentissage aléatoires sur le même cercle. Les cartes sont initialisées à des poids aléatoires différents au début de chaque apprentissage. 
 Les tracés représentent la moyenne, à chaque pas de temps, des indicateurs considérés au pas de temps $t$.
 
-\subsection{Evolution de l'indicateur $I_x$ au cours de l'apprentissage}
+\subsubsection{Evolution de l'indicateur $I_x$ au cours de l'apprentissage}
 
 Nous étudions d'abord l'évolution de $I_x$, calculé en discrétisant l'espace par la méthode des histogrammes.
 On choisit de découper les valeurs de $U$ en 50 boîtes, et en 500 pour $\bmu\m{i}$: comme soulevé en section précédente, il est nécessaire d'utiliser un intervalle plus large pour les valeurs de $U$, afin de ne pas prendre en compte la dispersion des points au niveau local. Le tracé obtenu est tracé en figure~\ref{fig:MI_evol}.
@@ -286,7 +302,7 @@ Nous pourrons donc utiliser $I_x$ comme indicateur d'une relation fonctionnelle 
     \label{fig:MI_evol}
 \end{figure}
 
-\subsection{Evolution du coefficient d'incertitude théorique au cours de l'apprentissage}
+\subsection{\'Evolution du coefficient d'incertitude théorique au cours de l'apprentissage}
 
 Nous avons proposé $I_x$ comme indicateur pour évaluer la relation fonctionnelle entre $U$ et $\bmu$ et noté qu'il est nécessaire de l'estimer par histogrammes pour l'interpréter de cette façon dans le cadre de CxSOM.
 Nous sortons de l'étape de validation de l'indicateur $I_x$ cherchant à évaluer une relation fonctionnelle autorisant le bruit local, pour étudier l'évolution du coefficient d'incertitude $UC$ entre les distributions de $U$ et de $\bmu$, estimée cette fois de façon précise, avec la méthode de Kraskov.
