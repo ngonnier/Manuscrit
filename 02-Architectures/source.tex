@@ -13,26 +13,25 @@
 \chapter{Architectures de cartes auto-organisatrices}
 \minitoc
 
+Les travaux que nous présentons dans cette thèse se concentrent sur la création d'une architecture non hiérarchique modulaire de cartes auto-organisatrices (SOM).
 Les cartes auto-organisatrices et notamment le modèle de Kohonen sont largement utilisées en tant qu'algorithme d'apprentissage non supervisé appliqué à des tâches de réduction de dimension, de visualisation de données ou de classification.
-Cependant, peu de travaux ont exploré leur aspect topologique et la simplicité de leurs règles de calcul pour les assembler en architectures modulaires, formant un système dynamique et générant d'autres comportements que ceux d'apprentissage automatique décrits ci-dessus.
-Une motivation de création d'une telle architecture se place par exemple au niveau de l'apprentissage développemental et de l'apprentissage incarné (\emph{Embodied intelligence}) en robotique, dont les enjeux sont par exemple présentés en \cite{Smith2005TheDO} et \cite{cangelosi_embodied_2015}.
-Une telle motivation est par exemple formulée par Kohonen dès 1995~:
+D'une part, de nombreux travaux étudient l'utilisation de plusieurs cartes collaborant entre elles sur différentes applications, en général afin d'améliorer les performances de classification ou de regroupement de données d'une carte auto-organisatrice classique. Ces travaux se retrouvent sous le terme de SOM hiérarchiques, SOM multi-couches, ou \emph{Deep SOM}.
+Cependant, peu de travaux ont exploré l'aspect topologique et la simplicité des règles de calcul d'une carte pour les assembler en architectures modulaires comportant des rétroactions, formant un système dynamique et conférant à une architecture de cartes un comportement de prise de décision.
+
+L'étude d'une architecture non hiérarchique de cartes est d'une part motivée par leur inspiration biologique. Leur organisation rappelle en effet celle qu'on peut observer dans des aires cérébrales. Le cortex faisant apparaître des aires interagissant entre elles avec des boucles de rétroaction, la création d'une architecture non hiérarchique de cartes s'inscrit dans la continuité de cette inspiration biologique.
+Ensuite, l'étude des systèmes biologiques et la robotique sont liées~: la biologie sert d'inspiration à la robotique, que ce soit pour le mouvement d'un bras ou la prise de décision et la robotique permet de tester des théories cherchant à modéliser des comportements biologiques \cite{Oudeyer2010OnTI}.
+Aussi les architectures de cartes bio-inspirées que nous avons relevées dans la littérature se placent dans les domaines des neurosciences computationnelles ou de l'apprentissage incarné (\emph{Embodied intelligence}) en robotique \cite{Smith2005TheDO,cangelosi_embodied_2015}, à la frontière entre étude de la biologie et apprentissage automatique.
+
+Nous passerons en revue dans ce chapitre un ensemble de travaux définissant des architectures de cartes auto-organisatrices, en s'intéressant aux différences de conception existant au sein des architectures. Nous définirons ainsi la notion d'architecture non-hiérarchique modulaire.
+Cette notion d'architecture modulaire de cartes est bien résumée par Kohonen dès 1995~:
 \begin{quote}
 Un objectif à long terme de l'auto-organisation est de créer des systèmes autonomes dont les éléments se contrôlent mutuellement et apprennent les uns des autres. De tels éléments de contrôle peuvent être implémentés par des SOMs spécifiques~; le problème principal est alors l'interface, en particulier la mise à l'échelle automatique des signaux d'interconnexion entre les modules et la collecte de signaux pertinents comme interface entre les modules. Nous laisserons cette idée aux recherches futures.
 \cite{Kohonen1995SelfOrganizingM}
 \end{quote}
-Bien que plusieurs travaux en apprentissage automatique aient fait avancer le domaine de l'apprentissage développemental depuis ces 30 dernières années, par exemple à partir de réseaux de neurones profonds~\cite{droniou_deep_2015}, peu de travaux ont exploré la création d'architectures autonomes de cartes auto-organisatrices.
-La simplicité des règles de mise à jour de l'algorithme d'organisation d'une carte leur confère pourtant un intérêt computationnel.
-Nous étudierons dans cette thèse un modèle de création d'architectures modulaires décentralisées de cartes auto-organisatrices.
-
-
-Le but de cette thèse est ainsi d'une part, de proposer un modèle de cartes qui puissent être utilisées en tant que modules, de définir l'interface entre modules et d'autre part d'en extraire des comportements de calcul qui en émergent.
-Il s'agit en premier lieu de définir ce qu'on entend par architecture modulaire.
-Nous passons ainsi en revue dans ce chapitre les travaux traitant des architectures de cartes de Kohonen ou plus généralement de réseaux d'apprentissage utilisant des règles d'auto-organisation dans leur évolution. 
-Nous présenterons le modèle général d'une carte de Kohonen et ses comportements fondamentaux, puis décrirons les différents types de structures se présentant comme des architectures de cartes. Nous analyserons leur aspect modulaire et les comportements d'apprentissage générés par ces structures.
-Nous comparerons aussi le choix du modèle d'interface entre cartes.
-
-
+Ces éléments de contrôle sont les modules d'une architectures. 
+L'objectif de nos travaux est ainsi de proposer un modèle de carte qui puisse être utilisée en tant que module, de définir l'interface entre les modules afin de créer une architecture et de comprendre les comportements de calcul qui émergent de l'association des modules.
+Nous présentons dans ce chapitre le modèle général d'une carte de Kohonen et ses comportements fondamentaux, puis répertorions les différents types de structures se présentant comme des architectures de cartes.
+A l'issue de ce chapitre, nous aurons une vue d'ensemble des architectures des catégories d'architectures de cartes auto-organisatrices existant dans la littérature et de leurs principales propriétés d'apprentissage. Nous pourrons ainsi définir en pratique la notion d'architecture modulaire et comment se placent nos travaux dans cette taxonomie.
 
 \section{Les cartes auto-organisatrices de Kohonen comme modules d'une architecture}\label{sec:som001}
 
@@ -271,9 +270,7 @@ L'analyse de ces modèles nous permet de nous situer dans la littérature et d'�
 \subsection{Architectures hiérarchiques de cartes}
 
 Nous nous intéressons en premier lieu aux architectures hiérarchiques de cartes, c'est-à-dire sans rétroaction. Ces architectures se retrouvent également sous les termes de \emph{Deep SOM} ou SOM multi-couches~: ces modèles se rapportent tous au même concept d'architecture hiérarchique de SOMs.
-Nous les divisons en deux catégories~:
-la première est celle des architectures par sélection, dans laquelle le premier niveau est généralement une carte seule et le nombre de cartes augmente au fur et à mesure des niveaux. 
-L'autre catégorie est celle des architectures par transmission de représentation. Dans ce cas, les cartes du deuxième niveau prennent en entrée la sortie du premier niveau et non les données d'entrées. Le nombre de cartes diminue alors au parcours des niveaux le dernier niveau formant une représentation plus abstraite de l'espace d'entrée.
+Nous les divisons en deux catégories selon leur mode d'interface. Dans un premier cas, l'architetcure s'appuie sur un processus extérieur au carte qui sélectionne et attribue les entrées à présenter à une carte. Dans l'autre, l'architectures est composée de cartes dont certaines apprennent les entrées externes et d'autre apprennent sur des éléments de sortie d'autre cartes, donc des représentations internes à l'architecture des entrées.
 Nous présenterons les équations des différents modèles dans le formalisme introduit en section~\ref{sec:som001}. 
 Par facilité de représentations, les schémas des architectures seront présentés avec des cartes en une dimension. Cependant, toutes les architectures présentées utilisent des cartes en deux dimensions, parfois plus.
 % Le lecteur peut également se référer à \cite{henriques_spatial_2012} pour une revue appliquée des méthodes de clustering basées sur des SOMs hiérarchiques. 
@@ -579,22 +576,22 @@ Une autre version d'architecture de cartes non hiérarchique est développée en
 La particularité de A-SOM, par rapport à tous les modèles précédemment étudiés est que l'apprentissage des cartes et de leurs interactions est réalisé simultanément et non séquentiellement. Il s'agit du mode de mise à jour synchrone~: on peut définir une itération globale à toute l'architecture pendant laquelle toutes les cartes seront mises à jour une fois.
 Ce modèle décentralisé inclut aussi la possibilité de créer une version d'architecture centralisée à partir des mêmes règles d'associations, par exemple \cite{buonamente_hierarchies_2016}. A-SOM est illustré en figure~\ref{fig:asom} pour l'exemple de deux cartes associées. 
 Dans ce modèle, chaque SOM reçoit une entrée $\inpx$ provenant d'une modalité, telle que la texture et l'image d'un objet.
-Une carte possède alors deux couches de poids~: l'une est relative aux entrées externes $\inpx$ et l'autre relative à l'entrée contextuelle provenant de l'autre carte, $X_c$.
+Une carte possède alors deux couches de poids~: l'une est relative aux entrées externes $\inpx$ et l'autre relative à l'entrée contextuelle provenant de l'autre carte, $\inpc$.
 Sur ces entrées, les auteurs calculent une activité par couche de poids~: $a_e$ et $a_c$.
-L'entrée $X_c$ correspond au vecteur des activations externes $a_e$ des neurones de l'autre carte.
+L'entrée $\inpc$ correspond au vecteur des activations externes $a_e$ des neurones de l'autre carte.
 L'interface entre cartes utilisée en A-SOM est donc le champ d'activation des neurones, interface qui avait été utilisée dans les architectures centralisées SOIMA ou Bijama. Cette interface par transmission d'activation comme entrée d'une carte est équivalente à des connexions pondérées par des poids $\w_{cij}$ reliant le neurone $i$ d'une carte au neurone $j$ de l'autre. On a alors $w_c(i) = [\w_{ci1}, \cdots, \w_{ciN}]$.
 Lors de l'apprentissage, la mise à jour des poids $\w_e$ et $\w_c$ est réalisée de manière indépendante. 
 Le BMU de position $\Pi$ se situe au maximum de l'activité externe et les poids $\w_e$ sont mis à jour comme dans une SOM classique.
 Les poids $\w_c$ sont mis à jour en fonction de la différence entre activités externes et contextuelles à la position $p$~:
-$$ \w_c(p) \leftarrow \w_c(p) + \beta X_c \times (a_e(p) - a_c(p))$$
+$$ \w_c(p) \leftarrow \w_c(p) + \beta \times \inpc_t \times (a_e(p) - a_c(p))$$
 
-Cette règle de mise à jour permet de renforcer le schéma d'activation appris par un neurone seulement lorsque son activité externe est forte, et de réduire son impact si le neurone a une activité externe faible. Elle équivaut à l'échelle d'une carte et non du neurone à la règle Hebbienne qui renforce les connexions de deux neurones s'activant en même temps.
+Cette règle de mise à jour permet de renforcer le schéma d'activation $\inpc_t$ appris par un neurone seulement lorsque son activité externe est forte, et de réduire son impact si le neurone a une activité externe faible. Elle équivaut à l'échelle d'une carte et non du neurone à la règle Hebbienne qui renforce les connexions de deux neurones s'activant en même temps.
 Pendant l'apprentissage, le calcul d'activité est indépendant sur chaque couche de poids, seule la mise à jour insère une dépendance entre les deux couches.
 Après apprentissage, il est possible de couper les entrées externes d'une des cartes, mais de toujours pouvoir l'activer grâce à la seconde. Le BMU d'une telle carte est alors calculé comme le maximum de l'activité contextuelle $a_c$. Cette activation permet alors de générer des prédictions entre modalités.
 
 \begin{figure}
     \centering\includegraphics[width=\textwidth]{ASOM.pdf}
-    \caption{Le modèle A-SOM \cite{johnsson_associative_2009} associe les activités de différentes cartes. Chaque ASOM prend une entrée modale $X_1$ et $X_2$. Chacune des cartes possède deux couches de poids, une couche $\w_e$ associée aux entrées modales et une couche $\w_c$ associées aux entrées $X_c$ venant de l'autre carte. Lors de l'apprentissage, le calcul des activités sur chaque couche de poids est déconnecté, ce qui permet de gérer les rétroactions. 
+    \caption{Le modèle A-SOM \cite{johnsson_associative_2009} associe les activités de différentes cartes. Chaque ASOM prend une entrée modale $X_1$ et $X_2$. Chacune des cartes possède deux couches de poids, une couche $\w_e$ associée aux entrées modales et une couche $\w_c$ associées aux entrées $\inpc$ venant de l'autre carte. Lors de l'apprentissage, le calcul des activités sur chaque couche de poids est déconnecté, ce qui permet de gérer les rétroactions. 
     Après apprentissage, une des entrées est coupées. L'activation de cette carte est alors permise par les connexions contextuelles, amenant la carte à prédire une entrée. Les cartes sont représentées en version 1D pour plus de clarté, mais le modèle utilise des cartes 2D.
     \label{fig:asom}}
 \end{figure}
@@ -607,8 +604,8 @@ Dans le modèle Bijama, un neurone d'une carte est composé de plusieurs étages
 Un poids dit thalamique est relatif à l'entrée sensorielle du neurone, c'est-à-dire l'entrée $\inpx$.
 Des poids corticaux sont quant à eux relatifs aux connexions venant des neurones des autres cartes de l'architecture.
 
-Dans le modèle Bijama, chaque neurone d'une carte est connecté via sa couche corticale à une rangée de neurones d'une carte modale. Cela revient donc à la transmission de champs d'activation entre cartes.
-La mise à jour dans ce cas est asynchrone~: les connexions entre neurones génèrent la mise à jour des paramètres du neurone. Contrairement aux modèles précédemment présentés, l'activité prise en compte lors des connexions neuronales est l'activité globale du neurone. Le calcul de l'activité du neurone de la première carte dépend de l'activation des neurones de la deuxième, qui dépendent de l'activité de la première.
+Dans le modèle Bijama, présenté en figure~\ref{fig:bijama}, chaque neurone d'une carte est connecté via sa couche corticale à une rangée de neurones d'une carte modale. Cela revient donc à la transmission de champs d'activation entre cartes.
+La mise à jour est asynchrone~: les connexions entre neurones génèrent la mise à jour des paramètres du neurone. Contrairement aux modèles précédemment présentés, l'activité prise en compte lors des connexions neuronales est l'activité globale du neurone. Le calcul de l'activité du neurone de la première carte dépend de l'activation des neurones de la deuxième, qui dépendent de l'activité de la première.
 Cette rétroaction est gérée en introduisant un mécanisme de relaxation dynamique dans le calcul des activations, inspirée des réseaux de Hopfield~\cite{Hopfield1982NeuralNA}.
 Les activités étant calculée de façon asynchrone, la présentation d'une entrée induit un processus dynamique de calcul d'activité au sein des neurones, au cours duquel les entrées thalamiques restent inchangées et les activités des neurones évoluent vers un état limite stable. Cette dynamique est appelée relaxation.
 Rappelons que dans un processus dynamique, l'état du système évolue vers un point ou un ensemble de points des variables d'état, définissant un attracteur. Cet attracteur est qualifié de point fixe lorsque l'attracteur est un point. Une fois sa valeur atteinte, l'état du système reste fixe. L'attracteur est un cycle limite lorsque les variables d'état prennent successivement une même série de valeurs, montrant un comportement cyclique. Autrement, l'attracteur est chaotique~: le système n'exhibe pas de comportement périodique.
@@ -638,10 +635,11 @@ Ce modèle permet alors d'apprendre des séquences d'entrée. Alors qu'une carte
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\textwidth]{bijama_002.pdf}
+    \includegraphics[width=\textwidth]{bijama_002.pdf}
     \caption{Exemple d'architecture construite avec le modèle Bijama~\cite{menard05}.
-    Chaque neurone d'une carte reçoit une entrée sensorielle $X\m{1}$ et des entrées corticales. Dans cet exemple, deux cartes reçoivent des entrées sensorielles et corticales, et la troisième reçoit seulement des entrées corticales.
-    Les activités corticales correspondent aux activités globales $a_g(p)$ des neurones situées dans une bande de même position dans la carte voisine, comme présenté figure de gauche, l'activité globale étant une moyenne géométrique des activités sensorielles et corticales d'un neurone.
+    Chaque neurone d'une carte reçoit une entrée sensorielle $X\m{1}$ et des entrées corticales, indiquées figure de gauche.
+    Dans cet exemple, deux cartes reçoivent des entrées sensorielles et corticales, et la troisième reçoit seulement des entrées corticales.
+    Les activités corticales correspondent aux activités globales $a_g(p)$ des neurones situées dans une bande de même position dans la carte voisine, en gris dans la figure centrale. L'activité globale est une moyenne géométrique des activités sensorielles et corticales d'un neurone.
     Trois connexions sont représentées sur le schéma, mais tous les neurones reçoivent des connexions.
     La rétroaction entre les activités neuronales induit un phénomène dynamique de relaxation au sein de l'architecture, au cours duquel les entrées sensorielles restent inchangées et les activités globales des neurones évoluent vers un état limite stable. \label{fig:bijama}}
 \end{figure}
@@ -741,6 +739,8 @@ Enfin, nous pouvons revenir sur les travaux menés précédemment dans notre éq
 \cite{khouzam_neural_2014} utilise le modèle Bijama, permettant de construire des architectures de cartes auto-organisatrices cellulaires, dans un cadre de traitement de séquences.
 Les connexions corticales des neurones proviennent alors des activités des neurones de cette même carte au pas de temps précédent.
 Le modèle à base de cartes auto-organisatrices classiques proposé en \cite{baheux_towards_2014} que nous avons décrit plus haut s'inscrit également dans un cadre de traitement de séquence. Le modèle montre qu'une carte de Kohonen au sein d'une architecture récurrente permet de différencier les BMUs d'une carte non seulement en fonction de la valeur de l'entrée mais également en fonction de la position dans la séquence. Ces résultats sont similaire à ce qu'on obtient avec une carte récurrente s'appuyant sur la transmission du BMU, sans relaxation, décrite par exemple en \cite{fix20}. La transformation du modèle récurrent en modèle multi-cartes montre la similarité existant entre récurrence et multimodalité et la possibilité d'inclusion de connexions récurrentes au sein d'un modèle multi-cartes.
+
+
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{GWR.pdf}
