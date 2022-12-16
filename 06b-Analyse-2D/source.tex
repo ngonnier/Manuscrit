@@ -1,0 +1,93 @@
+\documentclass[../main]{subfiles}
+\ifSubfilesClassLoaded{
+    \dominitoc
+    \tableofcontentsfile
+	\pagenumbering{arabic}
+    \setcounter{page}{1}
+}{}
+\begin{document}
+\graphicspath{{06-Analyse/figures},{../06-Analyse/figures}}
+
+\chapter{Extension aux cartes en deux dimensions}
+
+Nous avons étudié des comportements de base de cartes 1D sur des données en une dimension. Afin de généraliser le modèle à des données en dimension supérieures, nous avons cherché à observer ses propriétés d'auto-organisation, d'apprentissage et de prédiction sur des cartes en deux dimensions apprenant sur des données géométriques en 2D.
+Les comportements d'une architecture de carte ont été mis en lumière sur des cartes 1D et des entrées 1D. Nous présentons dans cette section les comportements observés sur une architecture de deux cartes de type grille en deux dimensions. 
+
+\subsection{Entrées}
+
+Nous travaillons à présent sur des entrées en deux dimensions. Pour analyser un cas géométrique similaire au cas en une dimension, les entrées sont des points en 4 dimensions pour une structure de 2 cartes, 6 dimensions pour 3 cartes. Ces points sont situés sur une sphère 3D dont on a effectuée une rotation dans l'espace de plus haute dimension, de la même façon que les entrées en 3D se trouvaient sur un cercle 2D dont on a effectué une rotation dans l'espace, voir figure~\ref{fig:sphere_inputs}. La variable $U$ paramétrant cette surface est en deux dimensions.
+Comme pour les entrées prises sur une courbe, nous normalisons les entrées entre 0 et 1 sur chaque dimension, entrainant une légère déformation de la courbe.
+Nous prenons une architecture de deux cartes, prenant chacune une paire de dimensions du point en 4D (respectivement 6D).
+
+Nous comparerons les résultats obtenus sur cette disposition d'entrées à ceux obtenus sur des entrées indépendantes prises dans $[0,1]^4$. 
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{sphere_inputs.pdf}
+	\caption{Transformation d'une surface d'un espace 3D en surface dans un espace 4D ou 6D. Les points restent positionnés sur une surface, mais sont plongés dans un espace de plus grande dimension. La rotation permet de répartir les coordonnées des points sur les dimensions. \label{fig:sphere_inputs}}
+\end{figure}
+
+\subsection{Résultats}
+
+Dans ces deux expériences, nous prenons des cartes 2D de taille $100x100$ prenant chacune des entrées 2D. Chacune des cartes est connectée à l'autre. Chaque carte a donc une couche de poids $\w\ext$ en deux dimensions, se dépliant sur les entrées externes, et une couche de poids contextuels $\w_c$, apprenant dans l'espace des positions de l'autre carte, donc en deux dimensions. Toutes les entrées sont normalisées.
+Afin d'accélérer le processus d'apprentissage, nous effectuons d'abord quelques itérations pendant lesquelles les poids externes sont mis à jour en ne prenant en compte que l'entrée externe. Nous prendrons, sauf si mention contraire, $r_e = 0.2$ et $r_c = 0.05$. 
+
+Comme les entrées externes sont en deux dimensions, nous pouvons tracer la disposition de la grille dans l'espace des entrées.
+Cette représentation est tracée en figure~\ref{fig:2som_cub_we}~; chaque point $p$ de la carte est positionné en $\w_e(p)$. Nous préférons utiliser une représentation à l'aide d'une carte de coloration pour les poids contextuels en figure~\ref{fig:2som_cub_wc}. Le pixel situé à la position $p$ sur l'image prend la couleur correspondant à la valeur de son poids contextuel $w_c$, définie par la carte de coloration tracée sur la figure.
+Cette représentation est similaire à celle utilisée en une dimension et permet de faire apparaître clairement des motifs dans la disposition des poids.
+Tracer les poids nous permet ici de comparer l'organisation d'une carte à celle observée en une dimension. Nous soulignons cependant que cette représentation ne permet pas de détecter quelles unités sont effectivement BMU lors d'un test.
+
+Les poids contextuels ayant appris sur des entrées indépendantes font apparaître des motifs auto-organisés dans leur disposition. Les motifs sont similaires sur les deux cartes, traduisant un aspect systématique et non aléatoire. Nous avons également remarqué que la taille des motifs dépend de la valeur du rayon de voisinage contextuel.
+Néanmoins, les poids restent centrés autour de $0.5$~: les points représentés en rouge sur la carte de coloration sont les valeurs effectivement prises par les poids contextuels des deux cartes. Pourtant, les positions des BMUs de chaque carte observées lors d'un test s'étendent bien sur toute la surface d'une carte.
+Ce comportement rappelle le cas en une dimension. Des architectures de 4 cartes apprenant sur 4 entrées 1D indépendantes voient également leurs poids contextuels se moyenner. Ce comportement est à voir comme une limite des architectures de cartes, mais cette limitation est générale à des cartes une et deux dimensions. 
+
+
+En figures~\ref{fig:2som_s_we} et \ref{fig:2som_s_wc}, nous effectuons les mêmes tracés que précédemment, sur des cartes ayant appris sur une sphère en trois dimensions plongée dans un espace en 4D et pivotée. $U$ est alors en deux dimensions.
+Nous remarquons également la présence de motifs dans l'organisation des poids contextuels. Cette fois, les poids prennent bien des valeurs s'étendant sur toute la surface d'une carte.
+Cependant, nous n'avons pas la certitude que cette disposition correspond à une position de convergence des poids. 
+La taille des motifs dépend de la valeur de $r_c$. Nous comparons ainsi en figure~\ref{fig:2som_s_comp} les motifs obtenus sur une disposition de sphère, pour un rayon de voisinage correspondant à $r_c = 0.02$. Les motifs formés sont différents.
+
+
+
+\begin{figure}
+	\begin{minipage}{\textwidth}
+		\centering\includegraphics[width=0.7\textwidth]{2SOM_CUB_we_199999.pdf}
+		\label{fig:2som_cub_we}
+	\end{minipage}
+	\begin{minipage}{\textwidth}
+		\includegraphics[width=\textwidth]{2SOM_CUB_wc_199999_v2.pdf}
+		\caption{En haut: poids externes des cartes $M\m{1}$ et $M\m{2}$ représentés sous forme de distorsion de la carte après 200000 itérations.
+	En bas: poids contextuels des cartes pour la même itération, représentés sous forme de carte de couleur en deux dimensions. Un pixel situé à la position $p_i,p_j$ prend comme couleur correspondante la valeur 2D de son poids contextuel, associé à une couleur par la carte de coloration représentée à droite de la figure.
+	Les points rouges indiqués sur la carte de coloration sont les valeurs effectivement prises par toutes les valeurs de $\w_c^{(1)}$ et $\w_c^{(2)}$. On remarque donc que les poids contextuels ne se déplient pas sur toutes les valeurs prises par les BMUS.\label{fig:2som_cub_wc}}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+	\begin{minipage}{\textwidth}
+		\centering\includegraphics[width=0.7\textwidth]{2SOM_sphere_wc_249999.pdf}
+		\label{fig:2som_s_we}
+	\end{minipage}
+	\begin{minipage}{\textwidth}
+		\includegraphics[width=\textwidth]{2SOM_sphere_we_249999.pdf}
+		\caption{En haut: poids externes des cartes $M\m{1}$ et $M\m{2}$ représentés sous forme de distortion de la carte après 200000 itérations.
+		En bas: poids contextuels des cartes pour la même itération, représentés sous forme de carte de couleur en deux dimensions. Un pixel situé à la position $p_i,p_j$ prend comme couleur correspondante la valeur 2D de son poids contextuel, associé à une couleur par la carte de coloration représentée à droite de la figure.
+		Les points rouges indiqués sur la carte de coloration sont les valeurs effectivement prises par toutes les valeurs de $\w_c^{(1)}$ et $\w_c^{(2)}$. On remarque donc que les poids contextuels ne se déplient pas sur toutes les valeurs prises effectivement par les BMUS.
+		\label{fig:2som_s_wc}}
+	\end{minipage}
+\end{figure}
+
+
+\begin{figure}
+	\begin{minipage}{\textwidth}
+		\centering\includegraphics[width=0.7\textwidth]{3SOM_S_we_239999.pdf}
+	\end{minipage}
+	\begin{minipage}{\textwidth}
+		\includegraphics[width=\textwidth]{3SOM_S_wc_239999.pdf}
+		\caption{}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{zclosed-1-239999_error.pdf}
+\caption{Tracé de l'erreur de prédiction $\w_e\m{1}(X\m{1})$ en fonction de la valeur théorique de $X^{(1)}$, non présentée à l'architecture, dans une architecture de trois cartes 2D prenant des entrées $X^{(i)}$ en deux dimensions $[X^{(i)}_0, X^{(i)}_1]$. Nous traçons sur une ligne, pour chaque entrée, les dépendances entre chacune des dimensions.
+Lorsque la carte $M^{(1)}$ ne reçoit pas d'entrée externe. Les cartes $M^{(2)}$ et $M^{(3)}$ ayant une activité externe, le graphique montre que la quantification vectorielle est bien réalisée dans ces cartes. La carte $M^{(1)}$ est uniquement activée par les connexions contextuelles venant de $M^{(2)}$ et $M^{(3)}$. La figure du haut montre que la prédiction est correctement réalisée.}
+\end{figure}

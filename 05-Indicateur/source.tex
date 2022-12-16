@@ -8,7 +8,7 @@
 }{}
 \begin{document}
 \chapter{Indicateurs statistiques de l'apprentissage des données multimodales\label{chap:indicateur}}
-\graphicspath{{05-Indicateur/},{./figures/}}
+\graphicspath{{05-Indicateur/figures},{./figures/}}
 \minitoc
 
 Dans le chapitre précédent, nous avons présenté différents tracés permettant d'évaluer comment l'architecture de cartes extrait une représentation interne du modèle d'entrée lors de l'apprentissage sur des cartes et données en une dimension.
@@ -44,6 +44,7 @@ Il est défini par~:
 \begin{equation}
     \eta(Y;X) = 1 - \frac{\mathbb{E}(Var(Y|X)))}{Var(Y)}
 \end{equation}
+
 Nous détaillerons le calcul de ce coefficient dans la suite de ce chapitre. Notons seulement que la fonction $\varphi(x) = \mathbb{E}(Y|X = x)$, utilisée pour le calcul de $Var(Y|X)$, est la fonction approximant le mieux les valeurs des paires $(X,Y)$ au sens des moindres carrés. Cette fonction est tracée en rouge sur la figure~\ref{fig:signaux}
 Le ratio de corrélation mesure alors la qualité de cette approximation. Il vaut 1 si $Y$ est une fonction de $X$ et 0 si les variables sont complètement indépendantes. 
 
@@ -53,7 +54,9 @@ Elle évalue une relation quelconque et non seulement fonctionnelle entre les di
 Nous avons remarqué dans les cas d'exemples présentés au chapitre précédent que l'apprentissage du modèle se traduit par une relation fonctionnelle entre les valeurs de $U$ et la position du BMU $\Pi$ dans chaque carte. 
 Nous cherchons dans ce chapitre à définir des indicateurs de l'apprentissage du modèle par les cartes. Le ratio de corrélation, qui permet de mesurer une relation fonctionnelle quelconque entre deux variables apparaît comme un indicateur pertinent de cet apprentissage.
 
-D'autre part, l'information mutuelle mesure également l'existance d'une relation fonctionnelle entre deux variables aléatoire, étant donné qu'elle vaut 1 lorsqu'il existe une bijection entre $X$ et $Y$. L'hypothèse que l'apprentissage du modèle se traduit dans chaque carte par le fait que $U$ est une fonction du BMU dans chaque carte reste à vérifier, en particulier en dimension supérieure à 1. Le calcul de l'information mutuelle entre les éléments de réponse d'une carte et ses entrées est pertinent à explorer. L'information mutuelle est largement utilisée comme métrique, indicateur ou fonction de cout dans de nombreux domaines~: ainsi, un grand nombre de méthodes d'estimation existent pour son calcul sur des données statistiques. L'information mutuelle n'est pas normalisée, mais il en existe des variantes normalisées que nous présenterons et utiliserons dans ce chapitre. 
+D'autre part, l'information mutuelle mesure également l'existence d'une relation fonctionnelle entre deux variables aléatoire, étant donné qu'elle vaut 1 lorsqu'il existe une bijection entre $X$ et $Y$.
+L'hypothèse que l'apprentissage du modèle se traduit dans chaque carte par le fait que $U$ est une fonction du BMU dans chaque carte reste à vérifier, en particulier en dimension supérieure à 1. Le calcul de l'information mutuelle entre les éléments de réponse d'une carte et ses entrées est pertinent à explorer pour compléter la compréhension du modèle. L'information mutuelle est par ailleurs largement utilisée comme métrique, indicateur ou fonction de coût dans de nombreux domaines, donc un grand nombre de méthodes d'estimation et d'implémentation existent pour son calcul sur des données statistiques.
+L'information mutuelle n'est pas normalisée, mais il en existe des variantes normalisées que nous présenterons et utiliserons dans ce chapitre. 
 
 \begin{figure}
     \includegraphics[width=\textwidth]{mi_cr.pdf}
@@ -65,9 +68,106 @@ D'autre part, l'information mutuelle mesure également l'existance d'une relatio
 %     \item Information mutuelle : mesure une relation statistique quelconque. Largement utilisé, donc de nombreuses méthodes fiables d'estimation existent, y compris pour des dimensions supérieures. Normalisation possible pour définir un indicateur compris entre 0 et 1. Est maximale lorsque qu'il existe une bijection entre les deux variables, ce qui est ce qu'on veut mesurer.
 % \end{itemize}
 
-Nous choisissons d'utiliser deux indicateurs. 
-Le premier s'appuie sur l'information mutuelle, que nous avons publié en \cite{Gonnier2020ConsensusDS}. Cet indicateur permet de mesurer une dépendance fonctionnelle entre les deux variables mais dépend beaucoup de la méthode d'estimation utilisée et est limité si $U$ est de grande dimension.
-Ensuite, nous présenterons un indicateur s'appuyant sur le ratio de corrélation, qui répond plus spécifiquement à nos besoins lorsque les cartes sont en une dimension. 
+Nous choisissons d'utiliser deux indicateurs.
+Nous présenterons d'abord un indicateur s'appuyant sur le ratio de corrélation, qui répond spécifiquement à nos besoins lorsque les cartes sont en une dimension. 
+Nous explorons ensuite un indicateur s'appuyant sur l'information mutuelle, que nous avons publié en \cite{Gonnier2020ConsensusDS}.  
+Cet indicateur permet de mesurer une dépendance fonctionnelle entre les deux variables mais dépend beaucoup de la méthode d'estimation utilisée et est limité si $U$ est de grande dimension. L'estimation de l'in
+
+\section{Utilisation du ratio de corrélation comme mode d'évaluation}
+
+Mesurer l'information mutuelle entre la distribution de l'entrée $U$ et les distributions des BMUs est très dépendante des paramètres d'estimations. Dans l'optique d'une utilisation en plus grande dimension, cette mesure n'est pas satisfaisante. Comme nous cherchons simplement à vérifier une dépendance fonctionnelle entre $U$ et les positions du BMU, nous revenons à une métrique s'appuyant sur une régression.
+
+Nous cherchons à mesurer la dépendance fonctionnelle existant entre la variable $\bmu\m{i}$, les positions du BMU d'une carte, et la variable $U$ décrivant le modèle.
+Le ratio de corrélation $\eta(\bmu\m{i},U)$ permet de mesurer un coefficient de dépendance non-linéaire entre deux variables, ce qui correspond à une relation fonctionnelle. Il atteint la valeur de 1 lorsque $U$ est fonction de la première variable $\bmu\m{i}$ et est nul lorsque les deux variables sont statistiquement indépendantes.
+
+
+\subsection{Définition}
+
+La mesure de la dépendance fonctionnelle entre deux variables $X$ et $Y$ peut se décomposer en deux étapes~:
+\begin{enumerate}
+    \item Trouver une fonction $\varphi(X)$ qui approxime les valeurs de $Y$
+    \item Mesurer la qualité de l'approximation.
+\end{enumerate}
+
+La fonction $y = f(x)$ approximant le mieux un ensemble de variables $(x,y)$ au sens des moindres carrés est la fonction~:
+\begin{equation}
+    \varphi(x) = \mathbb{E}(Y|X = x)
+\end{equation}
+
+Un exemple d'estimation de $\varphi(x)$ est illustré en figure~\ref{fig:cr_box}, estimé par discrétisation des valeurs de $X$. $\varphi(x)$ est une variable aléatoire à valeurs dans $X$.
+
+Le ratio de corrélation $\eta$ se définit à partir de $\varphi$ et mesure la qualité de l'approximation des valeurs de $Y$ par la fonction $\varphi$ au sens des moindres carrés en calculant la moyenne des variances de la variable $Y|X$ pour chaque valeur possible de $X$. 
+\begin{equation}\label{eq:cr}
+   \eta(Y;X) = 1 - \frac{\mathbb{E}(Var(Y|X))}{Var(Y)}
+\end{equation}
+$\mathbb{E}(Var(Y|X))$ représente la moyenne des écarts de $Y|X=x_i$ à sa valeur moyenne en $x_i$ $\mathbb{E}(Y|X=x_i)$ pour une valeur de $X = x_i$ donnée. 
+En effet, en notant $Z$ la variable aléatoire $Y | X=x_i$~: 
+$$ Var(Y|X=x_i) = \mathbb{E}((Z - \mathbb{E}(Z))^2)$$
+$$ Var(Y|X=x_i) = \mathbb{E}((Z - \varphi(x_i))^2)$$
+
+Lorsque la dépendance entre $Y$ et $X$ est fonctionnelle, les valeurs de $Y|X = x_i$ sont très proches de $\varphi(x_i)$  pour toutes les valeur de $x_i$ et $\mathbb{E}(Var(Y|X=x_i))$ est faible partout. La variance est nulle lorsqu'une valeur de $X$ correspond à un seul point pour $Y$, c'est-à-dire une relation fonctionnelle. 
+Inversement, quand $Y$ et $X$ sont indépendantes, $Var(Y|X=x_i) = Var(Y)$ pour tout $x_i$, donc $\mathbb{E}(Var(Y|X)) = Var(Y)$ et $\eta(Y;X) = 0$.
+
+La définition du coefficient se retrouve souvent sous une forme modifiée de l'équation~\ref{eq:cr}~:
+par la définition des variances conditionnelles,
+$$Var(Y) = \mathbb{E}(Var(Y|X)) + Var(\mathbb{E}(Y|X))$$
+Soit~:
+\begin{equation}
+    \eta(Y;X) = \frac{Var(\mathbb{E}(Y|X))}{Var(Y)}
+\end{equation}
+
+Le ratio de corrélation n'est pas symétrique. 
+Par le fait qu'il s'appuie sur un rapport, il n'est pas sensible à une transformation linéaire de $Y$ et est sans unité.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{boxes_CR.pdf}
+    \caption{Exemple d'approximation non-linéaire de la relation entre $X$ et $Y$ par $\mathbb{E}(Y|X)$. Cette approximation est ici réalisée en discrétisant les valeurs de $X$. La valeur de la fonction pour chaque $x_i$ est alors la moyenne des valeurs de $Y$ sur l'intervalle considéré.\label{fig:cr_box}}
+\end{figure}
+
+\subsection{\'Evolution du ratio de corrélation au cours de l'apprentissage des cartes CxSOM}
+
+Nous utilisons le ratio de corrélation pour mesurer la dépendance fonctionnelle existant dans chaque carte entre les valeurs de $U$ et l'ensemble des BMU d'une carte $\bmu\m{i}$.
+Les valeurs $\bmu\m{1}$ et $\bmu\m{2}$ étant des valeurs discrètes, $\mathbb{E}(U|\bmu\m{i})$ est estimée par la moyenne des valeurs de $U$ ayant pour BMU la même valeur $\bmu\m{i}$. 
+En figure~\ref{fig:cr_xp}, nous traçons les distributions de $U$ en fonction de $\bmu\m{1}$ et $\bmu\m{2}$, dans le cas de l'architecture CxSOM et des cartes simples. Nous y représentons la fonction $\mathbb{E}(U|\bmu\m{i})$ en rouge.
+Le ratio de corrélation apparaît ici comme une bonne mesure de la relation fonctionnelle existant entre $U$ et $\bmu$. Le ratio de corrélation est très proche de 1 dans chaque carte de CxSOM, traduisant le fait que $U$ est une fonction du BMU dans chaque carte.
+
+La figure~\ref{fig:cr_bruit} présente les mêmes paramètres tracés dans le cas ou l'expérience est réalisée sur des données bruitées, en l'occurence un anneau. $U$ n'est alors plus vraiment une fonction du BMU, mais en reste proche. 
+Le ratio de corrélation traduit correctement cette proximité et reste plus élevé dans chaque carte que pour une carte seule.
+
+Enfin, nous traçons en figure~\ref{fig:cr_evol} l'évolution du ratio de corrélation sur les 200 premiers pas d'apprentissage de deux cartes sur un cercle, connectées et non connectées. Les mesures sont réalisées sur 10 expériences réalisées sur des distributions d'entrées identiques et moyennées.
+Nous remarquons que $\eta$ reste inférieur dans le cas ou les cartes sont connectées que non connectées. 
+Remarques:
+\begin{itemize}
+    \item Semble rester a peu près constant pendant tout l'apprentissage. Traduit le fait que dès le début de l'apprentissage, la relaxation différencie les BMUs en fonction des deux valeurs d'entrées, même quand les poids ne sont pas organisés.
+    \item Pas d'information sur l'organisation topologique des poids ici: le coefficient ne traduit pas l'organisation de la carte.
+    \item Grande variabilité de la valeur de $\eta$ entre les expériences, traduite ici par l'écart à la moyenne.
+    \item On voit qu'entre la carte $M\m{1}$ et $M\m{2}$, $\eta$ prend une valeur bien différente, alors que la qualité de la relation est semblable. On peut donc difficilement utiliser $\eta$ de façon absolue, mais plutôt pour comparer des valeurs.
+\end{itemize}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{correlation_ratio_xp0.pdf}
+    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples \label{fig:cr_xp}}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{correlation_ratio_anneau_xp0.pdf}
+    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples dans le cas ou les données sont bruitées.\label{fig:cr_bruit}}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{correlation_ratio_evolution_totale.pdf}
+    \caption{Evolution du ratio de corrélation pendant l'apprentissage des cartes\label{fig:cr_evol}}
+\end{figure}
+
+\subsection{Discussion}
+Bonne mesure de la relation existant entre $U$ et $\bmu$
+Variable BMU discrète, variable U peut être continue
+Très bien pour des dimensions plus grandes.
+
+A mettre dans conclu générale: 
+Néanmoins, il est montré (?) que  les variables restent sur des manifolds de dimension réduite - d'ou déjà l'intéret des cartes de kohonen et que ca marche. Donc les calculs de discretisation n'augmenteront pas de facon explosive au cours des dimensions ....
+
 
 \section{Utilisation du coefficient d'incertitude comme indicateur de la relation entre $U$ et $\bmu$}
 
@@ -78,36 +178,61 @@ L'entropie de Shannon d'une variable aléatoire $X$ à valeurs discrètes dans u
 H(X) = - \sum_{x \in E_X}{P_X(x)\textrm{log}(P_X(x))}
 \end{equation}
 
-Elle se mesure en $bit/symbole$ lorsque le logarithme est en base 2, ce qui est généralement utilisé. 
-L'entropie est une mesure de la quantité d'incertitude, ou de surprise, sur la valeur de la variable aléatoire $X$. Si la la distribution de probabilité de $X$ est concentrée autour d'un point, l'entropie est faible : lors d'une réalisation de $X$, l'observateur est \emph{plutôt certain} du résultat. En revanche, l'entropie est maximale lorsque $X$ suit une distribution de probabilité uniforme.
-L'entropie s'interprète également comme la quantité moyenne d'information à fournir, en bits, pour coder la valeur que prend la variable $X$.
+Remarquons que l'entropie de Shannon concerne des variables discrètes uniquement.
+Shannon a cependant proposé une autre version de l'entropie est définie pour des variables continues, l'entropie différentielle~:
+\begin{equation}
+    H(X) = - \int_{x \in E_X}{p_X(x)\textrm{log}(p_X(x))dx}
+\end{equation}
+Avec $p_X$ la densité de probabilité de $X$.
+    
+Cette valeur n'est cependant pas la limite de l'entropie de Shannon calculée par discrétisation de $X$ en $N$ intervalles, $N \rightarrow \infty$.
+L'entropie différentielle et l'entropie de Shannon sont donc deux quantités bien différentes.
+
+L'entropie de Shannon se mesure en $bit/symbole$ (pour un logarithme en base 2)
+L'entropie est une mesure de la quantité d'incertitude, ou de surprise, sur la valeur de la variable aléatoire $X$. Si la distribution de probabilité de $X$ est concentrée autour d'un point, l'entropie est faible : lors d'une réalisation de $X$, l'observateur est \emph{plutôt certain} du résultat. En revanche, l'entropie est maximale lorsque $X$ suit une distribution de probabilité uniforme.
+L'entropie s'interprète également comme la quantité moyenne d'information à fournir, en bits, pour coder une valeur de $X$.
 De la même manière, on peut définir l'entropie conjointe de deux variables, qui est l'entropie de leur distribution jointe, et l'entropie conditionnelle, qui est l'entropie de leurs distributions conditionnelles.
 
-Outre les entropies jointes et conditionnelles, l'existence d'une relation statistique entre deux variables aléatoires $X,Y$ à valeurs dans $E_X,E_Y$ se mesure par \emph{l'information mutuelle}. Elle se définit formellement par : 
+Outre les entropies jointes et conditionnelles, l'existence d'une relation statistique entre deux variables aléatoires $X,Y$ à valeurs dans $E_X,E_Y$ se mesure par \emph{l'information mutuelle}.
+Elle est définie par : 
 \begin{equation}
  I(X,Y) = \sum_{x,y \in E_X,E_Y}{P_{XY}(x,y)\textrm{log}(\frac{P_{XY}(x,y)}{P_X(x)P_Y(y)})}
 \end{equation}
+Avec $P_XY$ la distribution de la variable aléatoire jointe $(X,Y)$
 Cette valeur mesure la quantité d'information moyenne partagée entre les distributions $X$ et $Y$~: en moyenne, quelle information sur la valeur de $Y$ donne une valeur de $X$ et inversement, quelle information sur la valeur de $X$ donne une valeur de $Y$.
+
+L'information mutuelle se calcule également à partir des densités de probabilité pour des variables à valeur continues de densités de probabilité $p_X$ et $p_Y$~:
+
+\begin{equation}
+    I(X,Y) = \int_{x \in E_X}\in _ {y \in E_Y }{p_{XY}(x,y)\textrm{log}(\frac{p_{XY}(x,y)}{p_X(x)p_Y(y)})dx \: dy}
+\end{equation}
+
+Contrairement à l'entropie, la valeur de l'information mutuelle pour des variables continues correspond bien à une limite des valeurs de l'information mutuelle discrète, pour un nombre de catégories tendant vers l'infini.
 
 L'information mutuelle possède les propriétés suivantes~:
 \begin{enumerate}
 \item $I(X,Y) = 0 \Leftrightarrow \textrm{X et Y sont indépendantes}$. L'information mutuelle peut être vue une mesure de la distance entre la distribution jointe de $(X,Y)$, $P(X,Y)$ et la distribution correspondant à l'indépendance des variables, $P(X)P(Y)$.
-\item Elle s'exprime à partir de l'entropie : $I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$
+\item Elle s'exprime à partir de l'entropie de Shannon : $I(X,Y) = H(X) + H(Y) - H(X,Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$
 \item Elle est symétrique : $I(X,Y) = I(Y,X)$
 \item Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y))$. L'égalité est atteinte si et seulement si $f$ est \emph{bijective}.
 \end{enumerate}
+
+Ces propriétés restent vraies pour des variables continues, en prenant $H$ l'entropie différentielle.
 
 Lors de l'analyse de CxSOM, on s'interroge sur l'information que portent les positions des BMUs $\bmu$ d'une carte sur le modèle d'entrée.
 Les éléments de la carte ont été définis en termes statistiques~; on peut donc utiliser l'information mutuelle comme une représentation de l'information partagée entre la position du BMU d'une carte et la variable paramétrant le modèle d'entrée, $U$.
 
 \subsection{Définition de l'indicateur}
 
-Nous cherchons à définir un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes. D'après les observations mentionnées ci-dessus, l'existence d'un apprentissage du modèle complet se traduit par le fait que $U$ est une fonction de $\bmu$ \emph{dans chacune des cartes}.
-Nous choisissons donc de définir un indicateur mesurant à quel point la variable cachée équivalente au modèle d'entrée, $U$, est une fonction de la position du BMU $\bmu$ correspondante.
-Dans l'exemple, $U$ est en une dimension pour des entrées 2D $(\inpx\m{1},\inpx\m{2})$.
-Nous attendons que cet indicateur prenne une valeur minimale lorsque $U$ n'a aucune relation avec $\bmu$, et augmente jusqu'à une valeur maximale lorsque $U$ est fonction de $\bmu$. Afin de pouvoir comparer les expériences entre elles, nous voulons définir un indicateur normalisé, dont la valeur est donc comprise entre $0$ et $1$.
+Nous cherchons à définir un indicateur permettant d'évaluer l'apprentissage du modèle par l'architecture de cartes. D'après les observations réalisées sur des cartes en une dimension, l'existence d'un apprentissage du modèle complet par une carte se traduit par le fait que $U$ est une fonction de $\bmu$ \emph{dans chacune des cartes}.
+Le ratio de corrélation nous permet de mesurer cette dépendance fonctionnelle. Toutefois, son estimation ne prend pas en compte la continuité des valeurs de $p$.
 
-Nous pouvons utiliser l'\emph{information mutuelle} $I(\bmu, U)$ pour évaluer l'information qu'une position du BMU d'une carte porte en moyenne sur la valeur de $U$, et $U$ sur le BMU.
+\cite{ShwartzZiv2017OpeningTB} : emploi de IM pour évaluer des autoencoders.
+
+% Dans l'exemple, $U$ est en une dimension pour des entrées 2D $(\inpx\m{1},\inpx\m{2})$.
+% Nous attendons que cet indicateur prenne une valeur minimale lorsque $U$ n'a aucune relation avec $\bmu$, et augmente jusqu'à une valeur maximale lorsque $U$ est fonction de $\bmu$. Afin de pouvoir comparer les expériences entre elles, nous voulons définir un indicateur normalisé, dont la valeur est donc comprise entre $0$ et $1$.
+
+L'\emph{information mutuelle} $I(\bmu, U)$ entre $U$ et le BMU d'une carte est une mesure plus générale permettant d'évaluer l'information qu'une position du BMU d'une carte porte en moyenne sur la valeur de $U$, et $U$ sur le BMU. Nous avons donc exploré son utilisation en terme d'évaluation du modèle.
 L'information mutuelle dépend de la quantité d'information portée par chaque distribution et se mesure en bit/symbole. Un indicateur normalisé nous permettra de comparer des expériences différentes. 
 
 Nous choisissons de normaliser l'information mutuelle $I(\bmu,U)$  par la valeur maximale qu'elle peut prendre dans une expérience de CxSOM. Cette valeur maximale atteinte par $I(\bmu,U)$ est $H(U)$, atteinte lorsque $U$ est une fonction de $\bmu$.
@@ -266,105 +391,6 @@ La comparaison de la valeur précise du coefficient d'intertitude, estimé par K
 \caption{Evolution de $UC(U|\bmu)$ dans chaque carte au long de l'apprentissage, estimé par la méthode de Kraskov.\label{fig:MI_evol_total}}
 
 \end{figure}
-
-\section{Utilisation du ratio de corrélation comme mode d'évaluation}
-
-
-Mesurer l'information mutuelle entre la distribution de l'entrée $U$ et les distributions des BMUs est très dépendante des paramètres d'estimations. Dans l'optique d'une utilisation en plus grande dimension, cette mesure n'est pas satisfaisante. Comme nous cherchons simplement à vérifier une dépendance fonctionnelle entre $U$ et les positions du BMU, nous revenons à une métrique s'appuyant sur une régression.
-
-Nous cherchons à mesurer la dépendance fonctionnelle existant entre la variable $\bmu\m{i}$, les positions du BMU d'une carte, et la variable $U$ décrivant le modèle.
-Le ratio de corrélation $\eta(\bmu\m{i},U)$ permet de mesurer un coefficient de dépendance non-linéaire entre deux variables, ce qui correspond à une relation fonctionnelle. Il atteint la valeur de 1 lorsque $U$ est fonction de la première variable $\bmu\m{i}$ et est nul lorsque les deux variables sont statistiquement indépendantes.
-
-
-\subsection{Définition}
-
-La mesure de la dépendance fonctionnelle entre deux variables $X$ et $Y$ peut se décomposer en deux étapes~:
-\begin{enumerate}
-    \item Trouver une fonction $\varphi(X)$ qui approxime les valeurs de $Y$
-    \item Mesurer la qualité de l'approximation.
-\end{enumerate}
-
-La fonction $y = f(x)$ approximant le mieux un ensemble de variables $(x,y)$ au sens des moindres carrés est la fonction~:
-\begin{equation}
-    \varphi(x) = \mathbb{E}(Y|X = x)
-\end{equation}
-
-Un exemple d'estimation de $\varphi(x)$ est illustré en figure~\ref{fig:cr_box}, estimé par discrétisation des valeurs de $X$. $\varphi(x)$ est une variable aléatoire à valeurs dans $X$.
-
-Le ratio de corrélation $\eta$ se définit à partir de $\varphi$ et mesure la qualité de l'approximation des valeurs de $Y$ par la fonction $\varphi$ au sens des moindres carrés en calculant la moyenne des variances de la variable $Y|X$ pour chaque valeur possible de $X$. 
-\begin{equation}\label{eq:cr}
-   \eta(Y;X) = 1 - \frac{\mathbb{E}(Var(Y|X))}{Var(Y)}
-\end{equation}
-$\mathbb{E}(Var(Y|X))$ représente la moyenne des écarts de $Y|X=x_i$ à sa valeur moyenne en $x_i$ $\mathbb{E}(Y|X=x_i)$ pour une valeur de $X = x_i$ donnée. 
-En effet, en notant $Z$ la variable aléatoire $Y | X=x_i$~: 
-$$ Var(Y|X=x_i) = \mathbb{E}((Z - \mathbb{E}(Z))^2)$$
-$$ Var(Y|X=x_i) = \mathbb{E}((Z - \varphi(x_i))^2)$$
-
-Lorsque la dépendance entre $Y$ et $X$ est fonctionnelle, les valeurs de $Y|X = x_i$ sont très proches de $\varphi(x_i)$  pour toutes les valeur de $x_i$ et $\mathbb{E}(Var(Y|X=x_i))$ est faible partout. La variance est nulle lorsqu'une valeur de $X$ correspond à un seul point pour $Y$, c'est-à-dire une relation fonctionnelle. 
-Inversement, quand $Y$ et $X$ sont indépendantes, $Var(Y|X=x_i) = Var(Y)$ pour tout $x_i$, donc $\mathbb{E}(Var(Y|X)) = Var(Y)$ et $\eta(Y;X) = 0$.
-
-La définition du coefficient se retrouve souvent sous une forme modifiée de l'équation~\ref{eq:cr}~:
-par la définition des variances conditionnelles,
-$$Var(Y) = \mathbb{E}(Var(Y|X)) + Var(\mathbb{E}(Y|X))$$
-Soit~:
-\begin{equation}
-    \eta(Y;X) = \frac{Var(\mathbb{E}(Y|X))}{Var(Y)}
-\end{equation}
-
-Le ratio de corrélation n'est pas symétrique. 
-Par le fait qu'il s'appuie sur un rapport, il n'est pas sensible à une transformation linéaire de $Y$ et est sans unité.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{boxes_CR.pdf}
-    \caption{Exemple d'approximation non-linéaire de la relation entre $X$ et $Y$ par $\mathbb{E}(Y|X)$. Cette approximation est ici réalisée en discrétisant les valeurs de $X$. La valeur de la fonction pour chaque $x_i$ est alors la moyenne des valeurs de $Y$ sur l'intervalle considéré.\label{fig:cr_box}}
-\end{figure}
-
-\subsection{\'Evolution du ratio de corrélation au cours de l'apprentissage des cartes CxSOM}
-
-Nous utilisons le ratio de corrélation pour mesurer la dépendance fonctionnelle existant dans chaque carte entre les valeurs de $U$ et l'ensemble des BMU d'une carte $\bmu\m{i}$.
-Les valeurs $\bmu\m{1}$ et $\bmu\m{2}$ étant des valeurs discrètes, $\mathbb{E}(U|\bmu\m{i})$ est estimée par la moyenne des valeurs de $U$ ayant pour BMU la même valeur $\bmu\m{i}$. 
-En figure~\ref{fig:cr_xp}, nous traçons les distributions de $U$ en fonction de $\bmu\m{1}$ et $\bmu\m{2}$, dans le cas de l'architecture CxSOM et des cartes simples. Nous y représentons la fonction $\mathbb{E}(U|\bmu\m{i})$ en rouge.
-Le ratio de corrélation apparaît ici comme une bonne mesure de la relation fonctionnelle existant entre $U$ et $\bmu$. Le ratio de corrélation est très proche de 1 dans chaque carte de CxSOM, traduisant le fait que $U$ est une fonction du BMU dans chaque carte.
-
-La figure~\ref{fig:cr_bruit} présente les mêmes paramètres tracés dans le cas ou l'expérience est réalisée sur des données bruitées, en l'occurence un anneau. $U$ n'est alors plus vraiment une fonction du BMU, mais en reste proche. 
-Le ratio de corrélation traduit correctement cette proximité et reste plus élevé dans chaque carte que pour une carte seule.
-
-Enfin, nous traçons en figure~\ref{fig:cr_evol} l'évolution du ratio de corrélation sur les 200 premiers pas d'apprentissage de deux cartes sur un cercle, connectées et non connectées. Les mesures sont réalisées sur 10 expériences réalisées sur des distributions d'entrées identiques et moyennées.
-Nous remarquons que $\eta$ reste inférieur dans le cas ou les cartes sont connectées que non connectées. 
-Remarques:
-\begin{itemize}
-    \item Semble rester a peu près constant pendant tout l'apprentissage. Traduit le fait que dès le début de l'apprentissage, la relaxation différencie les BMUs en fonction des deux valeurs d'entrées, même quand les poids ne sont pas organisés.
-    \item Pas d'information sur l'organisation topologique des poids ici: le coefficient ne traduit pas l'organisation de la carte.
-    \item Grande variabilité de la valeur de $\eta$ entre les expériences, traduite ici par l'écart à la moyenne.
-    \item On voit qu'entre la carte $M\m{1}$ et $M\m{2}$, $\eta$ prend une valeur bien différente, alors que la qualité de la relation est semblable. On peut donc difficilement utiliser $\eta$ de façon absolue, mais plutôt pour comparer des valeurs.
-\end{itemize}
-
-\begin{figure}
-    \includegraphics[width=\textwidth]{correlation_ratio_xp0.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples \label{fig:cr_xp}}
-\end{figure}
-
-\begin{figure}
-    \includegraphics[width=\textwidth]{correlation_ratio_anneau_xp0.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples dans le cas ou les données sont bruitées.\label{fig:cr_bruit}}
-\end{figure}
-
-\begin{figure}
-    \includegraphics[width=\textwidth]{correlation_ratio_evolution_totale.pdf}
-    \caption{Evolution du ratio de corrélation pendant l'apprentissage des cartes\label{fig:cr_evol}}
-\end{figure}
-
-\subsection{Discussion}
-Bonne mesure de la relation existant entre $U$ et $\bmu$
-Variable BMU discrète, variable U peut être continue
-Très bien pour des dimensions plus grandes.
-
-A mettre dans conclu générale: 
-Néanmoins, il est montré (?) que  les variables restent sur des manifolds de dimension réduite - d'ou déjà l'intéret des cartes de kohonen et que ca marche. Donc les calculs de discretisation n'augmenteront pas de facon explosive au cours des dimensions ....
-
-
-
 \section{Que nous apprend l'information mutuelle sur les données apprises par une carte de l'architecture ?}
 
 
@@ -379,6 +405,7 @@ Ainsi, l'utilisation de l'information mutuelle normalisée comme indicateur rest
 
 Parallèlement à la définition de cet indicateur, nous avons étudié l'évolution de la valeur exacte du coefficient d'incertitude lors de l'apprentissage d'une architecture de deux cartes de Kohonen. Cette valeur nous montre que CxSOM réalise un compromis lors de l'apprentissage de données: une carte de l'architecture perd de l'information sur son entrée externe par rapport à une carte simple apprenant sur les mêmes entrées, pour gagner de l'information sur le modèle global d'entrées. Finalement, la quantité d'information sur $U$ reste similaire dans le cas d'une carte simple ou d'une carte dans CxSOM, mais se répartit différemment.
 
+Nous considérons ici des représentations paramétriques d'un modèle d'entrée étant en bijection avec le modèle d'entrée. Si un seul des paramètres du modèle nous intéresse, les représentations et indicateurs proposées dans ce chapitre restent valables comme indicateur de l'apprentissage d'une relation entre entrée des cartes.
 
 Cette propriété reste à généraliser pour des distributions d'entrée différentes, comme les autres propriétés des cartes de CxSOM entrevues dans le chapitre précédent. La généralisation de toutes ces propriétés fera l'objet du chapitre suivant.
 Elle pose néanmoins une question concernant la création d'architectures contenant plus de cartes: jusqu'à quel point une carte peut-elle se permettre de perdre de l'information sur l'entrée externe pour gagner de l'information sur le modèle ? 
