@@ -27,6 +27,11 @@ Ce modèle est général~: au pire, $U$ correspond à la dimension totale des en
 Nous considérons d'abord des points liés par $U$ en une dimension, situés sur une courbe. 
 Nous choisissons dans cette section de s'intéresser à différents exemples de dispositions d'entrées.
 
+Ces dispositions sont les suivantes~:
+\begin{itemize}
+	\item 
+\end{itemize}
+
 Nous réutiliserons d'abord l'expérience présentée au chapitre représentation, sur des données disposée en cercle. L'intérêt de cette courbe est que la disposition est symétrique~: toute entrée $X^{(1)}$ correspond à deux valeurs possibles pour $X^{(2)}$ et inversement.
 Nous ferons varier cette propriété de dépendance en observant également le comportement de deux cartes sur des entrées identiques (cas dégénéré). Ces points sont toujours sur une courbe 1D, mais leur dépendance est bijective.
 Au contraire, nous étudierons le comportement des cartes sur des entrées totalement indépendantes, prises aléatoirement dans un carré $[0,1]^n$.
@@ -39,37 +44,10 @@ Nous étendons ensuite notre étude à des architectures de 3 cartes en une dime
 Dans ce cadre, nous réaliserons de la prédiction d'entrée par les cartes. Nous donnons en entrées $X\m{1}, X\m{2}$ à la structure et verrons si la valeur de $X\m{3}$ correspondante est correctement prédite. Une bonne prédiction témoignera de l'apprentissage du modèle d'entrées par l'architecture de cartes.
 
 
-\begin{figure*}
-	\begin{minipage}{\textwidth}
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{2som_id_in.pdf}
-			\caption{$X\m{1}$ = $X\m{2}$ \label{fig:id}}
-		\end{minipage}
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{2som_courbe000_inputs.pdf}
-			\caption{$X\m{2}$ = $cos(X\m{1})$ \label{fig:cos}}
-		\end{minipage}
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{lissa/inputs.pdf}
-			\caption{Courbe de lissajous}
-		\end{minipage}
-	\end{minipage}
-	\begin{minipage}{\textwidth}
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{2som_inp_noU.pdf}
-			\caption{Cercle \label{fig:cercle}}
-		\end{minipage}
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{2som_mix001_in.pdf}
-			\caption{Mix \label{fig:mix}}
-		\end{minipage}
-		\begin{minipage}{0.3\textwidth}
-			\includegraphics[width=\textwidth]{2som_square_in.pdf}
-			\caption{Carré \label{fig:mix}}
-		\end{minipage}
-	\end{minipage}
-	
-\end{figure*}
+\begin{figure}
+	\includegraphics[width=\textwidth]{inputs/inputs.pdf}
+	\caption{Dispositions d'entrées en deux dimensions étudiées dans la section suivante}
+\end{figure}
 
 \subsection{Matériel}
 
@@ -175,33 +153,13 @@ La figure \ref{fig:id_results} présente la disposition des poids et entrées de
 En figure~\ref{fig:cos_results}, la dépendance entre les entrées n'est plus bijective. $\inpx\m{2}$ est fonction de $\inpx\m{1}$~; de ce fait, la carte $M\m{1}$ ne forme pas de zones. Au contraire, la carte $M\m{2}$ doit a présent se diviser pour apprendre les deux valeurs de $\bmu\m{1}$ possibles correspondant à $\inpx\m{2}$. Ces expériences montrent que la formation de zones est bien déterminée par la disposition des entrées.
 
 \begin{figure}
-	\begin{minipage}{0.6\textwidth}
-		\includegraphics[width=\textwidth]{2som_id_w.pdf}
-	\end{minipage}
-	\begin{minipage}{0.4\textwidth}
-		\includegraphics[width=\textwidth]{2som_id_in}
-	\end{minipage}
+	\centering\includegraphics[width=0.6\textwidth]{2som_id_w.pdf}
 	\caption{Représentation cartographique des poids et entrées pour la disposition identité. Les poids externes et contextuels sont superposés, et les poids contextuels n'ont pas besoin de former de zones \label{fig:id_results}}
 	\end{figure}
 	
 	\begin{figure}
-		\begin{minipage}{0.6\textwidth}
-		\includegraphics[width=\textwidth]{2som_cos_w.pdf}
-		\end{minipage}
-		\begin{minipage}{0.4\textwidth}
-			\includegraphics[width=\textwidth]{2som_cos_in.png}
-		\end{minipage}
+		\centering\includegraphics[width=0.6\textwidth]{2som_cos_w.pdf}
 		\caption{Représentation cartographique des poids et entrées pour $\inpx\m{2} = cos(\inpx\m{1}$. Les poids contextuels de la carte $M\m{1}$ ne forment pas de zones car une seule valeur de $\inpx\m{2}$ correspond à une entrée $\inpx\m{1}$. Au contraire, les poids de la carte $M\m{2}$ s'organisent pour gérer la distinction. \label{fig:cos_results}}
-	\end{figure}
-	
-	\begin{figure}
-		\begin{minipage}{0.6\textwidth}
-			\includegraphics[width=\textwidth]{2som_mix_w.pdf}
-		\end{minipage}
-		\begin{minipage}{0.4\textwidth}
-			\includegraphics[width=\textwidth]{2som_mix_in.pdf}
-		\end{minipage}
-		\caption{Représentation cartographique des poids et entrées lorsque la distribution mélange le type de dépendance. La séparation en zones dépend alors de l'emplacement du poids contextuel. \label{fig:mix_results}}
 	\end{figure}
 
 La couche de poids externe converge plus vite que la couche contextuelle par la différence entre rayons de voisinage. De ce fait, les positions du BMU respectent les relations de distances dans l'espace d'entrée externe~: deux points éloignés sur $\w_e$ ont des poids éloignés.
@@ -223,22 +181,12 @@ Les deux cartes de Kohonen se comportent donc pour paver l'espace d'entrée diff
 
 
 \begin{figure}
-	\begin{minipage}{0.66\textwidth}
-		\includegraphics[width=\textwidth]{2som_square_w.pdf}
-	\caption{Représentation cartographique des poids et entrées pour la disposition mix}
-	\end{minipage}
-	\begin{minipage}{0.33\textwidth}
-		\includegraphics[width=\textwidth]{2som_square_in.pdf}
-	\end{minipage}
+	\centering\includegraphics[width=0.6\textwidth]{2som_square_w.pdf}
+	\caption{Représentation cartographique des poids et entrées pour la disposition carré}
 \end{figure}
 
 \begin{figure}
-	\begin{minipage}{0.6\textwidth}
-	\includegraphics[width=\textwidth]{lissa/weights_19999.pdf}
-	\end{minipage}
-	\begin{minipage}{0.4\textwidth}
-		\includegraphics[width=\textwidth]{lissa/inputs.pdf}
-	\end{minipage}
+	\centering\includegraphics[width=0.6\textwidth]{lissa/weights_19999.pdf}
 	\caption{Représentation cartographique des poids et entrées pour des entrées sur une courbe de Lissajous. Les poids contextuels continuent de former des zones.}
 \end{figure}
 
@@ -247,9 +195,9 @@ Les deux cartes de Kohonen se comportent donc pour paver l'espace d'entrée diff
 		\includegraphics[width=\textwidth]{2som_square_d}
 	\end{minipage}
 	\begin{minipage}{0.48\textwidth}
-		\includegraphics[width=\textwidth]{2som_square_d}
+		\includegraphics[width=\textwidth]{2som_square_d2}
 	\end{minipage}
-	\caption{Représentation de la distortion des poids des deux cartes dans l'espace d'entrée $\inpx\m{1}, \inpx\m{2}$ lorsque les entrées sont indépendantes. Les cartes s'organisent de façon à quadriller le carré, l'une selon les $\inpx\m{1}$, l'autre selon les $\inpx\m{2}$. Bien que chaque carte aie 500 noeuds, on observe seulement environ 90 valeurs possibles pour les paires $\w_e(\bmu\m{1}),\w_e(\bmu\m{2})$}
+	\caption{Représentation de la distortion des poids des deux cartes dans l'espace d'entrée $\inpx\m{1}, \inpx\m{2}$ lorsque les entrées sont indépendantes. Les cartes s'organisent de façon à quadriller le carré, l'une selon les $\inpx\m{1}$, l'autre selon les $\inpx\m{2}$. Bien que chaque carte aie 500 noeuds, on observe seulement environ 90 valeurs possibles pour les paires $\w_e(\bmu\m{1}),\w_e(\bmu\m{2})$ \label{2som_p_d}}
 \end{figure}
 
 \subsection{Discussion}
@@ -265,16 +213,16 @@ Nous avons observé sur ces quelques distributions les comportements suivants~:
 La disposition des cartes repose complètement sur les zones formées par les poids contextuels. Ces zones apparaissent grâce au fait que la proximité des poids externe est priorisé par rapport au poids contextuels par le rayon de voisinage externe 10 fois plus élevé. Ce rapport introduit une relation subordonnée entre les poids. 
 Au sein d'une même zone, dans laquelle les poids externes ont des valeurs très proches, les poids contextuels s'organisent de manière à former une petite carte sur toutes les valeurs possible de l'entrée contextuelle.
 On pourrait donc introduire une notion d'indices primaire et secondaire, l'indice primaire étant celui de la zone et l'indice secondaire la position dans la zone.
-Ce type d'indexation est courant dans les systèmes informatiques, comme les bases de données.
+% Ce type d'indexation est courant dans des systèmes informatiques comme les bases de données.
 Cette notion d'indices primaires et secondaires est également observée dans le cerveau, proposé en 1986 par \cite{ballard_cortical_1986}. Les neurones du cortex V1, par exemple, gèrent leurs connexions et leur organisation comme schématisé en figure~\ref{fig:ballard}.
 Les neurones situés à différents emplacements sur cortex V1 ne reçoivent pas la même partie de l'entrée visuelle. Ces entrées différenciées forment une indexation~\emph{primaire} de V1. Au sein d'une zone de même indice primaire, les neurones s'organisent de façon à représenter toutes le sous espace d'entrée ayant été présenté à la zone. Cette sous-carte définit alors des indices secondaires.
 %ci, la même entrée est certes présentée à toute la carte, mais l'activité externe agit comme un masque 
 
-Le comportement des cartes jointes indroduit un phénomène de discontinuité dans les poids contextuels. Cette discontinuité est en fait une fausse discontinuité puisque des zones mortes comptant 4-5 n\oe{}uds séparent séparent deux zones de poids contextuels.
-On observe que plus on a de valeurs possible pour $\inpx\m{2}$ pour une meme valeur de $\inpx\m{1}$, moins on aura de n\oe{}uds morts dans les zones de discontinuité, comme le montre l'exemple du carré dans lequel il n'y a pas de n\oe{}uds morts entre zones.
+Le comportement des cartes jointes introduit un phénomène de discontinuité dans les poids contextuels. Cette discontinuité est en fait une fausse discontinuité puisque des zones mortes comptant 4-5 n\oe{}uds séparent séparent deux zones de poids contextuels.
+On observe que plus on a de valeurs possibles pour $\inpx\m{2}$ pour une même valeur de $\inpx\m{1}$, moins on aura de n\oe{}uds morts dans les zones de discontinuité, comme le montre l'exemple du carré dans lequel il n'y a pas de n\oe{}uds morts entre zones.
 Les zones sont à peu près réparties équitablement sur la cartes.
-La présence de zones auto-organisée, en plus d'être surprenante, permet au cartes d'acquérir une capacité de prise de décision, que nous explorons dans la section suivante.
-En effet, si une carte ne possède pas d'entrée externe, elle peut être activée par les connexions contextuelles et possède un BMU. Ce BMU peut être considéré comme une prise de décision d'une carte de l'architecture.
+La présence de zones auto-organisées permet au cartes d'acquérir une capacité de prise de décision, que nous explorons dans la section suivante.
+En effet, si une carte ne possède pas d'entrée externe, elle peut être activée par les connexions contextuelles et possède un BMU. Ce BMU peut être considéré comme une prise de décision d'une carte de l'architecture. Nous verrons que cette disposition en zones permet effectivement de 
 
 Ces architectures de quelques cartes sont des architectures \emph{élémentaires}: toute architecture comportant plus de cartes pourra être construite à partir de petits modules. 
 \begin{figure}
@@ -282,17 +230,24 @@ Ces architectures de quelques cartes sont des architectures \emph{élémentaires
 	\caption{Schéma d'une répartition en indices primaires et secondaire des neurones d'une aire corticale présentée en \cite{ballard_cortical_1986}. Les auteurs observent que sur une carte rétinotopique des neurones, c'est à dire tracées en fonction de la position des neurones sur le cortex, la réponse de neurones est organisée en zones, les indices primaires, recevant en connexion différentes portions de l'espace d'entrée. Au sein d'une même zone, les neurones cartographient toutes les valeurs possibles de l'entrée sous forme de carte topologiquement ordonnée, formant des indices secondaires.\label{fig:ballard}}
 \end{figure}
 
+\subsection{Limites possibles}
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{xp_cube_bigdim.pdf}
+	\caption{Tracé des poids des cartes pour une architectures de 10 cartes toutes connectées. Les entrées sont ici indépendantes. Nous remarquons que les poids contextuels se moyennent autour de 0.5.}
+\end{figure}
 %tracé pour les valeurs sur le cercl
 
 \section{Prédiction d'entrée}
 
-L'observation des comportements des cartes sur des entrées géométrique nous a fourni quelques éléments d'analyse des mécanismes d'organisation y occurrant. 
-Nous avons vu que le modèle, défini par la variable cachée, était appris dans chacune des cartes de l'architecture grâce aux connexions entre cartes. Nous utilisons maintenant cet apprentissage du modèle dans une tâche de prédiction d'entrée.
+L'observation des mécanismes d'organisation occurrant dans des architectures de deux cartes nous a confirmé que le modèle d'entrées, défini par la variable cachée, est appris dans chacune des cartes de l'architecture grâce aux connexions entre cartes.
+Nous utilisons maintenant le fait qu'une architecture ait appris le modèle dans une tâche de prédiction d'entrée.
 
-Cette utilisation en tant que prédiction a certes une valeur applicative, car il s'agit d'un cas d'utilisation possible de l'apprentissage du modèle par une carte. Néanmoins, la prédiction permet avant tout de valider l'apprentissage du modèle par l'architecture d'un point de vue d'une carte. Par exemple, dans le cas de données réelles, le modèle d'entrée n'est pas forcément connu. La prédiction permet alors de valider l'apprentissage du modèle.
+Cette utilisation en tant que prédiction a certes une valeur applicative, car il s'agit d'un cas d'utilisation possible d'une architecture CxSOM pour une tâche de mémoire associative. Néanmoins, la prédiction permet avant tout de valider l'apprentissage du modèle par l'architecture d'un point de vue d'une carte. Par exemple, dans le cas de données réelles, le modèle d'entrée n'est pas forcément connu. La prédiction permet alors de valider l'apprentissage du modèle.
 
-Rappelons la structure utilisée pour la prédiction (voir figure~\ref{fig:schema_pred})~: après apprentissage, nous choisissons une des cartes comme carte prédictive. Lors de la phase de prédiction, cette carte ne reçoit plus d'entrée externe, mais seulement les entrées contextuelles venant des autres cartes de l'architecture. 
-Les autres cartes reçoivent quant à elles toujours leurs entrées externes et contextuelles. La phase de prédiction est une phase de test durant laquelle les poids de toutes les cartes ne sont pas mis à jour. Les règles de calcul et paramètres sont conservés entre apprentissage et prédiction. La carte ne recevant pas d'entrée externe prend simplement comme activité globale son activité contextuelle.
+Rappelons la structure utilisée pour la tâche de prédiction (voir figure~\ref{fig:schema_pred})~: après l'apprentissage de l'architecture sur l'ensemble des entrées, nous choisissons une des cartes comme carte prédictive. 
+Lors de la phase de prédiction, cette carte ne reçoit plus d'entrée externe, mais seulement les entrées contextuelles venant des autres cartes de l'architecture. 
+Les autres cartes reçoivent quant à elles toujours leurs entrées externes et contextuelles. La phase de prédiction est une phase de test durant laquelle les poids de toutes les cartes ne sont pas mis à jour. Les règles de calcul et paramètres sont conservés entre apprentissage et prédiction. La carte ne recevant pas d'entrée externe prend simplement comme activité globale son activité contextuelle. 
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{learning_tests.pdf}
@@ -302,10 +257,12 @@ Les autres cartes reçoivent quant à elles toujours leurs entrées externes et 
 
 \subsection{Prédiction d'entrées géométriques}
 
-Nous testons d'abord la prédiction sur des dispositions d'entrées géométriques.
-Les tâches de prédiction seront possibles dans le cas où la connaissance des entrées et du modèle permet de prédire l'entrée manquante.
-Pour cela, nous prendrons des entrées disposées sur un cercle en deux dimensions plongé et pivoté dans l'espace en 3D \ref{fig:cercle3}. De cette manière, la connaissance de deux des trois coordonnées permet de déterminer la troisième avec précision.
-Nous utilisons pour cela une architecture de trois cartes 1D, toutes connectées entre elles.
+Nous testons d'abord la qualité de la prédiction sur des dispositions d'entrées géométriques.
+Pour qu'une carte puisse faire une prédiction correcte, nous choisissons des entrées telles que la connaissance des entrées et du modèle permet de prédire l'entrée manquante.
+
+Nous prendrons ainsi des entrées disposées sur un cercle en deux dimensions plongé et pivoté dans l'espace en 3D \ref{fig:cercle3}. De cette manière, la connaissance de deux des trois coordonnées permet de déterminer la troisième avec précision. Nous testerons également la prédiction d'entrée sur un plan 2D pivoté en trois dimensions.
+
+Ces tâches de prédictions sont réalisées sur un architecture de trois cartes 1D, toutes connectées entre elles. Chaque carte prend donc deux entrées contextuelles et de ce fait possède deux couches contextuelles.
 Nous étendrons la capacité de prédiction aux cartes deux dimensions au chapitre suivant.
 
 \begin{figure}
@@ -314,9 +271,17 @@ Nous étendrons la capacité de prédiction aux cartes deux dimensions au chapit
 	\label{fig:in_3D}}
 \end{figure}
 
-La figure \ref{fig:w_cercle} présente la disposition des poids des trois cartes de l'architecture ainsi que des entrées associées. Comme dans la version à deux cartes, les poids contextuels s'organisent en plusieurs zones au sein desquelles la valeur de $U$ est située dans une même plage de valeur. La figure \ref{fig:pred_cercle} présente l'erreur obtenue lors de la phase de prédiction. L'entrée $X\m{1}$ n'est alors pas présentée à la carte et sa valeur est prédite par $\w\ext\m{1}{\bmu\m{1}}$. Nous voyons ici que la prédiction est bien réalisée. Remarquons que la disposition de l'erreur en lignes horizontales n'est pas anodine~: elle correspond aux zones définies par les valeurs des poids contextuels d'une carte.
+La figure \ref{fig:w_cercle} présente la disposition des poids des trois cartes de l'architecture après apprentissage ainsi que des entrées associées. 
+Comme dans la version à deux cartes, les poids contextuels s'organisent en plusieurs zones au sein desquelles la valeur de $U$ est située dans une même plage de valeur. 
+La figure \ref{fig:pred_cercle} présente ensuite l'erreur obtenue lors de la phase de prédiction. L'entrée $X\m{1}$ n'est ici pas présentée à la carte et sa valeur est prédite par $\w\ext\m{1}{\bmu\m{1}}$. 
+Cette figure nous montre que la prédiction est correctement réalisée par l'architecture de cartes. Remarquons que la disposition de l'erreur en lignes horizontales correspond aux zones définies par les valeurs des poids contextuels d'une carte.
 
-La figure \ref{fig:w_lissa} présente la disposition des poids sur une courbe de lissajous.
+Nous traçons également en Figure~\ref{fig:plan3} la disposition des cartes et l'erreur de prédiction obtenue pour des entrées située sur un plan 2D de l'espace en trois dimensions. Ici encore, La connaissance de $X\m{2}$ et $X\m{3}$ définit bien une seule valeur possible de $X\m{1}$. La prédiction est bien réalisée, en remarquant une erreur assez élevée. Nous avons vu que les poids externes des cartes s'étalaient sur le plan en discrétisant l'espace en une centaine de points seulement, bien que chaque carte soit de taille 500 (Voir Figure~\ref{fig:2som_p_d}). Cette discrétisation se retrouve dans l'erreur de prédiction pour trois cartes.
+
+Cette capacité de prédiction est peu précise. Cependant, aucune autre architecture de cartes nous apparaît comme capable de telles tâches de prédiction et prise de décision auto-organisée.
+
+
+% La figure \ref{fig:w_lissa} présente la disposition des poids sur une courbe de lissajous.
 \begin{figure}
 	\centering\includegraphics[width=0.9\textwidth]{3som_cercle_w.pdf}
 	\caption{\label{fig:w_cercle}}
@@ -331,20 +296,20 @@ La figure \ref{fig:w_lissa} présente la disposition des poids sur une courbe de
 	\caption{\label{fig:pred_cercle}}
 \end{figure}
 
-\begin{figure}
-	\centering\includegraphics[width=0.5\textwidth]{lissa3D/inputs_lissa}
-	\caption{Disposition des entrées sur une courbe de lissajous pivotée sur trois dimensions. Étant donné que la courbe est inscrite dans un plan, la connaissance de deux entrées est suffisante pour déterminer la troisième à partir du modèle.\label{fig:in_lissa_3D}}
-\end{figure}
+% \begin{figure}
+% 	\centering\includegraphics[width=0.5\textwidth]{lissa3D/inputs_lissa}
+% 	\caption{Disposition des entrées sur une courbe de lissajous pivotée sur trois dimensions. Étant donné que la courbe est inscrite dans un plan, la connaissance de deux entrées est suffisante pour déterminer la troisième à partir du modèle.\label{fig:in_lissa_3D}}
+% \end{figure}
 
-\begin{figure}
-\begin{minipage}{0.48\textwidth}
-\centering\includegraphics[width=\textwidth]{lissa3D/weights_19999}
-\end{minipage}
-\begin{minipage}{0.48\textwidth}
-\includegraphics[width=\textwidth]{lissa3D/zclosed-1-19999_error}	
-\end{minipage}	
-\caption{Représentation cartographique des poids et entrées des trois cartes après apprentissage d'une courbe de lissajous}
-\end{figure}
+% \begin{figure}
+% \begin{minipage}{0.48\textwidth}
+% \centering\includegraphics[width=\textwidth]{lissa3D/weights_19999}
+% \end{minipage}
+% \begin{minipage}{0.48\textwidth}
+% \includegraphics[width=\textwidth]{lissa3D/zclosed-1-19999_error}	
+% \end{minipage}	
+% \caption{Représentation cartographique des poids et entrées des trois cartes après apprentissage d'une courbe de lissajous}
+% \end{figure}
 
 \begin{figure}
 	\begin{minipage}{0.48\textwidth}
@@ -353,31 +318,32 @@ La figure \ref{fig:w_lissa} présente la disposition des poids sur une courbe de
 	\begin{minipage}{0.48\textwidth}
 	\includegraphics[width=\textwidth]{plan/zclosed-1-19999_error}	
 	\end{minipage}	
-	\caption{Représentation cartographique des poids et entrées des trois cartes après apprentissage d'un plan pivoté en 3D}
+	\caption{Représentation cartographique des poids et entrées des trois cartes après apprentissage d'un plan pivoté en 3D \label{fig:plan3}}
 	\end{figure}
 
 
 \subsection{Entrées réelles~: application sur un drône}
 
-Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel. Nous disposons d'un drône quadricoptère, commandé à distance. Ce drône possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun de ces capteurs peut être considéré comme une modalité d'un espace multimodal. A ces modalités s'ajoute la modalité correspondant à la commande envoyée au drône.
-Le principe est d'apprendre, à l'aide d'une architecture de cartes, les relations existants entre les modalités des capteurs et de la commande afin d'ensuite prédire la commande à envoyer à partir des capteurs.
-Afin que les relations entre la commande et les capteurs soient significatives, nous nous placons dans un cas d'application particulier: le drône vole dans un couloir étroit, en ligne droite. Le but du drône est alors de voler en avant dans le couloir, sans toucher les murs.
-Le but de cette expérience est de démontrer la tâche de prédiction en situation réelle. Nous évaluerons ainsi la robustesse de l'algorithme à des données bruitées, et la capacité de CxSOM à réagir en temps réel malgré la relaxation.
+Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel. 
+Nous disposons d'un drône quadricoptère, commandé à distance. Ce drône possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun de ces capteurs peut être considéré comme une modalité d'un espace multimodal. \'A ces modalités s'ajoute la modalité correspondant à la commande envoyée au drône.
+Le principe est d'apprendre, à l'aide d'une architecture de cartes, les relations existant entre les modalités des capteurs et de la commande afin d'ensuite prédire la commande à envoyer à partir des capteurs.
+Afin que les relations entre la commande et les capteurs soient significatives, nous nous plaçons dans un cas d'application particulier~: le drône vole dans un couloir étroit, en ligne droite. Le but du drône est alors de voler en avant dans le couloir, sans toucher les murs.
+Le but de cette expérience est de démontrer la tâche de prédiction en situation réelle. Nous évaluerons ainsi la robustesse de l'algorithme à des données bruitées et la capacité de CxSOM à réagir en temps réel malgré la relaxation.
 
 \subsubsection{Méthode expérimentale}
 
 Le drône utilisé pour l'expérience est un quadricoptère. Il possède une caméra frontale.
-Le drône est contrôlé à distance par un ordinateur; la commande est réalisée en envoyant l'accélération angulaire du drône autour de ses trois axes de rotation.
+Nous le contrôlons à distance par un ordinateur~; la commande est réalisée en envoyant l'accélération angulaire du drône autour de ses trois axes de rotation.
 Nous avons accès aux données des capteurs internes, notamment la vitesse linéaire courante selon chaque axe de déplacement.
 
-le drône se déplace dans un couloir étroit.
-Dans le cadre de l'expérience, nous extrayons deux éléments visuels spécifiques au couloir à partir de la caméra du drône: l'abscisse du point de fuite du couloir $x$. Nous calculons également la différence entre les angles du couloir, notée $\varphi$. Ces valeurs sont illustrées en figure~\ref{fig:drone}.
-Le drône se déplace dans un couloir, à hauteur constante et vitesse constante.
-La commande générant le déplacement en avant du drône (tangage) est maintenue constante. Les commandes permettant le déplacement en largeur sont alors $\omega$ et $\rho$. Dans le cadre de cette expérience, nous contrôlerons uniquement $\rho$.
-Enfin, la vitesse linéaire en largeur du drône peut être récupérée à chaque instant; nous la notons $v$.
+Dans le cadre de l'expérience, nous extrayons deux éléments visuels spécifiques au couloir à partir de la caméra du drône~: l'abscisse du point de fuite du couloir $x$. Nous calculons également la différence entre les angles du couloir, notée $\varphi$. Ces valeurs sont illustrées en figure~\ref{fig:drone}.
+Le drône se déplace dans un couloir étroit, à hauteur constante et vitesse constante.
+La commande générant le déplacement en avant (tangage) est maintenue constante. Les commandes permettant le déplacement en largeur sont alors $\omega$ et $\rho$. Dans le cadre de cette expérience, nous contrôlerons uniquement $\rho$.
+Enfin, la vitesse linéaire en largeur du drône peut être récupérée à chaque instant~; nous la notons $v$.
 Nous avons ainsi quatres modalités lors du déplacement du drône: $x$, $\varphi$, $\rho$ et $v$.
 Nous construisons une architecture CxSOM sur ces quatres modalités, composée de quatre cartes connectées chacune aux trois autres.
-Une phase d'apprentissage est réalisée sur des déplacements du drône contrôlés humainement. Notons que lors de cette phase, nous avons utilisé un système de contrôle PID pour assister la commande humaine. Cette phase d'apprentissage est réalisée hors ligne pour que les données soient réparties aléatoirement.
+Une phase d'apprentissage est réalisée sur des déplacements du drône contrôlés humainement. Lors de cette phase, nous avons utilisé un système de contrôle PID pour assister la commande humaine. 
+Cette phase d'apprentissage est réalisée hors ligne pour que les données soient présentées aléatoirement aléatoirement lors de l'apprentissage.
 Après apprentissage, nous effectuons une phase de prédiction. Lors de cette étape, la commande $\rho$ n'est plus présentée à la carte correspondante. Nous envoyons alors le poids externe du BMU de cette carte comme commande du drône. Cette étape est réalisée en ligne, sur des trajectoires réelles du drône.
 
 La figure \ref{fig:drone_inp} présente la répartition des entrées présentées au drône. Nous avons tracé les dépendances entre chaque modalité. Nous remarquons sur la figure qu'une dépendance forte se dégage entre les entrées ?? et ??, ainsi que ?? et ??. Si les cartes apprennent correctement le modèle liant les entrées, la prédiction peut être réalisée.
