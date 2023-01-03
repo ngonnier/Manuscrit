@@ -93,6 +93,8 @@ Nous verrons que la convergence en l'absence de décroissance de paramètres pos
 	Ces tracés montrent que les poids externes et contextuels convergent rapidement vers une position stable.\label{fig:conv}}
 \end{figure}
 
+
+
 \subsubsection{Disposition des poids}
 
 Analysons maintenant la forme des poids contextuels de $M\m{1}$, tracés en figure~\ref{fig:w}.
@@ -106,12 +108,36 @@ Dans la carte $M\m{1}$, les entrées externes $\inpx\m{1}$ sont proches de la co
 Nous notons que les zones définies par les poids contextuels partagent les positions des BMUs en fonction de la valeur des entrées. 
 Deux points ayant la même valeur de $\inpx\m{1}$ mais une valeur différente de $\inpx\m{2}$ auront BMU différent dans la carte $M\m{1}$~; ces BMUs sont alors situées dans deux zones adjacentes.
 
-Ainsi, une carte connectée au sein d'une architetcure CxSOM différencie les échantillons en fonction de non seulement leur entrée externe, mais aussi de l'entrée de l'autre carte de l'architecture. La plage de valeurs des $\inpx\m{1}$ gagnant dans un des zones recoupe les plages de valeurs gagnant dans les zones situées à gauche et à droite. Par exemple, la zone dans laquelle l'échantillon rouge gagne, autour de $\bmu\m{1} = 0.25$. La partie des entrées située en dessous de la courbe de poids externe recoupe les valeurs d'entrées gagnant dans la zone précédente; la partie située au dessous de la courbe de poids externe recoupe des valeurs gagnant dans la partie suivante. Pour une entrée externe, le choix de la zone de BMU dans laquelle elle gagnera dépend alors de l'entrée contextuelle. 
+Ainsi, une carte connectée au sein d'une architecture CxSOM différencie les échantillons en fonction de non seulement leur entrée externe, mais aussi de l'entrée de l'autre carte de l'architecture. La plage de valeurs des $\inpx\m{1}$ gagnant dans un des zones recoupe les plages de valeurs gagnant dans les zones situées à gauche et à droite. Par exemple, la zone dans laquelle l'échantillon rouge gagne, autour de $\bmu\m{1} = 0.25$. La partie des entrées située en dessous de la courbe de poids externe recoupe les valeurs d'entrées gagnant dans la zone précédente; la partie située au dessous de la courbe de poids externe recoupe des valeurs gagnant dans la partie suivante. Pour une entrée externe, le choix de la zone de BMU dans laquelle elle gagnera dépend alors de l'entrée contextuelle. 
 
 
 Dans la carte $M\m{1}$, une position se spécialise donc en tant que BMU par rapport aux deux entrées et non pas une seule comme dans la carte indépendante~: les entrées externes et l'entrée contextuelles. C'est bien ce à quoi on s'attendait en ayant deux couches de poids. Ce qui est intéressant est que cette différenciation est réalisée par la répartition des unités en un nombre fini de zones distinctes. Dans chaque zone, les unités sont BMUs pour un segment de valeurs d'entrée externe et contextuelles. Au sein d'une zone, la répartition des entrées externe selon le BMUs est ordonnée, comme ce serait le cas dans une carte auto-organisatrice classique. Le comportement de la carte au sein d'une zone reste donc similaire à celui d'une carte classique.
 
 Deux zones adjacentes correspondent par ailleurs à des segments de valeur d'entrée en partie superposés, et des segments de valeurs d'entrées contextuelles différentes. Il s'agit d'une deuxième échelle d'organisation, qui garde également l'aspect ordonné d'une carte classique. Ces zones sont créées par auto-organisation~; aucun paramètre de la carte n'a été modifié pendant l'apprentissage pour former ces zones, et le nombre d'unités allouées par auto-organisation dans chaque zone est à peu près égal. La carte agit un peu comme une base de données structurée avec des indices primaires et des indices secondaires pour chaque neurone, l'indice primaire étant la zone de la carte, et l'indice secondaire la position dans cette zone.
+
+\begin{figure}
+	\centering\includegraphics[width=0.9\textwidth]{2som_cercle_w.pdf}
+	\caption{Représentation cartographique des poids et entrées lors d'une phase de test selon la position dans chacune des cartes. Nous remarquons que les poids d'une carte, par exemple la carte $M^{(1)}$ s'organisent en zones différenciant les valeurs de la paire $X^{(1)}, X^{(2)}$ et non seulement de la valeur de $X^{(1)}$. Deux zones adjacentes codent pour des valeurs de $X^{(1)}$ proches, mais $X^{(2)}$ différents. Au sein d'une même zone, les BMUs s'organisent sous la forme d'une sous-carte auto-organisée sur les valeurs de l'entrée contextuelle. Ces zones se forment de manière auto-organisée. \label{fig:w}}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{2som_cercle_w_zoom_with_nodes.pdf}
+	\caption{Zoom sur la figure \ref{fig:w}. Nous y faisons apparaître la position sur la courbe des noeuds de la carte. Nous voyons que les zones grisées contiennent quelques n\oe{}uds qui ne sont jamais BMUsé; ce sont des zones mortes. Nous en concluons que la discontinuité introduite par la formation de zones est une "fausse" discontinuité et se produit en reliant des valeur de $\w_c$ éloignée en étirant une portion de carte morte. \label{fig:w_zoom}}
+\end{figure}
+
+
+\subsubsection{Erreur de quantification vectorielle}
+
+La Figure~\ref{fig:qv} présente la valeur de l'entrée quantifiée au sein de chaque carte $\w\ext(\bmu\m{i})$ en fonction de l'entrée présentée $\inpx\m{i}$. Nous pouvons observer que la quantification vectorielle est bien réalisée. Cette capacité de quantification permet de retrouver la valeur de l'entrée à partir du BMU de la carte et donne donc une sortie interprétable dans l'espace des entrées à l'architecture CxSOM.
+Cependant, l'erreur de quantification est plus forte que ce qu'on peut attendre avec une carte de même taille et mêmes paramètres apprenant sur l'ensemble de $\inpx\m{i}$. Nous remarquons une disposition en étages, dues aux zones formées par les poids contextuels.
+Les n\oe{}uds de zones adjacentes de la carte sont en effet des Best Matching Unit pour des intervalles d'entrée qui se recoupent, ce qu'on observe sur la quantification vectorielle. Cependant, les poids externes restent croissants même entre deux zones, d'où la perte de précision. 
+
+\begin{figure}
+	\centering\includegraphics[width=0.8\textwidth]{2som_cercle_err.pdf}
+	\caption{Représentation de l'erreur de quantification sur les valeurs de $X^{(1)}$ et $X^{(2)}$. Le poids externe du BMU est proche de la valeur de l'entrée~; chaque carte réalise ainsi une bonne quantification vectorielle sur ses entrées. \label{fig:qv}}
+\end{figure}
+
+\subsubsection{Conclusion}
 
 Les résultats de cette expérience nous permettent donc de formuler les hypothèses suivantes concernant le comportement de cartes en une dimension~:
 
@@ -124,20 +150,6 @@ Les résultats de cette expérience nous permettent donc de formuler les hypoth�
 Nous chercherons à vérifier toutes ces observations sur d'autres dispositions d'entrées dans des structures de deux cartes, et nous nous demanderons si la création de zones dépend de la disposition des entrées. Nous chercherons donc à savoir comment ces zones sont construites. Enfin, une caractéristique d'une carte de Kohonen est sa robustesse au bruit. Nous vérifierons si cette propriété se traduit également dans les architectures de deux cartes.
 Nous étendrons ensuite notre étude aux structures de trois cartes apprenant sur trois entrées 1D en section~\ref{sec:pred}.
 
-\begin{figure}
-	\centering\includegraphics[width=0.9\textwidth]{2som_cercle_w.pdf}
-	\caption{Représentation cartographique des poids et entrées lors d'une phase de test selon la position dans chacune des cartes. Nous remarquons que les poids d'une carte, par exemple la carte $M^{(1)}$ s'organisent en zones différenciant les valeurs de la paire $X^{(1)}, X^{(2)}$ et non seulement de la valeur de $X^{(1)}$. Deux zones adjacentes codent pour des valeurs de $X^{(1)}$ proches, mais $X^{(2)}$ différents. Au sein d'une même zone, les BMUs s'organisent sous la forme d'une sous-carte auto-organisée sur les valeurs de l'entrée contextuelle. Ces zones se forment de manière auto-organisée. \label{fig:w}}
-\end{figure}
-
-\begin{figure}
-	\includegraphics[width=\textwidth]{2som_cercle_w_zoom_with_nodes.pdf}
-	\caption{Zoom sur la figure \ref{fig:w}. Nous y faisons apparaître la position sur la courbe des noeuds de la carte. Nous voyons que les zones grisées contiennent quelques n\oe{}uds qui ne sont jamais BMUsé; ce sont des zones mortes. Nous en concluons que la discontinuité introduite par la formation de zones est une "fausse" discontinuité et se produit en reliant des valeur de $\w_c$ éloignée en étirant une portion de carte morte. \label{fig:w_zoom}}
-\end{figure}
-
-\begin{figure}
-	\centering\includegraphics[width=0.8\textwidth]{2som_cercle_err.pdf}
-	\caption{Représentation de l'erreur de quantification sur les valeurs de $X^{(1)}$ et $X^{(2)}$. Le poids externe du BMU est proche de la valeur de l'entrée~; chaque carte possède donc une capacité de quantification vectorielle sur ses entrées. \label{fig:qv}}
-\end{figure}
 
 %2SOM anneau ???
 
@@ -201,47 +213,54 @@ Les deux cartes de Kohonen se comportent donc pour paver l'espace d'entrée diff
 	\caption{Représentation de la distortion des poids des deux cartes dans l'espace d'entrée $\inpx\m{1}, \inpx\m{2}$ lorsque les entrées sont indépendantes. Les cartes s'organisent de façon à quadriller le carré, l'une selon les $\inpx\m{1}$, l'autre selon les $\inpx\m{2}$. Bien que chaque carte aie 500 noeuds, on observe seulement environ 90 valeurs possibles pour les paires $\w_e(\bmu\m{1}),\w_e(\bmu\m{2})$ \label{2som_p_d}}
 \end{figure}
 
+
+
 \subsection{Discussion}
 
-Nous avons observé sur ces quelques distributions les comportements suivants~:
-\begin{itemize}
-	\item Quantification vectorielle correctement réalisée pour chaque type d'entrée
-	\item Organisation en zones dès que besoin de découpler deux valeurs de U
-	\item Le comportement traduit l'existence de plusieurs valeurs de U pour une même entrée, sans forcément qu'une relation existe. Dans tous les cas, la carte effectue un découpage selon U.
-	\item Lorsqu'une relation existe, ce découpage de zones permettra de faire de la prédiction.
-\end{itemize}
+Nous avons observé sur ces distributions d'entrées en 2D les comportements suivants qui vérifient et complètent les hypothèses formulées sur la disposition d'entrées en cercle.
+La quantification vectorielle reste correctement réalisées sur les différentes dispositions d'entrées. Les valeurs prises par les poids sont toujours disposées en étages à cause des zones.
+Cette organisation en zones intervient dès que la disposition des entrées implique d'avoir à séparer au moins deux valeurs de $U$ pour une même entrée externe. Le fait que des zones existent n'implique pas la détection d'une relation entre entrées mais est systémique aux mécanismes d'auto-organisation des cartes. Par contre, l'organisation au sein d'une zone et forme des poids contextuels dépend de la dépendance entre les entrées.
 
-La disposition des cartes repose complètement sur les zones formées par les poids contextuels. Ces zones apparaissent grâce au fait que la proximité des poids externe est priorisé par rapport au poids contextuels par le rayon de voisinage externe 10 fois plus élevé. Ce rapport introduit une relation subordonnée entre les poids. 
+
+La disposition des cartes repose ainsi complètement sur les zones formées par les poids contextuels. Ces zones apparaissent grâce au fait que la proximité des poids externe est priorisé par rapport au poids contextuels par le rayon de voisinage externe 10 fois plus élevé. Ce rapport introduit une relation subordonnée entre les poids. 
+Ces zones semblent favoriser la recherche de consensus lors de la relaxation et la convergence des poids~; cet avantage n'est pas significativement observable en une dimension, dans laquelle les poids des cartes convergent très facilement.
+Par contre, nous verrons en partie suivante que ces zones permettent à l'architecture d'utiliser une carte en tant que prédiction d'entrée, ce qui n'est pas possible lorsque les cartes ne sont pas organisées en zones.
+
+
 Au sein d'une même zone, dans laquelle les poids externes ont des valeurs très proches, les poids contextuels s'organisent de manière à former une petite carte sur toutes les valeurs possible de l'entrée contextuelle.
 On pourrait donc introduire une notion d'indices primaire et secondaire, l'indice primaire étant celui de la zone et l'indice secondaire la position dans la zone.
-% Ce type d'indexation est courant dans des systèmes informatiques comme les bases de données.
 Cette notion d'indices primaires et secondaires est également observée dans le cerveau, proposé en 1986 par \cite{ballard_cortical_1986}. Les neurones du cortex V1, par exemple, gèrent leurs connexions et leur organisation comme schématisé en figure~\ref{fig:ballard}.
-Les neurones situés à différents emplacements sur cortex V1 ne reçoivent pas la même partie de l'entrée visuelle. Ces entrées différenciées forment une indexation~\emph{primaire} de V1. Au sein d'une zone de même indice primaire, les neurones s'organisent de façon à représenter toutes le sous espace d'entrée ayant été présenté à la zone. Cette sous-carte définit alors des indices secondaires.
-%ci, la même entrée est certes présentée à toute la carte, mais l'activité externe agit comme un masque 
+Les neurones situés à différents emplacements sur cortex V1 ne reçoivent pas la même partie de l'entrée visuelle. Ces entrées différenciées forment une indexation~\emph{primaire} de V1. Au sein d'une zone de même indice primaire, les neurones s'organisent de façon à représenter tous le sous-espace des entrée ayant été présenté à la zone. Cette sous-carte définit alors des indices secondaires.
+Ici, la même entrée est certes présentée à toute la carte, mais les BMUs des zones réagissent à un sous-ensemble d'entrées externes définies par les poids contextuels.
 
-Le comportement des cartes jointes introduit un phénomène de discontinuité dans les poids contextuels. Cette discontinuité est en fait une fausse discontinuité puisque des zones mortes comptant quelques n\oe{}uds séparent deux zones de poids contextuels.
+Le comportement des cartes jointes introduit par ailleurs un phénomène de discontinuité dans les poids contextuels. Cette discontinuité est en fait une fausse discontinuité puisque des zones mortes comptant quelques n\oe{}uds séparent deux zones de poids contextuels.
 On observe que plus on a de valeurs possibles pour $\inpx\m{2}$ pour une même valeur de $\inpx\m{1}$, moins on aura de n\oe{}uds morts dans les zones de discontinuité, comme le montre l'exemple du carré dans lequel il n'y a pas de n\oe{}uds morts entre zones.
 Les zones sont à peu près réparties équitablement sur la carte.
 La présence de zones auto-organisées permet aux cartes d'acquérir une capacité de prise de décision, que nous explorons dans la section suivante.
 En effet, si une carte ne possède pas d'entrée externe, elle peut être activée par les connexions contextuelles et possède un BMU. Nous verrons que l'architecture CxSOM permet une prédiction correcte seulement si les cartes se sont organisées en zones.
 
-Ces architectures de quelques cartes sont des architectures \emph{élémentaires}: toute architecture comportant plus de cartes pourra être construite à partir de petits modules. 
+Ces architectures de quelques cartes sont des architectures \emph{élémentaires}~: toute architecture comportant plus de cartes pourra être construite à partir de petits modules.
+
+
 \begin{figure}
 	\centering\includegraphics[width=0.5\textwidth]{ballard_primary_secondary.png}
 	\caption{Schéma d'une répartition en indices primaires et secondaire des neurones d'une aire corticale présentée en \cite{ballard_cortical_1986}. Les auteurs observent que sur une carte rétinotopique des neurones, c'est à dire tracées en fonction de la position des neurones sur le cortex, la réponse de neurones est organisée en zones, les indices primaires, recevant en connexion différentes portions de l'espace d'entrée. Au sein d'une même zone, les neurones cartographient toutes les valeurs possibles de l'entrée sous forme de carte topologiquement ordonnée, formant des indices secondaires.\label{fig:ballard}}
 \end{figure}
 
-\subsection{Limites possibles}
+\subsection{Limites possibles et questions ouvertes}
+
+- Influence des connexions contextuelles 
+- 
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{xp_cube_bigdim.pdf}
-	\caption{Tracé des poids des cartes pour une architectures de 10 cartes toutes connectées. Les entrées sont ici indépendantes. Nous remarquons que les poids contextuels se moyennent autour de 0.5.}
+	\caption{Tracé des poids des cartes pour une architecture de 10 cartes toutes connectées. Les entrées sont ici indépendantes. Nous remarquons que les poids contextuels se moyennent autour de 0.5.}
 \end{figure}
 %tracé pour les valeurs sur le cercl
 
 \section{Prédiction d'entrée}
 
-L'observation des mécanismes d'organisation occurrant dans des architectures de deux cartes nous a confirmé que le modèle d'entrées, défini par la variable cachée, est appris dans chacune des cartes de l'architecture grâce aux connexions entre cartes.
+L'observation des mécanismes d'organisation occurrant dans des architectures de deux cartes nous a confirme que le modèle d'entrées, défini par la variable cachée, est appris dans chacune des cartes de l'architecture grâce aux connexions entre cartes.
 Nous utilisons maintenant le fait qu'une architecture ait appris le modèle dans une tâche de prédiction d'entrée.
 
 Cette utilisation en tant que prédiction a certes une valeur applicative, car il s'agit d'un cas d'utilisation possible d'une architecture CxSOM pour une tâche de mémoire associative. Néanmoins, la prédiction permet avant tout de valider l'apprentissage du modèle par l'architecture d'un point de vue d'une carte. Par exemple, dans le cas de données réelles, le modèle d'entrée n'est pas forcément connu. La prédiction permet alors de valider l'apprentissage du modèle.
