@@ -260,25 +260,26 @@ Ces architectures de quelques cartes sont des architectures \emph{élémentaires
 
 \section{Prédiction d'entrée}
 
-L'observation des mécanismes d'organisation occurrant dans des architectures de deux cartes nous a confirme que le modèle d'entrées, défini par la variable cachée, est appris dans chacune des cartes de l'architecture grâce aux connexions entre cartes.
+L'observation des mécanismes d'organisation occurrant dans des architectures de deux cartes nous a confirmé que le modèle d'entrées, défini par la variable cachée, est appris dans chacune des cartes de l'architecture grâce aux connexions entre cartes.
 Nous utilisons maintenant le fait qu'une architecture ait appris le modèle dans une tâche de prédiction d'entrée.
 
 Cette utilisation en tant que prédiction a certes une valeur applicative, car il s'agit d'un cas d'utilisation possible d'une architecture CxSOM pour une tâche de mémoire associative. Néanmoins, la prédiction permet avant tout de valider l'apprentissage du modèle par l'architecture d'un point de vue d'une carte. Par exemple, dans le cas de données réelles, le modèle d'entrée n'est pas forcément connu. La prédiction permet alors de valider l'apprentissage du modèle.
 
-Rappelons la structure utilisée pour la tâche de prédiction (voir figure~\ref{fig:schema_pred})~: après l'apprentissage de l'architecture sur l'ensemble des entrées, nous choisissons une des cartes comme carte prédictive. 
-Lors de la phase de prédiction, cette carte ne reçoit plus d'entrée externe, mais seulement les entrées contextuelles venant des autres cartes de l'architecture. 
-Les autres cartes reçoivent quant à elles toujours leurs entrées externes et contextuelles. La phase de prédiction est une phase de test durant laquelle les poids de toutes les cartes ne sont pas mis à jour. Les règles de calcul et paramètres sont conservés entre apprentissage et prédiction. La carte ne recevant pas d'entrée externe prend simplement comme activité globale son activité contextuelle. 
+La structure utilisée pour la tâche de prédiction est présentée en Figure~\ref{fig:schema_pred}. Dans un premier temps, les cartes CxSOM sont mises à jour sur l'ensemble des entrées dans une phase d'apprentissage. Ensuite, nous choisissons une des cartes comme carte prédictive. Lors de la phase de prédiction, cette carte ne reçoit plus d'entrée externe, mais seulement ses entrées contextuelles. 
+Les autres cartes reçoivent quant à elles toujours leurs entrées externes et contextuelles. La phase de prédiction est une phase de test durant laquelle les poids de toutes les cartes ne sont pas mis à jour. Les règles de calcul et paramètres sont conservés entre apprentissage et prédiction.
+La carte ne recevant pas d'entrée externe prend comme activité globale seulement son activité contextuelle.
+
+Nous choisissons comme valeur de prédiction le poids externe du BMU de la carte prédictive $\w\ext\m{i}(\bmu\m{i})$. Ce BMU a été choisi uniquement grâce aux entrées contextuelles de la carte. Nous vérifierons alors que cette prédiction est proche de l'entrée théorique $\inpx\m{i}$ non présentée à la carte.
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{learning_tests.pdf}
 	\caption{Schéma descriptif des opérations effectuées lors de l'apprentissage et de la phase de prédiction.\label{fig:schema_pred}}
 \end{figure}
 
-
 \subsection{Prédiction d'entrées géométriques}
 
 Nous testons d'abord la qualité de la prédiction sur des dispositions d'entrées géométriques.
-Pour qu'une carte puisse faire une prédiction correcte, nous choisissons des entrées telles que la connaissance des entrées et du modèle permet de prédire l'entrée manquante.
+Pour qu'une carte puisse faire une prédiction correcte, nous choisissons des dispositions d'entrées telles que la connaissance des entrées et du modèle détermine l'entrée manquante.
 
 Nous prendrons ainsi des entrées disposées sur un cercle en deux dimensions plongé et pivoté dans l'espace en 3D \ref{fig:cercle3}. De cette manière, la connaissance de deux des trois coordonnées permet de déterminer la troisième avec précision. Nous testerons également la prédiction d'entrée sur un plan 2D pivoté en trois dimensions.
 
@@ -292,13 +293,19 @@ Nous étendrons la capacité de prédiction aux cartes deux dimensions au chapit
 \end{figure}
 
 La figure \ref{fig:w_cercle} présente la disposition des poids des trois cartes de l'architecture après apprentissage ainsi que des entrées associées. 
-Comme dans la version à deux cartes, les poids contextuels s'organisent en plusieurs zones au sein desquelles la valeur de $U$ est située dans une même plage de valeur. 
+Comme dans la version à deux cartes, les poids contextuels s'organisent en plusieurs zones au sein desquelles la valeur de $U$ est située dans une même plage de valeur.
+Les deux couches de poids contextuels forment les mêmes zones.
 La figure \ref{fig:pred_cercle} présente ensuite l'erreur obtenue lors de la phase de prédiction. L'entrée $X\m{1}$ n'est ici pas présentée à la carte et sa valeur est prédite par $\w\ext\m{1}{\bmu\m{1}}$. 
 Cette figure nous montre que la prédiction est correctement réalisée par l'architecture de cartes. Remarquons que la disposition de l'erreur en lignes horizontales correspond aux zones définies par les valeurs des poids contextuels d'une carte.
 
-Nous traçons également en Figure~\ref{fig:plan3} la disposition des cartes et l'erreur de prédiction obtenue pour des entrées située sur un plan 2D de l'espace en trois dimensions. Ici encore, La connaissance de $X\m{2}$ et $X\m{3}$ définit bien une seule valeur possible de $X\m{1}$. La prédiction est bien réalisée, en remarquant une erreur assez élevée. Nous avons vu que les poids externes des cartes s'étalaient sur le plan en discrétisant l'espace en une centaine de points seulement, bien que chaque carte soit de taille 500 (Voir Figure~\ref{fig:2som_p_d}). Cette discrétisation se retrouve dans l'erreur de prédiction pour trois cartes.
+Nous traçons également en Figure~\ref{fig:plan3} la disposition des cartes et l'erreur de prédiction obtenue pour des entrées située sur un plan 2D de l'espace en trois dimensions. Ici encore, La connaissance de $X\m{2}$ et $X\m{3}$ définit bien une seule valeur possible de $X\m{1}$. La prédiction est bien réalisée, en remarquant une erreur assez élevée. 
+Nous avons vu que les poids externes des cartes s'étalaient sur le plan en discrétisant l'espace en une centaine de points seulement, bien que chaque carte soit de taille 500 (Voir Figure~\ref{fig:2som_p_d}). 
+Cette discrétisation se retrouve dans l'erreur de prédiction pour trois cartes.
 
-Cette capacité de prédiction est peu précise. Cependant, aucune autre architecture de cartes nous apparaît comme capable de telles tâches de prédiction et prise de décision auto-organisée.
+Cette capacité de prédiction est peu précise, mais il s'agit d'une prise de décision induite par l'auto-organisation des cartes.
+La formation de zones discrètes apparaît comme nécessaire à cette capacité prédictive. Par exemple, nous présentons en Figure~\ref{fig:rcre_pred} l'erreur de prédiction dans une architecture de 3 cartes sur un cercle 2D, mais dans lesquelles on a pris $r_c = r_e$. Ce jeu de paramètre ne fait pas apparaître de zones dans les poids contextuels. Nous voyons alors qu'aucune prédiction n'est réalisée. Dans ce sens, bien que les cartes se soit organisées, on ne peut pas parler d'un apprentissage du modèle par l'architecture.
+
+Lorsqu'il manque des informations pour prédire correctement l'entrée, par exemple dans le cas du cercle en deux dimensions et d'une architecture de deux cartes, l'activation est cohérente. Si on ne présente pas l'entrée $\inpx\m{2}$ à la carte $M\m{2}$, deux bulles d'activité se formeront aux deux emplacements possibles pour $\bmu\m{2}$. D'après la figure~\ref{fig:pred}
 
 
 % La figure \ref{fig:w_lissa} présente la disposition des poids sur une courbe de lissajous.
@@ -346,50 +353,56 @@ Cette capacité de prédiction est peu précise. Cependant, aucune autre archite
 	\caption{Représentation cartographique des poids et entrées des trois cartes après apprentissage d'un plan pivoté en 3D et erreur de prédiction. Le découpage de l'espace par les cartes permet de prédire correctement une entrée. \label{fig:plan3}}
 	\end{figure}
 
-La disposition en zones semble favoriser la convergence des poids ainsi que la relaxation, bien que cette dernière soit encore assurée meme sans formation de zones.
 
 \subsection{Entrées réelles~: application sur un drône}
 
-Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel. 
-Nous disposons d'un drône quadricoptère, commandé à distance. Ce drône possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun de ces capteurs peut être considéré comme une modalité d'un espace multimodal. \'A ces modalités s'ajoute la modalité correspondant à la commande envoyée au drône.
+Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel.
+Nous disposons d'un drône quadricoptère, commandé à distance. 
+Ce drône possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun de ces capteurs peut être considéré comme une modalité d'un espace multimodal. \'A ces modalités s'ajoute la modalité correspondant à la commande envoyée au drône.
 Le principe est d'apprendre, à l'aide d'une architecture de cartes, les relations existant entre les modalités des capteurs et de la commande afin d'ensuite prédire la commande à envoyer à partir des capteurs.
 Afin que les relations entre la commande et les capteurs soient significatives, nous nous plaçons dans un cas d'application particulier~: le drône vole dans un couloir étroit, en ligne droite. Le but du drône est alors de voler en avant dans le couloir, sans toucher les murs.
-Le but de cette expérience est de démontrer la tâche de prédiction en situation réelle. Nous évaluerons ainsi la robustesse de l'algorithme à des données bruitées et la capacité de CxSOM à réagir en temps réel malgré la relaxation.
+
+
+Lors des expériences géométriques, les données étaient peu bruitées et nous nous étions assurés que chaque modalité contribuait à l'apprentissage du modèle. Dans cette application, les relations entre entrées sont simples, mais les données sont très bruitées et certaines entrées ne sont pas du tout déterminantes pour le modèle et peuvent ainsi polluer l'apprentissage.
+Nous évaluerons ainsi la robustesse de l'algorithme à des données bruitées et la capacité de CxSOM à réagir en temps réel malgré les étapes de relaxation.
 
 \subsubsection{Méthode expérimentale}
 
-Le drône utilisé pour l'expérience est un quadricoptère. Il possède une caméra frontale.
+Le drône utilisé pour l'expérience est un quadricoptère modèle. Il possède une caméra frontale.
 Nous le contrôlons à distance par un ordinateur~; la commande est réalisée en envoyant l'accélération angulaire du drône autour de ses trois axes de rotation.
-Nous avons accès aux données des capteurs internes, notamment la vitesse linéaire courante selon chaque axe de déplacement.
+Nous avons accès aux données des capteurs internes, notamment la vitesse linéaire courante selon chaque axe de déplacement. Le drône se déplace dans un couloir étroit en ligne droite, à hauteur constante et vitesse constante.
 
-Dans le cadre de l'expérience, nous extrayons deux éléments visuels spécifiques au couloir à partir de la caméra du drône~: l'abscisse du point de fuite du couloir $x$. Nous calculons également la différence entre les angles du couloir, notée $\varphi$. Ces valeurs sont illustrées en figure~\ref{fig:drone}.
-Le drône se déplace dans un couloir étroit, à hauteur constante et vitesse constante.
+Dans le cadre de l'expérience, nous extrayons deux éléments visuels spécifiques au couloir à partir de la caméra du drône~: l'abscisse du point de fuite du couloir $x$ et la différence entre les angles des lignes du couloir, notée $\varphi$. Ces valeurs sont illustrées en figure~\ref{fig:drone}.
+
 La commande générant le déplacement en avant (tangage) est maintenue constante. Les commandes permettant le déplacement en largeur sont alors $\omega$ et $\rho$. Dans le cadre de cette expérience, nous contrôlerons uniquement $\rho$.
 Enfin, la vitesse linéaire en largeur du drône peut être récupérée à chaque instant~; nous la notons $v$.
-Nous avons ainsi quatres modalités lors du déplacement du drône: $x$, $\varphi$, $\rho$ et $v$.
+Nous utilisons ainsi ainsi quatre modalités lors du déplacement du drône: $x$, $\varphi$, $\rho$ et $v$.
 Nous construisons une architecture CxSOM sur ces quatres modalités, composée de quatre cartes connectées chacune aux trois autres.
-Une phase d'apprentissage est réalisée sur des déplacements du drône contrôlés humainement. Lors de cette phase, nous avons utilisé un système de contrôle PID pour assister la commande humaine. 
-Cette phase d'apprentissage est réalisée hors ligne pour que les données soient présentées aléatoirement aléatoirement lors de l'apprentissage.
-Après apprentissage, nous effectuons une phase de prédiction. Lors de cette étape, la commande $\rho$ n'est plus présentée à la carte correspondante. Nous envoyons alors le poids externe du BMU de cette carte comme commande du drône. Cette étape est réalisée en ligne, sur des trajectoires réelles du drône.
 
-La figure \ref{fig:drone_inp} présente la répartition des entrées présentées au drône. Nous avons tracé les dépendances entre chaque modalité. Nous remarquons sur la figure qu'une dépendance forte se dégage entre les entrées ?? et ??, ainsi que ?? et ??. Si les cartes apprennent correctement le modèle liant les entrées, la prédiction peut être réalisée.
-Ces dépendances sont très bruitées. Cette expérience en conditions réelles nous permettra d'observer la résistance au bruit de la prédiction.
+Une phase d'apprentissage est réalisée sur des déplacements du drône contrôlés humainement. Lors de cette phase, nous avons utilisé un système de contrôle PID pour assister la commande humaine.
+Cette phase d'apprentissage est réalisée hors ligne pour que les données soient présentées aléatoirement lors de l'apprentissage.
+Après apprentissage, nous effectuons une phase de prédiction. Lors de cette étape, la commande $\rho$ n'est plus présentée à la carte correspondante. 
+Nous envoyons alors le poids externe du BMU de cette carte comme commande du drône. Cette étape est réalisée en ligne en temps réel sur la trajectoire du drône.
+
+La figure \ref{fig:drone_inp} présente la répartition des entrées présentées au drône. Nous avons tracé les dépendances entre chaque modalité. Nous nous intéressons aux dépendances entre la commande en $y$ $\rho$, sujet de la prédiction et des autres modalités.
+
+\begin{figure}
+	\begin{minipage}{0.5\textwidth}
+	\includegraphics[width=\textwidth]{visudrone}
+	\end{minipage}
+	\begin{minipage}{0.5\textwidth}
+	\includegraphics[width=\textwidth]{dronesteup}
+	\end{minipage}
+	\caption{Disposition des capteurs utilisés pour l'expérience}
+	\label{fig:drone}
+	\end{figure}
+
 
 %TODO mettre disposition des entrées.
 
 \subsubsection{Résultats}
-La carte associée à $\rho$ possède donc une couche de poids externe et trois couches de poids contextuels. Ces poids sont représentés en figure \ref{fig:drone_w}. L'organisation des poids contextuels rappelle celle observé dans des conditions géométriques: les poids contextuels définissent des zones. Contrairement à l'expérience réalisée sur un cercle, la taille de ces zones dépend de la couche de poids contextuel définie. 
-
-\begin{figure}
-\begin{minipage}{0.5\textwidth}
-\includegraphics[width=\textwidth]{visudrone}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\includegraphics[width=\textwidth]{dronesteup}
-\end{minipage}
-\caption{Disposition des capteurs utilisés pour l'expérience}
-\label{fig:drone}
-\end{figure}
+La carte associée à $\rho$ possède donc une couche de poids externe et trois couches de poids contextuels. Ces poids sont représentés en figure \ref{fig:drone_w}. 
+L'organisation des poids contextuels rappelle celle observé dans des conditions géométriques: les poids contextuels définissent des zones. Contrairement à l'expérience que nous avions réalisée sur un cercle, les zones ne sont pas les mêmes selon les couches de poids contextuels.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{dronemap}
@@ -398,10 +411,11 @@ La carte associée à $\rho$ possède donc une couche de poids externe et trois 
 \end{figure}
 
 \subsubsection{Discussion}
+
+
 Ici on ne cherchait pas à comparer avec des valeurs théorique, mais on observe que le drone ne tape pas les murs
 Illustration de la capacité de prédiction et mémoire associative
 Resistance au bruit
-
 Calcul des dépendance entre les entrées et la commande:
 PCA sur les entrées, calcul de MI après apprentissage
 
