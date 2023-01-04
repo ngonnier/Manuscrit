@@ -241,6 +241,8 @@ En effet, si une carte ne possède pas d'entrée externe, elle peut être activ�
 
 Ces architectures de quelques cartes sont des architectures \emph{élémentaires}~: toute architecture comportant plus de cartes pourra être construite à partir de petits modules.
 
+Pour des cartes en une dimension, les comportements d'organisation en zones et de convergences observés sont reproducibles sur de nombreuses dispositions d'entrées pour de nombreuses condition initiales de poids des cartes.
+
 
 \begin{figure}
 	\centering\includegraphics[width=0.5\textwidth]{ballard_primary_secondary.png}
@@ -305,7 +307,7 @@ Cette discrétisation se retrouve dans l'erreur de prédiction pour trois cartes
 Cette capacité de prédiction est peu précise, mais il s'agit d'une prise de décision induite par l'auto-organisation des cartes.
 La formation de zones discrètes apparaît comme nécessaire à cette capacité prédictive. Par exemple, nous présentons en Figure~\ref{fig:rcre_pred} l'erreur de prédiction dans une architecture de 3 cartes sur un cercle 2D, mais dans lesquelles on a pris $r_c = r_e$. Ce jeu de paramètre ne fait pas apparaître de zones dans les poids contextuels. Nous voyons alors qu'aucune prédiction n'est réalisée. Dans ce sens, bien que les cartes se soit organisées, on ne peut pas parler d'un apprentissage du modèle par l'architecture.
 
-Lorsqu'il manque des informations pour prédire correctement l'entrée, par exemple dans le cas du cercle en deux dimensions et d'une architecture de deux cartes, l'activation est cohérente. Si on ne présente pas l'entrée $\inpx\m{2}$ à la carte $M\m{2}$, deux bulles d'activité se formeront aux deux emplacements possibles pour $\bmu\m{2}$. D'après la figure~\ref{fig:pred}
+Lorsqu'il manque des informations pour prédire correctement l'entrée, par exemple dans le cas du cercle en deux dimensions et d'une architecture de deux cartes, l'activation est cohérente. Si on ne présente pas l'entrée $\inpx\m{2}$ à la carte $M\m{2}$, deux bulles d'activité se formeront aux deux emplacements possibles pour $\bmu\m{2}$. D'après la figure~\ref{fig:pred_closed}, le choix de l'une ou l'autre des valeurs est aléatoire~: une des deux options n'est pas systématiquement privilégiée.
 
 
 % La figure \ref{fig:w_lissa} présente la disposition des poids sur une courbe de lissajous.
@@ -376,7 +378,7 @@ Dans le cadre de l'expérience, nous extrayons deux éléments visuels spécifiq
 
 La commande générant le déplacement en avant (tangage) est maintenue constante. Les commandes permettant le déplacement en largeur sont alors $\omega$ et $\rho$. Dans le cadre de cette expérience, nous contrôlerons uniquement $\rho$.
 Enfin, la vitesse linéaire en largeur du drône peut être récupérée à chaque instant~; nous la notons $v$.
-Nous utilisons ainsi ainsi quatre modalités lors du déplacement du drône: $x$, $\varphi$, $\rho$ et $v$.
+Nous utilisons ainsi quatre modalités lors du déplacement du drône: $x$, $\varphi$, $\rho$ et $v$.
 Nous construisons une architecture CxSOM sur ces quatres modalités, composée de quatre cartes connectées chacune aux trois autres.
 
 Une phase d'apprentissage est réalisée sur des déplacements du drône contrôlés humainement. Lors de cette phase, nous avons utilisé un système de contrôle PID pour assister la commande humaine.
@@ -384,7 +386,8 @@ Cette phase d'apprentissage est réalisée hors ligne pour que les données soie
 Après apprentissage, nous effectuons une phase de prédiction. Lors de cette étape, la commande $\rho$ n'est plus présentée à la carte correspondante. 
 Nous envoyons alors le poids externe du BMU de cette carte comme commande du drône. Cette étape est réalisée en ligne en temps réel sur la trajectoire du drône.
 
-La figure \ref{fig:drone_inp} présente la répartition des entrées présentées au drône. Nous avons tracé les dépendances entre chaque modalité. Nous nous intéressons aux dépendances entre la commande en $y$ $\rho$, sujet de la prédiction et des autres modalités.
+La figure \ref{fig:drone_inp} présente la répartition des entrées présentées au drône. Nous avons tracé les dépendances entre chaque modalité. Nous nous intéressons ici aux dépendances entre la commande en $y$ $\rho$, sujet de la prédiction et des autres modalités.
+On remarque que $\rho$ dépend linéairement de l'angle du couloir $\varphi$, mais que cette dépendance est très bruitée. On remarque également des dépendances entre les autres variables.
 
 \begin{figure}
 	\begin{minipage}{0.5\textwidth}
@@ -401,14 +404,19 @@ La figure \ref{fig:drone_inp} présente la répartition des entrées présentée
 %TODO mettre disposition des entrées.
 
 \subsubsection{Résultats}
+
 La carte associée à $\rho$ possède donc une couche de poids externe et trois couches de poids contextuels. Ces poids sont représentés en figure \ref{fig:drone_w}. 
-L'organisation des poids contextuels rappelle celle observé dans des conditions géométriques: les poids contextuels définissent des zones. Contrairement à l'expérience que nous avions réalisée sur un cercle, les zones ne sont pas les mêmes selon les couches de poids contextuels.
+
+L'organisation des poids contextuels rappelle celle observé dans des conditions géométriques~: les poids contextuels définissent des zones. 
+Contrairement à l'expérience que nous avions réalisée sur un cercle, les zones ne sont pas les mêmes selon les couches de poids contextuels.
 
 \begin{figure}
 \includegraphics[width=\textwidth]{dronemap}
 \caption{Disposition des poids de la carte $\rho$ après apprentissage et exemple de calcul d'activité}
 \label{fig:drone_w}
 \end{figure}
+
+La phase de test réalisée en temps réel sur le drône le long du couloir montre que le drône se déplace correctement 
 
 \subsubsection{Discussion}
 
