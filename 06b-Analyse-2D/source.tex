@@ -7,7 +7,7 @@
 }{}
 
 \begin{document}
-\graphicspath{{06-Analyse/figures},{../06-Analyse/figures}, {../06b-Analyse-2D}}
+\graphicspath{{06-Analyse/figures},{../06-Analyse/figures}, {../06b-Analyse-2D}, {06b-Analyse-2D}}
 
 \chapter{Extension aux cartes en deux dimensions}
 
@@ -105,7 +105,10 @@ Le tracé des entrées en fonction de la position du BMU fait également figurer
 
 Une première différence avec les cartes en une dimension est la forme des zones, moins régulières. Ces zones semblent dépendre des paramètres choisis.
 Nous comparons en Figures~\ref{fig:rc_003,fig:rc_005} et \ref{fig:todo} l'évolution des poids contextuels au cours de l'apprentissage pour une même distribution de données d'entrées et $r_c = 0.05, 0.03$ et $0.02$
-Nous remarquons que l'expérience avec $r_c = 0.02$ conduit à une configuration stable des poids contextuels, dont certains ont convergé vers un point fixe et d'autres vers un cycle limite, comme l'indique la figure TODO. Cette convergence est également assurée dans l'expérience avec $r_c = 0.03$. Au contraire, les poids contextuels ne montrent pas de convergence pour $r_c =0.05$. Nous avons observé expérimentalement ce comportement sur plusieurs expériences.
+Nous remarquons que l'expérience avec $r_c = 0.02$ conduit à une configuration stable des poids contextuels, dont certains ont convergé vers un point fixe et d'autres vers un cycle limite, comme l'indique la figure TODO. 
+
+
+Cette convergence est également assurée dans l'expérience avec $r_c = 0.03$. Au contraire, les poids contextuels ne montrent pas de convergence pour $r_c =0.05$. Nous avons observé expérimentalement ce comportement sur plusieurs expériences.
 
 Cependant, nous observons une organisation des poids contextuels similaires dans ces trois expériences, ce qui montre que les motifs dépendent bien de la relation entre entrées et non des conditions initiales des expériences. 
 Nous remarquons en effet que les poids contextuels tendent à s'organiser sous une forme hélicoïdale, formant les motifs observé dans les trois expériences.
@@ -149,6 +152,10 @@ Nous pouvons donc supposer que le type de relation entre entrées influence ces 
 	\caption{\'Evolution des poids contextuels d'une architecture de deux cartes pour $r_c =0.02$. Les motifs observés sont similaires à ceux observés pour d'autres paramètres. Les poids présentent toujours une forme hélicoïdale évoluant dans le temps. \label{fig:rc_002}}
 \end{figure}
 
+\begin{figure}
+	\includegraphics[width=\textwidth]{evol_convergence_poids.pdf}
+	\caption{\'Evolution de la différence moyenne entre les poids externes et contextuels au cours de l'apprentissage d'une architecture de 2 cartes sur une sphère 3D en 4 dimensions. Le calcul de différences est réalisé toutes les 10 000 itérations. Nous avons tracé les courbes pour 4 expériences avec $r_e = 0.2$ et $r_c = 0.02$ ainsi que pour les expériences avec $r_e = 0.2$ et $r_c = 0.05$,$r_e = 0.2$ et $r_c = 0.03$. Nous remarquons que cette différence évolue vers une valeur faible, qu'on attend nulle pour une carte stabilisée. Ici les poids tendent vers une valeur faible qui semble stable. Notons que cela ne démontre pas forcément la convergence~: les poids peuvent se déplacer faiblement dans une même direction. le tracé nous assure que l'évolution, si elle existe, est lente.}
+\end{figure}
 
 
 %CONVERGENCE RELAX ! 
@@ -157,15 +164,15 @@ Nous pouvons donc supposer que le type de relation entre entrées influence ces 
 
 Nous traçons enfin en figure \label{fig:relax} l'évolution du taux de convergence des tests au cours de l'apprentissage pour des structures de deux cartes en deux dimensions, par le
 processus décrit au chapitre \ref{chap:relax}.
-Des phases de test sont lancées à intervalles réguliers au cours de l'apprentissage. Lors de chaque test, nous comptons le nombre de pas de relaxation nécessaires à la convergence. Nous traçons sur la figure la moyenne de ces pas de relaxation sur chaque test $t$. 
-Nous traçons également sur la deuxième figure le taux d'échantillons menant à une convergence de la relaxation. On considère que la relaxation n'a pas convergé si le nombre de pas est de 1000, seuil maximal fixé par notre étude. Le nombre de pas de relaxation moyen étant de 20 pas, ce seuil est pertinent. 
+Des phases de test sont lancées à intervalles réguliers au cours de l'apprentissage. Lors de chaque test, nous comptons le nombre de pas de relaxation nécessaires à la convergence. Nous traçons sur la figure la moyenne du nombre de pas de relaxation sur chaque temps de test $t$. 
+Nous traçons également sur la deuxième figure le taux d'échantillons menant à une convergence de la relaxation. On considère que la relaxation n'a pas convergé si le nombre de pas atteint le seuil maximal de 1000 fixé par notre étude. Le nombre de pas de relaxation moyen étant de 20 pas, ce seuil est pertinent pour considérer que la relaxation n'a pas convergé. 
 Ces tracés ont été réalisés sur trois expériences de mêmes paramètres $r_e=0.2$ et $r_c = 0.02$.
 Nous y faisons figurer l'évolution du nombre moyen de pas et du taux de convergence pour l'expérience avec $r_c = 0.05$. Dans cette expérience, les poids n'ont pas formé de zones distinctes et ne convergence pas vers une valeur fixe.
-Nous voyons que la relaxation converge bien dans tous les cas. Le nombre moyen de pas de relaxation tourne autour de 50 et entre 95 et 98 \% des recherches de BMU par relaxation convergent dans chaque expérience. 
+Nous voyons que la relaxation converge bien dans entre 95 et 98 \% des cas sur chaque itération.
 Les valeurs trouvées pour $r_c = 0.05$ sont similaires au cas $r_c = 0.02$, dans lequel les poids ont bien convergé. La relaxation n'est donc pas tributaire de la formation de zones stables.
 
 Cette observation est prometteuse pour la construction d'architectures. Cela montre que le BMU a un sens dans une carte en deux dimensions. 
-Nous n'avons pas étudié en deux dimensions l'unicité du BMU en fonction des valeurs d'initialisation de la relaxation. Nous avons cependant observé que la relaxation converge la plupart du temps, et qu'elle converge vers une valeur dont le poids $\w_e(\bmu)$ est proche de l'entrée externe. Cela suffit pour considérer que le BMU a bien un sens en terme d'apprentissage.
+Nous n'avons pas étudié en deux dimensions l'unicité du BMU en fonction des valeurs d'initialisation de la relaxation. Nous avons cependant observé que la relaxation converge la plupart du temps, et qu'elle converge vers une valeur dont le poids $\w_e(\bmu)$ est proche de l'entrée externe.
 
 \begin{figure}
 	\centering
@@ -190,10 +197,7 @@ L'organisation des poids contextuels conduit à la présence de motifs très sem
 Nous lançons une étape de prédiction à la fin de l'apprentissage lors de laquelle la carte $M\m{1}$ ne reçoit plus d'entrée externe. 
 La valeur de $\w\ext\m{1}(\bmu\m{1})$ est alors utilisée comme prédiction de l'entrée $\inpx\m{1}$.
 La Figure~\ref{fig:3som_pred} indique la valeur prédite en fonction de l'entrée $\inpx\m{1}$. 
-Les valeurs de $\inpx$ et $\w_e$ étant 2D, nous avons représenté séparément chaque dimension. 
-Les tracés montrent que la prédiction est bien réalisée.
-
-La capacité de prédiction observée dans le cas 2D est prometteuse et nous montre que l'architecture de cartes ont bien appris le modèle d'entrées 2D.
+Les valeurs de $\inpx$ et $\w_e$ étant 2D, nous avons représenté séparément chaque dimension. Cette expérience montre que la prédiction est bien réalisée, donc que l'architecture a appris le modèle des entrées 2D.
 
 \begin{figure}
 	\begin{minipage}{\textwidth}
@@ -213,15 +217,12 @@ Lorsque la carte $M^{(1)}$ ne reçoit pas d'entrée externe. Les cartes $M^{(2)}
 
 
 
-\section{Limites et perspectives}
-
-
-
-
 \subsection{Perspectives}
 %Convergence des cartes 2D Cottrell 
 
 \section{Conclusion}
+
+Les expériences réalisées sur des cartes en deux dimensions montrent que 
 
 
 \ifSubfilesClassLoaded{

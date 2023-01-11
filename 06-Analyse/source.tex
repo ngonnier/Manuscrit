@@ -11,41 +11,71 @@
 \graphicspath{{06-Analyse/figures},{./figures}}
 \minitoc
 
-Nous avons proposé un modèle de connexions de cartes auto-organisatrices au sein d'une architecture complète s'appuyant sur un consensus~; le but de ce chapitre est de définir et comprendre des mécanismes d'auto-organisation occurrant dans des cartes en une dimension et permettant d'apprendre une relation entre entrées multimodales.
-Nous conclurons sur la scalabilité du modèle à des architectures comportant un plus grand nombre de cartes. Nous généraliserons au chapitre suivant pour des cartes en deux dimensions.
+
+Nous avons proposé un modèle de connexions de cartes auto-organisatrices au sein d'une architecture complète s'appuyant sur une recherche de consensus entre BMUs. Nous avons vu dans le chapitre précédent que ce consensus permet de définir un BMU.
+Dans ce chapitre, nous nous intéressons aux mécanismes d'auto-organisation des poids occurrant dans des cartes. 
+Nous étudions encore ici les cartes en une dimension~; nous ouvrirons l'étude aux cartes en deux dimensions au chapitre suivant.
+
+
+
+
 
 \section{Méthode expérimentale}
 
-Nous utiliserons en premier lieu des modèles géométriques d'entrées. Ces modèles nous permettent de maîtriser les dépendances sur des modalités en basse dimension et ainsi de visualiser les liens entre organisation et apprentissage. Cela nous permettra également de mesurer l'apprentissage de cette dépendance connue au sein des structures de cartes.
+Nous utiliserons en premier lieu des modèles géométriques d'entrées. 
+Ces modèles nous permettent de maîtriser les dépendances sur des modalités en basse dimension et ainsi de visualiser les liens entre organisation et apprentissage. 
+Cela nous permettra également de mesurer l'apprentissage de cette dépendance connue au sein des structures de cartes.
 
-\subsection{Entrées géométriques}
+\subsection{Modèle d'entrées géométriques}
 
+Rappelons la définition des entrées multimodales~: il s'agit d'un ensemble d'entrées $\mathbf{\inpx} = (\inpx\m{1}, \cdots, \inpx\m{n})$
+Nous représentons la dépendance entre entrées en choisissant une variable latente du modèle $U$ telle que :
+$$ \forall i, \inpx\m{i} = f\m{i}(U) + \epsilon\m{i}$$
+avec $\epsilon\m{i}$ un bruit sur les entrées.
 La dépendance entre modalités est définie par la dimension choisie pour $U$.
 Une variable $U$ en une dimension paramètre des points placés sur une courbe en une dimension~; $U$ en 2 dimensions paramètre une surface 2D. 
-Plus généralement, quelle que soit la dimension totale $n$ des entrées, nous prendrons ces entrées placées sur une variété de dimension inférieure, $k$,  définie par $U \in [0,1]^k$ et qui définit la dépendance entre entrées. 
-Ce modèle est général~: au pire, $U$ correspond à la dimension totale des entrées. Par ailleurs, de nombreux modèles d'entrées réelles se placent sur une variété (\emph{manifold}) de dimension réduite, comme nous l'avions vu au chapitre \ref{chap:repr} pour des images d'un même objet 3D vu par différents angles. Le choix d'un modèle d'entrées géométriques situées sur une variété de dimension inférieure est donc justifié comme modèle expérimental simplifié.
-Nous considérons d'abord des points pour lesquels $U$ est en une dimension~: ils sont situés sur une courbe. 
-Nous reviendrons d'abord  sur les conclusions de l'expérience présentée au chapitre représentation, sur des données disposée en cercle (A). L'intérêt de cette courbe est que la disposition est symétrique~: toute entrée $X^{(1)}$ correspond à deux valeurs possibles pour $X^{(2)}$ et inversement.
-Nous testerons ensuite si les observations réalisées sur cette disposition d'entrées se retrouve dans d'autres dispositions listées ci-dessous, représentées en figureé\ref{fig:input_list}~:
+
+Dans cette série d'expériences, nous étudions un modèle dans lequel chaque modalité est unidimensionnelle. Chaque modalité correspond à une coordonnée d'un objet géométrique en $K$ dimensions, avec  $K$ le nombre de cartes. Afin de définir une dépendance entre entrées, nous les prenons sur une variété de dimension inférieure, $k$,  paramétrée par $U \in [0,1]^k$.
+Ce modèle est général~: au pire, $U$ correspond à la dimension totale des entrées. 
+Par ailleurs, de nombreux modèles d'entrées réelles se placent sur une variété (\emph{manifold}) de dimension réduite, comme nous l'avions vu au chapitre \ref{chap:repr} pour des images d'un même objet 3D vu par différents angles. Le choix d'un modèle d'entrées géométriques situées sur une variété de dimension inférieure est donc justifié comme modèle expérimental simplifié.
+Dans ce chapitre, nous considérons des architectures de deux et trois cartes et prenons donc des entrées de dimension totale $K = 2$ et $K = 3$.
+
+
+Dans une architecture de deux cartes, nous considérons d'abord des points pour lesquels $U$ est en une dimension~: ils sont situés sur une courbe du plan 2D.
+Nous reviendrons d'abord  sur les conclusions de l'expérience présentée au chapitre représentation, sur des données disposée en cercle (\textbf{A}). L'intérêt de cette courbe est que la disposition est symétrique~: toute entrée $X^{(1)}$ correspond à deux valeurs possibles pour $X^{(2)}$ et inversement.
+Nous testerons ensuite si les observations réalisées sur cette disposition d'entrées se retrouve dans d'autres dispositions listées ci-dessous, représentées en figure~\ref{fig:input_list}~:
 \begin{itemize}
 	\item Une entrée est fonction de l'autre~: $\inpx\m{2} = cos(\inpx\m{1})$~(\textbf{B})
 	\item Entrées identiques (cas dégénéré). Ces points sont toujours sur une courbe 1D, mais leur dépendance est bijective.~(\textbf{C})
-	\item Courbe de Lissajous (D).
-	\item Entrées totalement indépendantes, prises aléatoirement dans un carré $[0,1]^n$~(\textbf({E}))
-	\item Une carte de Kohonen classique a comme propriété d'être résistante au bruit des données. Ainsi, une carte 1D se dépliant sur un anneau fin en 2D apprendra d'abord la représentation du cercle. Nous voulons vérifier comment cette propriété se vérifie sur l'apprentissage de données par plusieurs cartes~; nous prendrons ainsi des points sur un anneau \textbf{(F)}
+	\item Entrées sur une courbe de Lissajous (\textbf{D})~: une entrée $\inpx\m{1}$ correspond à 4 à 6 valeurs de $\inpx\m{2}$ et inversement.
+	\item Entrées totalement indépendantes, prises aléatoirement dans un carré $[0,1]^n$~(\textbf({E})). $U$ est alors une variable 2D correspondant aux entrées.
+	\item Une carte de Kohonen classique a comme propriété d'être résistante au bruit des données. Ainsi, une carte 1D se dépliant sur un anneau fin en 2D apprendra d'abord la représentation du cercle. Nous voulons vérifier comment cette propriété se vérifie sur l'apprentissage de données par plusieurs cartes~; nous prendrons ainsi des points sur un anneau \textbf{(F)}. $U$ est ici en une dimension, et chaque dimension est bruitée.
 \end{itemize}
 
-Nous étudierons l'organisation après apprentissage de structures de deux cartes connectées réciproquement, sur ces différents jeux d'entrées, comme proposé au chapitre \ref{chap:repr} et tracerons les représentations. 
+
+Sur ces différents jeux d'entrées, nous étudierons l'organisation après apprentissage de deux cartes connectées réciproquement et tracerons les représentations. Nous suivons la méthode expérimentale et les représentations élaborées au chapitre \ref{chap:repr}.
 Dans un premier temps, nous étudions des architectures de deux cartes 1D, ce qui nous permettra de mieux comprendre certains mécanismes d'organisation.
-Nous étendrons ensuite notre étude à des architectures de 3 cartes en une dimension, toutes connectées. 
-% Nous appliquerons ces architectures à une courbe ($U$ 1D) mais sur trois dimensions, chacune des cartes prenant une des dimensions d'un point comme entrée \ref{fig:cercle3}. Il s'agit ici d'un cercle en deux dimensions que nous pivotons sur la troisième dimension. De cette manière, il existe une redondance entre $X\m{1}, X\m{2}$ et $X\m{3}$ : étant donné $X\m{1}, X\m{2}$ et le modèle d'entrée, il est possible d'en déduire l'entrée manquante.
-Dans ce cadre, nous réaliserons de la prédiction d'entrée par les cartes. Nous donnons en entrées $X\m{1}, X\m{2}$ à la structure et verrons si la valeur de $X\m{3}$ correspondante est correctement prédite par l'architecture. Une bonne prédiction témoignera de l'apprentissage du modèle d'entrées par l'architecture de cartes.
+Nous étendrons ensuite notre étude à des architectures de 3 cartes en une dimension, toutes connectées.
+
+Nous étendrons ensuite notre étude à des modèles d'architectures de trois cartes. Nous prendrons deux configurations d'entrées : 
+\begin{itemize}
+	\item Les entrées sont dans un plan 2D pivoté en trois dimensions
+	\item Les entrées sont sur un cercle en 2D, pivoté en trois dimensions
+\end{itemize}
+
+Dans ces deux cas, la connaissance de deux des entrées et du modèle détermine la valeur de la troisième entrée. Nous étudierons ces configurations dans un cadre de prédiction d'entrées~: nous donnons en entrées $X\m{1}, X\m{2}$ à la structure et regardons si la valeur de $X\m{3}$ correspondante est correctement prédite par l'architecture. Une bonne prédiction témoignera de l'apprentissage du modèle d'entrées par l'architecture de cartes.
 Les architectures de cartes en deux dimensions seront traitées par la suite au chapitre~\ref{chap:analyse2D}.
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{inputs/inputs.pdf}
 	\caption{Dispositions d'entrées en deux dimensions. $M\m{1}$ prend en entrée l'ordonnée $\inpx\m{1}$ et $M\m{2}$ prend en entrée l'abscisse $M\m{2}$. \label{fig:input_list}}
 \end{figure}
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{inputs/inputs_3D.pdf}
+	\caption{Dispositions d'entrées en deux dimensions. $M\m{1}$ prend en entrée l'ordonnée $\inpx\m{1}$ et $M\m{2}$ prend en entrée l'abscisse $M\m{2}$. \label{fig:input_list}}
+\end{figure}
+
 
 \subsection{Matériel}
 
@@ -70,29 +100,32 @@ Nous avons identifié certains comportements au chapitre précédent, que nous �
 
 \subsection{Entrées disposées sur un cercle : formulation d'hypothèses}
 
-Revenons sur l'expérience précédemment présentée au chapitre \ref{chap:representation}, réalisée sur des entrées disposées selon un cercle. Nous avons alors relevé plusieurs comportements se différenciant de ce qu'on aurait pu voir avec une carte classique. Cette expérience a l'avantage d'être un cas de figure très simple d'entrées multimodales.
+Revenons sur l'expérience précédemment présentée au chapitre \ref{chap:representation}, réalisée sur des entrées disposées selon un cercle.
+ Nous avons alors relevé plusieurs comportements se différenciant de ce qu'on aurait pu voir avec une carte classique. 
+ Cette expérience présente l'avantage d'être un cas de figure très simple d'entrées multimodales.
 
 \subsubsection{Convergence des poids}
 
 Dans une carte de Kohonen classique, le rayon de voisinage et le taux d'apprentissage sont décroissants au cours des itérations. Cette opération permet d'assurer un dépliement des cartes au début de l'apprentissage puis assure la convergence des poids $\w$ des cartes lorsque les paramètres décroissent.
 Dans notre étude, nous choisissons de ne pas modifier les paramètres d'apprentissage au cours des itérations.
-Sans chercher à démontrer mathématiquement une convergence des poids, déjà difficile à démontrer sur des cartes de Kohonen classique, nous pouvons évaluer expérimentalement la convergence des poids au cours de l'apprentissage.
-La figure~\ref{fig:conv} présente l'évolution de la modification des poids $\w\ext$ et $\w\cont$ dans chaque carte au cours de l'apprentissage. La différence considérée ici est $||\w_t - \w_{t-1}||_{\infty}$ (maximum sur les positions $p$ des différences entre les valeurs des poids $\w$ à l'instant $t$ et l'instant $t-1$). Ce calcul de différence est moyenné pour 10 expériences, chacune lancée sur des entrées aléatoires tirées de la même distribution sur le cercle, pour une initialisation aléatoire des poids des cartes.
-Nous observons que cette courbe tend vers $0$ pour chaque courbe de poids, donc que tous les poids tendent vers une position stable.
+Sans chercher à démontrer mathématiquement une convergence des poids, nous pouvons évaluer expérimentalement la convergence des poids au cours de l'apprentissage.
+La figure~\ref{fig:conv} présente l'évolution de la modification des poids $\w\ext$ et $\w\cont$ dans chaque carte au cours de l'apprentissage. La différence considérée ici est $||\w_t - \w_{t-1}||_{\infty}$ (maximum sur les positions $p$ des différences entre les valeurs des poids $\w$ à l'instant $t$ et l'instant $t-1$). 
+Ce calcul de différence est moyenné pour 10 expériences, chacune lancée sur des entrées aléatoires tirées de la même distribution sur le cercle, pour une initialisation aléatoire des poids des cartes.
+Nous observons que cette courbe tend vers $0$ pour chaque courbe de poids. Cela montre que tous les poids de la carte tendent vers une position stable.
 
 Cette convergence est favorisée par la différence de contribution dans l'activité globale des activations externes et contextuelles, calculée, rappelons le, par~: 
 $$ a_g = \sqrt{a_e \cdot (\beta a_e + (1-\beta)a_c)}$$
-La carte se comporte donc d'abord comme une carte de Kohonen classique apprenant sur des entrées externes, qui pour des cartes 1D sur des entrées 1D converge sans problème même en l'absence de décroissance des paramètres d'apprentissage. Les entrées contextuelles viennent seulement moduler un peu le calcul d'activité.
+La carte se comporte donc d'abord comme une carte de Kohonen classique apprenant sur des entrées externes, qui pour des cartes 1D sur des entrées 1D converge sans problème même en l'absence de décroissance des paramètres d'apprentissage. 
+Les entrées contextuelles viennent seulement moduler le calcul d'activité.
 
 Notons toutefois que nous sommes sur un cas particulier de cartes 1D sur des entrées 1D.
 Nous verrons que la convergence en l'absence de décroissance de paramètres pose plus de problèmes sur des cartes en deux dimensions, comme il y a plus de configurations possibles pour la carte~; mais nous verrons aussi que pour des rayons de voisinage bien choisis, la convergence sera assurée également en deux dimensions.
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{convergence/cercle_moy.pdf}
-	\caption{Pour chaque carte, nous représentons l'évolution en fonction du temps d'apprentissage, de la différence maximale en valeur absolue entre les poids à l'instant $t$ et ceux à $t-1$ $\w_t$ et $\w_{t-1}$. Les entrées sont ici un cercle en deux dimensions. L'évolution est moyennée sur 10 apprentissages initialisés aléatoirement.
+	\caption{Pour chaque carte, nous représentons l'évolution en fonction du temps d'apprentissage, de la différence maximale en valeur absolue entre les poids à l'instant $t$ et ceux à $t-1$ $\w_t$ et $\w_{t-1}$. Les entrées sont ici un cercle en deux dimensions. L'évolution est moyennée sur 10 apprentissages dont les entrées sont tirées aléatoirement selon la même distribution (cercle)
 	Ces tracés montrent que les poids externes et contextuels convergent rapidement vers une position stable.\label{fig:conv}}
 \end{figure}
-
 
 
 \subsubsection{Disposition des poids}
@@ -161,8 +194,8 @@ Nous étendrons ensuite notre étude aux structures de trois cartes apprenant su
 
 \subsection{Vérification des hypothèses sur différentes distributions d'entrées}
 
-La figure \ref{fig:id_results} présente la disposition des poids et entrées des cartes lorsque $\inpx\m{1}$ et $\inpx\m{2}$ sont identiques. Les poids externes et contextuels ne forment pas de zones et les deux cartes se comportent comme une seule carte simple sur $\inpx\m{1} = \inpx\m{2}$
-En figure~\ref{fig:cos_results}, la dépendance entre les entrées n'est plus bijective. $\inpx\m{2}$ est fonction de $\inpx\m{1}$~; de ce fait, la carte $M\m{1}$ ne forme pas de zones. Au contraire, la carte $M\m{2}$ doit a présent se diviser pour apprendre les deux valeurs de $\bmu\m{1}$ possibles correspondant à $\inpx\m{2}$. Ces expériences montrent que la formation de zones est bien déterminée par la disposition des entrées.
+La figure \ref{fig:id_results} présente la disposition des poids et entrées des cartes lorsque $\inpx\m{1}$ et $\inpx\m{2}$ sont identiques. Les poids externes et contextuels ne forment pas de zones et les deux cartes se comportent comme une seule carte simple sur $\inpx\m{1} = \inpx\m{2}$.
+En figure~\ref{fig:cos_results}, la dépendance entre les entrées n'est plus bijective. $\inpx\m{2}$ est fonction de $\inpx\m{1}$~; de ce fait, la carte $M\m{1}$ ne forme pas de zones. Au contraire, la carte $M\m{2}$ doit a présent se diviser pour apprendre les deux valeurs de $\bmu\m{1}$ possibles correspondant à $\inpx\m{2}$. Ces expériences montrent que la formation de zones est relative à la disposition des entrées.
 
 \begin{figure}
 	\centering\includegraphics[width=0.6\textwidth]{2som_id_w.pdf}
@@ -187,8 +220,8 @@ Sur la distribution indépendante, contrairement au cercle, la carte ne présent
 Une zone agit alors comme une petite carte d'une sous-région de l'espace d'entrée. Nous pouvons le constater sur la Figure~\ref{fig:2som_p_d} présentant la distorsion des poids externes des cartes dans l'espace $\inpx\m{1}; \inpx\m{2}$.
 
 
-Nous avons remarqué que les poids externes se déplient en priorité et respectent les distances~: deux n\oe{}uds distants dans la carte ont des poids distants et gagnent pour des entrées distantes.  
-Par contre, nous remarquons que deux n\oe{}uds proches peuvent gagner pour une même valeur d'entrée externe, bien qu'ayant une valeur de poids contextuel légèrement différente.
+Nous avons remarqué que les poids externes se déplient en priorité. Ils respectent les distances~: deux n\oe{}uds distants dans la carte ont des poids distants et gagnent pour des entrées distantes.  
+Par contre, deux n\oe{}uds proches peuvent gagner pour une même valeur d'entrée externe, bien qu'ayant une valeur de poids contextuel légèrement différente.
 L'intervalle de valeurs d'entrées codées au sein de deux zones adjacentes se recouvrent.
 Les deux cartes de Kohonen se comportent donc pour paver l'espace d'entrée différemment, et définissent un compromis entre qualité de l'approximation de l'entrée externe par $\w_e(\bmu)$ et différenciation des BMUs selon le modèle d'entrée complet $U$.
 
@@ -252,13 +285,26 @@ Pour des cartes en une dimension, les comportements d'organisation en zones et d
 \subsection{Limites possibles et questions ouvertes}
 
 - Influence des connexions contextuelles 
-- 
+- Comparaison: carte en loop vs cartes connectées ,meme organisation des poids. prédiction réalisée, mais moins bonne. Les connexions distantes gardent donc bien une influence, sans quoi la prédiction n'est pas du tout possible, mais influence réduite.
+
+
+- Paramètres : taille de la carte, dépendance de la taille de zone à rc, re
+
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{xp_cube_bigdim.pdf}
 	\caption{Tracé des poids des cartes pour une architecture de 10 cartes toutes connectées. Les entrées sont ici indépendantes. Nous remarquons que les poids contextuels se moyennent autour de 0.5.}
 \end{figure}
-%tracé pour les valeurs sur le cercl
+
+\begin{figure}
+	\begin{minipage}{\textwidth}
+		\centering\includegraphics[width=\textwidth]{loop/weights.pdf}
+	\end{minipage}
+	\begin{minipage}{\textwidth}
+		\includegraphics[width=\textwidth]{loop/prediction.pdf}
+		\caption{Poids à l'issue de l'apprentissage et erreur de prédiction de $\inpx\m{1}$ dans une architecture de 3 cartes connectées en boucle. Bien que les poids s'organisent de façon similaire aux expériences dans lesquelles les cartes sont connectées réciproquement, la prédiction est moins bien réalisée. L'influence des connexions diminue donc rapidement avec la distance dans l'architecture, mais reste présente.\label{fig:3som_loop}}
+	\end{minipage}
+\end{figure}
 
 \section{Prédiction d'entrée}
 
@@ -326,7 +372,7 @@ Lorsqu'il manque des informations pour prédire correctement l'entrée, par exem
 \end{figure}
 
 \begin{figure}
-	\includegraphics[width=0.9\textwidth]{rceqre_pred2.pdf}
+	\includegraphics[width=0.9\textwidth]{rceqre/prediction.pdf}
 	\caption{Prédiction de l'entrée $X\m{1}$ lorsque $r_c = r_e$. Sans formation de zones, la capacité de prise de décision n'est plus possible par une carte de l'architecture. \label{fig:rcre_pred}}
 \end{figure}
 
@@ -387,7 +433,8 @@ Après apprentissage, nous effectuons une phase de prédiction. Lors de cette é
 Nous envoyons alors le poids externe du BMU de cette carte comme commande du drône. Cette étape est réalisée en ligne en temps réel sur la trajectoire du drône.
 
 La figure \ref{fig:drone_inp} présente la répartition des entrées présentées au drône. Nous avons tracé les dépendances entre chaque modalité. Nous nous intéressons ici aux dépendances entre la commande en $y$ $\rho$, sujet de la prédiction et des autres modalités.
-On remarque que $\rho$ dépend linéairement de l'angle du couloir $\varphi$, mais que cette dépendance est très bruitée. On remarque également des dépendances entre les autres variables.
+On remarque que $\rho$ dépend linéairement de l'angle du couloir $\varphi$, mais que cette dépendance est très bruitée. 
+On remarque également des dépendances entre les autres variables.
 
 \begin{figure}
 	\begin{minipage}{0.5\textwidth}
@@ -400,8 +447,10 @@ On remarque que $\rho$ dépend linéairement de l'angle du couloir $\varphi$, ma
 	\label{fig:drone}
 	\end{figure}
 
-
-%TODO mettre disposition des entrées.
+\begin{figure}
+	\centering\includegraphics[width=\textwidth]{drone_inputs}
+	\caption{Disposition et dépendances des entrées d'apprentissage. Nous chercherons à prédire $\rho$~: cette valeur dépend bien des autres modalités $v$, $\varphi$ et $x$. La dépendance est très simple (linéaire) mais très bruitée. \label{fig:drone_inp}}
+\end{figure}
 
 \subsubsection{Résultats}
 
