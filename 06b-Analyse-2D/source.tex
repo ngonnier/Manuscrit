@@ -14,13 +14,15 @@
 \minitoc
 Nous avons étudié des comportements de base de cartes 1D sur des données en une dimension. 
 Cependant, les cartes auto-organisatrices utilisées en pratique sont des cartes en deux dimensions, qui permettent bien mieux de cartographier des données en grande dimension.
-Ce chapitre présente une étude préliminaire d'architectures de deux et trois cartes en deux dimensions. 
+Ce chapitre présente une étude préliminaire d'architectures de deux et trois cartes en deux dimensions.
 Nous cherchons à étudier ici si les mécanismes d'organisation observés sur des cartes 1D sont transposables à des cartes en deux dimensions et dans quelle mesure. Ceci nous permettra d'identifier les limites et perspectives du passage des cartes 1D à 2D.
 
-\section{Jeu d'entrées géométriques en grande dimension}
+\section{Présentation de l'expérience}
+
+\subsection{Modèle d'entrées}
 
 Maintenant que nous travaillons sur des cartes en deux dimensions, nous voulons que chaque carte prenne des entrées de dimension supérieure ou égale à deux. Nous nous concentrons dans ce chapitre sur des cartes prenant des entrées 2D, dans un cas géométrique similaire aux cartes 1D du chapitre précédent prenant des entrées unidimensionnelles.
-Les entrées multimodales sont donc des points en 4 dimensions pour une structure de 2 cartes.
+Les entrées multimodales sont alors des points en 4 dimensions pour une structure de 2 cartes.
 Nous choisissons ces points sur une sphère en 3D dont on a effectuée une rotation dans l'espace 4D, de la même façon que les entrées en 3D se trouvaient sur un cercle 2D dont on a effectué une rotation dans l'espace, voir figure~\ref{fig:sphere_inputs}. 
 La variable $U$ paramétrant cette surface est alors en deux dimensions et permet de représenter le modèle d'entrées.
 Nous normalisons les entrées entre 0 et 1 sur chaque dimension, entrainant une légère déformation de la sphère.
@@ -29,19 +31,20 @@ Nous nous intéressons à une architecture de deux cartes 2D.
 Chaque carte possède une couche de poids externes  $\w\ext \in [0,1]^2$ et une couche de poids contextuels $\w_c \in [0,1]^2$.
 Les BMUs de chaque carte sont indexés par des positions en deux dimensions $\bmu = (\bmu_0, \bmu_1)$. 
 Nous prenons des cartes  de taille $100x100$.
-Les activités $a_e$ et $a_c$ sont calculées par une activitation gaussienne: 
+Les activités $a_e$ et $a_c$ sont calculées par une activation gaussienne~: 
 $$a_e(\inpx,p) = \exp(\frac{||\inpx - \w_e(p) ||^2}{2*\sigma^2})$$
-, identiquement pour $a_c$. La norme utilisée dans les cartes 2D est la norme euclidienne.
+de même pour $a_c$. La norme utilisée dans les cartes 2D est la norme euclidienne.
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{sphere_inputs.pdf}
 	\caption{Transformation d'une surface d'un espace 3D en surface dans un espace 4D ou 6D. Les points restent positionnés sur une surface, mais sont plongés dans un espace de plus grande dimension. La rotation permet de répartir les coordonnées des points sur les dimensions. \label{fig:sphere_inputs}}
 \end{figure}
 
-\section{Organisation des poids}
+\subsection{Architecture}
 
-La notion d'organisation dans une carte 2D est moins directe que dans une carte en une dimension.
-De plus, l'organisation des poids externes n'est pas forcément assurée pour un rayon de voisinage constant, même dans une carte sans connexions contextuelles. Par exemple, l'organisation attendue d'une carte sur le carré $[0,1]^2$ est que les coins de la carte viennent dans les coins du carré. Cependant, les mécanismes d'organisation peuvent conduire à une carte tordue en son milieu, par exemple en \label{fig:torsion}.
+La notion d'organisation dans une carte 2D est moins systématique que dans une carte en une dimension. Par exemple, l'organisation attendue d'une carte sur le carré $[0,1]^2$ est que les coins de la carte viennent dans les coins du carré. 
+Cependant, les mécanismes d'organisation peuvent conduire à une carte tordue en son milieu, par exemple en \label{fig:torsion}. Cette organisation respecte la continuité des poids au sens des cartes auto-organisatrice, mais n'est pas la disposition représentant le mieux le carré.
+De plus, l'organisation des poids externes n'est pas forcément assurée pour un rayon de voisinage constant, même dans une carte sans connexions contextuelles. 
 
 \begin{figure}
 	\centering\includegraphics[width=0.7\textwidth]{we_cub_example.pdf}
@@ -49,14 +52,18 @@ De plus, l'organisation des poids externes n'est pas forcément assurée pour un
 	}
 \end{figure}
 
-Dans une architecture CxSOM, cela peut poser un problème pour l'utilisation de la position du BMU en tant que représentation de l'entrée~: la position du BMU n'est plus directement représentative de l'entrée. Deux entrées proches peuvent avoir leur BMU de chaque côté de la carte.
-Dans un premier temps, nous avons choisi de forcer les cartes à bien se déplier . Pour cela, nous laissons les poids externes s'organiser sur quelques centaines d'itérations, préalablement aux poids contextuels, en prenant un grand rayon de voisinage $r_e = 0.5$. 
+Dans une architecture CxSOM, cela peut poser un problème pour l'utilisation de la position du BMU en tant que représentation de l'entrée~: la position du BMU n'est plus directement représentative de l'entrée.  Deux entrées proches peuvent avoir leur BMU de chaque côté de la carte.
+Dans un premier temps, nous avons choisi de favoriser le bon dépliement des poids externes en modifiant un peu l'initialisation, de base aléatoire, des poids. Pour cela, nous laissons les poids externes s'organiser sur quelques centaines d'itérations, préalablement aux poids contextuels, en prenant un grand rayon de voisinage $r_e = 0.5$. 
 Ce grand rayon permet d'éviter les zones de torsion dans la carte. Après cette étape préalable, nous réduisons le rayon externe  à $r_e = 0.2$ et effectuons l'apprentissage des poids externes et contextuels comme décrit dans le modèle CxSOM. Les poids externes affinent alors leur apprentissage et les poids contextuels s'organisent sur une carte "bien dépliée". 
-La généralisation de l'organisation des architectures 2D serait à explorer pour assurer une robustesse de l'algorithme sur des données quelconques~: il est en effet compliqué de s'assurer du bon dépliement d'une carte en pratique sur des données de grande dimension.
+La généralisation de l'organisation des architectures 2D sera à explorer pour assurer une robustesse de l'algorithme sur des données quelconques~: il est en effet compliqué de s'assurer du bon dépliement d'une carte en pratique sur des données de grande dimension.
+
+
+\section{Résultats}
+
 
 \subsection{Organisation de cartes sur des entrées indépendantes}
 
-Intéressons nous à l'organisation d'une architecture de deux cartes prenant des entrées $\inpx\m{1}, \inpx\m{2} \in [0,1]^2 \times 0,1]^2$ indépendantes. Nous prenons des rayons de voisinage $r_e = 0.2, r_c = 0.05$.
+Intéressons-nous à l'organisation d'une architecture de deux cartes prenant des entrées $\inpx\m{1}, \inpx\m{2} \in [0,1]^2 \times 0,1]^2$ indépendantes. Nous prenons des rayons de voisinage $r_e = 0.2, r_c = 0.05$.
 Dans l'architecture de cartes 1D, l'apprentissage sur des données indépendantes conduit à la formation de zones dans les poids contextuels de chaque carte. Nous voulons vérifier si la présence de telles zones est observable sur des cartes 2D.
 Nous nous intéressons d'abord aux motifs formés par les poids externes et contextuels sur chaque carte.
 
@@ -73,7 +80,7 @@ Les motifs sont similaires sur les deux cartes, traduisant un aspect systématiq
 En traçant l'organisation des poids pour des cartes de paramètres $r_c$ différents, nous remarquons également que l'échelle des motifs dépend de la valeur du rayon de voisinage contextuel, comme dans le cas en une dimension.
 Néanmoins, les poids restent centrés autour de $0.5$~: nous faisons apparaître en bleu et orange sur la carte de coloration les valeurs effectivement prises par les poids contextuels de chaque carte. 
 Pourtant, les positions des BMUs de chaque carte observées lors d'un test s'étendent bien sur toute la surface d'une carte. Les poids contextuels auraient dû, pour bien cartographier les positions sur l'autre carte, s'étendre sur tout le carré dans chaque zone.
-Ce comportement est à voir comme une limite des architectures de cartes, mais cette limitation est générale à des cartes une et deux dimensions~:  Des architectures de 10 cartes apprenant sur 10 entrées 1D indépendantes voient également leurs poids contextuels se moyenner autour de 0.5.
+Ce comportement est à voir comme une limite des architectures de cartes, mais cette limitation est générale à des cartes une et deux dimensions~:  nous avons vu que des architectures de 10 cartes apprenant sur 10 entrées 1D indépendantes voient également leurs poids contextuels se moyenner autour de $0.5$.
 
 \begin{figure}
 	\begin{minipage}{\textwidth}
@@ -95,9 +102,9 @@ Nous étudions l'organisation des cartes sur des données pris sur une sphère 3
 Nous prendrons dans une première expérience les paramètres $r_c = 0.02$ et $r_e = 0.2$.
 La figure~\ref{fig:2som_s_002_wc} présente la disposition des cartes après 700 000 itérations d'apprentissage. 
 
-Cette configuration de poids est stable~: seule une zone réduite de la carte évolue encore après les 700000 itérations, sur un cycle limite restreint en termes de valeurs. 
+Cette configuration de poids est stable~: seule une zone réduite de la carte évolue encore après les 700000 itérations, sur un cycle limite restreint en termes de valeurs. Il s'agit de la partie de la carte faisant apparaître des motifs de taille réduite.
 On peut donc parler ici de convergence.
-Les poids externes cartographient les entrées externes de la même façon qu'une carte indépendante, ce qui est bien attendu du modèle CxSOM. Chacune des carte s'étend sur le cercle dans lequel sont tirées leurs entrées externes.
+Les poids externes cartographient les entrées externes de la même façon qu'une carte indépendante, ce qui est bien attendu du modèle CxSOM. Chacune des carte s'étend sur le disque dans lequel sont tirées leurs entrées externes.
 Les poids contextuels de la carte, représentés sous forme de carte de coloration, font apparaître des motifs alternés.
 Ces motifs rappellent bien les motifs présents en une dimension en faisant alterner des valeurs opposées (rouge et vert).
 Le tracé des entrées en fonction de la position du BMU fait également figurer l'existence de zones mortes de taille réduite.
@@ -108,12 +115,11 @@ Nous comparons en Figures~\ref{fig:rc_003,fig:rc_005} et \ref{fig:todo} l'évolu
 Nous remarquons que l'expérience avec $r_c = 0.02$ conduit à une configuration stable des poids contextuels, dont certains ont convergé vers un point fixe et d'autres vers un cycle limite, comme l'indique la figure TODO. 
 
 
-Cette convergence est également assurée dans l'expérience avec $r_c = 0.03$. Au contraire, les poids contextuels ne montrent pas de convergence pour $r_c =0.05$. Nous avons observé expérimentalement ce comportement sur plusieurs expériences.
+Cette convergence est également assurée dans l'expérience avec $r_c = 0.03$. Au contraire, les poids contextuels ne montrent pas de convergence pour $r_c =0.05$.
+Nous avons observé expérimentalement ce comportement sur plusieurs expériences.
 
-Cependant, nous observons une organisation des poids contextuels similaires dans ces trois expériences, ce qui montre que les motifs dépendent bien de la relation entre entrées et non des conditions initiales des expériences. 
-Nous remarquons en effet que les poids contextuels tendent à s'organiser sous une forme hélicoïdale, formant les motifs observé dans les trois expériences.
+Cependant, nous observons une organisation des poids contextuels similaires dans ces trois expériences, ce qui montre que les motifs dépendent bien de la relation entre entrées et non des conditions initiales des expériences. Les poids contextuels tendent en effet à s'organiser sous une forme hélicoïdale, formant les motifs observé dans les trois expériences.
 La dynamique de l'évolution des poids au cours de l'apprentissage suit par ailleurs cette forme d'hélice. 
-Les zones "floues" observées dans les poids contextuelles correspondent aux zones de transition
 
 Nous pouvons conclure de ces observations préliminaires en deux dimensions que la formation de zones est un mécanisme qu'on retrouve dans des cartes 1D comme des cartes 2D. Cependant, les deux dimensions apportent beaucoup moins de contraintes sur la forme des zones que sur des cartes en une dimension, rendant possible la formation différents motifs sur les poids contextuels. 
 Contrairement au cas en une dimension dans lequel la convergence des poids était assurée, la convergence des poids contextuels dans une carte 2D n'est pas assurée en fonction des paramètres de la carte. Cette étude paramétrique en deux dimensions apparaît comme une suite nécessaire de l'étude des cartes.
@@ -157,6 +163,18 @@ Nous pouvons donc supposer que le type de relation entre entrées influence ces 
 	\caption{\'Evolution de la différence moyenne entre les poids externes et contextuels au cours de l'apprentissage d'une architecture de 2 cartes sur une sphère 3D en 4 dimensions. Le calcul de différences est réalisé toutes les 10 000 itérations. Nous avons tracé les courbes pour 4 expériences avec $r_e = 0.2$ et $r_c = 0.02$ ainsi que pour les expériences avec $r_e = 0.2$ et $r_c = 0.05$,$r_e = 0.2$ et $r_c = 0.03$. Nous remarquons que cette différence évolue vers une valeur faible, qu'on attend nulle pour une carte stabilisée. Ici les poids tendent vers une valeur faible qui semble stable. Notons que cela ne démontre pas forcément la convergence~: les poids peuvent se déplacer faiblement dans une même direction. le tracé nous assure que l'évolution, si elle existe, est lente.}
 \end{figure}
 
+\subsection{Apprentissage du modèle d'entrée par les BMUs}
+
+La figure $\ref{fig:U_BMU}$ fait figurer les valeurs de la variable 2D $U$, représentée par la couleur des points, en fonction de la position du BMU $\bmu\m{1}$ et $\bmu\m{2}$ de chaque carte. En une dimension, nous avions noté que $U$ était une fonction du BMU dans chaque carte, ce qui signifie que les BMUs encodent la valeur de l'entrée $\inpx$ et la valeur de $U$. Deux points ayant la même valeur de $\inpx$ mais une valeur de $U$ différentes étaient alors codés par des BMUs proches dans la carte.
+Enfin, entre deux zones de BMUs figuraient des zones mortes, dans lesquelles les n\oe{}uds ne sont jamais BMUs.
+Nous voyons sur la figure que ce comportement se reproduit également en deux dimensions. La figure fait apparaître des zones blanches, sans points~: il s'agit des zones mortes, séparant les zones de BMUs. Des BMUs proches codent pour des entrées ayant la même valeur de $\inpx$ et de $U$. Des entrées ayant une même valeur de $\inpx$ mais des $U$ différents sont encodées proches dans la carte mais dans deux zones différentes. 
+
+Le comportement de zones observé en 1D se généralise bien en deux dimensions. La forme et le nombre de zones sont plus variables qu'en une dimension et dépendent des zones de poids contextuels.
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{U_Pi_rc002_afterbug.pdf}
+	\caption{Disposition des valeurs de $U$, ici une variable en deux dimensions, selon les valeurs du BMU $\bmu$ dans chaque carte. Les tracés font apparaître que des zones de BMUs se spécialisent pour une valeur de $U$, comme ce qui était observé en une dimension. \label{fig:U_BMU}}
+\end{figure}
 
 %CONVERGENCE RELAX ! 
 
@@ -180,7 +198,7 @@ Nous n'avons pas étudié en deux dimensions l'unicité du BMU en fonction des v
 	\caption{\'Evolution de la convergence de la relaxation au cours de l'apprentissage. Nous avons réalisé les tracés sur trois expériences générées pour $r_c = 0.02$, sur des entrées aléatoires tirées sur la même distribution, une sphère 4D. Pour comparaison, nous traçons également l'évolution pour l'expérience avec $r_c = 0.05$, dans laquelle les poids contextuels n'ont pas convergé. La relaxation converge en fin d'apprentissage~: le BMU a donc un sens dans les cartes en deux dimensions. \label{fig:relax}}
 \end{figure}
 
-\section{Prédiction d'entrée}
+\subsection{Prédiction d'entrée}
 
 Nous avons vu que les cartes en deux dimensions s'organisent, comme en 1D, de manière à former des zones dans les poids contextuels. 
 Nous avons également observé que la recherche de BMU a un sens, car la relaxation converge dans les cartes 2D.
@@ -217,8 +235,6 @@ Lorsque la carte $M^{(1)}$ ne reçoit pas d'entrée externe. Les cartes $M^{(2)}
 
 
 
-\subsection{Perspectives}
-%Convergence des cartes 2D Cottrell 
 
 \section{Conclusion}
 
