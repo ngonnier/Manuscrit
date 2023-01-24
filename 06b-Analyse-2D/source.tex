@@ -136,6 +136,8 @@ La similarité existant entre la forme des poids montre que les motifs dépenden
 Nous pouvons conclure de ces observations préliminaires en deux dimensions que la formation de zones est un mécanisme qu'on retrouve dans des cartes 1D comme des cartes 2D.
 Cependant, les deux dimensions apportent beaucoup moins de contraintes sur la forme des zones que sur des cartes en une dimension, rendant possible la formation différents motifs sur les poids contextuels. 
 Contrairement au cas en une dimension dans lequel la convergence des poids était assurée, la convergence des poids contextuels dans une carte 2D n'est pas assurée en fonction des paramètres de la carte. Cette étude paramétrique en deux dimensions apparaît comme une suite nécessaire de l'étude des cartes.
+En Figure~\ref{fig:conv_poids}, nous avons tenté de représenter l'évolution des poids au cours de l'apprentissage, en traçant, tous les 5000 itérations, la moyenne des différences entre les poids des cartes au temps courant $t$ et à la dernière configuration observée ($t - 5000$). Ce tracé ne constitue pas une preuve expérimentale de convergence, mais nous donne une idée de l'évolution des poids également observée à l'\oe{}il. Pour $r_c = 0.02$, nous relevons une différence moyenne entre les poids au temps $t$ de 0.01 à l'itération 500000.
+Plusieurs travaux dans la littérature proposent des outils et des critères pour étudier la convergence et l'organisation de cartes de Kohonen \cite{Polani2001MeasuresFT, Breard2017EvaluatingSM, Tatoian2018SelfOrganizingMC}, qu'il sera intéressant d'utiliser égalemement dans les architecture CxSOM.
 
 Nous avons analysé la forme des poids sur un seul type de distribution, une sphère dans un espace 4D, pour différents rayons de voisinage de la carte.
 Nous observons que les motifs formés par les poids contextuels sont similaires dans tous ces cas et ne dépendent donc pas des conditions initiales des expériences~: les poids des cartes sont initialisés aléatoirement de façon différente dans chaque expérience et les entrées sont tirées sur une même distribution de façon aléatoire.
@@ -159,10 +161,10 @@ Nous pouvons donc supposer que le type de relation entre entrées influence l'or
 	\caption{\'Evolution des poids contextuels d'une architecture de deux cartes pour $r_c =0.02$. Les motifs observés sont similaires à ceux observés pour d'autres paramètres. Les poids présentent toujours une forme hélicoïdale évoluant dans le temps. \label{fig:rc_002}}
 \end{figure}
 
-% \begin{figure}
-% 	\includegraphics[width=\textwidth]{evol_convergence_poids.pdf}
-% 	\caption{\'Evolution de la différence moyenne entre les poids externes et contextuels au cours de l'apprentissage d'une architecture de 2 cartes sur une sphère 3D en 4 dimensions. Le calcul de différences est réalisé toutes les 10 000 itérations. Nous avons tracé les courbes pour 4 expériences avec $r_e = 0.2$ et $r_c = 0.02$ ainsi que pour les expériences avec $r_e = 0.2$ et $r_c = 0.05$,$r_e = 0.2$ et $r_c = 0.03$. Nous remarquons que cette différence évolue vers une valeur faible, qu'on attend nulle pour une carte stabilisée. Ici les poids tendent vers une valeur faible qui semble stable. Notons que cela ne démontre pas forcément la convergence~: les poids peuvent se déplacer faiblement dans une même direction. le tracé nous assure que l'évolution, si elle existe, est lente. \label{fig:conv_poids}}
-% \end{figure}
+\begin{figure}
+	\includegraphics[width=\textwidth]{evol_convergence_poids.pdf}
+	\caption{\'Evolution de la différence moyenne entre les poids externes et contextuels au cours de l'apprentissage d'une architecture de 2 cartes sur une sphère 3D en 4 dimensions. Le calcul de différences est réalisé toutes les 10 000 itérations. Nous avons tracé les courbes pour 4 expériences avec $r_e = 0.2$ et $r_c = 0.02$ ainsi que pour les expériences avec $r_e = 0.2$ et $r_c = 0.05$,$r_e = 0.2$ et $r_c = 0.03$. Nous remarquons que cette différence évolue vers une valeur faible, qu'on attend nulle pour une carte stabilisée. Ici les poids tendent vers une valeur faible qui semble stable. Notons que cela ne montre pas forcément la convergence~: les poids peuvent se déplacer faiblement dans une même direction. Le tracé nous assure simplement que l'évolution des poids est lente en fin d'apprentissage. \label{fig:conv_poids}}
+\end{figure}
 
 \subsection{Convergence de la relaxation}
 
@@ -256,12 +258,27 @@ Ce comportement à la limite de CxSOM est une piste de propriété à étudier p
 
 \section{Conclusion}
 
-Cette série d'expériences donne une idée des comportements auxquels on peut s'attendre des cartes en deux dimensions.
-Nous avons d'abord observé que la disposition en zones de poids contextuels est également observée sur des cartes en deux dimensions. 
-La formation de ces zones permet de séparer les valeurs de $U$ en fonction des positions des BMUs et $U$ est une fonction du BMU dans chacune des cartes en deux dimensions également.
-Cette séparation est bien évaluée par le ratio de corrélation.
+Les expériences proposées dans ce chapitre sur les cartes en deux dimensions donnent une idée des comportements auxquels on peut s'attendre dans un cas plus général d'architecture.
+Ces expériences nous ont également permis de vérifier la méthode d'étude de carte construite tout au long de cette thèse et constituent une première application des indicateurs proposés au chapitre précédent.
+Nous avons d'abord observé que l'émergence de zones de poids contextuels est une propriété qui se transpose sur des cartes en deux dimensions. Ces zones constituent donc un point clé des architectures CxSOM.
+La formation de ces zones permet, comme sur des cartes 1D, de séparer les valeurs de $U$ en fonction des positions des BMUs et $U$ est une fonction du BMU dans chacune des cartes en deux dimensions également.
+Cette séparation est correctement évaluée par le ratio de corrélation.
+La convergence des poids, contrairement aux cartes en une dimension, n'est pas assurée en fonction des paramètres d'apprentissage et constitue un point à analyser lors de la construction d'architectures de cartes en deux dimensions. 
+Par ailleurs, nous avons déplié les poids externes lors d'une étape d'initialisation afin de s'assurer que la carte 2D ne présente pas de "point de torsion". La robustesse de l'algorithme CxSOM sur des cartes "mal organisées" est un point à étudier avant une éventuelle application de l'algorithme.
 
-Nous remarquons que les motifs formés par les poids contextuels 
+
+Nous remarquons que la forme des motifs spatiaux formés par les poids contextuels sont plus variés que dans le cas des cartes en une dimension~; il serait intéressant d'explorer la formation de ces motifs sur d'autres dispositions d'entrées. Ces motifs rappellent ceux émergeant d'autre processus d'organisation, tels que les motifs de Turing. Ces motifs émergent de processus de diffusion, ce qui n'est a priori pas le cas sur les cartes de Kohonen~: l'organisation des cartes est guidée par la présentation d'une séquence aléatoire d'entrées. Il est cependant intéressant d'observer la similarité existant dans les motifs, qui montrent que l'organisation des cartes est issue d'une dynamique complexe (au sens des systèmes complexes).
+Les poids contextuels montrent également l'émergence de motifs temporels lors de l'apprentissage~: l'organisation en hélice pour $r_c = 0.05$. Ces observations montrent que les mécanismes d'apprentissage émergeant dans des cartes en deux dimensions sont plus complexes qu'en une dimension. Cela peut être un atout pour le modèle car cela laisse la porte ouverte à des comportements plus complexes sur des cartes 2D~; mais cela apporte plus de difficulté pour une éventuelle compréhension du modèle.
+Ainsi, il est pertinent d'étudier l'organisation des cartes d'un point de vue macroscopique pour la suite des travaux. Si la forme des motifs en 1D nous apportait une compréhension du comportement d'une architecture de trois cartes, il est compliqué de prédire l'apprentissage d'une architecture de cartes 2D et de plus nombreuses cartes à partir de la forme des poids.
+
+
+\begin{figure}
+\centering\includegraphics[width=0.5\textwidth]{turing_pattern_chem.pdf}
+\caption{Motifs de Turing observés lors d'une réaction de diffusion chimique. Ces motifs émergent après l'introduction d'une perturbation dans un système initialement stable. Les différents motifs A,B,C,D sont des états atteint dans différentes expériences en fonction des paramètres de la réaction. Dans nos cartes, nous observons des motifs similaires au motif A lorsque $r_c = 0.02$, mais nous observons également des motifs rappelant C et D pour des rayons de voisinage différents. Notons cependant que l'organisation des cartes n'est a priori pas un processus de diffusion et est générée par la présentation d'une séquence d'entrées.  \label{fig:turing}}
+\end{figure}
+
+
+
 
 \ifSubfilesClassLoaded{
     \printbibliography
