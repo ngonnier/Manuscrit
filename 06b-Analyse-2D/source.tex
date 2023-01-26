@@ -11,7 +11,7 @@
 \begin{document}
 \graphicspath{{06-Analyse/figures},{../06-Analyse/figures}, {../06b-Analyse-2D}, {06b-Analyse-2D}}
 
-\chapter{Extension aux cartes en deux dimensions}
+\chapter{Extension aux cartes en deux dimensions}\label{chap:analyse2D}
 
 \minitoc
 Nous avons étudié des comportements de base de cartes 1D sur des données en une dimension. 
@@ -45,7 +45,7 @@ Les entrées fournies à chaque carte sont ensuite $\inpx\m{1} = [x_0,x_1]$ et $
 
 \subsection{Architecture}
 
-L'architecture de cartes en deux dimensions est construite sur le même principe qu'un architectures de cartes 1D, le modèle présenté au chapitre \ref{chap:modele} étant valable pour n'importe quelle dimension de carte.
+L'architecture de cartes en deux dimensions est construite sur le même principe qu'une architecture de cartes 1D, le modèle présenté au chapitre \ref{chap:modele} étant valable pour n'importe quelle dimension de carte.
 Nous nous intéressons d'abord à une architecture de deux cartes. Les n\oe{}uds sont positionnées sur une grille carrée et indexés entre 0 et 1 sur chaque dimension, que nous noterons $\mathbf{p}\m{i} = (p\m{i}_0, p\m{i}_1)$ sur les figures. 
 Chaque carte possède donc une couche de poids externes $\w\ext \in [0,1]^2$ et une couche de poids contextuels $\w_c \in [0,1]^2$.
 Les poids contextuels représentent les positions des BMUs de l'autres cartes qui sont les positions $\mathbf{p}\m{2}$ pour la carte $M\m{1}$ et $\mathbf{p\m{1}}$ pour la carte $M\m{2}$. Nous prenons des cartes de taille $100x100$.
@@ -109,7 +109,7 @@ Nous obtenons $\eta(U|\bmu\m{1}) = 0.99 $ et $\eta(U|\bmu\m{2}) = 0.99 $.
 Ces valeurs sont de $\eta(U|\bmu\m{1}) = 0.94 $ et $\eta(U|\bmu\m{2}) = 0.98$ pour des cartes ayant appris indépendamment sur les mêmes entrées 2D.
 En effet, la répartition des valeurs de $U$ selon $\inpx\m{1}$ et $\inpx\m{2}$ donne déjà des ratios de corrélation élevés~:
 $\eta(U|\inpx\m{1}) = 0.91$ et $\eta(U|\inpx\m{2}) = 0.98$. 
-Cet indicateur permet donc bien d'observer un apprentissage de $U$ par le modèle CxSOM lorsqu'on le compare à la valeur des entrées. Une meilleure analyse de l'indicateur reste à étudier pour une étude claire de données en plus grande dimension, dans laquelle un tracé n'est plus possible.
+Cet indicateur permet bien d'observer un apprentissage de $U$ par le modèle CxSOM lorsqu'on le compare à la valeur des entrées. Une meilleure analyse de l'indicateur reste à étudier pour une étude claire de données en plus grande dimension, dans laquelle un tracé n'est plus possible.
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{U_BMU_2SOM_2D.pdf}
@@ -137,7 +137,7 @@ Nous pouvons conclure de ces observations préliminaires en deux dimensions que 
 Cependant, les deux dimensions apportent beaucoup moins de contraintes sur la forme des zones que sur des cartes en une dimension, rendant possible la formation différents motifs sur les poids contextuels. 
 Contrairement au cas en une dimension dans lequel la convergence des poids était assurée, la convergence des poids contextuels dans une carte 2D n'est pas assurée en fonction des paramètres de la carte. Cette étude paramétrique en deux dimensions apparaît comme une suite nécessaire de l'étude des cartes.
 En Figure~\ref{fig:conv_poids}, nous avons tenté de représenter l'évolution des poids au cours de l'apprentissage, en traçant, tous les 5000 itérations, la moyenne des différences entre les poids des cartes au temps courant $t$ et à la dernière configuration observée ($t - 5000$). Ce tracé ne constitue pas une preuve expérimentale de convergence, mais nous donne une idée de l'évolution des poids également observée à l'\oe{}il. Pour $r_c = 0.02$, nous relevons une différence moyenne entre les poids au temps $t$ de 0.01 à l'itération 500000.
-Plusieurs travaux dans la littérature proposent des outils et des critères pour étudier la convergence et l'organisation de cartes de Kohonen \cite{Polani2001MeasuresFT, Breard2017EvaluatingSM, Tatoian2018SelfOrganizingMC}, qu'il sera intéressant d'utiliser égalemement dans les architecture CxSOM.
+Plusieurs travaux dans la littérature proposent des outils et des critères pour étudier la convergence et l'organisation de cartes de Kohonen \cite{Polani2001MeasuresFT, Breard2017EvaluatingSM, Tatoian2018SelfOrganizingMC}, qu'il sera intéressant d'utiliser également dans les architectures CxSOM.
 
 Nous avons analysé la forme des poids sur un seul type de distribution, une sphère dans un espace 4D, pour différents rayons de voisinage de la carte.
 Nous observons que les motifs formés par les poids contextuels sont similaires dans tous ces cas et ne dépendent donc pas des conditions initiales des expériences~: les poids des cartes sont initialisés aléatoirement de façon différente dans chaque expérience et les entrées sont tirées sur une même distribution de façon aléatoire.
