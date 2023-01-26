@@ -28,7 +28,7 @@ Nous proposerons dans ce chapitre des indicateurs permettant d'évaluer l'appren
     \label{fig:upi_chap4}}
 \end{figure}
 
-\subsection{Indicateurs envisagés}
+\subsection*{Indicateurs envisagés}
 
 Plusieurs méthodes permettent d'évaluer une relation statistique existant entre deux signaux.
 Parmi ceux-ci, citons le coefficient de corrélation (Pearsons' R) et le ratio de corrélation, illustrés en figure~\ref{fig:signaux}, ainsi que l'information mutuelle.
@@ -135,56 +135,50 @@ En figure~\ref{fig:cr_xp}, nous traçons les distributions de $U$ en fonction de
 Le ratio de corrélation apparaît ici comme une bonne mesure de la relation fonctionnelle existant entre $U$ et $\bmu$. Le ratio de corrélation est très proche de 1 dans chaque carte de CxSOM, traduisant le fait que $U$ est une fonction du BMU dans chaque carte.
 
 La figure~\ref{fig:cr_bruit} présente les mêmes paramètres tracés dans le cas ou l'expérience est réalisée sur des données bruitées, en l'occurence un anneau. $U$ n'est alors plus vraiment une fonction du BMU, mais en reste proche. 
-Le ratio de corrélation traduit correctement cette proximité et reste plus élevé dans chaque carte que pour une carte seule.
+Le ratio de corrélation traduit correctement cette proximité et est plus élevé dans chaque carte de l'architecture que pour une carte seule.
 
-% \begin{table}
-%     \begin{tabular}
-%         Distribution & Entrées & Cartes indépendantes & CxSOM \\
-%         Cercle 2D & & & \\
-%         Lissajous & & & \\
-%         Plan & & & 
-%         Anneau & & & \\
-%     \end{tabular}
-% \end{table}
-
+\begin{table}
+    \centering
+    \caption{Comparaison des valeurs du ratio de corrélation sur plusieurs expériences.}
+    \begin{tabular}{*7c}
+        \toprule
+        & \multicolumn{2}{c}{Entrées} & \multicolumn{2}{c}{CxSOM} & \multicolumn{2}{c}{Cartes Simples} \\
+        \cmidrule(lr){2-7}
+         & $\eta(U;\inpx\m{1})$ & $\eta(U;\inpx\m{2})$  & $\eta(U;\bmu\m{1})$ & $\eta(U;\bmu\m{2})$  & $\eta(U;\bmu\m{1})$ & $\eta(U;\bmu\m{2})$ \\    
+        \midrule
+        Cercle &   $0.45 $    & $0.84$  &  $0.98$ & $0.99$ & $0.49$ & $0.84$      \\
+        Anneau &  $0.43$      &  $0.83$      & $0.97$ & $0.93$ & $0.44$ & $0.98$ \\
+        Lissajous &  $0.81$     &  $0.80$ & $0.96$ & $0.94$  & & \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 Enfin, nous traçons en figure~\ref{fig:cr_evol} l'évolution du ratio de corrélation sur les 200 premiers pas d'apprentissage de deux cartes sur un cercle, connectées et non connectées. Les mesures sont réalisées sur 10 expériences réalisées sur des distributions d'entrées identiques et moyennées.
 Nous remarquons que $\eta$ reste inférieur dans le cas ou les cartes sont connectées que non connectées. 
-
-Remarques~:
-\begin{itemize}
-    \item Semble rester a peu près constant pendant tout l'apprentissage. Traduit le fait que dès le début de l'apprentissage, la relaxation différencie les BMUs en fonction des deux valeurs d'entrées, même quand les poids ne sont pas organisés.
-    \item Pas d'information sur l'organisation topologique des poids ici: le coefficient ne traduit pas l'organisation de la carte.
-    \item Grande variabilité de la valeur de $\eta$ entre les expériences, traduite ici par l'écart à la moyenne.
-    \item On voit qu'entre la carte $M\m{1}$ et $M\m{2}$, $\eta$ prend une valeur bien différente, alors que la qualité de la relation est semblable. On peut donc difficilement utiliser $\eta$ de façon absolue, mais plutôt pour comparer des valeurs.
-\end{itemize}
+Le ratio de corrélation traduit une relation fonctionnelle mais ne prend pas en compte l'aspect continu des positions. Ainsi, à partir du moment ou deux positions différentes sont BMU pour une même entrée, même lorsque les poids ne sont pas organisés, le ratio de corrélation est élevé. Le ratio de corrélation apparaît ainsi sur la figure prendre à une valeur élevée tout au long de l'apprentissage. Il ne traduit pas d'organisation des poids.
+$\eta(U;\bmu\m{2})$ est bien plus élevé sur $\eta(U;\bmu\m{1})$, ce qui apparaît également sur les figures~\ref{fig:cr_xp} et \ref{fig:cr_bruit}, à cause de la relation entre entrées.
+Intuitivement, on voudrait que les deux expériences aient un indicateur similaire.
+Bien que les valeurs de $\eta$ soient normalisées, il est donc compliqué d'utiliser cette métrique comme valeur absolue pour comparer des expériences~; mais seulement la comparer à $\eta(U;\inpx\m{1})$ et $\eta(U;\inpx\m{2})$
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{correlation_ratio_xp0.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples \label{fig:cr_xp}}
+    \centering\includegraphics[width=0.8\textwidth]{correlation_ratio_cercle0.pdf}
+    \caption{Tracé du ratio de corrélation et de $\varphi$ sur des entrées placées sur un cercle. Comparaison entre CxSOM et une carte simple \label{fig:cr_xp}}
 \end{figure}
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{correlation_ratio_anneau_xp0.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes cxsom et cartes simples dans le cas ou les données sont bruitées.\label{fig:cr_bruit}}
+   \centering \includegraphics[width=0.8\textwidth]{xu_yu_both_anneau.pdf}
+    \caption{Tracé du ratio de corrélation sur cartes CxSOM et cartes simples pour des entrées placées sur un anneau.\label{fig:cr_bruit}}
 \end{figure}
 
 \begin{figure}
     \includegraphics[width=\textwidth]{correlation_ratio_evolution_totale.pdf}
-    \caption{Evolution du ratio de corrélation pendant l'apprentissage des cartes\label{fig:cr_evol}}
+    \caption{\'Evolution du ratio de corrélation pendant l'apprentissage des cartes\label{fig:cr_evol}}
 \end{figure}
 
 \subsection{Discussion}
 
-
-Bonne mesure de la relation existant entre $U$ et $\bmu$
-Variable BMU discrète, variable U peut être continue
-Très bien pour des dimensions plus grandes.
-
-Calcul possible en 2D : mettre la formule.
-
-A mettre dans conclu générale: 
-Néanmoins, il est montré (?) que  les variables restent sur des manifolds de dimension réduite - d'ou déjà l'intéret des cartes de kohonen et que ca marche. Donc les calculs de discretisation n'augmenteront pas de facon explosive au cours des dimensions ....
-
+Le ratio de corrélation $\eta(U;\bmu)$ est une mesure statistique qui exprime par définition la relation fonctionnelle existant entre $U$ et $\bmu$, ce que nous cherchions à mesurer. Cette mesure nécessite de discrétiser les valeurs de $\Pi$ mais pas de $U$, ce qui est adapté aux cartes auto-organisatrices dans lesquelles $\Pi$ est en une ou deux dimensions. Il s'agit donc d'une bonne mesure de l'apprentissage de $U$ par une carte et est adaptable pour des cartes en 2D, ainsi que des $U$ en grande dimension.
+Cependant, la valeur du ratio de corrélation dépend également de l'organisation originale des entrées.
+L'utilisation du ratio de corrélation comme indicateur d'un bon apprentissage de $U$ par les BMUs n'est donc pertinent qu'en le comparant à sa valeur théorique $\eta(U;\bmu)$ ou à la valeur qu'il prend dans une carte auto-organisatrice indépendante.
 
 \section{L'information mutuelle comme indicateur de l'apprentissage de $U$ par les BMUs}
 
@@ -210,7 +204,7 @@ Cette valeur n'est cependant pas la limite de l'entropie de Shannon calculée pa
 L'entropie différentielle et l'entropie de Shannon sont donc deux quantités bien différentes.
 
 L'entropie de Shannon se mesure en $bit/symbole$.
-L'entropie est une mesure de la quantité d'incertitude, ou de surprise, sur la valeur de la variable aléatoire $X$. Si la distribution de probabilité de $X$ est concentrée autour d'un point, l'entropie est faible : lors d'une réalisation de $X$, l'observateur est \emph{plutôt certain} du résultat. En revanche, l'entropie est maximale lorsque $X$ suit une distribution de probabilité uniforme.
+C'est une mesure de la quantité d'incertitude, ou de surprise, sur la valeur de la variable aléatoire $X$. Si la distribution de $X$ est concentrée autour d'un point, l'entropie est faible : lors d'une réalisation de $X$, l'observateur est \emph{plutôt certain} du résultat. En revanche, l'entropie est maximale lorsque $X$ suit une distribution de probabilité uniforme.
 L'entropie s'interprète également comme la quantité moyenne d'information à fournir, en bits, pour coder une valeur de $X$.
 De la même manière, on peut définir l'entropie conjointe de deux variables, qui est l'entropie de leur distribution jointe, et l'entropie conditionnelle, qui est l'entropie de leurs distributions conditionnelles.
 
@@ -269,8 +263,7 @@ Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$ les k p
 $$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$
 Cette information mutuelle locale est ensuite moyennée sur l'ensemble des points: 
 $$\hat{I}(X,Y) = \psi(k) - \langle\psi(n_{x_j} + 1) + \psi(n_{y_j} +1)\rangle + \psi(N)$$
-L'estimateur de Kraskov est plus précis que l'estimateur par histogrammes et est moins sensible aux paramètres choisis pour son estimation, en l'occurence le nombre de voisins considérés.
-Il est notamment plus performant que l'approche par histogrammes en grande dimension.
+L'estimateur de Kraskov est plus précis que l'estimateur par histogrammes et est moins sensible aux paramètres choisis pour son estimation qui sont le nombre de voisins considérés.
 
 \begin{figure}
     \begin{minipage}{0.4\textwidth}
@@ -291,7 +284,7 @@ Il est notamment plus performant que l'approche par histogrammes en grande dimen
 \section{Définition d'un indicateur quantifiant la relation fonctionnelle entre $U$ et $\bmu$}
 
 Dans un premier temps, nous avons cherché à définir un indicateur permettant de montrer que $U$ est une fonction du BMU à partir de l'information mutuelle, que nous avons utilisé en \cite{Gonnier2020ConsensusDS}. 
-Nous décrivons ici une méthode que nous avons proposée avant de s'intéresser au ratio de corrélation. Ce dernier sera finalement à privilégier par rapport à cette méthode pour montrer la relation fonctionnelle entre $U$ et $\bmu$. 
+Nous décrivons ici une méthode que nous avons proposée avant de s'intéresser au ratio de corrélation. Ce dernier sera à privilégier par rapport à la méthode que nous décrivons ici pour montrer la relation fonctionnelle entre $U$ et $\bmu$. 
 
 Nous définissons cet indicateur en normalisant l'information mutuelle $I(\bmu,U)$  par la valeur maximale qu'elle peut prendre dans une carte. Cette valeur maximale atteinte est $H(U)$, atteinte lorsque $U$ est une fonction de $\bmu$.
 En effet, par construction, $\bmu$ est une fonction de $U$ dans une carte de Kohonen: l'algorithme est déterministe et une sortie est définie pour toute valeur de $U$. C'est-à-dire, $I(U,\bmu) = I (U, f(U))$.
@@ -310,7 +303,7 @@ $I_x$ vaut 1 lorsque $U$ est une fonction de $\bmu$, et $0$ lorsque les deux dis
 La normalisation de l'information mutuelle par l'entropie est uniquement valable dans le cas de variables aléatoires discrètes. Il est donc nécessaire dans ce cadre d'utilisation de considérer $\bmu$ et $U$ comme des variables discrètes et donc d'estimer l'information mutuelle et l'entropie par la méthode des histogrammes.
 
 
-\subsubsection{Choix des paramètres d'estimation}
+\subsection{Choix des paramètres d'estimation}
 
 Pour mieux comprendre ce que représente l'information mutuelle discrète, comparons en figure~\ref{fig:exemple-limite} deux exemples de relations entre les variables $U$ et $\bmu$.
 Dans le cas de gauche, la relation se rapproche d'une relation fonctionnelle, qu'on souhaite dans le cas de CxSOM, mais cette relation est bruitée. Dans le cas de droite, la relation n'est pas une fonction, mais elle est "précise": une valeur de $\bmu$ correspond à deux valeurs de $U$ et pas plus.
@@ -326,10 +319,6 @@ Nous utiliserons donc l'indicateur $I_x$ pour CxSOM en l'estimant par la méthod
 
 L'indicateur $I_x$ doit ainsi être considéré plutôt comme un indicateur s'inspirant du coefficient d'incertitude que comme une estimation précise de cette valeur. 
 C'est cette estimation large qui nous permettra d'évaluer qu'une carte a dissocié les positions de ses BMUs en fonction de $U$ et non seulement de son entrée externe.
-L'estimation de l'information mutuelle continue par la méthode de Kraskov donne quant à elle une valeur précise de la quantité statistique qu'est le coefficient d'incertitude entre $U$ et $\bmu$.
-Nous pourrons considérer cette quantité comme un deuxième indicateur différent de $I_x$.
-Nous appliquerons dans la section suivante ces deux indicateurs à l'étude de l'évolution de l'apprentissage au sein d'une architecture.
-
 \begin{figure}
     \centering
     \includegraphics[width=0.75\textwidth]{exemple_limite_2.pdf}
@@ -371,13 +360,16 @@ La courbe bleue correspond à $I_x(U|\bmu)$ dans l'architecture de cartes $M\m{1
 \label{fig:MI_evol}
 \end{figure}
 
-\section{Comment utiliser l'information mutuelle continue comme indicateur d'un apprentissage au sein de cartes connectées ?}
+\section{Comment utiliser l'information mutuelle continue comme indicateur d'un apprentissage ?}
+
+Le ratio de corrélation et le coefficient d'incertitude, présentés ci-dessus, mesurent de deux manières différentes le fait que $U$ est une fonction du BMU dans chaque carte.
+Bien que le coefficient d'incertitude s'appuie sur l'information mutuelle, l'indicateur que nous avons présenté se détache de la valeur théorique de l'information mutuelle par la discrétisation à gros grains de $U$.
+Nous considérons qu'il restera intéressant d'étudier l'information mutuelle entre $U$ et les BMUs $\bmu\m{1}, \bmu\m{2}$ pour analyser l'apprentissage dans une architecture de cartes et présentons dans cette section des perspectives d'études de CxSOM par des mesures d'information mutuelle.
 
 \subsection{\'Evolution de l'information mutuelle entre $U$ et $\bmu$ au cours d'un apprentissage}
 
-L'indicateur proposé en section précédente, comme le ratio de corrélation, représente le fait que $U$ est une fonction du BMU dans chaque carte.
-Plus généralement, il sera intéressant d'étudier l'information mutuelle entre $U$ et les BMUs $\bmu\m{1}, \bmu\m{2}$.
-En figure~\ref{fig:MI_evol_total}, nous traçons l'évolution de l'information mutuelle dans les deux cartes, estimée par la méthode des KNN. Nous observons que l'information mutuelle entre $U$ et $\bmu$ converge vers une valeur plus élevée dans une carte isolée que dans une architecture CxSOM.
+En figure~\ref{fig:MI_evol_total}, nous traçons l'évolution de l'information mutuelle dans les deux cartes, estimée par la méthode de Kraskov. 
+Nous observons que l'information mutuelle entre $U$ et $\bmu$ converge vers une valeur plus élevée dans une carte isolée que dans une architecture CxSOM.
 Ce résultat est étonnant~: cela signifie donc que la carte au sein de CxSOM n'a pas plus d'information sur le modèle qu'une carte isolée. 
 Ce résultat s'interprète par le fait que cette information n'est pas répartie de la même façon dans les deux expériences.
 Dans une carte isolée, le niveau de quantification vectorielle sur $\inpx$ est très précis~: lorsqu'on présente une entrée $\inpx$ à la carte, le poids du BMU sera très proche de cette valeur $\inpx$. Or, la connaissance de $\inpx$ donne en soit beaucoup d'information sur le modèle $U$.
@@ -385,12 +377,11 @@ Dans CxSOM, on perd ce niveau de quantification sur $\inpx$, ce qu'on a observé
 
 Le fait que l'information mutuelle soit plus élevée dans une carte indépendante dans les deux expériences traduit ainsi une perte d'information sur l'entrée $\inpx$ dans CxSOM par rapport à la carte indépendante, avec la perte de précision. Cette valeur ne traduit pas le gain d'information sur $\inpx\m{2}$ et donc $U$.
 Les cartes effectuent donc un compromis~: chacune gagne de l'information sur le modèle $U$, au détriment de l'information apprise sur l'entrée externe. Ce comportement sera à valider sur d'autres modèles d'entrées.
-Des méthodes permettant de séparer l'information entre variables existent dans la littérature~; nous en discuterons en section suivante. Elles nous permettraient ainsi de mesurer le gain d'information sur $U$ dans une ou plusieurs cartes sans s'intéresser à l'information apprise sur l'entrée externe $\inpx$.
+
+
+Des méthodes permettant de séparer l'information entre variables existent dans la littérature. Elles nous permettraient de mesurer le gain d'information sur $U$ dans une ou plusieurs cartes sans s'intéresser à l'information apprise sur l'entrée externe $\inpx$.
 Dans notre calcul du coefficient d'incertitude, c'est le fait de discrétiser grossièrement la distribution de $U$ qui a permis de mesurer le gain d'information sur $U$, sans prendre en compte le fait que la précision sur l'entrée externe est affaiblie.
-
-
-La perte d'information globale sur le modèle d'entrée reste à généraliser pour des distributions d'entrée différentes.
-Elle pose néanmoins une question concernant la création d'architectures contenant plus de cartes~: jusqu'à quel point une carte peut-elle se permettre de perdre de l'information sur l'entrée externe pour gagner de l'information sur le modèle ? 
+Cette perte d'information pose néanmoins une question concernant la création d'architectures contenant plus de cartes~: jusqu'à quel point une carte peut-elle se permettre de perdre de l'information sur l'entrée externe pour gagner de l'information sur le modèle ? 
 Cela motive l'idée qu'un apprentissage de $U$ dans une grande architecture devra être distribué entre les cartes et ne peut être appris indépendamment dans chaque carte.
 
 \begin{figure}
@@ -405,13 +396,13 @@ Nous pouvons voir que dans ces expériences, les positions des BMUs d'une carte 
 \subsection{Ouvertures possibles}
 
 Les mesures proposées dans ce chapitre ont permis d'évaluer un apprentissage du modèle indépendamment dans chaque carte.
-La mesure de l'information mutuelle est cependant bien plus large que le seul calcul de $I(U,\bmu)$~; de nombreux aspects nous semblent intéressant à explorer pour une compréhension de l'apprentissage du modèle dans des architectures comportant plus de cartes. Par ailleurs, la méthode par KNN présentée dans ce chapitre est une méthode classique d'estimation de l'information, mais il existe de nombreuses autres méthodes d'estimation \cite{Doquire2012ACO}. Des méthodes ont également été développées pour la mesure de l'information mutuelle entre variables continues et discrètes \cite{ross_mutual_2014, Gao2017EstimatingMI}. Enfin, l'information mutuelle a été utilisée pour analyser l'apprentissage dans des réseaux de neurones profonds en \cite{ShwartzZiv2017OpeningTB} ou encore directement comme métrique d'apprentissage en \cite{Hjelm2018LearningDR}.
-Cette grandeur est donc bien documentée.
+La mesure de l'information mutuelle est cependant bien plus large que le seul calcul de $I(U,\bmu)$~; de nombreux aspects nous semblent intéressant à explorer pour une compréhension de l'apprentissage du modèle dans des architectures comportant plus de cartes. 
+La méthode d'estimation par KNN présentée dans ce chapitre est une méthode classique d'estimation de l'information, mais il existe de nombreuses autres méthodes d'estimation \cite{Doquire2012ACO}. Des méthodes ont également été développées pour la mesure de l'information mutuelle entre variables continues et discrètes \cite{ross_mutual_2014, Gao2017EstimatingMI}. Enfin, l'information mutuelle a été utilisée pour analyser l'apprentissage dans des réseaux de neurones profonds en \cite{ShwartzZiv2017OpeningTB} ou encore directement comme métrique d'apprentissage en \cite{Hjelm2018LearningDR}.
+Cette grandeur est donc bien documentée et donc pertinente à utiliser dans des travaux futurs.
 
-Tout d'abord, il est possible de s'intéresser à la notion d'information mutuelle multivariée~: étant donné une variable cible $S$ et deux variables $R_1$ et $R_2$, $I(S;R_1,R_2)$ est l'information mutuelle multivariée entre $S$ et la variable jointe $(R_1,R_2)$ Nous pourrons ainsi mesurer, dans une architecture de cartes, $I(U; \bmu\m{1}, \bmu\m{2})$ par exemple.
-Il est également possible de décomposer cette information entre les entrées $U$, $\inpx\m{1}$ et $\inpx\m{2}$
-\'A partir de cette information multivariée \cite{williams_nonnegative_2010} définit, en plus de l'information mutuelle, la notion de redondance et de synergie entre variables, illustrée en figure \ref{fig:redondance}.
-La redondance est l'information sur $S$ portée à la fois par $R_1$ et par $R_2$, et la synergie l'information portée seulement par la jointure des variables $R_1$ et $R_2$
+Tout d'abord, il est possible de s'intéresser à la notion d'information mutuelle multivariée~: étant donné une variable cible $S$ et deux variables $R_1$ et $R_2$, $I(S;R_1,R_2)$ désigne l'information mutuelle entre $S$ et la variable jointe $(R_1,R_2)$. Nous pourrons ainsi mesurer, dans une architecture de cartes, $I(U; \bmu\m{1}, \bmu\m{2})$ par exemple.
+Il est également possible de décomposer cette information multivariée~: \cite{williams_nonnegative_2010} définit, en plus de l'information mutuelle, la notion de redondance et de synergie entre variables, illustrée en figure \ref{fig:redondance}.
+La redondance est l'information sur $S$ portée à la fois par $R_1$ et par $R_2$, et la synergie l'information portée seulement par la jointure des variables $R_1$ et $R_2$. Le calcul de telles grandeurs permettrait par exemple de séparer l'information gagnée sur $U$ et $\inpx$ dans une carte.
 Le calcul de ces grandeurs entre les entrées, le modèle d'entrée et les BMUs des cartes CxSOM sont une piste d'étude pour une compréhension du stockage d'information dans une architecture de cartes et pour la définition d'un indicateur ciblant spécifiquement le gain d'information sur $U$.
 
 \begin{figure}
@@ -421,11 +412,11 @@ Le calcul de ces grandeurs entre les entrées, le modèle d'entrée et les BMUs 
 \end{figure}
     
 
-Des travaux comme \cite{lizier_detecting_2007,ceguerra_information_2011} s'intéressent quant à eux à la notion de transfert d'information au sein de systèmes dynamiques complexes. Le calcul d'information entre les éléments des cartes pourrait ainsi également s'appliquer à la quantification de la dynamique d'apprentissage d'une architecture de cartes.
+Des travaux comme \cite{lizier_detecting_2007,ceguerra_information_2011} s'intéressent quant à eux à la notion de transfert d'information au sein de systèmes dynamiques complexes. Le calcul d'information entre les éléments des cartes peut ainsi également s'appliquer à la quantification de la dynamique d'apprentissage d'une architecture de cartes.
 
-La représentation des éléments d'une carte et des entrées d'un point de vue statistique que nous avons proposé dans cette thèse est une méthode pertinente pour la compréhension des comportements d'apprentissage du modèle CxSOM et leur analyse statistique reste à explorer dans des travaux futurs.
+La représentation des éléments d'une carte et des entrées d'un point de vue statistique que nous avons proposé dans cette thèse est ainsi une méthode pertinente pour la compréhension des comportements d'apprentissage du modèle CxSOM et leur analyse statistique reste à explorer dans des travaux futurs.
 Nous avons en effet vu que les poids d'une carte et les mesures d'organisation seules ne traduisent pas forcément l'apprentissage des relations par les cartes de l'architecture. 
-De plus, cette approche "comportementale" rapproche les cartes de Kohonen d'autres algorithmes d'apprentissage non supervisés. Les perspectives d'études par l'information mutuelle mentionnées ci-dessus sont donc générales à tout type d'architecture d'apprentissage. Inversement, il sera possible d'appliquer des méthodes d'évaluation utilisées dans d'autres architectures afin de caractériser l'apprentissage associatif des cartes.
+Cette approche "comportementale" rapproche les cartes de Kohonen d'autres algorithmes d'apprentissage non supervisés. Les perspectives d'études par l'information mutuelle mentionnées ci-dessus sont donc générales à tout type d'architecture d'apprentissage. Inversement, il sera possible d'appliquer des méthodes d'évaluation utilisées dans d'autres architectures afin de caractériser l'apprentissage associatif des cartes.
 
 
 \section{Conclusion}
