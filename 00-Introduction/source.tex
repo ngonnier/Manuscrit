@@ -1,13 +1,95 @@
 \section*{Introduction}
 
+
+
+\subsection*{Bio-inspiration : une thématique actuelle}
+
+Le terme calcul désigne les procédés abstraits utilisés pour le traitement de l'information. Un système réalisants de tels procédés est alors désigné comme système de calcul. D'un point de vue abstrait, ces systèmes peuvent être biologiques comme artificiels.
+Aussi le cerveau humain est un système de calcul : il transforme une multitudes de signaux physiques et chimiques provenant des capteurs du corps humain en activité électrique qui se traduisent en des actions sur l'environnement. De nombreux systèmes biologiques sont ainsi des systèmes de calcul dans le sens ou ils traitent de l'information: cellules, organismes vivants ...
+La majorité des systèmes de calculs artificiels développés actuellement ont d'ailleurs commencé par une inspiration biologique. En particulier, l'intelligence artificielle et le développement des systèmes d'apprentissage automatique ont comme point de départ la question des calculs réalisés biologiquement. Le modèle de neurone artificiel utilisé en deep learning s'appuie ainsi d'abord sur un modèle biologique de neurone.
+Même si la diversité des applications actuelles de l'apprentissage automatique s'est éloignée de la compréhension biologique, la question des calculs occurants dans les systèmes biologique reste une thématique de recherche dans de nombreux domaines cherchant à simuler des comportements biologiques tels que les neurosciences computationnelles. 
+Inversement, les systèmes  de calcul biologiques, par leur diversité de comportements encore incompris, restent une source d'inspiration majeure pour le développement de systèmes de calcul artificiels.
+
+Nous nous intéressons dans cette thèse à une approche bio-inspirée de la conception de systèmes de calculs, en  particulier de systèmes d'apprentissage.
+Un aspect récurrant, voire de fond observé en biologique est la modularité des systèmes. On peut définir la modularité d'un système comme sa composition en sous-systèmes autonomes effectuant des tâches différentes et collaborant entre eux. Cette modularité présente des aspects de réutilisation, de robustesse à des fautes, de traitement local de l'information. En soi, tout système peut être modulaire en fonction de la représentation qu'on lui choisit~; mais il existe des similitudes dans la structure de nombreux systèmes. De nombreux systèmes biologiques sont en effet composés de nombreux modules de même structure, ayant des règles d'évolution locales,  interagissant entre eux. Dans ce cas, le comportement global du système est plus.
+Certains expliquent même le coté modulaire comme une conséquence de la sélection évolutive des systèmes.
+
+ Les neurones du cerveau en sont un exemple. Chaque neurone est construit sur le même modèle et les règles d'évolution de chaque neurone sont similaires. Dans son ensemble, le cerveau présente des comportements de calculs qui lui sont propres.
+Dans ce même cerveau, à  une plus grande échelle, on peut séparer des zones fonctionnelles distinctes dans le cerveau. Chaque zone est de construction similaire, mais effectue une fonction différente.
+Le cerveau n'est pas le seul système biologique présentant ce type de fonctionnemment. Ainsi, les systèmes métaboliques ou d'expression de gènes sont des exemples de systèmes aggrégeant des éléments.
+Les colonies de fourmi sont constituées de milliers d'individus effectuants des actions à leur échelle et communiquant localement. Le comportement de la colonie est un système de calcul, capable de résoudre des problème d'optimisation de chemin vers une source de nourriture.
+Les calculs occurrant dans ces systèmes modulaires sont appelés comportements émergeant : chaque module du systèmes effectue des calculs et actions locales, mais le comportement du tout est plus complexe que la somme de chaque partie.
+Cette notion d'émergence, dont nous avons donné des exemples biologiques, a inspiré de nombreux modèles de calcul en intelligence artificielle et robotique.
+Par exemple, l'intelligence d'essaim (swarm intelligence) est une direct application de ce concept à des sytèmes multi-agents qui interagissent localement avec leur environnement. 
+Le jeu de la vie permet d'effectuer des calculs et de propager de l'information malgré la simplicité des règles d'évolution de chaque cellule. Enfin, les calculs rendus possibles dans les réseaux de neurones proviennent du comportement collectif des neurones et sont donc un exemple d'émergence au sein de systèmes d'apprentissage.
+
+
+La modularité présente des aspects avantageux pour le calcul, voire optimaux. En témoigne les architectures de modèles artificiels, a priori pas du tout inspirés de la biologie, à des modèles biologiques existants. Une structure de réseau en petit monde est  utilisée dans des systèmes d'information, comme des bases de données, comme une structure optimisant la vitesse des échanges d'information dans le système. Or, ces strctures sont observées dans de nombreux domaines expérimentaux : biologie (exemple ?) et même dans des systèmes sociaux tels que les arbres de connaissances entre individus.
+
+ D'un point de vue informatique, on peut définir la modularité comme la décomposition d'un système en sous-systèmes plus petits et fonctionnant indépendamment. Ces systèmes interagissent via une interface bien définie.
+Plusieurs façon de construire ces sous-systèmes. Dans un cas de figure, ces composants sont conçus pour être interchangeables et réutilisables.
+La modularité permet alors à un système d'être robuste à un dysfonctionnement d'un composant, sa mise à l'échelle et un faculté d'adaptation.
+
+Un système modulaire n‘est pas forcément un système complexe.
+Cependant, lorsque l'interaction des modules est diverse et non linéaire, le système mène à l'émergence de nouveaux comportements.
+
+\subsection*{Modularité et Conception d'architectures d'apprentissage}
+
+Les systèmes d'apprentissage existants combinent la notion de modularité et d'émergence pour former des comportements d'apprentissage plus complexes.
+Les réseaux de deep learning, se sont éloignés du modèle biologique du neurone pour ajouter des règles de calculs plus informatiques comme la backpropagation. Cependant l'approche modulaire est resté une constante dans le développement des réseaux utilisés actuellements comme le modèle teacher student et les réseaux de neurones adversarials qui combinent des réseaux performant chacun une sous-tâche par rapport à l'autre.
+
+La conception de système modulaire d'apprentissage peut passer par deux approches. D'un coté, une approche “finale” dans laquelle la finalité, l'application du système est connue. La conception du sytèmes passe alors par la décomposition de l'objectif en sous-systèmes et sous-tâches de manière à définir des modules particuliers.
+L'approche inverse serait l'approche constructive, dans laquelle nous disposons de modules permettant des comportements simples de calculs et les associons entre eux pour former un système modulaire. Il est difficile de connaître à l'avance le comportement final de ce type de sytème et son étude passe donc par la simulation.
+Cette approche, si elle n'est pas la plus rapide en terme de résultats applicatifs, a l'avantage d'ouvrir la porte à des comportement d'apprentissages qui peuvent être inattendus. 
+
+Exemples d'archi modulaires d'apprentissage ? ART, Reservoir
+
+\subsection*{Le calcul local et décentralisé, une problématique actuelle des réseaux de neurones}
+
+Modularité et calcul local sont des problématiques liées. De nos jours, la consommation energetique grandissante des  algorithmes de traitement de l'information  
+
+3 – Les cartes auto-organisatrices comme choix de modules
+
+Nous avons choisi dans cette thèse de s'intéresser à cette deuxième approche~: développer un système modulaire apprenant en associant des réseaux existants connus. Nous nous intéressons spécialement aux cartes auto-organisatrices.
+
+Si nous revenons à un aspect biologique, les cartes auto-organisatrices sont, par leur comportement un modèle simplifié des aires cérébrales. Les travaux conduits dans notre équipes ces dernières années se sont attachés à construire des architectures modulaires complètement cellulaires. Nous cherchons dans cette thèse à s'inspirer de ces travaux mais en les passant à une échelle moins cellulaire, dans un cadre de simplification du modèle. Cette simplification nous permet une recherche plus facile et moins coûteuse de nouveaux comportements d'apprentissage, tout en restant déclinable si besoin en version cellulaire.
+Dans un cadre d'architecture modulaire, 
+
+
+\section{Contributions et plan}
+
+Cette thèse cherche donc, dans un cadre bio-inspiré, à construire une architecture modulaire décentralisée de cartes auto-organisatrices. L'idée de cette approche est de rechercher des nouveaux comportements d'apprentissage émergeant de l'interaction entre les modules d'une grande architecture, à l'inverse des méthodes plus ingénieures consistant à diviser une tâche connue en sous-systèmes.
+Nous commencerons par présenter un état de l'art des architectures de cartes auto-organisatrices existantes afin de définir ce qu'on entend par architecture modulaire décentralisée et positionner notre modèle dans l'ensemble des modèles existants.
+Nous détaillerons ensuite notre modèle d'architecture décentralisée de cartes auto-organisatrices.
+Si le modèle a pour but à long terme de concevoir une architecture comportant de nombreux modules, nous avons concentré cette thèse sur l'analyse des comportements d'architecture de deux et trois cartes.
+Le but de cette thèse est alors de proposer une méthodologie d'analyse de ce modèle et d'en tirer des comportements élémentaires.
+Nous proposerons une méthode expérimentale et des représentations rapprochant l'architecture de cartes de modèles d'apprentissage communs au chapitre 3.
+Les résultats présentés dans les chapitres 4,5,6,7 présentent le comportement du modèle CxSOM sous différents angles.
+Nous analyserons plus en détail l'interface entre cartes et une recherche de BMU originale que nous utilisons.
+Nous présenterons ensuite les comportements élémentaires observés sur des architectures de deux et trois cartes en une dimension, qui sont plus facile à visualiser. Nous présenterons notamment un comportement de prédiction rendu possible par le modèle.
+Nous proposons au chapitre 6 des indicateurs numériques originaux d'évaluation de l'apprentissage associatif par l'architecture de cartes, dans le but d'étendre l'analyse du modèle à des architectures difficilement représentables visuellement.
+Le chapitre 7 applique la méthode d'observation à des cartes en deux dimensions afin de saisir la scalabilité du modèle.
+
+Les travaux présentés dans cette thèse ont fait l'objet de deux présentations en conférence~:
 \begin{itemize}
-    \item Apprentissage non supervisé, quantification vectorielle : définition + apprentissage développemental ? Pq c'est cool de continuer a etudier les SOM ?
-    \item Modularité et modularité dans les programmes informatiques,définition
-    \item Systèmes dynamiques complexes~: Biologique first puis exemple automates cellulaires qui sont une machine de turing, réseaux de Hopfields, machine de bolztmann: comporements de calcul comme émergeance
-    \item Systèmes d'apprentissage modulaire : des systèmes complexe.
+    \item Consensus driven ...., ICONIP 2020
+    \item Input prediction in SOMs, ISCMI 2021
 \end{itemize}
 
-\cite{Oudeyer2010OnTI} : biologie liée dans les deux sens à l'aspect computationnel.
+A placer : 
+
+Apprentissage supervisé / non supervisé définition.
+Mémoire associative/traitement de séquences 
 
 
-But : montrer comment un mécanisme de recherche de consensus entre cartes de Kohonen permet de construire des architectures apprenant des relations multimodales.
+% \begin{itemize}
+%     \item Apprentissage non supervisé, quantification vectorielle : définition + apprentissage développemental ? Pq c'est cool de continuer a etudier les SOM ?
+%     \item Modularité et modularité dans les programmes informatiques,définition
+%     \item Systèmes dynamiques complexes~: Biologique first puis exemple automates cellulaires qui sont une machine de turing, réseaux de Hopfields, machine de bolztmann: comporements de calcul comme émergeance
+%     \item Systèmes d'apprentissage modulaire : des systèmes complexe.
+% \end{itemize}
+
+% \cite{Oudeyer2010OnTI} : biologie liée dans les deux sens à l'aspect computationnel.
+
+
+% But : montrer comment un mécanisme de recherche de consensus entre cartes de Kohonen permet de construire des architectures apprenant des relations multimodales.
