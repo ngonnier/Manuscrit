@@ -20,6 +20,8 @@
 %% original source files, as listed above, are part of the
 %% same distribution. (The sources need not necessarily be
 %% in the same archive or directory.)
+
+
 \def\filedate{2013/10/06}
 \def\fileversion{v0.14}
 \def\docdate{06/10/2013}
@@ -237,15 +239,10 @@
                  \fi}
 
          
-\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,backend=biber,doi=false,url=false,date=year,isbn=false,maxcitenames=2]{biblatex}
+\RequirePackage[citestyle=ext-authoryear,bibstyle=authortitle, maxcitenames=2,backend=biber,doi=false,url=false,date=year,isbn=false,maxcitenames=2,backref=true]{biblatex}
 \setlength\bibitemsep{1.5\itemsep}
-\RequirePackage[colorlinks = true,
-linkcolor = blue,
-urlcolor  = blue,
-citecolor = blue,
-anchorcolor = blue]{hyperref}
+\RequirePackage[colorlinks = true, linkcolor = blue, urlcolor  = blue, citecolor = blue, anchorcolor = blue]{hyperref}
 \RequirePackage{subfiles}
-
 
 \newcommand\ShowLogos{%
         \message{*** \string\ShowLogos\space is now the default ******^^J}}

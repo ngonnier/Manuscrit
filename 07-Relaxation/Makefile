@@ -7,6 +7,6 @@ figs : $(PDFS_FROM_SVG)
 	rsvg-convert -f pdf -o $@ $<
 
 pdf :
-	pdflatex -jobname=chapter-07 source.tex
-	biber chapter-07
-	pdflatex -jobname=chapter-07 source.tex
+	pdflatex -jobname=chapter-03 source.tex
+	biber chapter-03
+	pdflatex -jobname=chapter-03 source.tex

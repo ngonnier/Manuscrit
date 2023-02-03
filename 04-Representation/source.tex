@@ -6,10 +6,12 @@
     \tableofcontentsfile
     \pagenumbering{arabic}
     \setcounter{page}{1}
+    \setcounter{chapter}{2}
 }{}
+
 \begin{document}
-\chapter{Méthodes de représentation et d'analyse de l'architecture CxSOM}
-\graphicspath{{04-Representation/},{./figures/}}
+\chapter{Méthodes de représentation et d'analyse de l'architecture CxSOM}\label{chap:repr}
+\graphicspath{{04-Representation/figures},{./figures}}
 \minitoc
 
 \section{Introduction}
@@ -17,27 +19,29 @@
 Dans le chapitre précédent, nous avons proposé l'algorithme CxSOM, permettant de construire des architectures non-hiérarchiques modulaires de cartes auto-organisatrices. 
 Dans ces architectures non-hiérarchiques, plusieurs cartes sont connectées. 
 Chaque carte a pour but d'extraire une représentation de ses entrées externes, tout en prenant comme entrée secondaire les positions des \emph{Best Matching Unit} d'autres cartes afin de mettre en relation les activités relatives aux différentes modalités. 
-La particularité du modèle CxSOM est d'introduire des rétroactions entre cartes: l'architecture n'est pas un empilement de cartes qui apprennent tour à tour, de façon ascendante.
+La particularité du modèle CxSOM est d'introduire des rétroactions entre cartes~: l'architecture n'est pas un empilement de cartes qui apprennent tour à tour, de façon ascendante.
 Le but de ce modèle est à terme de pouvoir construire des architectures assemblant un grand nombre de cartes~; nous nous concentrons dans cette thèse sur des petites architectures de deux et trois cartes afin de comprendre les comportements qui émergent d'un tel système.
 
 Nous étudions l'architecture CxSOM dans un cadre particulier de mémoire associative.
 L'objectif pour une architecture de cartes est alors d'apprendre une représentation des relations existant entre des entrées de différentes modalités, tout en apprenant une représentation au sein de chaque carte d'un espace d'entrée.
 La compréhension du comportement de structures avec un faible nombre de cartes posera des bases pour la construction d'architectures plus grandes. Ce système de cartes est un système complexe, même dans une architecture de quelques cartes. Chaque carte possède 500 unités~; son état, représenté par son BMU, peut alors prendre 500 valeurs et l'état d'une carte dépend des cartes voisines.
 
-Cette thèse s'inscrit alors dans une démarche complètement expérimentale d'étude d'un système complexe~: nous observerons l'organisation d'architectures de cartes sur différents espaces d'entrées et différentes configurations et observerons comment l'organisation qui en émerge traduit l'apparition d'un phénomène de mémoire associative. 
-Pour analyser l'organisation de ces cartes, nous aurons besoin de d'introduire de nouvelles représentations par rapport à l'étude d'une SOM classique. Nous voulons également poser un formalisme clair sur des architectures de quelques cartes pour permettre l'adaptation de CxSOM à plus grande échelle.
+Cette thèse s'inscrit alors dans une démarche expérimentale d'étude d'un système complexe~: nous observerons l'organisation d'architectures de cartes sur différents espaces d'entrées et différentes configurations et observerons comment l'organisation qui en émerge traduit l'apparition d'un phénomène de mémoire associative. 
+Pour analyser l'organisation de ces cartes, nous aurons besoin de d'introduire de nouvelles représentations par rapport à l'étude d'une SOM classique. 
+Nous voulons également poser un formalisme clair sur des architectures de quelques cartes pour permettre l'adaptation de CxSOM à plus grande échelle.
 
-Nous posons ainsi dans ce chapitre la méthode expérimentale que nous utiliserons dans toutes les expériences présentées dans ce manuscrit. Nous y présenterons les représentations adaptées à cette méthode expérimentale ainsi que le formalisme utilisé. Ces représentations ont pour but non seulement de qualifier la qualité de l'apprentissage mais surtout de mettre en lumière les propriétés et l'organisation des cartes émergeant de l'algorithme d'apprentissage. 
+Nous posons ainsi dans ce chapitre la méthode expérimentale que nous utiliserons dans toutes les expériences présentées dans ce manuscrit. 
+Nous y présenterons les représentations adaptées à cette méthode expérimentale ainsi que le formalisme utilisé.
+Ces représentations ont pour but non seulement de qualifier la qualité de l'apprentissage mais surtout de mettre en lumière les propriétés et l'organisation des cartes émergeant de l'algorithme d'apprentissage. 
 
 \subsection{Présentation d'une expérience multimodale minimale illustrant les représentations}
 
-La méthode expérimentale sera présentée dans toute ce chapitre sur l'exemple minimal d'une architecture de deux cartes. L'architecture est illustrée à droite en figure~\ref{fig:exp}~: elle est composée de deux cartes en une dimension. Chaque carte prend une entrée externe. Il s'agit de $\inpx\m{1}=x$ et $\inpx\m{2}=y$, les coordonnées de points 2D sur un cercle. Ces deux modalités sont dépendantes~: pour une valeur de $x$, seule deux valeurs sont possibles pour $y$, et symétriquement. Les entrées sont représentées sur le schéma de gauche, figure~\ref{fig:exp}.
+La méthode expérimentale sera présentée dans tout ce chapitre sur l'exemple minimal d'une architecture de deux cartes. L'architecture est illustrée à droite en figure~\ref{fig:exp}~: elle est composée de deux cartes en une dimension. Chaque carte prend une entrée externe. Il s'agit de $\inpx\m{1}=x$ et $\inpx\m{2}=y$, les coordonnées de points 2D sur un cercle. Ces deux modalités sont dépendantes~: pour une valeur de $x$, seule deux valeurs sont possibles pour $y$, et symétriquement. Les entrées sont représentées sur le schéma de gauche, figure~\ref{fig:exp}.
 Ces entrées externes sont normalisées entre 0 et 1. Les points sont donc sur un cercle de centre $x_c,y_c = 0.5,0.5$ et de rayon $0.5$.
 Les deux cartes sont des lignes 1D de 500 n\oe{}uds. Les rayons de voisinage sont $h_e = 0.2$ et $h_c = 0.02$.
 Chacune des deux cartes est également connectée à sa voisine, c'est-à-dire, la carte $M\m{1}$ prend en entrée contextuelle la position du BMU de $M\m{2}$, et inversement.
-%es données relatives à cette expérience et le code permettant de faire les tracés sont fournies sur git.
 Afin de comprendre les tracés que nous présenterons, nous utiliserons deux cartes de Kohonen 1D classiques en tant que témoin.
-Ces cartes prennent en entrée les valeurs $x$, et la deuxième les valeurs $y$, mais sans être connectées entre elles. Il s'agit de cartes classiques, prendant une entrée. Les paramètres de ces cartes sont les mêmes que les cartes de CxSOM: 500 n\oe{}uds, de rayon de voisinage constant $h_e = 0.2$.
+Ces cartes prennent en entrée les valeurs $x$, et la deuxième les valeurs $y$, mais sans être connectées entre elles. Les paramètres de ces cartes sont les mêmes que les cartes de CxSOM: 500 n\oe{}uds, de rayon de voisinage constant $h_e = 0.2$.
 
 \begin{figure}
 \begin{minipage}{0.4\textwidth}
@@ -58,9 +62,7 @@ La manière la plus couramment utilisée de représenter une carte de Kohonen es
 \item Le graphe qu'est la carte de Kohonen est représenté dans l'espace de ses positions (la grille d'indices $(i,j)$, ou une ligne indexée par $i$. Sur chaque noeud est tracé le poids correspondant. C'est le cas sur l'exemple de gauche en figure~\ref{fig:representation} dans lequel les poids des prototypes, qui sont des imagettes, sont affichés en chaque point de la grille. 
 \item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace $\mathbb{R}^2$ ou $\mathbb{R}^3$. Ces poids sont reliés en fonction des positions des n\oe{}uds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation} pour une grille en deux dimension.
 \end{itemize}
-
-Nous utiliserons des représentations adaptées au cas d'une architecture à plusieurs cartes à partir de ces deux modes de représentation. 
-Cette adaptation dans le cas précis d'une architecture CxSOM est l'objet de cette section.
+Nous utiliserons des représentations adaptées au cas d'une architecture à plusieurs cartes à partir de ces deux modes de représentation.
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}
@@ -96,10 +98,9 @@ Au regard des insuffisances des représentations classiques, que nous avons rév
 \caption{Représentation des valeurs des poids d'une carte au sein de CxSOM après apprentissage en fonction de leur position dans la carte. La seule représentation de ces poids ne suffit pas à savoir comment la carte se comporte.\label{fig:weights}}
 \end{figure}
 
-\subsection{Problématique}
-
 Suite aux limites montrées par les méthodes de représentation classiques utilisées dans le domaine des SOMs, ce chapitre propose plusieurs façons de représenter une carte au sein d'une architecture.
-Nous présenterons en premier lieu le formalisme décrivant les cartes et leurs entrées multimodales associées ainsi que la méthode expérimentale que nous utiliserons pour toutes les expériences présentées dans cette thèse. \'A partir de ce formalisme, nous proposerons plusieurs représentations permettant de comprendre et représenter ce que calcule une architecture CxSOM sur les données d'entrées. Ces représentations seront illustrées sur un exemple minimal de deux cartes pour faciliter la compréhension. Nous utiliserons ces méthodes dans les chapitres suivants pour analyser le comportement des cartes.
+Nous présenterons en premier lieu le formalisme décrivant les cartes et leurs entrées multimodales associées ainsi que la méthode expérimentale que nous utiliserons pour toutes les expériences présentées dans cette thèse. \'A partir de ce formalisme, nous proposerons plusieurs représentations permettant de comprendre et représenter ce que calcule une architecture CxSOM sur les données d'entrées. Ces représentations seront illustrées sur un exemple minimal de deux cartes pour faciliter la compréhension. 
+Nous utiliserons ces méthodes dans les chapitres suivants pour analyser le comportement des cartes.
 
 \section{Formalisation statistique des entrées et sorties des cartes}
 
@@ -108,9 +109,10 @@ Ce formalisme possède à la fois l'avantage de clarifier les représentations e
 
 \subsection{Formalisation des entrées}
 
-Plaçons nous dans le cas général d'une architecture de $N$ cartes pour formaliser davantage.
+Plaçons-nous dans le cas général d'une architecture de $N$ cartes pour formaliser davantage.
 Nous considérons des entrées multimodales tirées d'un ensemble d'espaces d'entrée $\mathcal{D}\m{1},\cdots,\mathcal{D}\m{n}$. Chaque espace $\mathcal{D}\m{i}$ est une modalité.
 Les observations multimodales que l'on cherche à apprendre par l'architecture de cartes sont notées $(\inpx\m{i} \in \mathcal{D}\m{i}, i = 1 \cdots N)$.
+
 Nous choisissons de modéliser ces entrées $\inpx\m{i}$ comme des \emph{variables aléatoires}.
 Chaque variable aléatoire possède une distribution $p\m{i}$ sur $\mathcal{D}\m{i}$.
 Nous notons $\mathbf{\inpx} = (\inpx\m{1}, \cdots, \inpx\m{n})$ la variable aléatoire jointe.
@@ -129,15 +131,31 @@ Les tracés que nous développerons dans cette section ont pour but de mesurer c
 \subsection{Formalisation du modèle d'entrée par une variable cachée}
 
 Nous cherchons à évaluer expérimentalement la capacité du modèle CxSOM à apprendre à partir d'un environnement multimodal. Dans ce cadre expérimental particulier, nous choisissons des modèles d'entrées dont les relations sont connues.
-Ces modèles peuvent être paramétrisés par une variable multidimensionnelle $U$. Les modalités sont alors définies comme des fonctions de cette variable:
+Ces modèles peuvent être paramétrisés par une variable multidimensionnelle $U$. Les modalités sont alors définies comme des fonctions de cette variable~:
 $\inpx\m{i} = f\m{i}(U)$
-$U$ est une nouvelle variable aléatoire représentant le modèle.
+$U$ est une nouvelle variable aléatoire, décrivant l'ensemble des paramètres du modèle.
 
 Pour que la variable $U$ conserve toute l'information sur le modèle d'entrées, la fonction $(f\m{1}, \cdots, f\m{n})$ : $(\inpx\m{1}, \cdots \inpx\m{n})\rightarrow U$ doit être une bijection. Toute valeur d'entrées jointes correspond à un seul $U$, toute valeur de $U$ renvoie à une seule valeur d'entrées jointes. 
 La définition de $U$ peut aussi être considérée comme un cas particulier de réduction de dimension du modèle, dans lequel la variable $U$, de dimension plus faible que $\mathbf{X}$, réduit la dimension des entrées sans perte d'information.
 
+La variable $U$ s'interprète par l'existence d'une variété de dimension inférieure ou égale à la dimension des entrées, sur lesquelles les entrées multimodales se trouvent.
+
+Des travaux font l'hypothèse que des variables en grande dimension, telles que des images, sont en pratique positionnées sur des variétés de dimension plus faible \cite{Pless2009ASO}.
+Les algorithmes d'apprentissage de ces entrées font du \emph{manifold learning}, de l'apprentissage de variété, qui correspond à une réduction de dimension non-linéaire des entrées.
+Des entrées multimodales en haute dimension seront ainsi positionnées sur une variété de dimension inférieure ou égale à la somme des dimension des entrées.
+La modélisation des variables multimodales en passant par leur représentation par une variété inférieure est ainsi un cadre d'expériences général, en faible dimension dans nos travaux.
+Les méthodes existantes de réduction de dimension non-linéaire permettent d'extraire des structures dans des données réelles.
+Ainsi, bien que nos travaux se concentrent sur des données en faible dimension, la représentation paramétrique est généralisable à des données de plus grande dimension ainsi qu'à des jeux de données réelles.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{pless-000.png}
+    \caption{Ensemble d'images représentant une statuette sous différents angles de vue. Toutes les images, de grande dimension, sont situées sur un manifold 3D sous-jacent représentant la rotation de la caméra. Source~:~\cite{Pless2009ASO}}
+\end{figure}
+
+
 Dans le cas d'exemple, $\mathbf{X} = (\inpx\m{1},\inpx\m{2})$ est un vecteur aléatoire prenant comme valeurs les coordonnées cartésiennes des points du cercle de centre $x_c,y_c = 0.5,0.5$ et de rayon $r = 0.5$.
-En définissant une variable $U$ scalaire à valeurs dans $[0,1]$, ces variables aléatoires peuvent maintenant s'écrire, selon l'équation paramétrique du cercle:
+En définissant une variable $U$ scalaire à valeurs dans $[0,1]$, ces variables aléatoires peuvent maintenant s'écrire, selon l'équation paramétrique du cercle~:
 \begin{equation}
  \begin{cases}
      \inpx\m{1}= x_c + r  \cos(2\pi U)\\
@@ -145,12 +163,10 @@ En définissant une variable $U$ scalaire à valeurs dans $[0,1]$, ces variables
     \end{cases}\,.
 \end{equation}
 
-$U$ représente ici l'angle du point sur le cercle (à un facteur $2\Pi$ près).
+$U$ représente ici l'angle du point sur le cercle (à un facteur $2\Pi$ près). Les données 2D sont situées sur une variété de dimension 1.
 Ce modèle n'étant pas fourni à l'architecture de cartes lors de l'apprentissage, il s'agit d'un modèle \emph{latent}.
-Nous cherchons, par l'architecture de cartes, à apprendre les entrées et les relations entre entrées: nous cherchons donc à extraire une structure dans le modèle latent. La relation entre $U$ et $\mathbf{X}$ est bijective; de ce fait, étudier comment l'architecture de cartes a appris $U$ est équivalent à étudier comment l'architecture a appris le modèle d'entrées.
-
-Cet exemple est scalaire mais la représentation sous forme de variable cachée est générale à n'importe quel dimension et nombre d'entrées. En effet, toute configuration d'entrée multimodale dépend d'un environnement global. La variable $U$ correspond alors aux paramètres de cet environnement. Néanmoins, dans le cas de variables non artificielles, cette variable d'environnement est inconnue.
-Nous utiliserons donc la variable cachée $U$ uniquement dans les expériences sur données artificielles. Elle nous permettra d'étudier et de représenter comment les cartes apprennent le modèle d'entrées.
+Nous cherchons, par l'architecture de cartes, à apprendre les entrées et les relations entre entrées~: nous cherchons donc à extraire une structure dans le modèle latent. La relation entre $U$ et $\mathbf{X}$ est bijective~; de ce fait, étudier comment l'architecture de cartes a appris $U$ est équivalent à étudier comment l'architecture a appris le modèle d'entrées.
+Cet exemple est scalaire mais la représentation sous forme de variable cachée est générale à n'importe quel dimension et nombre d'entrées. En effet, toute configuration d'entrée multimodale dépend d'un environnement global. La variable $U$ correspond alors aux paramètres de cet environnement.
 
 \begin{figure}
 \centering
@@ -158,10 +174,9 @@ Nous utiliserons donc la variable cachée $U$ uniquement dans les expériences s
 \caption{Représentation choisie pour le cercle. Le modèle auxquelles appartiennent les modalités $\inpx\m{1}$ et $\inpx\m{2}$ est représenté par la variable $U$. \label{fig:U}}
 \end{figure}
 
+\subsection{Démarche expérimentale proposée}
 
-\subsection{Démarche expérimentale}
-
-Afin d'étudier le comportement de la carte à n'importe quel instant $t$ de l'apprentissage, nous effectuons une phase de \emph{test}, décrit en figure~\ref{fig:flowchart}.
+Afin d'étudier le comportement d'une carte à n'importe quel instant $t$ de l'apprentissage, nous effectuons une phase de \emph{test}, décrit en figure~\ref{fig:flowchart}.
 Lors de cette phase de test, des entrées sont présentées à la carte, mais seul le processus de recherche de la best matching unit est réalisé, les poids des cartes ne sont pas mis à jour. Cet étape génère un ensemble de réponses de la carte aux entrées présentées.
 Les entrées utilisées lors du test sont un échantillon de taille 1000 de la variable aléatoire $(\inpx\m{1}, \cdots, \inpx\m{n})$.
 La distribution des entrées test est identique à la distribution des entrées d'apprentissage ayant servi au dépliement de la carte.
@@ -175,7 +190,9 @@ $$(\underbrace{\inpx\m{1}, \cdots, \inpx\m{n}, U,}_{\text{Entrées}} \underbrace
 
 Les composantes de cette variable jointe ne sont pas indépendantes. Maintenant que la démarche expérimentale est formalisées, les représentations présentées par la suite sont simplement des tracés de dépendances au sein d'un échantillon de test entre composantes de la variable jointe définie ci-dessus.
 
-Les variables d'entrées sont à valeurs continues et $\bmu$ à valeurs discrètes, correspondant aux 500 n\oe{}uds d'une carte. Nous considérerons cependant $\bmu$ comme une variable continue plutôt qu'une grandeur discrète. En effet, l'ensemble des positions du BMU correspondent à une discrétisation de l'espace continu $[0,1]$, et sont ordonnées. Le déplacement par relaxation n'est pas limité aux positions discrètes des BMUs. Les variables aléatoires considérées sont bien à valeurs continues. Le formalisme par variable aléatoires permettra aussi d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture, ce que nous ferons dans le chapitre~\ref{chap:indicateur}.
+Les variables d'entrées sont à valeurs continues et $\bmu$ à valeurs discrètes, correspondant aux 500 n\oe{}uds d'une carte. Nous considérerons cependant $\bmu$ comme une variable continue plutôt qu'une grandeur discrète. En effet, l'ensemble des positions du BMU correspondent à une discrétisation de l'espace continu $[0,1]$, et sont ordonnées. Le déplacement par relaxation n'est pas limité aux positions discrètes des BMUs. Les variables aléatoires considérées sont bien à valeurs continues. 
+Le formalisme par variable aléatoires permettra aussi d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture, ce que nous ferons dans le chapitre~\ref{chap:indicateur}.
+Ce formalisme comportemental rapproche par ailleurs l'analyse des cartes de Kohonen d'autres modèles d'apprentissage.
 
 \begin{figure}
 \centering
@@ -185,18 +202,18 @@ Les variables d'entrées sont à valeurs continues et $\bmu$ à valeurs discrèt
 \end{figure}
 
 \section{Représentations graphiques}
-A partir des échantillons de test, nous proposons dans cette section les représentations graphiques que nous utiliserons pour évaluer expérimentalement les architectures de cartes.
-Ces représentations sont toute un tracé de dépendances entre des composantes de la variable $$(\inpx\m{1}, \cdots, \inpx\m{n}, U, \bmu\m{1}, \cdots, \bmu\m{n}, \w_e\m{1}(\bmu\m{1}), \cdots, \w_e\m{n}(\bmu\m{n}),U)$$ dont un échantillon est obtenu lors du test.
-Nous proposons d'abord une représentation pour évaluer la qualité de quantification vectorielle effectuée par une carte de l'architecture. Nous présenterons ensuite des représentations nous permettant de comprendre comment le modèle d'entrées est appris par l'architecture CxSOM.
+
+\`A partir des échantillons de test, nous proposons dans cette section les représentations graphiques que nous utiliserons pour évaluer expérimentalement les architectures de cartes.
+Ces représentations sont toutes un tracé de dépendances entre certaines composantes de la variable $$(\inpx\m{1}, \cdots, \inpx\m{n}, U, \bmu\m{1}, \cdots, \bmu\m{n}, \w_e\m{1}(\bmu\m{1}), \cdots, \w_e\m{n}(\bmu\m{n}),U)$$ dont un échantillon est obtenu lors du test.
 
 \subsection{Erreur de quantification d'une modalité dans chaque carte}
 
 La première fonction d'une carte de Kohonen est de réaliser une tâche de quantification vectorielle sur son entrée externe. Au sein d'une architecture de cartes, nous nous attendons à ce que chaque carte extraie une représentation de la modalité qu'elle prend en entrée externe.
 Afin de mesurer cette qualité de quantification vectorielle au sein d'une carte dans CxSOM, nous traçons le nuage de points correspondant au poids externe du BMU $\w_e(\bmu\m{i})$ en fonction de l'entrée externe présentée $\inpx\m{i}$. Une carte effectue une quantification vectorielle correcte si ce nuage de points est proche de la fonction identité.
-Ces tracés sont réalisés en figure~\ref{fig:erreur} pour l'expérience exemple. Ces tracés s'approchent de l'identité: la quantification des entrées est correctement réalisée.
+Ces tracés sont réalisés en figure~\ref{fig:erreur} pour l'expérience exemple. Ces tracés s'approchent de l'identité~: la quantification des entrées est correctement réalisée.
 On pourrait mesurer une erreur quadratique moyenne pour déterminer numériquement cette erreur de quantification mais la représentation en nuage de points est, à défaut d'être quantitative, plus qualitative. En effet, ici, on observe que le nuage montre une structure "filamenteuse". Nous reviendrons sur ce point par la suite, nous contentant de souligner ici que la représentation graphique exprime une propriété que la simple mesure d'erreur n'aurait pas mise en évidence. 
 
-Cette représentation nous informe ainsi sur la qualité de quantification dans une seule carte relativement à une seule modalité. Cette seule représentation est insuffisante à elle seule pour comprendre plus en détail le comportement d'une architecture de cartes: il nous faut également définir des méthodes de représentation permettant d'évaluer comment la structure globale du modèle d'entrées est apprise par l'architecture dans son ensemble.
+Cette représentation nous informe ainsi sur la qualité de quantification dans une seule carte relativement à une seule modalité. Cette seule représentation est insuffisante à elle seule pour comprendre plus en détail le comportement d'une architecture de cartes~: il nous faut également définir des méthodes de représentation permettant d'évaluer comment la structure globale du modèle d'entrées est apprise par l'architecture dans son ensemble.
 
 \begin{figure}
     \centering
@@ -236,13 +253,8 @@ Sur la figure (c), le point rouge et le point bleu ont leurs BMUs dans deux zone
 La représentation des valeurs d'entrées $\inpx\m{j}$ selon la position du BMU $\bmu\m{i}$ permet ainsi d'identifier une répartition des BMUs sur une carte que nous ne pourrions pas observer en traçant simplement les poids.
 Nous voyons notamment que la carte s'auto-organise en zones de BMUs, séparées par des zones mortes.
 Les n\oe{}ds d'une zone réagissent à des valeurs spécifiques du couple d'entrées et non de seulement l'entrée externe.
-Cette organisation en zone observée sur ce graphique traduit l'existence de deux échelles d'indices: une organisation primaire selon la valeur de l'entrée externe, et une organisation secondaire au sein des zones selon la valeur de l'entrée de l'autre carte.
 Nous étudierons dans les chapitres suivants, grâce à cette représentation, si ce comportement se généralise pour différentes architectures et distributions d'entrées.
 
-% Sur la figure (c), les BMUs appartenant à une même zone encodent les entrées $\inpx\m{1}$ ainsi que $\inpx\m{2}$ sur un intervalle particulier. Ce comportement diffère de celui de la carte simple (b). Dans cette carte, il n'y a pas de création de zones et un intervalle de position des BMUs encode deux intervalles distincts de valeurs concernant les entrées $\inpx\m{2}$.
-% Les intervalles encodés par deux zones de BMUs adjacentes se recoupent: ce phénomène est illustré par le fait que les points rouges et bleus, ayant la même valeur de $\inpx\m{1}$, sont envoyés dans deux zones différentes.
-
-% Ces valeurs peuvent être mises en relation avec celles de l'entrée $\inpx\m{2}$, également disposées selon $\bmu\m{1}$. Nous pouvons alors observer que deux zones adjacentes de la carte encodent des entrées proches selon $\inpx\m{1}$, mais très différentes pour $\inpx\m{2}$. Cela explique la séparation du point rouge et du point bleu dans deux zones.
 
 \begin{figure}
     \centering
@@ -271,10 +283,10 @@ Afin de mettre en valeur ce comportement, nous tracerons les nuages de points re
 
 En figure~\ref{fig:piu}, nous traçons $U$ en fonction de $\bmu\m{1}$ et $U$ en fonction de $\bmu\m{2}$.
 Ce tracé montre $U$ comme une fonction de la position du BMU dans chaque carte, contrairement au cas ou les cartes ne sont pas connectées pour lequel deux valeurs de $U$ correspondent à un même BMU. Cela traduit bien le fait que chaque carte a appris une représentation du modèle d'entrée et non seulement de son entrée externe.
-L'organisation de la carte dans CxSOM montre donc chaque position $\bmu$ codant pour une seule valeur de $U$, c'est à dire une seule position d'échantillon sur le cercle.
+L'organisation de la carte dans CxSOM montre donc chaque position $\bmu$ codant pour une seule valeur de $U$, c'est-à-dire une seule position d'échantillon sur le cercle.
 La représentation de $U$ selon la position du BMU d'une carte $\bmu\m{i}$ permet de représenter comment la carte $i$ a appris l'ensemble d'entrées $(\inpx\m{1},\inpx\m{2})$ et non seulement son entrée externe. Déterminer si l'architecture a appris le modèle d'entrées revient alors à vérifier si $U$ est une fonction de $\bmu$ dans chacune des cartes de l'architecture.
 
-Cette représentation fait appararaître $U$ comme une fonction de $\bmu$ dans chaque carte. Ce comportement traduit le fait que les cartes s'organisent en fonction de tout le modèle d'entrée, non seulement de leur entrée externe. Il s'agit là d'un comportement que nous pouvons qualifier de comportement de base pour CxSOM. 
+Cette représentation fait apparaître $U$ comme une fonction de $\bmu$ dans chaque carte. Ce comportement traduit le fait que les cartes s'organisent en fonction de tout le modèle d'entrée, non seulement de leur entrée externe. Il s'agit là d'un comportement que nous pouvons qualifier de comportement de base pour CxSOM. 
 
 \begin{figure}
 \centering
@@ -289,15 +301,14 @@ $U$ apparaît alors comme une fonction de la position du BMU $\bmu\m{i}$ dans ch
 
 Une représentation classique utilisée pour représenter une carte de Kohonen est de tracer les poids du graphe qu'est la carte dans l'espace de ses entrées, telle qu'en figure de droite en~\ref{fig:representation}. Dans CxSOM, chaque carte prend en entrée une seule des modalités. Par contre, grâce à l'échantillon de test, il est possible de représenter comment la carte se déplie dans l'espace de toutes les modalités.
 
-Nous définissons alors une façon de représenter le dépliement d'une seule carte de CxSOM dans l'espace global des entrées. Dans l'exemple, il s'agit de représenter le dépliement de $M\m{1}$ dans l'espace des entrées $\inpx\m{1},\inpx\m{2}$.
+Nous définissons une façon de représenter le dépliement d'une seule carte de CxSOM dans l'espace global des entrées. Dans l'exemple, il s'agit de représenter le dépliement de $M\m{1}$ dans l'espace des entrées $\inpx\m{1},\inpx\m{2}$.
 Au lieu de s'appuyer sur les poids des cartes comme en~\ref{fig:representation}, nous utilisons les valeurs de l'échantillon de test. Nous traçons le nuage de poids correspondant au poids des BMUs: $\w_e\m{1}(\bmu\m{1},\w_e\m{2}(\bmu\m{2})$, puis relions ces points selon l'ordre de leurs positions dans la carte $M\m{1}$ ou $M\m{2}$. Ainsi, nous obtenons une représentation des cartes $M\m{1}$ ou $M\m{2}$ dépliées dans l'espace global des entrées. 
 Notons que les unités mortes ne peuvent pas être représentées sur la carte. Nous ne représentons que les morceaux de cartes étant effectivement BMUs. 
 Cette représentation est tracée en ~\ref{fig:distortion} pour l'exemple à deux cartes.
 
-
 La carte représentant les poids externes des BMUs, on s'attend à ce que la forme du nuage de points corresponde à la structure des entrées.
-Les tracés mettent en lumière les propriétés observées lors de la représentation cartographique des entrées, à savoir l'apparition de zones dans chaque carte. Les poids suivent la structure circulaire des entrées en découpant l'espace en zones. Les parties du cercle effectivement représentées par les poids sont réduites: le cercle est comme discrétisé en petits morceaux.
-Dans l'exemple, on remarque la façon dont est parcouru l'espace dans chaque carte: en fonction de $x$ dans la carte $M\m{1}$, et en fonction de $y$ dans la carte $M\m{2}$. 
+Les tracés mettent en lumière les propriétés observées lors de la représentation cartographique des entrées, à savoir l'apparition de zones dans chaque carte. Les poids suivent la structure circulaire des entrées en découpant l'espace en zones. Les potions du cercle effectivement représentées par les poids sont réduites~: le cercle est comme discrétisé en petits morceaux.
+Dans l'exemple, on remarque la façon dont est parcouru l'espace dans chaque carte~: en fonction de $\inpx\m{1}$ dans la carte $M\m{1}$, et en fonction de $\inpx\m{2}$ dans la carte $M\m{2}$. 
 Cette représentation offre la possibilité  de visualiser comment une carte se déplie dans l'espace d'autres modalités.
 
 \begin{figure}
@@ -313,41 +324,21 @@ Cette représentation offre la possibilité  de visualiser comment une carte se 
 
 \section{Conclusion}
 
-Afin d'extraire des comportements d'une architecture de cartes, nous modélisons les éléments des cartes comme des variables aléatoires et l'étape de test comme l'échantillonnage d'une variable jointe. Nous introduisons notamment, dans le cas des exemples artificiels, une variable cachée $U$ non présentée comme entrée à la carte, portant toute l'information sur le modèle d'entrées.
+Nous avons présenté dans ce chapitre une méthode expérimentale d'analyse d'une architecture de cartes.
+Afin d'extraire des comportements d'une architecture de cartes, nous avons choisi de modéliser les éléments des cartes comme des variables aléatoires et l'étape de test comme l'échantillonnage d'une variable jointe. Nous introduisons notamment, dans le cas des exemples artificiels, une variable cachée $U$ non présentée comme entrée à la carte, portant toute l'information sur le modèle d'entrées.
 La représentation par échantillonnage et variable aléatoire permet de mieux comprendre les mécanismes des cartes, ceux ci ne reposant plus directement sur les courbes de poids.
 
 Nous utiliserons donc quatre représentations des cartes dans la suite de cette thèse, toutes définies à partir d'un échantillon de test.
 Le tracé du poids du BMU en fonction de l'entrée externe permet d'évaluer comment chaque carte extrait une représentation de son espace d'entrée.
-La représentation cartographique des entrées selon le BMU de chaque carte fait apparaître des zones mortes dans les cartes CxSOM et affiche les valeurs préférentielles d'entrées selon leur BMU. Cette représentation met en lumière un comportement émergeant de l'exemple à deux cartes: de façon auto-organisée, chaque carte définit des zones de BMUs correspondant à intervalle de valeurs $(\inpx\m{1},\inpx\m{2})$, et non seulement $\inpx\m{1}$. Cette représentation fait également apparaître une notion d'organisation selon un indice primaire sur les poids externes, et secondaire grâce aux poids contextuels. Nous étudierons plus extensivement ce comportement dans la partie suivante grâce à cette représentations.
+La représentation cartographique des entrées selon le BMU de chaque carte fait apparaître des zones mortes dans les cartes CxSOM et affiche les valeurs préférentielles d'entrées selon leur BMU. Cette représentation met en lumière un comportement émergeant de l'exemple à deux cartes: de façon auto-organisée, chaque carte définit des zones de BMUs correspondant à intervalle de valeurs $(\inpx\m{1},\inpx\m{2})$, et non seulement $\inpx\m{1}$.
 Afin d'évaluer la façon dont un BMU traduit le modèle d'entrée, nous traçons la variable cachée $U$ en fonction du BMU d'une carte $\bmu\m{i}$.
 L'apprentissage du modèle d'entrée se traduit alors par l'observation d'une \emph{relation fonctionnelle} entre $U$ et $\bmu$ dans chaque carte.
 Enfin, nous proposons une représentation du dépliement de chaque carte dans l'espace de toutes les entrées en traçant les poids des BMUs de chaque carte, ordonnés selon les BMUs d'une des cartes. Cette représentation apporte une vision globale de la façon dont une carte encode le modèle d'entrées.
-Ces représentations permettront d'étudier plus en détail les comportements observés dans l'exemple illustratif. Cette étude sera traitée au chapitre~\ref{chap:analyse}.
+Ces représentations permettront d'étudier plus en détail les comportements observés dans l'exemple illustratif.
 
 Même avec des représentations adaptées, l'analyse d'architectures comportant de nombreuses cartes ne peut pas simplement s'effectuer à l'aide de graphiques, qui deviendraient trop complexes. La comparaison d'un grand nombre d'expériences est aussi difficilement réalisable graphiquement.
-Cette difficulté de représentation et le besoin de comparer des expériences soulève la nécessité de définir une valeurs indicatrice du fonctionnement de la carte, que nous proposerons dans le chapitre suivant.
-
-
-% \comment{Correlation ration : mesure de dépendance fonctionnelle
-% Débruitage de l'IM : répétition de l'expérience et moyenne ?}
-% \draft{Le ration de corrélation traduit mieux que le coefficient d'incertitude la dépendance fonctionnelle entre le modèle et le BMU. Cependant, à l'inverse de l'information mutuelle, une relation non fonctionnelle mais précise (telle que l'exemple du cercle de la figure~\ref{fig:exemple-limite}) entre les variables aura un score très faible. Ce n'est pas non plus voulu. 
-
-% Il semble que l'information mutuelle reste le moyen le plus prometteur et le plus général de mesurer la relation entre les éléments des cartes. Dans le cas une dimension, on observe qu'on veut tendre vers U fonction du BMU; on connait mal le comportement recherché en dimension plus grande (cartes 2D, entrées de grande dimension). L'information mutuelle laisse donc l'opportunité à plus d'états d'organisation des cartes de l'architecture d'avoir un bon score. La meilleure perspective serait donc de pouvoir calculer le coefficient d'incertitude sur des échantillons provenant de données non bruitées, ou de pouvoir séparer le bruit des données lors du calcul du coefficient.
-% Dans cette optique, l'estimateur par histogrammes permet de réduire l'effet du bruit, en choisissant correctement les tailles de boîtes. L'utilisation histo versus Kraskov reste donc à discuter.
-% Dans le cas ou le modèle d'entrée est connu, calculer les réponses des cartes sur des jeux de données non bruitées générées artificiellement, après apprentissage sur un jeu de données réelles et bruitée, est une solution. Si le modèle n'est pas connu, des méthodes statistique de réduction de bruit peuvent être imaginées.} 
-
-% \draft{
-% \section{Prédiction d'entrée}
-
-% Au sein d'une architecture de cartes, il est possible de ne pas présenter à une ou plusieurs cartes de l'architecture leur entrée externe $\inpx\m{i}$. Dans ce cas, une best matching unit peut quand même être calculée par leurs entrées contextuelles. Le poids de cette best matching unit peut alors être vu comme une prédiction de l'entrée manquante. Cette capacité de prédiction peut être à la fois vue comme une application possible de l'architecture, mais aussi comme une façon de représenter \emph{ce que les autre cartes connaissent d'une autre}. Tracer les prédictions d'une carte est donc un indicateur de la façon dont une architecture a appris des relations. 
-
-
-% \comment{
-% 2 parties dans estimation/perspectives : 
-% d'une part, questionnement sur l'estimation des données bruitées par exemple - pas besoin de proposer des solutions si elles ne sont pas testées ? 
-% Et parler de l'estimation en grande dimension : ce n'est pas forcément le pb ici. Donc pas la peine...
-% }
-% }
+Cette difficulté de représentation et le besoin de comparer des expériences soulève la nécessité de définir une valeur indicatrice du fonctionnement de la carte, que nous proposerons au le chapitre \ref{chap:indicateur}.
+ 
 
 \ifSubfilesClassLoaded{
     \printbibliography
