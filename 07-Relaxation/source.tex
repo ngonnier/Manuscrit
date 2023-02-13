@@ -51,23 +51,26 @@ $a_g\m{i}$ étant à valeurs positives pour tout $i$, le consensus s'exprime de 
 
 \begin{equation}\label{eq:opti}
 	\begin{cases}
-	\text{Maximiser}\;& \sum_{i = 1}^n a_g\m{i}((\bmu\m{i},\inpx_m{i},\bmu\m{i_1}, \cdots, \bmu\m{i_K})) \\
-	\text{Sous Contrainte }\; &\forall i, \; \bmu\m{i} = \argmax_{p\m{i}}a_g\m{i}(p\m{i},\bmu\m{i_0}, \cdots \bmu\m{i_K})
+	\text{Maximiser}\;& \sum_{i = 1}^n a_g\m{i}((\bmu\m{i},\inpx_m{i},\inpc_{i_0}\m{i}, \cdots, \inpc_{i_K}\m{i})) \\
+	\text{Sous Contrainte }\; &\forall i,\:\forall k, \; \inpc_{i_k}\m{i} = \argmax_{p\m{k}}a_g\m{k}(p\m{k},\inpc_{k_0}\m{k}, \cdots \inpc{k_K}\m{k})
 	\end{cases}
 \end{equation}
 
-En fonction des poids des cartes, il n'est pas assuré qu'une solution existe ni qu'elle soit unique. Au contraire, dans un cas quelconque, ce genre de problème qui s'apparente à la recherche d'un optimum de Pareto n'a pas de solution, il s'agit de trouver un compromis.
-Ici, l'objectif dépend de la disposition des poids des cartes. Nous cherchons à étudier l'existence d'une solution dans le cadre particulier des poids de cartes auto-organisatrices.
+En fonction des poids des cartes, il n'est pas assuré qu'une solution existe ni qu'elle soit unique. Au contraire, dans un cas quelconque, ce genre de problème n'a pas de solution, il s'agit de trouver un compromis.
+
 
 \subsection{Heuristique de recherche~: relaxation}
 
-La relaxation définie dans le modèle est une heuristique de recherche du maximum par déplacements dans l'espace des positions $(\bmu\m{1},\codts, \bmu\m{n})$.
+L'idée de la relaxation est de chercher une solution, si elle existe, au problème \ref{eq:opti}.
+La relaxation définie dans le modèle est une heuristique par déplacements dans l'espace des positions $(\bmu\m{1},\codts, \bmu\m{n})$.
 
-Notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
-La suite $(\mathbf{\bmu})_\tau$ est une suite définie par récurrence par $\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)$ avec $\mathbf{f} = (f\m{0},\cdots,f\m{n}) : [0,1]^N \rightarrow [0,1]^N$. $\mathbf{f}$ ne dépend pas de $\tau$. 
+Formalisons cette heuristique.
+Nous notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $N$ cartes d'une architecture lors de la relaxation.
+La suite $(\mathbf{\bmu})_\tau$ est une suite définie par récurrence par $\mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)$ avec $\mathbf{f} = (f\m{0},\cdots,f\m{n}) : [0,1]^N \rightarrow [0,1]^N$. 
+$\mathbf{f}$ ne dépend pas de $\tau$. 
 
 Détaillons l'évolution de cette suite.
-Pour clarifier les notations, définissons pour chaque carte~$i$ $\hat{p}\m{i}_\tau$, comme la position maximisant l'activité globale de la carte $i$ à l'instant $\tau$.
+Pour clarifier les notations, définissons pour chaque carte~$i$ $\hat{p}\m{i}_\tau$, comme la position maximisant l'activité globale de la carte $i$ à l'instant $\tau$~:
 
 \begin{equation}
 \begin{gathered}
@@ -77,7 +80,8 @@ Pour clarifier les notations, définissons pour chaque carte~$i$ $\hat{p}\m{i}_\
 \label{eq:pstar}
 \end{equation}
 
-$a_g\m{i}$ est une fonction des poids de la carte $\w\ext\m{i}, \w\cont\m{i}$ et de son entrée externe $\inpx\m{i}$. Lors du processus de relaxation, les poids et l'entrée $\inpx\m{i}$ restent fixes. Le calcul de $a_g$ ne dépend pas de $\tau$. Pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ dépend donc uniquement de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$ et l'équation d'évolution s'écrit alors: 
+
+$a_g\m{i}$ est une fonction des poids de la carte $\w\ext\m{i}, \w\cont\m{i}$ et de son entrée externe $\inpx\m{i}$. Lors du processus de relaxation, les poids et l'entrée $\inpx\m{i}$ restent fixes. Le calcul de $a_g$ ne dépend pas de $\tau$. Pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ dépend donc uniquement de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$. L'équation d'évolution de la suite $(\mathbf{\bmu})_\tau$ s'écrit alors: 
 \begin{equation}
 \bmu\m{i}_{\tau+1} = 
 \begin{cases}
@@ -89,7 +93,7 @@ $a_g\m{i}$ est une fonction des poids de la carte $\w\ext\m{i}, \w\cont\m{i}$ et
 
 En posant $f\m{i}$ la partie droite de l'équation \ref{eq:evolution}, on peut donc écrire: 
 \begin{equation}
-\bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)
+\forall i, \; \bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)
 \label{eq:fonction}
 \end{equation}
 
@@ -104,8 +108,9 @@ La relaxation se traduit ainsi par une recherche de point fixe de la suite $(\ma
 \label{eq:suite}
 \end{equation}
 
-Un point fixe de la fonction $f$ est bien une solution du système d'équations~\ref{eq:opti}.
-Si $f$ admet un point fixe, alors ce point fixe est aussi un point fixe pour la suite $(\mathbf{\bmu})_\tau$. Cependant, rien ne garantit que ce point fixe existe, ni que la suite converge.
+Un point fixe $\mathbf{\bmu}$ de la fonction $\mathbf{f}$ est bien une solution du système d'équations~\ref{eq:opti}.
+% De plus, si $f$ admet un unique point fixe, alors ce point fixe est aussi une valeur d'adhérence pour la suite $(\mathbf{\bmu})_\tau$. 
+Cependant, rien ne garantit que ce point fixe existe et est unique, ni que la suite converge. Pour des poids quelconques, ce n'est pas le cas. Il est donc pertinent d'observer le comportement de la relaxation dans le cas de cartes de Kohonen.
 
 L'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dépend de son initialisation.
 Lors de l'apprentissage du modèle, nous prenons comme état initial $(\bmu\m{0}_0, \cdots , \bmu\m{n}_0)$ : 
@@ -119,6 +124,8 @@ Lors de l'apprentissage du modèle, nous prenons comme état initial $(\bmu\m{0}
 \end{equation}
 Nous étudierons dans ce chapitre la relaxation pour $(\bmu\m{0}_0, \cdots , \bmu\m{n}_0)$ quelconques.
 
+Maintenant que nous avons posé un formalisme sur le mécanisme de relaxation, le but de ce chapitre est de visualiser quelques étapes de relaxation sur un exemple d'expérience.
+
 \subsection{Relaxation et notion de \emph{Best Matching Unit}}
 
 La notion de Best Matching Unit est définie au sein de l'algorithme d'apprentissage d'une carte de Kohonen, comme l'unité possédant l'activité maximale pour une entrée fixée. 
@@ -129,29 +136,33 @@ Dans le modèle classique de carte auto-organisatrice, le BMU possède les propr
 	\item La recherche du BMU est déterministe
 \end{itemize}
 
-La relaxation est une méthode de recherche dynamique du BMU. Pour les propriétés du BMU ci dessus soient respectées, il est nécessaire que~: 
+La relaxation est une méthode de recherche dynamique du BMU. Pour les propriétés du BMU ci dessus soient respectées, il est nécessaire que~:
+
 \begin{itemize}
-	\item La recherche du BMU converge. S'il n'existe pas de point de convergence, nous ne pouvons pas définir un BMU unique pour la carte. 
+	\item La recherche du BMU converge. S'il n'existe pas de point de convergence, nous ne pouvons pas définir un BMU unique pour la carte.
 	\item La solution est unique~: la valeur trouvée à l'issue de la relaxation, à savoir le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation. Le BMU est alors relatif à seulement l'état des poids de la carte et non des conditions initiales.
 \end{itemize}
 
-Nous chercherons à évaluer si ces deux conditions sont remplies lors de la relaxation.
+Nous chercherons à évaluer si ces deux conditions sont remplies lors de la relaxation sur un exemple.
 Notons que dans l'algorithme CxSOM, les BMUs sont initialisés à la position du maximum de l'activité externe dans chaque carte. 
 Nous effectuerons l'analyse de la relaxation pour des conditions initiales quelconques, mais il est important de noter que ce choix d'initialisation permettra d'éviter certains cas de non-convergence.
 
 Nous montrerons expérimentalement qu'il n'existe pas toujours un unique point fixe, notamment lorsque les poids sont répartis aléatoirement au début de l'apprentissage, ce qui entraîne alors une non-convergence de la relaxation. 
-Cependant, nous observons que ces cas de non-convergence n'influencent pas le dépliement ultérieur des cartes, ce qui est permis par l'initialisation des positions au maximum de l'entrée externe.
-Nous observera expérimentalement qu'à la fin de l'apprentissage, la disposition des poids permet l'existence d'un unique point fixe qui est indépendant de l'initialisation des valeurs de $\bmu\m {i}_{\tau}$.
+Cependant, nous observons que ces cas de non-convergence n'influencent pas le dépliement ultérieur des cartes, ce qui est permis par l'initialisation des positions au maximum de l'activité externe.
+Nous observerons expérimentalement qu'à la fin de l'apprentissage, la disposition des poids permet l'existence d'un unique point fixe et que la relaxation converge vers ce point, indépendamment de l'initialisation des valeurs de $\bmu\m {i}_{\tau}$.
 
 Ce chapitre présente des points d'analyse empirique de ce processus de relaxation, réalisée sur des cartes prenant des dispositions d'entrées particulières: un cercle en deux et trois dimensions.
 La démarche expérimentale est la suivante:
 Nous évaluerons d'abord le taux de convergence de la relaxation dans les expériences citées ci-dessus.
-Nous proposons ensuite une visualisation de l'unicité du point fixe en fonction des conditions initiales de la relaxation. Enfin, nous étudierons comment le choix du pas de relaxation $\Delta$ influence la relaxation.
+Nous proposons ensuite une visualisation de l'unicité du point fixe en fonction des conditions initiales de la relaxation. Enfin, nous étudierons comment le choix du pas de relaxation $\Delta$ influence la convergence de la relaxation.
 
 \section{Etude expérimentale de la convergence de la relaxation}
 
 Nous nous intéressons ici  à un processus d'apprentissage complet d'une architectures de deux cartes. Les entrés $\inpx\m{1}$ et $\inpx\m{2}$ présentées sont les coordonnées de points situés sur un cercle de centre 0.5 et de rayon 0.5. Nous détaillerons le choix de disposition d'entrées par la suite~; notons simplement que ces entrées sont normalisées, chaque prenant toutes les valeurs entre 0 et 1.
-Pendant l'apprentissage, nous effectuons des phases de test régulières à poids figés, sur 5000 points tirés selon les mêmes distributions d'entrées. Nous avons compté, pour chaque entrée, le nomre de pas nécessaires à la convergence de la relaxation. En pratique, l'algorithme de relaxation s'arrête si la relaxation dépasse $\tau_{max}= 1000$ itérations~; nous considérerons donc que la relaxation n'a pas atteint un point de convergence si le nombre de pas de relaxation a atteint ces $\tau_{max}$ itérations lors de l'expérience. \'A partir de ces valeurs, nous pouvons traçer le nombre de pas moyen nécessaire à la convergence (en prenant en compte les cas dans lesquel la relaxation ne converge pas), ainsi que le taux de convergence~: la proportion d'entrées sur les 5000 entrées tests pour lesquelles la relaxation a convergé.
+
+Pendant l'apprentissage, nous effectuons des phases de test régulières à poids figés, sur 5000 points tirés selon les mêmes distributions d'entrées. Nous avons compté, pour chaque entrée, le nombre de pas nécessaires à la convergence de la relaxation. 
+
+En pratique, l'algorithme de relaxation s'arrête si la relaxation dépasse $\tau_{max}= 1000$ itérations~; nous considérerons donc que la relaxation n'a pas atteint un point de convergence si le nombre de pas de relaxation a atteint ces $\tau_{max}$ itérations lors de l'expérience. \'A partir de ces valeurs, nous pouvons traçer le nombre de pas moyen nécessaire à la convergence (en prenant en compte les cas dans lesquel la relaxation ne converge pas), ainsi que le taux de convergence~: la proportion d'entrées sur les 5000 entrées tests pour lesquelles la relaxation a convergé.
 Nous répétons 10 fois l'apprentissage complet et les tests, sur le même espace d'entrée mais des éléments différents ainsi que des cartes initialisées aléatoirement.
 Nous traçons ainsi en figure~\ref{fig:conv_evolution} la moyenne et l'écart type du nombre moyen de pas de relaxation et du taux de convergence obtenues sur ces 10 répétitions.
 
@@ -163,7 +174,7 @@ Plusieurs situations peuvent se traduire par une non-convergence de la relaxatio
 \end{itemize}
 
 Le premier cas est évité car la limite de 1000 itérations est assez grande par rapport à la taille de la carte, les cartes étant de taille 500 et le pas d'évolution de la relaxation d'une dizaine d'unités. 
-La convergence, si elle existe, est donc rapide. Les cas de non-convergence concernent alors la deuxième et la troisième situation.
+La convergence, si elle existe, est rapide. Les cas de non-convergence concernent alors la deuxième et la troisième situation.
 Nous observerons plus précisément les trajectoires dans la section suivante; on s'intéresse ici seulement à la question de la convergence.
 
 La figure\ref{fig:conv_evolution} montre qu'au début de l'apprentissage, lorsque les poids sont initialisés aléatoirement, la relaxation atteint rarement un point de convergence. Lorsque les cartes sont dépliée, la relaxation évolue vers un point de convergence dans plus de $90 \%$ des cas. Cette évolution est similaire pour des architecture de deux et trois cartes.
