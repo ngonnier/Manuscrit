@@ -22,7 +22,7 @@ Nous verrons en effet qu'une architecture peut non seulement encoder le modèle 
 Nous appliquerons cette propriété de prédiction de CxSOM sur des entrées jouet et des entrées réelles.
 
 
-\section{Identification de mécanismes d'auto-organisation dans une architecture de deux cartes}
+\section{Identification des mécanismes d'auto-organisation dans une architecture de deux cartes}
 
 \subsection{Introduction}
 
@@ -32,11 +32,15 @@ Un seul modèle d'architecture est une architecture non-hiérarchique de deux ca
 Pour faciliter les représentations, nous utiliserons des cartes 1D, prenant chacune une entrée externe en 1D.
 Nous avons donc un modèle très simple d'architecture, contenant une seule interface entre modules et facile à représenter graphiquement.
 
-Afin d'identifier l'apprentissage des relations entre modalités, nous utiliserons comme modèle d'entrées des points en deux dimensions~: chaque modalité est l'une des deux coordonnées $x$ et $y$ du point.
+Afin d'identifier l'apprentissage des relations entre modalités, nous utiliserons comme modèle d'entrées des points en deux dimensions~: chaque modalité est l'une des deux coordonnées $x$ et $y$ d'un point.
 Ces modèles d'entrées géométriques nous permettent de maîtriser les dépendances entre les modalités et ainsi de cibler des comportements d'organisation spécifiques à un modèle d'entrées.
 
 Dans cette section, nous identifierons d'abord les comportements d'apprentissage sur l'exemple des entrées en cercle, déjà utilisé au chapitre \ref{chap:repr}, puis nous vérifierons et étendrons les observations sur d'autres modèles d'entrées.
 Nous comparerons enfin l'influence des paramètres d'une carte sur l'apprentissage de l'architecture.
+\begin{figure}[hb]
+	\centering\includegraphics[width=\textwidth]{archi_2maps.pdf}
+	\caption{Schéma de l'architecture de deux cartes étudiée et rappel des notations. Chaque carte possède une couche de poids externe et une couche de poids contextuels. Les connexions sont rétroactives~: l'entrée contextuelle de $M\m{1}$ est la position du BMU de la carte $M\m{2}$ et inversement. Chaque carte prend une entrée externe.\label{fig:archis}}
+\end{figure}
 
 \subsection{Modèles d'entrée et architecture de cartes}
 
@@ -44,10 +48,7 @@ Le modèle d'architecture que nous utilisons est présenté en figure~\ref{fig:a
 Chaque carte a une taille fixée de 500 n\oe{}uds, indexés entre 0 et 1, et possède deux couches de poids $\w_e$ et $\w_c$. Les rayons de voisinage sont fixés à $r_e = 0.2$ et $r_c = 0.02$, sauf si précisé dans l'expérience.
 Les connexions sont réciproques~: $M\m{1}$ prend en entrée contextuelle $\bmu\m{2}$ et inversement.
 
-\begin{figure}[t]
-	\centering\includegraphics[width=\textwidth]{archi_2maps.pdf}
-	\caption{Schéma de l'architecture de deux cartes étudiée et rappel des notations. Chaque carte possède une couche de poids externe et une couche de poids contextuels. Les connexions sont rétroactives~: l'entrée contextuelle de $M\m{1}$ est la position du BMU de la carte $M\m{2}$ et inversement. Chaque carte prend une entrée externe.\label{fig:archis}}
-\end{figure}
+
 
 Rappelons la définition des entrées multimodales~: il s'agit d'un ensemble d'entrées $\mathbf{\inpx} = (\inpx\m{1}, \cdots, \inpx\m{n})$. 
 Nous notons $K$ la dimension totale des entrées.
@@ -204,8 +205,19 @@ La figure \ref{fig:id_results} présente la disposition des poids et entrées de
 En figure~\ref{fig:cos_results}, la dépendance entre les entrées présentées n'est plus bijective~: $\inpx\m{2}$ est toujours fonction de $\inpx\m{1}$, mais pas l'inverse (Entrées \textbf{B}). 
 Nous observons que la carte $M\m{1}$ ne forme pas de zones, car une seule valeur de $\inpx\m{2}$ correspond à une même valeur de $\inpx\m{1}$, ce qui est cohérent avec le comportement sur les entrées identiques.
 Au contraire, la carte $M\m{2}$ doit à présent se diviser pour apprendre les deux valeurs de $\bmu\m{1}$ possibles correspondant à $\inpx\m{2}$. Ce comportement rejoint ainsi celui que nous avons observé sur le cercle.
-
 La formation de zones semble ainsi intervenir seulement lorsqu'une carte doit séparer au moins deux points du modèle d'entrée ayant la même valeur sur la modalité $\inpx$.
+
+\begin{figure}[H]
+	\centering\includegraphics[width=0.8\textwidth]{id/weights.pdf}
+	\vspace{-0.3cm}
+	\caption{Représentation cartographique des poids et entrées pour la disposition identité. Les poids externes et contextuels sont superposés, et les poids contextuels n'ont pas besoin de former de zones \label{fig:id_results}}
+\end{figure}
+\begin{figure}[H]
+	\centering\includegraphics[width=0.8\textwidth]{cos/weights.pdf}
+	\vspace{-0.3cm}
+	\caption{Représentation cartographique des poids et entrées pour $\inpx\m{2} = cos(\inpx\m{1}$. Les poids contextuels de la carte $M\m{1}$ ne forment pas de zones car une seule valeur de $\inpx\m{2}$ correspond à une entrée $\inpx\m{1}$. Au contraire, les poids de la carte $M\m{2}$ s'organisent pour gérer la distinction. \label{fig:cos_results}}
+\end{figure}
+
 Regardons maintenant l'organisation des cartes lorsqu'une valeur de $\inpx\m{1}$ correspond à plus de deux valeurs de $\inpx\m{2}$~: 4 dans le cas de la courbe de Lissajous (Entrées \textbf{D}) ou tout l'intervalle $[0,1]$ dans le cas du patch $[0,1]^2$ (Entrées \textbf{E}). 
 Ces organisations sont tracées en figure~\ref{fig:lissa} et \ref{fig:ind}.
 Dans ces deux derniers cas, les cartes présentent encore une organisation en zones des poids contextuels.
@@ -219,16 +231,6 @@ La forme des zones et la réponse des cartes dépend ensuite de la relation entr
 Ainsi, sur la distribution indépendante, la carte ne présente pas de zone morte. La totalité d'une zone se déploie de manière à couvrir l'ensemble des valeurs de $U$ correspondant à cette zone, ce qui est également observé en figure ~\ref{fig:lissa} pour les courbes de Lissajous. Une zone agit alors comme une petite carte d'une sous-région de l'espace d'entrée. Sur la distribution en cercle, les BMUs se concentrent autour des extrema des poids contextuels.
 
 \begin{figure}[H]
-	\centering\includegraphics[width=0.8\textwidth]{id/weights.pdf}
-	\vspace{-0.3cm}
-	\caption{Représentation cartographique des poids et entrées pour la disposition identité. Les poids externes et contextuels sont superposés, et les poids contextuels n'ont pas besoin de former de zones \label{fig:id_results}}
-\end{figure}
-\begin{figure}[H]
-	\centering\includegraphics[width=0.8\textwidth]{cos/weights.pdf}
-	\vspace{-0.3cm}
-	\caption{Représentation cartographique des poids et entrées pour $\inpx\m{2} = cos(\inpx\m{1}$. Les poids contextuels de la carte $M\m{1}$ ne forment pas de zones car une seule valeur de $\inpx\m{2}$ correspond à une entrée $\inpx\m{1}$. Au contraire, les poids de la carte $M\m{2}$ s'organisent pour gérer la distinction. \label{fig:cos_results}}
-\end{figure}
-\begin{figure}[H]
 	\centering\includegraphics[width=0.8\textwidth]{lissa/weights.pdf}
 	\vspace{-0.3cm}
 	\caption{Représentation cartographique des poids et entrées pour des entrées sur une courbe de Lissajous. Les poids contextuels se disposent en zones afin de différencier les BMUs selon l'entrée externe et l'entrée contextuelle. Une zone est une carte d'une sous-region des entrées externes \label{fig:lissa}}
@@ -239,6 +241,7 @@ Ainsi, sur la distribution indépendante, la carte ne présente pas de zone mort
 	%\vspace{-0.5cm}
 	\caption{Représentation cartographique des poids et entrées dans le patch $[0,1]^2$. Les poids contextuels s'organisent en zones qui cartographient des sous région de l'espace d'entrée. \label{fig:ind}}
 \end{figure}
+
 
 Intéressons-nous plus en détail à l'apprentissage de la représentation du modèle d'entrée dans le cas des entrées indépendantes \textbf{E}.
 En figure~\ref{fig:2som_p_d}, nous traçons la distorsion des poids externes des cartes~: $(\omega_e(\bmu\m{1}))$ en fonction de  $\omega_e(\bmu\m{2}))$, et reliées selon l'ordre des connexions de $M\m{1}$ puis $M\m{2}$.
@@ -263,7 +266,7 @@ La dernière observation que nous avions relevé sur le cercle est que $U$ est u
 Cette observation est vérifiée sur les 6 dispositions d'entrées que nous avons étudiées.
 Nous reviendrons plus en détail sur l'utilisation de $U$ dans l'analyse des réponses des cartes au chapitre \ref{chap:indicateur}.
 
-\begin{figure}
+\begin{figure}[hb]
 	\centering\includegraphics[width=0.8\textwidth]{anneau/weights_001.pdf}
 	\caption{Représentation cartographique des poids et entrées pour des entrées sur un anneau. \label{fig:anneau_w}}
 \end{figure}

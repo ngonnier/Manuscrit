@@ -9,38 +9,55 @@
 }{}
 
 \begin{document}
-\graphicspath{{06-Analyse/figures},{../06-Analyse/figures}, {../06b-Analyse-2D}, {06b-Analyse-2D}}
+\graphicspath{{../06b-Analyse-2D}, {06b-Analyse-2D}}
 
 \chapter{Extension aux cartes en deux dimensions}\label{chap:analyse2D}
 
 \minitoc
-Nous avons étudié des comportements de base de cartes 1D sur des données en une dimension. 
-Cependant, les cartes auto-organisatrices utilisées en pratique sont des cartes en deux dimensions. Elles apportent en effet une meilleure qualité de quantification vectorielle sur des données de plus grande dimension, tout en restant peu coûteuses en calcul.
-Ce chapitre présente donc quelques résultats obtenus sur des architectures CxSOM construites sur des cartes en deux dimensions.
-Nous cherchons à étudier ici si les mécanismes d'organisation observés sur des cartes 1D sont transposables à des cartes en deux dimensions, à savoir : 
+
+\section{Introduction}
+
+Dans les chapitres précédents, nous avons étudié les propriétés d'organisation de cartes en une dimension d'une architecture de cartes CxSOM.
+L'étude des cartes en une dimension nous offrait un cadre de représentation facile pour la mise en valeur des mécanismes.
+Cependant, les cartes auto-organisatrices utilisées en pratique sont des cartes en deux dimensions. 
+Elles apportent en effet une meilleure qualité de quantification vectorielle sur des données de plus grande dimension, tout en restant peu coûteuses en calcul.
+Nous cherchons à vérifier dans ce chapitre si les mécanismes d'organisation observés sur des architectures de cartes en une dimension s'observent également sur des cartes en deux dimensions.
+
+Le modèle CxSOM tel que présenté au chapitre~\ref{chap:modele} est adapté aux cartes de dimension et de voisinage quelconque. Les expériences présentées dans ce chapitre ne nécessitent donc pas d'adaptation de l'algorithme.
+Cependant, on observe que le passage des cartes 1D aux cartes 2D classiques pose des défis supplémentaires en terme d'organisation et de convergence des poids. 
+Nous avons étudié des architectures de deux et trois cartes 1D~; nous nous intéresserons dans ce chapitre à des architectures de deux et trois cartes 2D.
+Le but est de vérifier si les mécanismes observés dans ces architectures de cartes 1D sont observés en 2D. 
+Nous observerons en particulier les propriétés suivantes, qui sont des marqueurs d'un apprentissage associatif entre cartes~:
 \begin{itemize}
-	\item La qualité de la quantification vectorielle des entrées externes
-	\item L'apprentissage du modèle par chacune des cartes
-	\item L'organisation des poids contextuels
-	\item La convergence de la relaxation
+	\item Les poids externes de chaque carte de l'architecture permettent une bonne quantification vectorielle de l'entrée externe
+	\item Les poids contextuels définissent des zones, et se déplient sur des sous-cartes d'une carte.
+	\item Les BMUs d'une carte encodent à la fois l'entrée externe et la valeur du modèle $U$.
+	\item La relaxation converge en fin d'apprentissage
+	\item Une carte ne recevant pas d'entrée externe est capable de générer une bonne prédiction de la modalité manquante dans l'architecture
 \end{itemize}
 
-Ceci nous permettra d'identifier les limites et perspectives du passage des cartes 1D à 2D dans des architectures.
+Les exemples que nous étudions dans ce chapitre nous permettront d'identifier des limites et perspectives pour le passage des cartes 1D à 2D dans des architectures de cartes CxSOM.
 
 \section{Présentation de l'expérience}
 
 \subsection{Modèle d'entrées}
 
-Nous évaluerons dans ce chapitre le comportement de cartes prenant des entrées 2D dans un cas géométrique similaire aux cartes 1D du chapitre précédent prenant des entrées unidimensionnelles. Il est inutile d'étudier des cartes deux dimensions prenant des entrées en une dimension~; nous prendrons donc comme entrées multimodales des points en 4 dimensions pour une structure de 2 cartes. Chacune des cartes prend donc une entrée 2D.
-Nous choisissons ces points sur une sphère en 3D dont on a effectuée une rotation en dimension 4 dans l'espace 4D, de la même façon que les entrées en 3D se trouvaient sur un cercle 2D dont on a effectué une rotation 3D dans l'espace, voir figure~\ref{fig:sphere_inputs}. De cette manière, les points sont situés sur une surface dans l'espace en 4D. La rotation permet de changer le repère et de répartir les valeurs sur quatre coordonnées au lieu de trois. La translation place le centre en $[0.5,0.5,0.5,0.5]$ afin que les coordonnées soient comprises entre $0$ et $1$.
-La rotation en quatre dimensions est générée en multipliant 6 matrices de rotations élémentaires laissant chacune un des plans de la base 4D fixe, en choisissant des angles répartissant bien les valeurs sur les quatre axes. La rotation est ici un moyen de représenter la surface étudiée sur les quatre dimensions au lieu de trois, sans modifier $U$.
-La variable $U$ paramétrant cette surface est en deux dimensions, il s'agit des angles $\theta$ et $\varphi$ de représentation polaire de la sphère et est une représentation du modèle d'entrées. Nous normalisons les entrées entre 0 et 1 indépendamment sur chaque dimension, entrainant une légère déformation de la sphère.
-
-Les entrées fournies à chaque carte sont ensuite $\inpx\m{1} = [x_0,x_1]$ et $\inpx\m{2} = [x_2,x_3]$. Par symétrie, l'agencement des coordonnées importe peu. Les paires $\inpx\m{1}, \inpx\m{2}$ correspondant à un même point sont présentées au même moment à l'architecture.
+Jusqu'à présent, les modalités observées étaient chacune en une dimension et $U$, la variable latente également 1D.
+Afin de complexifier la structure des entrées, nous choisissons cette fois d'étudier des données dont chaque modalité est en deux dimensions, et dont le modèle latent $U$ est également 2D.
+Nous analyserons des architectures de deux et trois cartes, ainsi nous choisissons des modèles d'entrées de dimension totale 4 et 6.
+Le modèle 4D est présenté en figure~\ref{fig:sphere_inputs}.
+La variable $U$ en deux dimensions paramètre les points placés sur une sphère 3D. Les deux dimensions de $U$ sont les angles paramétrant la représentation polaire de la sphère, $\theta$ et $\phi$~; sur les représentations, nous les normalisons entre $0$ et $1$.
+Pour générer les entrées, nous tirons $U$ dans $[0,1]^2$, ce qui correspond à un point sur la sphère.
+Nous effectuons ensuite une rotation en 4D afin que les coordonnées du point soient distribués sur les 4 axes de la base. Cette représentation en 4D de la sphère permet de définir deux modalités en deux dimensions $\inpx\m{1}$ et $\inpx\m{2}$. Sur la figure, les points sont colorés par rapport à la valeur de $U$, ce qui correspond à la figure de gauche. 
+Par symétrie, l'agencement des coordonnées importe peu. Les paires $\inpx\m{1}, \inpx\m{2}$ correspondant à un même point sont présentées lors de la même itération à l'architecture.
+Plusieurs valeurs de $U$ correspondent à une même valeur de $\inpx\m{1}$, ce qui est marqué par l'existence de plusieurs couleurs de points à une même position. La même chose est observée sur $M\m{2}$.
+Nous sommes donc dans un cas similaire aux tracés en une dimension, et nous chercherons à vérifier si les cartes $M\m\{1}$ et $M\m{2}$ apprennent à différencier les valeurs de $U$ par la position de leur BMU.
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{sphere_inputs.pdf}
-	\caption{Transformation d'une surface d'un espace 3D vers un espace 4D (ou 6D dans la section suivante). Les points restent positionnés sur une surface, mais sont plongés dans un espace de plus grande dimension. La rotation permet de répartir les coordonnées des points sur les quatre dimensions sans modifier la structure des entrées. \label{fig:sphere_inputs}}
+	\includegraphics[width=\textwidth]{sphere_inputs_colormap.pdf}
+	\caption{Transformation d'une surface d'un espace 3D, paramétrée par $U$ vers un espace 4D. Les points sont positionnés sur une surface et plongés dans un espace de plus grande dimension. La rotation permet de répartir les coordonnées des points sur les quatre dimensions sans modifier la structure des entrées. Les modalités considérées sont des valeurs 2D $\inpx\m{1}$ et $\inpx\m{2}$.
+	La couleur de chaque point des figures fait référence à la valeur de $U$ correspondante, dont la disposition est présentée figure de gauche. Plusieurs valeurs de $U$ différentes permettent de générer une même valeur de $\inpx\m{1}$. Par exemple, $\inpx\m{1} = (0.5, 0.7)$ correspond à $U$ autour de $(0.6,0.3)$ (vert) ou $U$ autour de $ (0.6,0.8)$ (violet).
+	\label{fig:sphere_inputs}}
 \end{figure}
 
 \subsection{Architecture}
@@ -48,7 +65,7 @@ Les entrées fournies à chaque carte sont ensuite $\inpx\m{1} = [x_0,x_1]$ et $
 L'architecture de cartes en deux dimensions est construite sur le même principe qu'une architecture de cartes 1D, le modèle présenté au chapitre \ref{chap:modele} étant valable pour n'importe quelle dimension de carte.
 Nous nous intéressons d'abord à une architecture de deux cartes. Les n\oe{}uds sont positionnées sur une grille carrée et indexés entre 0 et 1 sur chaque dimension, que nous noterons $\mathbf{p}\m{i} = (p\m{i}_0, p\m{i}_1)$ sur les figures. 
 Chaque carte possède donc une couche de poids externes $\w\ext \in [0,1]^2$ et une couche de poids contextuels $\w_c \in [0,1]^2$.
-Les poids contextuels représentent les positions des BMUs de l'autres cartes qui sont les positions $\mathbf{p}\m{2}$ pour la carte $M\m{1}$ et $\mathbf{p\m{1}}$ pour la carte $M\m{2}$. Nous prenons des cartes de taille $100x100$.
+Les poids contextuels représentent les positions des BMUs de l'autres cartes qui sont les positions $\mathbf{p}\m{2}$ pour la carte $M\m{1}$ et $\mathbf{p\m{1}}$ pour la carte $M\m{2}$. Nous prenons des cartes de taille $100 \times 100$.
 Les activités $a_e$ et $a_c$ sont calculées par une activation gaussienne, qui est la même qu'en dimension 1.
 $$a_e(\inpx,\mathbf{p}) = \exp(\frac{||\inpx - \w_e(\mathbf{p}) ||^2}{2\sigma^2})$$
 de même pour $a_c$.
@@ -59,7 +76,7 @@ La notion d'organisation dans une carte 2D est plus difficile à formuler que da
 Par exemple, la topologie intuitive d'une carte "organisée" sur le carré $[0,1]^2$ est que les quatre coins de la carte viennent se placer dans les coins du carré.
 Cependant, les mécanismes d'organisation peuvent conduire à une carte tordue en son milieu, par exemple en \label{fig:torsion}. 
 Cette organisation respecte la continuité des poids au sens des cartes auto-organisatrices~: deux poids proches dans la carte correspondent à des entrées proches, peut-être une configuration stable des poids, mais n'est pas forcément la topographie représentant le mieux l'espace d'entrée. 
-De plus, l'organisation et la convergence des poids externes n'est pas assurée pour un rayon de voisinage constant, même dans une carte de Kohonen classique. Des travaux anciens ont prouvé la convergence des SOM en une dimension \cite{Cottrell1998TheoreticalAO} mais seulement partiellement pour les cartes en deux dimensions, même avec des paramètres d'apprentissage décroissant \cite{flanagan_self-organisation_1996}. En pratique, la convergence des poids des SOMs en deux dimensions est observée avec un rayon de voisinage décroissant, mais pas de travaux à notre connaissance n'ont étudié le comportement des SOMs 2D lorsque les rayons restent constants. La convergence des poids des cartes est un enjeu crucial en deux dimensions.
+De plus, l'organisation et la convergence des poids externes n'est pas assurée pour un rayon de voisinage constant, même dans une carte de Kohonen classique. Des travaux ont prouvé la convergence des SOM en une dimension mais seulement partiellement pour les cartes en deux dimensions, même avec des paramètres d'apprentissage décroissant \cite{flanagan_self-organisation_1996}. En pratique, la convergence des poids des SOMs en deux dimensions est observée avec un rayon de voisinage décroissant, mais pas de travaux à notre connaissance n'ont étudié le comportement des SOMs 2D lorsque les rayons restent constants. La convergence des poids des cartes est un enjeu crucial en deux dimensions.
 %Des mesures d'organisation existent sur des cartes en deux dimensions \cite{Polani2001MeasuresFT}.
 
 \begin{figure}
