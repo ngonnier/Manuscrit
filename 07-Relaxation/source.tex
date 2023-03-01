@@ -5,35 +5,54 @@
     \pagenumbering{arabic}
     \setcounter{page}{1}
 	\setcounter{chapter}{2}
+	\addbibresource{../Biblio/biblio.bib}
 }{}
 \begin{document}
-\chapter{Convergence de la relaxation}
+\chapter{Analyse du mécanisme de relaxation}
 \graphicspath{{./},{07-Relaxation/}}
+
 \minitoc
 
 \section{Introduction}
 
+\subsection{Du calcul cellulaire au calcul à l'échelle d'une carte}
 Le processus de relaxation que nous proposons dans l'algorithme CxSOM est une méthode originale pour construire des connexions bidirectionnelles entre cartes.
-L'algorithme de relaxation proposé dans le modèle CxSOM s'appuie sur le modèle de relaxation que nous avions développé architectures de cartes auto-organisatrices cellulaires \cite{khouzam_neural_2014,menard05}.
+L'algorithme de relaxation proposé dans le modèle CxSOM prend comme inspiration sur le modèle de relaxation développé dans l'équipe pour créer des architectures de cartes auto-organisatrices cellulaires \cite{khouzam_neural_2014,menard05}.
 Dans ces modèles d'architecture, le processus dynamique d'apprentissage s'appuie sur des champs neuronaux dynamiques couplés (DNF).
-Ces champs dynamique approximent le comportement d'un champ de neurones impulsionnels
-S'appuie sur des connexions excitatrices short range et inhibitrices à long terme -> winner take all style.
-L'équivalent en SOM = BMU.
-\cite{Kohonen1982} introduction des SOMs comme 
-Ce processus cellulaire nécessite beaucoup de ressources de calcul~; l'algorithme de relaxation que nous proposons cherche à conserver un processus dynamique mais en le placant à l'échelle des cartes.
+Les DNF, introduits en \cite{Amari1977DynamicsOP} permettent de modéliser à gros grains l'activité spatiotemporelle d'une population de neurones impulsionnels. Au lieu de s'intéresser à l'activité d'un seul neurone, tel que son taux de décharge, le modèle des DNF calcule un potentiel $u(x,t)$ en un ensemble de positions continues $x$ de la population de neurones, à un temps $t$, réagissant à un stimulus $s(x)$. Ce calcul d'activité est une approximation du taux de décharge moyen du champ de neurones.
+$u(x,t)$ s'exprime à partir d'une équation différentielle~; son évolution prend en compte le potientiel $u(y,t)$ aux positions voisines de $x$, pondérées par un terme d'interaction latérale. Ce terme est en général une différence de gaussiennes, rendant le voisinage proche de $x$ \emph{inhibiteur}~: son potentiel influe négativement sur le potentiel $u(x,t)$, tandis que le voisinage à plus longue distance est excitateur.
+Le calcul du potentiel des DNF sur un pattern d'entrée résulte en la formation d'une bulle d'activité réagissant au signal d'entrée $x$. Les DNF ont plusieurs applications possibles comme le filtrage de bruit ou le suivi d'une cible.
+Pour une entrée constante, la dynamique du DNF mène à la formation d'une bulle se stabilisant à une position représentant le mieux le signal d'entrée.
+Les DNF implémentent ainsi à un mécanisme de \emph{Winner Take All} (WTA)~: la recherche d'une position (\emph{Winner}) réagissant le mieux au signal d'entrée.
+Comme le calcul du potentiel s'appuie uniquement sur un voisinage de $x$ en chaque point, les calculs permettant ce mécanisme WTA sont cellulaires.
+Par ailleurs, des DNF réagissant à plusieurs siganux d'entrée $s_i(x)$ peuvent être couplés en une architecture dynamique et rétroactive, par exemple \cite{Sandamirskaya2014DynamicNF}. C'est également cette démarche qui avait été privilégiée en\cite{khouzam_neural_2014,menard05} pour la construction d'architectures de cartes cellulaires.
+Dans ce cas, ce couplage permet d'envisager des comportements autonomes au sein des structures de DNF et non une seule réaction à l'entrée $x$.
 
-Deux cartes connectées de cette façon jouent alors un rôle symétrique.
-La relaxation est en même temps une recherche d'un ensemble de Best Matching units par consensus.
-Dans cette section, nous détaillons le formalisme de la méthode de relaxation que nous avons décrite de façon empirique et étudierons expérimentalement la relaxation sur un exemple d'apprentissage.
+La recherche de BMU d'une carte de Kohonen implémente elle aussi un mécanisme WTA, mais dont le calcul est centralisé à l'échelle de la carte grâce au calcul de l'activation des neurones.
+Ce calcul centralisé nécessite moins de ressources de calcul que le calcul des DNF, qui s'appuie sur la résolution d'une équation différentielle, par exemple par la méthode d'Euler. 
 
+Dans le même esprit que l'utilisation d'une activation chez Kohonen pour trouver le BMU au lieu d'un mécanisme cellulaire, l'algorithme de relaxation que nous avons proposé cherche à conserver un processus dynamique de recherche de BMU mais en plaçant les calculs à l'échelle d'une carte. 
+Le choix d'un BMU $\bmu$ dans une carte auto-organisatrice par un $\argmax$ équivaut à la génération d'une bulle d'activité centrée en $\bmu$ dans un DNF. 
+Le processus dynamique de relaxation que nous utilisons dans le modèle CxSOM se rapproche ainsi des mécanismes réalisés dans les DNF couplés, mais en remplacant le processus cellulaire réalisé dans une carte par le calcul d'activité et le choix du BMU. Le couplage entre les activité des cartes reste par contre un processus dynamique.
+Ce choix nous a permis de simplifier les calculs réalisés au sein d'une carte afin d'envisager d'étudier facilement des grandes architectures de cartes, tout en conservant une proximité avec une version cellulaire des cartes auto-organisatrices permettant de revenir facilement à une implémentation cellulaire si elle est souhaitée.
+
+Dans notre modèle, le mécanisme de relaxation cherche à la fois à trouver un BMU dans chaque carte, c'est à  dire la position à laquelle l'activité est maximale, et joue le rôle d'interface entre cartes en utilisant la position du BMU dans les cartes voisines pour le calcul d'activité. 
+
+\subsection{Problématique du chapitre}
+
+Dans ce chapitre, nous nous intéressons plus spécifiquement à ce mécanisme d'interface entre cartes.
+Nous chercherons d'abord à décrire formellement l'algorithme de relaxation proposé dans le modèle CxSOM afin de pouvoir mieux analyser et représenter sa dynamique. Nous nous demanderons notamment si la relaxation est équivalente, comme dans une carte simple, à une recherche de maximum et expliciterons les propriétés de convergence qu'on attend de l'algorithme de relaxation pour pouvoir le considérer comme une recherche de BMU.
+Le comportement de la relaxation dépend complètement des configurations des poids externes et contextuels des cartes de l'architecture. Ces configurations de poids résultent d'un processus de mise à jour et n'ont pas de formulation analytique.
+Ce chapitre cherchera plutôt à observer l'évolution de la relaxation dans différentes configuration de poids et de paramètres afin de répondre aux questions de convergence que nous aurons formulées.
 
 \section{Formalisme de l'algorithme de relaxation}
 
-La recherche du BMU par consensus dans l'architecture CxSOM se traduit par une recherche du maximum des activations de toutes les cartes de l'architecture. La relaxation est une heuristique de recherche de ce maximum.
+La recherche du BMU par relaxation dans l'architecture CxSOM se traduit par une recherche du maximum des activations de toutes les cartes de l'architecture. La relaxation est une heuristique de recherche de ce maximum.
+Nous décrivons dans cette section la relaxation sous une forme plus mathématique et formulons le problème d'optimisation qu'elle cherche à résoudre. Nous introduisons ainsi des notations plus détaillées qui nous permettront d'observer les quantités relatives à l'évolution de la relaxation en section suivante.
 
-\subsection{Formalisation de l'algorithme de relaxation}
+\subsection{Formulation de l'évolution des BMUs lors de la relaxation}
 
-La relaxation définie dans le modèle est une recherche de maximum par déplacements dans l'espace des positions $(\bmu\m{1},\cdots, \bmu\m{n})$.
+La relaxation définie dans le modèle est une recherche de maximum par déplacements dans l'espace des positions $(p\m{1},\cdots, p\m{n})$.
 Nous notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $n$ cartes d'une architecture lors de la relaxation.
 Détaillons ici l'évolution de cette suite.
 
@@ -47,7 +66,8 @@ Pour clarifier les notations, nous définissons  pour chaque carte~$i$, une seco
 \label{eq:pstar}
 \end{equation}
 
-L'équation d'évolution de la suite $(\mathbf{\bmu})_\tau$ s'écrit à partir des valeurs $\hat{p}_\tau$: 
+L'équation d'évolution de la suite $(\mathbf{\bmu})_\tau$ s'écrit à partir des valeurs $\hat{p}_\tau$:
+
 \begin{equation}
 \bmu\m{i}_{\tau+1} = 
 \begin{cases}
@@ -59,10 +79,10 @@ L'équation d'évolution de la suite $(\mathbf{\bmu})_\tau$ s'écrit à partir d
 
 $a_g\m{i}$ est une fonction des poids de la carte $\w\ext\m{i}, \w\cont\m{i}$ et de son entrée externe $\inpx\m{i}$. 
 Lors du processus de relaxation, les poids et l'entrée $\inpx\m{i}$ restent fixes. 
-Le calcul de $a_g$ à l'instant $\tau$ ne dépend donc pas de $\tau$. Pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ dépend donc uniquement de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$. 
-% Notons que nous avions défini une première version de l'algorithme de relaxation dans laquelle les déplacements de $\bmu_\tau$ dépendent de leur distance à $\hat{p}_\tau$ : 
+Le calcul de $a_g$ à l'instant $\tau$ ne dépend donc pas de $\tau$.
+Pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ dépend donc uniquement de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$. 
+En posant $f\m{i}$ toute la partie droite de l'équation \ref{eq:evolution}, on peut finalement écrire~:
 
-En posant $f\m{i}$ la partie droite de l'équation \ref{eq:evolution}, on peut donc écrire~: 
 \begin{equation}
 \forall i, \; \bmu\m{i}_{\tau +1} = f\m{i}(\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)
 \label{eq:fonction}
@@ -74,16 +94,13 @@ Soit, pour l'ensemble des composantes:
 \end{equation}
 
 Si $(\bmu)_\tau$ converge, alors elle converge vers un point fixe de la fonction $f$, soit une position $\mathbf{\bmu}$ vérifiant~:
-
 \begin{equation}
 \mathbf{\bmu} = \mathbf{f}(\mathbf{\bmu})
 \label{eq:suite}
 \end{equation}
 
-Les points fixes $\mathbf{\bmu}$ de la fonction $\mathbf{f}$ sont les valeurs maximisant le problème~\ref{eq:opti}.
-
 Cependant, rien ne garantit que ces point fixes existent ni que la suite converge.
-Pour des poids quelconques, ce n'est pas le cas. Il est donc pertinent d'observer le comportement de la relaxation dans le cas de cartes de Kohonen.
+En particulier, pour des poids $\w$ quelconques, il n'existent généralement pas de point fixe.
 
 Notons enfin que l'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dépend de son initialisation.
 Lors de l'apprentissage du modèle, nous prenons comme état initial une position $(\bmu\m{0}_0, \cdots , \bmu\m{n}_0)$  telle que~: 
@@ -100,51 +117,53 @@ Nous étudierons dans ce chapitre la relaxation pour $(\bmu\m{0}_0, \cdots , \bm
 
 \subsection{Formulation du problème d'optimisation}
 
-La relaxation que nous venons de formaliser est la recherche d'un ensemble de valeurs que nous notons $\mathbf{\bmu} = (\bmu\m{1}, \cdots, \bmu\m{n})$.
-Il s'agit d'une heuristique de recherche d'un maximum de l'activité totale de l'architecture, que nous détaillons ici.
+La relaxation que nous venons de décrire est la recherche d'un ensemble de valeurs $\mathbf{\bmu} = (\bmu\m{1}, \cdots, \bmu\m{n})$.
+
+Nous pouvons interpréter la relaxation comme la recherche d'un maximum de l'activité totale de l'architecture de cartes, que nous détaillons ici. 
 
 Rappelons les équations de calcul d'activation~:
 Dans chaque carte $i$, l'activité globale est définie par~:
 \begin{equation}\label{eq:ag}
 	a_g\m{i}(p, \inpx, \inpc_0, \cdots, \inpc_K) = \sqrt{a_e(p,\inpx)(\frac{1}{2}a_e(p,\inpx) + \frac{1}{2}a_c(p,\inpc_0, \cdots, \inpc_K)}
 \end{equation}
-Avec $\inpc_0, \cdots, \inpc_K$ les entrées contextuelles de la carte.
+Avec $\inpc_0, \cdots, \inpc_K$ les $K$ entrées contextuelles de la carte. 
 
-L'activité contextuelle $a_c$ est définie comme la moyenne des activités contextuelles sur chaque couche de poids contextuels~:
+L'activité contextuelle $a_c$ est définie, rappelons le, comme la moyenne des activités contextuelles sur chaque couche de poids contextuels~:
 \begin{equation}
-	a_c(p, \inpc_{i_0}, \cdots, \inpc_{i_K}) = \frac{1}{k+1}\sum_{k=0}^{K}{a_{ck}(p, \inpc_{i_k})}
+	a_c(p, \inpc_0, \cdots, \inpc_n = \frac{1}{K+1}\sum_{k=0}^{K}{a_{ck}(p, \inpc_k)}
 \end{equation}
 
-$a_g\m{i}$ étant à valeurs positives pour tout $i$, la recherche de BMU s'exprime comme une solution $(\bmu\m{0}, \cdots, \bmu\m{n})$ du problème d'optimisation suivant~:
+Pour simplifier les notations, nous noterons que les entrées contextuelles d'une carte $i$ sont ${\inpc_k, k = 0 \cdots n , k \neq i}$.
+
+$a_g\m{i}$ est à valeurs positives pour tout $i$ ; maximiser individuellement $a_g\m{i}$ revient à maximiser la somme des $a_g$. 
+La recherche de BMU s'exprime comme une solution $(\bmu\m{0}, \cdots, \bmu\m{n})$ du problème d'optimisation suivant~:
 
 \begin{equation}\label{eq:opti}
 	\begin{cases}
 	\text{Maximiser}\;& \sum_{i = 1}^n a_g\m{i}((\bmu\m{i},\inpx\m{i},\inpc_0\m{i}, \cdots, \inpc_n\m{i})) \\
-	\text{Sous Contrainte }\; &\forall i,\:\forall k, \; \inpc_k\m{i} = \argmax_{p}a_g\m{k}(p,\inpc_0\m{k}, \cdots, \inpc_n\m{k})
+	\text{Sous Contrainte }\; &\forall i,\:\forall k \neq i, \; \inpc_k\m{i} = \argmax_{p}a_g\m{k}(p,\inpc_0\m{k}, \cdots, \inpc_n\m{k})
 	\end{cases}
 \end{equation}
 
-Les solutions du problème~\ref{eq:opti} sont les positions $(\bmu\m{1}, \cdots, \bmu\m{n})$ vérifiant~:
-$$\bmu\m{i} = \argmax_p a_g(p, \bmu\m{0}, \cdots, \bmu\m{n})$$,c'est-à-dire les points fixes de la fonction $\mathbf{f}$ définie lors de la relaxation.
+Une solution du problème~\ref{eq:opti} est nécessairement une position $(\bmu\m{1}, \cdots, \bmu\m{n})$ vérifiant~:
+$$\forall i, \: \bmu\m{i} = \argmax_p a_g(p, \bmu\m{0}, \cdots, \bmu\m{n})$$, c'est-à-dire un point fixe de la fonction $\mathbf{f}$ définie lors de la relaxation.
+Cependant, cette fonction peut admettre plusieurs points fixes et la relaxation peut donc converger vers un maximum local qui n'est pas forcément la solution optimale.
+On peut noter que si $\mathbf{f}$ admet un unique point fixe et que la relaxation converge, alors elle converge vers la solution du problème d'optimisation~\ref{eq:opti}, qui maximise l'activité totale de l'architecture.
 
-En fonction des poids des cartes, il n'est clairement pas assuré qu'une solution existe ni qu'elle soit unique. 
-Dans un cas quelconque, ce problème n'a a priori pas de solution.
-Nous observerons dans la suite que lorsque les poids des cartes présentent une continuité (au sens des cartes de Kohonen), le problème admet une solution.
-Maintenant que nous avons posé un formalisme sur l'algorithme de relaxation, le but de ce chapitre est de visualiser la relaxation sur un exemple d'expérience.
+Maintenant que nous avons posé un formalisme sur l'algorithme, le but de ce chapitre est de visualiser la relaxation sur un exemple d'expérience.
+Nous observerons expérimentalement dans la suite du chapitre que lorsque les poids des cartes présentent une continuité (au sens des cartes de Kohonen), la fonction $\mathbf{f}$ apparaît admettre un unique point fixe, ce qui assurerait que la relaxation, si elle converge, converge bien vers la solution du problème $\ref{eq:opti}$.
 
 \subsection{Relaxation et notion de \emph{Best Matching Unit}}
 
 La notion de Best Matching Unit est définie au sein de l'algorithme d'apprentissage d'une carte de Kohonen, comme l'unité possédant l'activité maximale pour une entrée fixée. 
-Cette activité dépend de l'entrée présentée et des poids de la carte, mais peut aussi dépendre d'autres variables pour d'autres modèles de carte, tels que l'état de la carte au temps précédent pour les cartes récurrentes, ou dans notre cas les positions des BMU des cartes adjacentes.
-
+Cette activité dépend de l'entrée et des poids de la carte.
 On attend d'un algorithme de recherche du BMU que la valeur trouvée en sortie soit uniquement relative aux poids de la carte et aux entrées~: elle ne doit pas dépendre de l'initialisation.
-Dans le cas de la recherche de BMU par relaxation, nous voulons ainsi vérifier que~:
+Dans le cas de la recherche de BMU par relaxation, nous voulons d'abord vérifier la recherche du BMU converge. 
+Dans notre modèle, nous arrêtons la relaxation après un nombre fixe d'itération. Il est donc toujours possible de définir un BMU, mais dans le cas où la relaxation n'a pas convergé, ce BMU n'a pas de sens~: il ne s'agir pas d'un maximum. 
+Nous mesurerons pour cela la convergence de la relaxation sur un ensemble d'expériences.
+Nous observerons ensuite si la valeur trouvée à l'issue de la relaxation, à savoir le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation.
+Le BMU est alors relatif à seulement l'état des poids de la carte et non des conditions initiales. Pour cela, nous voulons vérifierons que la fonction $\mathbf{f}$ générant la suite $\mathbf{\bmu}_\tau$ admet un unique point fixe sur un ensemble d'exemple. 
 
-\begin{itemize}
-	\item La recherche du BMU converge. S'il n'existe pas de point de convergence, nous ne pouvons pas définir un BMU pour la carte. Nous mesurerons pour cela la convergence de la relaxation sur un ensemble d'expériences.
-	\item La valeur trouvée à l'issue de la relaxation, à savoir le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation. 
-	Le BMU est alors relatif à seulement l'état des poids de la carte et non des conditions initiales. Nous voulons donc vérifier que la fonction $\mathbf{f}$ générant la suite $\mathbf{\bmu}_\tau$ admet un unique point fixe.
-\end{itemize}
 L'évaluation de ces deux conditions sera réalisée sur des exemple d'apprentissage d'une architecture de deux et trois cartes. 
 Notons que dans l'algorithme CxSOM, les BMUs sont initialisés à la position du maximum de l'activité externe dans chaque carte. 
 Nous effectuerons l'analyse de la relaxation pour des conditions initiales quelconques, mais il est important de noter que ce choix d'initialisation permettra en fait d'éviter certains cas de non-convergence.
@@ -154,13 +173,12 @@ Cependant, nous observons que ces cas de non-convergence n'influencent pas le d�
 Nous observerons expérimentalement qu'à la fin de l'apprentissage, la disposition des poids obtenue dans chaque carte permet l'existence d'un unique point fixe et que la relaxation converge vers ce point, indépendamment de l'initialisation des valeurs de $\bmu\m {i}_{\tau}$.
 
 Ce chapitre présente des points d'analyse empirique de ce processus de relaxation, réalisée sur des cartes 1D et 2D prenant en entrée un jeu de données 1D.
-
 La démarche expérimentale est la suivante:
 Nous mesurerons d'abord la convergence de la relaxation dans les expériences citées ci-dessus.
 Nous chercherons à observer à partir de deux visualisations l'unicité du point fixe et les trajectoires de la suite $\mathbf{\bmu}_\tau$ en fonction de l'initialisation de la relaxation.
-Enfin, nous étudierons comment le choix du pas de relaxation $\Delta$ influence la convergence de la relaxation.
+Enfin, nous observerons comment le choix du pas de relaxation $\Delta$ influence la convergence de la relaxation.
 
-\section{Etude expérimentale de la convergence de la relaxation}
+\section{\'Etude expérimentale de la convergence de la relaxation}
 
 Nous nous intéressons ici  à un processus d'apprentissage complet d'une architectures de deux cartes. Les entrées $\inpx\m{1}$ et $\inpx\m{2}$ que nous présentons à chaque carte sont les coordonnées $x$ et $y$ de points situés sur un cercle de centre 0.5 et de rayon 0.5. 
 Nous détaillerons le choix de disposition d'entrées dans les chapitres suivants~; notons simplement que ces entrées sont normalisées, chaque prenant toutes les valeurs entre 0 et 1. 
@@ -188,16 +206,15 @@ Les figures~\ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} montrent qu'a
 
 Nous en  concluons que la convergence de la relaxation dépend complètement de la disposition des poids. 
 Elle converge dans plus de 90 \% des cas lorsque les poids sont bien dépliés, mais seulement dans 20\% des cas au début de l'apprentissage lorsque les poids ne présentent aucune forme de continuité et d'organisation.
-Le fait que la relaxation ne converge pas en début d'apprentissage ne perturbe cependant pas l'organisation des poids.
-Nous discuterons plus loin de cette observation.
+Toutefois, le fait que la relaxation ne converge pas en début d'apprentissage ne perturbe pas l'organisation des poids. Nous discuterons plus loin de cette observation.
 
 \begin{figure}
-\centering
-\includegraphics[width=0.7\textwidth]{1D_conv_evolution_total.pdf}
-\caption{En haut: évolution de la moyenne et l'écart-type du taux de convergence lors de la relaxation au cours de l'apprentissage sur deux et trois cartes 1D. En bas: évolution du nombre moyen de pas nécessaires à la convergence de la relaxation.
-Chaque point est calculé sur un échantillon de 5000 relaxations au temps t, évaluées sur des entrées différentes prises aléatoirement sur le cercle. La moyenne et l'écart-type sont réalisés sur 10 apprentissages séparés.}
-\label{fig:conv_evolution}
-\end{figure}
+	\centering
+	\includegraphics[width=0.7\textwidth]{1D_conv_evolution_total.pdf}
+	\caption{En haut: évolution de la moyenne et l'écart-type du taux de convergence lors de la relaxation au cours de l'apprentissage sur deux et trois cartes 1D. En bas: évolution du nombre moyen de pas nécessaires à la convergence de la relaxation.
+	Chaque point est calculé sur un échantillon de 5000 relaxations au temps t, évaluées sur des entrées différentes prises aléatoirement sur le cercle. La moyenne et l'écart-type sont réalisés sur 10 apprentissages séparés.}
+	\label{fig:conv_evolution}
+	\end{figure}
 
 \begin{figure}
 	\centering
@@ -214,7 +231,6 @@ Chaque point est calculé sur un échantillon de 5000 relaxations au temps t, é
 
 Nous nous placons dans une architecture de deux cartes 1D.
 Nous étudions dans cette partie l'évolution de plusieurs processus de relaxation lancés sur des poids de cartes dans une même disposition, à présent en fixant l'entrée externe et en prenant des valeurs d'initialisation de relaxation $\mathbf{\bmu}_0$ différentes.
-
 
 Pour une architecture de deux cartes 1D, nous avons donc~:
 \begin{equation*}
@@ -319,13 +335,16 @@ Dans ce cas, la relaxation permet de trouver ce point fixe.
 
 \subsection{Influence du pas de relaxation}
 
-Dans les expériences précédentes, nous avons utilisé un pas de convergence $\delta=0.05$.
-Une autre solution est de ne pas utiliser de pas de relaxation, c'est à dire, à chaque itération, déplacer le BMU $\bmu\m{i}_\tau$ directement en $\hat{p}\m{i}$, où l'activité globale est maximale, au lieu de le déplacer de $\delta$.
+Dans les expériences précédentes, nous avons utilisé un pas de convergence $\Delta=0.05$.
+Une autre solution est de ne pas utiliser de pas de relaxation, c'est à dire, à chaque itération, déplacer le BMU $\bmu\m{i}_\tau$ directement en $\hat{p}\m{i}$, où l'activité globale est maximale, au lieu de le déplacer de $\Delta$.
+
+
 L'évolution de la relaxation devient alors:
 \begin{equation}
 \forall i, \bmu\m{i}_{\tau+1} = \hat{p}\m{i}_{\tau}
 \end{equation}
 
+On pourrait supposer que prendre un petit $\Delta$ permet une meilleure convergence; en fait, la valeur de $\Delta$ influence peu la capacité de convergence et l'organisation des cartes.
 En figure \ref{fig:diff_nopas}, Nous avons tracé différentes trajectoires de relaxation, pour une même entrée. 
 On représente sur cette même figure les différences ${\hat{p}}\m{1} - p\m{1}$ et ${\hat{p}}\m{2} - p\m{2}$. Le point fixé de la fonction génératrice de la suite $(\bmu)_\tau$ est un point pour lequel les deux valeurs sont nulles.
 Ces relaxation sont effectués après l'apprentissage des données par l'architecture. La méthode de relaxation utilisée lors de l'apprentissage n'utilise pas non plus de pas de relaxation $\delta$.
@@ -343,30 +362,52 @@ Cela se comprend au vu des résultats précédents. $\hat{p}\m{1}$ et $\hat{p}\m
 \label{fig:diff_nopas}
 \end{figure}
 
+% \section{Conclusion}
+
+% Les parties \ref{sec:conv} et \ref{sec:cont} montrent donc que, lorsque les poids sont quelconques, la convergence de l'algorithme de relaxation n'est pas assurée; au contraire, la relaxation évolue dans la plupart des cas vers une situation non convergente. Dans le cas particulier étudié dans la section, il semble exister des point fixes, mais dus au caractère aléatoire des poids. La relaxation ne permet pas de trouver ces points. Pourtant, l'apprentissage des cartes utilisant la relaxation comme recherche de BMU mène une organisation des poids, même sans que la relaxation ne converge au début. Cette organisation permet de plus une meilleure convergence de la relaxation (convergence dans plus de $90 \%$ des cas).
+
+% Ce comportement peut être expliqué. On observe que la relaxation converge bien à partir du moment où les poids externes sont organisés et présentent une continuité. 
+% Au début de l'apprentissage, même si la relaxation mène à des positions quelconques de BMUs, ces BMUs auront quand même des poids externes restant proches de la valeur de l'entrée externe. 
+% Le calcul de l'activité dépend en effet d'abord de l'activité externe de la carte:
+% $$ a_g = \sqrt{a_e ( \beta a_e + (1-\beta a_c))}, \;\; \beta=0.5$$ 
+% De plus, la relaxation est initialisée à une position correspondant au maximum de l'activité externe.
+
+% L'organisation de la carte s'effectuera donc de façon similaire à une carte classique. Dans une carte de Kohonen, pour des poids aléatoires, de multiples positions de BMU sont possibles lors du calcul de la distance des poids à l'entrée. La disposition des poids et le choix du BMU n'influencent pas la propriété globale d'organisation d'une carte. Cette même observation peut s'effectuer ici. 
+% Le rayon de voisinage externe étant bien plus grand que le rayon de voisinage contextuel, l'organisation des poids externes de la carte influence peu l'organisation des poids contextuels.
+% Lorsque les poids externes présentent une continuité, la relaxation converge. Les poids contextuels peuvent alors s'organiser selon le BMU, qui a maintenant un sens: il s'agit d'un point fixe de la fonction de relaxation. Le BMU correspond alors au point qui maximise en même temps les activités globale de chaque carte.
+
+% Expérimentalement, on observe que, lorsque les cartes sont organisés, le point fixe  existe, est unique est est atteint par n'importe quelle trajectoire de relaxation. Le BMU a donc un sens au niveau de la carte. 
+
+% Enfin, la relaxation utilise un pas de déplacement utilisé $\delta$. 
+%
+
+% La relaxation est donc une recherche d'un maximum global à l'architecture, ce maximum étant un point fixe de la fonction de mise à jour des positions.
+% Une fois que les poids externes d'une carte présentent une continuité, la relaxation et le BMU issu de ce processus ont un sens topologique: on observe expérimentalement que la fonction de mise à jour présente un point fixe $\mathbf{\bmu} = \mathbf{f}(\mathbf{\bmu})$, et que la relaxation converge vers ce point fixe. Ce point fixe est alors le point qui maximise \emph{collectivement} les activités globales de chaque carte de l'architecture.
+% Bien que la relaxation ne converge pas au début de l'apprentissage, la convergence est observée dès que les poids externes présentent une certaine continuité. Cette continuité étant assurée après quelques itérations d'apprentissage par l'algorithme de mise à jours des poids de Kohonen, on peut donc dire que la relaxation converge au sein de CxSOM.
+
+
 \section{Conclusion}
 
-Les parties \ref{sec:conv} et \ref{sec:cont} montrent donc que, lorsque les poids sont quelconques, la convergence de l'algorithme de relaxation n'est pas assurée; au contraire, la relaxation évolue dans la plupart des cas vers une situation non convergente. Dans le cas particulier étudié dans la section, il semble exister des point fixes, mais dus au caractère aléatoire des poids. La relaxation ne permet pas de trouver ces points. Pourtant, l'apprentissage des cartes utilisant la relaxation comme recherche de BMU mène une organisation des poids, même sans que la relaxation ne converge au début. Cette organisation permet de plus une meilleure convergence de la relaxation (convergence dans plus de $90 \%$ des cas).
-
-Ce comportement peut être expliqué. On observe que la relaxation converge bien à partir du moment où les poids externes sont organisés et présentent une continuité. 
-Au début de l'apprentissage, même si la relaxation mène à des positions quelconques de BMUs, ces BMUs auront quand même des poids externes restant proches de la valeur de l'entrée externe. 
-Le calcul de l'activité dépend en effet d'abord de l'activité externe de la carte:
-$$ a_g = \sqrt{a_e ( \beta a_e + (1-\beta a_c))}, \;\; \beta=0.5$$ 
-De plus, la relaxation est initialisée à une position correspondant au maximum de l'activité externe.
-
-L'organisation de la carte s'effectuera donc de façon similaire à une carte classique. Dans une carte de Kohonen, pour des poids aléatoires, de multiples positions de BMU sont possibles lors du calcul de la distance des poids à l'entrée. La disposition des poids et le choix du BMU n'influencent pas la propriété globale d'organisation d'une carte. Cette même observation peut s'effectuer ici. 
-Le rayon de voisinage externe étant bien plus grand que le rayon de voisinage contextuel, l'organisation des poids externes de la carte influence peu l'organisation des poids contextuels.
-Lorsque les poids externes présentent une continuité, la relaxation converge. Les poids contextuels peuvent alors s'organiser selon le BMU, qui a maintenant un sens: il s'agit d'un point fixe de la fonction de relaxation. Le BMU correspond alors au point qui maximise en même temps les activités globale de chaque carte.
-
-Expérimentalement, on observe que, lorsque les cartes sont organisés, le point fixe  existe, est unique est est atteint par n'importe quelle trajectoire de relaxation. Le BMU a donc un sens au niveau de la carte. 
-
-Enfin, la relaxation utilise un pas de déplacement utilisé $\delta$. 
-On pourrait supposer que prendre un petit $\delta$ permet une meilleure convergence; en fait, la valeur de $\delta$ influence peu la capacité de convergence et l'organisation des cartes. La relaxation pourrait être effectuée sans utiliser de pas de relaxation. Par ailleurs, la relaxation est initialisée proche de la position théorique du BMU, quand elle existe. La relaxation est donc finalement assez courte.
-
-La relaxation est donc une recherche d'un maximum global à l'architecture, ce maximum étant un point fixe de la fonction de mise à jour des positions.
-Une fois que les poids externes d'une carte présentent une continuité, la relaxation et le BMU issu de ce processus ont un sens topologique: on observe expérimentalement que la fonction de mise à jour présente un point fixe $\mathbf{\bmu} = \mathbf{f}(\mathbf{\bmu})$, et que la relaxation converge vers ce point fixe. Ce point fixe est alors le point qui maximise \emph{collectivement} les activités globales de chaque carte de l'architecture.
-Bien que la relaxation ne converge pas au début de l'apprentissage, la convergence est observée dès que les poids externes présentent une certaine continuité. Cette continuité étant assurée après quelques itérations d'apprentissage par l'algorithme de mise à jours des poids de Kohonen, on peut donc dire que la relaxation converge au sein de CxSOM.
+Ce chapitre présente une étude expérimentale du mécanisme de relaxation. Nous avons détaillé un formalisme décrivant l'algorithme, qui montre que la relaxation est une recherche du maximum de l'activation globale de l'architecture, soit la somme des activations de chaque carte.
 La relaxation est alors un moyen de trouver un ensemble de BMU au sein d'une architecture maximisant une propriété \emph{globale} à cette architecture: toutes les cartes voient leur activité globale maximisée. 
-Cette recherche de maximum est réalisée localement, au niveau de chaque carte, et non de façon globale. La relaxation agit alors comme une manière de connecter des cartes de façon non-hiérarchique et les BMUs sont l'interface entre modules de la carte.
+Cette recherche de maximum est réalisée localement, au niveau de chaque carte, et non de façon globale. La relaxation agit alors comme une manière de connecter des cartes de façon non-hiérarchique et les BMUs sont 
+l'interface entre modules de la carte.
+
+
+Si la relaxation converge, alors elle converge vers un point maximisant cette activation totale.
+Cette convergence dépend de la disposition des poids des cartes.
+Nous avons observé expérimentalement que lorsque les poids des cartes ne sont pas ordonnés, il n'existe pas forcément de solution au problème d'optimisation. Dans ce cas, la relaxation converge seulement dans 20\% des cas lors d'une étape de test. Lorsque la relaxation n'a pas convergé, nous avons observé une évolution vers un cycle limite. La relaxation telle qu'elle est définie ne permet donc pas de trouver une solution approchée du problème d'optimisation s'il n'existe pas de solution exacte.
+
+Cependant, nous avons observé que les cartes se déplient correctement même lorsque la relaxation n'a pas convergé,c e qui est assuré grâce à l'initialisation de la relaxation à des positions maximisant l'activité externe et grâce à la prépondérance de l'activité externe dans le calcul de l'activité globale. 
+La relaxation va alors évoluer vers un point qui, même s'il n'est pas une solution du problème de maximisation globale, maximise bien l'activité externe de la carte~: $\w_e(\bmu)$ est proche de l'entrée. Cela permet de déplier correctement les poids externes. Une fois que ces poids externes sont dépliés, la relaxation ne peut évoluer que vers une zone réduite de la carte qui est définie par l'activité externe.
+
+Enfin, nous avons observé que lorsque tous les poids sont bien dépliés, il existe une solution optimale du problème de relaxation. L'algorithme de recherche converge alors vers ce point quel que soient les conditions initiales.
+Dans ce cas, la relaxation converge même en l'absence de pas de relaxation $\Delta$, c'est à dire lorsque les BMUs successifs considérés lors de la relaxation sont directement les positions maximisant l'activité de chaque carte.
+
+Les tracés de relaxation ont été effectués pour des cartes 1D prenant des entrées 1D, avec des cartes ayant un jeu de paramètre spécifique, avec notamment $r_e = 0.2$ et $r_c = 0.02$. 
+Nous avons également observé que la relaxation converge sur des cartes 2D prenant des entrées 1D.
+Dans les chapitre suivants, nous détaillerons le comportement des cartes 1D et 2D sur différentes données d'entrées et différents paramètres. Nous prendrons le soin de tracer dans ces chapitres l'évolution de la convergence de la relaxation, d'après la méthode proposée en figure~\ref{fig:conv_evolution}~; nous observerons la relaxation semble bien converger dès que les poids présentent un \og dépliement \fg{} ordonné, ceci sur des cartes 1D prenant des entrées 1D mais également des cartes 2D prenant des entrées 2D.
+
 
 \ifSubfilesClassLoaded{
     \printbibliography
