@@ -16,18 +16,16 @@
 
 \section{Introduction}
 
-Dans le chapitre précédent, nous avons proposé l'algorithme CxSOM, permettant de construire des architectures non-hiérarchiques modulaires de cartes auto-organisatrices. Dans ces architectures non-hiérarchiques, plusieurs cartes sont connectées. 
-Chaque carte a pour but d'extraire une représentation de ses entrées externes, tout en prenant comme entrée secondaire les positions des \emph{Best Matching Unit} d'autres cartes afin de mettre en relation les activités relatives aux différentes modalités. 
-La particularité du modèle CxSOM est d'introduire des rétroactions entre cartes~: l'architecture n'est pas un empilement de cartes qui apprennent tour à tour, de façon ascendante.
-Nous étudierons l'architecture CxSOM dans un cadre particulier de mémoire associative.
-L'objectif pour une architecture de cartes est alors d'apprendre une représentation des relations existant entre des entrées de différentes modalités, tout en apprenant une représentation au sein de chaque carte d'un espace d'entrée.
+Nous avons proposé l'algorithme CxSOM, permettant de construire des architectures non-hiérarchiques de cartes auto-organisatrices.
+Chaque carte de l'architecture a à la fois pour but d'extraire une représentation de ses entrées externes, tout en prenant comme entrée secondaire les positions des \emph{Best Matching Unit} d'autres cartes afin de prendre en compte les activités relatives aux différentes modalités dans le calcul de son BMU. 
+Dans cette thèse, nous étudions les propriétés de l'architecture CxSOM dans un cadre particulier de mémoire associative.
+L'objectif pour une architecture de cartes est d'apprendre une représentation des relations existant entre des entrées de différentes modalités, tout en apprenant une représentation au sein de chaque carte d'un espace d'entrée.
 La compréhension du comportement de structures avec un faible nombre de cartes posera des bases pour la construction d'architectures plus grandes. Ce système de cartes est un système complexe, même dans une architecture de quelques cartes. Chaque carte possède 500 unités~; son état, représenté par son BMU, peut alors prendre 500 valeurs et l'état d'une carte dépend des cartes voisines.
 
-L'objectif de cette thèse est d'observer comment l'organisation qui émerge d'une structure de cartes traduit un apprentissage de type mémoire associative sur les entrées. Pour analyser l'organisation de ces cartes, nous aurons besoin de d'introduire de nouvelles représentations par rapport à celles utilisées dans les SOM classiques. 
-
+L'objectif de cette thèse est d'observer comment l'organisation qui émerge d'une structure de cartes traduit un apprentissage associatif sur les entrées multimodales. Pour analyser l'organisation de ces cartes, nous aurons besoin de d'introduire de nouvelles représentations par rapport à celles utilisées dans les SOM classiques. 
 Ce chapitre présente la méthode expérimentale et les représentations que nous utiliserons dans toutes les expériences présentées par la suite dans ce manuscrit.
-Ces représentations ont pour but non seulement de qualifier la qualité de l'apprentissage, et surtout de mettre en lumière les propriétés et l'organisation des cartes émergeant de l'algorithme d'apprentissage.
-La création de méthodes de représentation adaptées au modèle sur une architecture élémentaire de peu de cartes nous permet de poser les bases pour l'étude de plus grandes architectures par la suite.
+Ces représentations ont pour but de qualifier la qualité de l'apprentissage, et surtout de mettre en lumière les propriétés et l'organisation des cartes émergeant de l'algorithme d'apprentissage.
+La création de méthodes de représentation adaptées au modèle CxSOM sur une architecture élémentaire de peu de cartes nous permet de poser les bases pour l'étude de plus grandes architectures pour une suite à long terme des travaux.
 
 \subsection{Présentation d'une expérience multimodale minimale illustrant les représentations}
 
@@ -57,12 +55,12 @@ Les paramètres de ces cartes sont les mêmes que les cartes de l'architecture~:
 \subsection{Représentations et indicateurs classiques des cartes de Kohonen}
 
 Les cartes de Kohonen sont particulièrement associées à une facilité de représentation et de visualisation. Leur nombre réduit de prototypes et leur aspect topologique permet d'en tracer une représentation visuelle interprétable.
-La manière la plus couramment utilisée de représenter une carte de Kohonen est de représenter les poids finaux des ses prototypes. 
+La manière la plus couramment utilisée de représenter une carte de Kohonen est de représenter les poids finaux de ses prototypes. 
 Deux représentations sont souvent privilégiées~:
 \begin{itemize}
-\item Les poids de chaque n\oe{}uds sont tracés à leur emplacement sur la carte. 
+\item Les prototypes de chaque n\oe{}ud sont tracés à leur emplacement $p$ sur la carte. 
 C'est le cas sur l'exemple de gauche en figure~\ref{fig:representation} dans lequel les poids des prototypes, qui sont des imagettes 16x16, sont affichés en chaque point de la carte en deux dimensions.
-\item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace des entrées $\mathbb{R}^2$ ou $\mathbb{R}^3$. Les poids sont reliés en fonction des positions des n\oe{}uds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation} pour une grille en deux dimension ayant appris sur des entrées en deux dimensions (en bleu)
+\item Lorsque les données traitées sont des points deux ou trois dimensions, les poids des prototypes peuvent être directement tracés dans l'espace des entrées $\mathbb{R}^2$ ou $\mathbb{R}^3$. Les poids sont reliés en fonction des positions des n\oe{}uds dans la carte, montrant ainsi la déformation de la carte dans l'espace d'entrée, c'est le cas sur l'exemple de droite en figure~\ref{fig:representation} pour une grille en deux dimensions ayant appris sur des entrées en deux dimensions (en bleu).
 \end{itemize}
 
 Nous utiliserons des représentations adaptées au cas d'une architecture à plusieurs cartes à partir de ces deux modes de représentation.
@@ -74,19 +72,19 @@ Nous utiliserons des représentations adaptées au cas d'une architecture à plu
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \centering
-\includegraphics[width=0.5\textwidth]{points.png}
+\includegraphics[width=0.5\textwidth]{points2.png}
 \end{minipage}
-\caption{Représentations possibles des poids d'une carte de Kohonen classiques, dans le cas d'entrées sous forme d'imagettes ou de points en deux dimensions.\label{fig:representation}}
+\caption{Représentations possibles des poids d'une carte de Kohonen classique, dans le cas d'entrées sous forme d'imagettes ou de points en deux dimensions \footnote{Images tirées du polycopié de machine learning de CentraleSupelec Metz, \url{https://frezza.pages.centralesupelec.fr/teachml2/Poly/Poly-ML-SDImetz.pdf}} \label{fig:representation}}
 \end{figure}
 
 \subsection{Limites des représentations classiques dans le cas d'une architecture CxSOM}
 
-Utilisons d'abord les représentations classiques mentionnées ci-dessus pour tracer les poids de chacun des cartes d'une architecture CxSOM à la fin de l'apprentissage.
+Nous pouvons d'abord utiliser les représentations classiques mentionnées ci-dessus pour tracer les différentes couches de poids de chacun des cartes d'une architecture CxSOM à la fin de l'apprentissage.
 La fin de l'apprentissage est définie comme le moment où les poids ont convergé vers une organisation restant stable au cours des itérations $t$.
-La figure~\ref{fig:weights} présente le tracé des poids externes et contextuels des deux cartes de l'exemple selon leur position sur la carte, soit le pendant en une dimension de l'exemple de gauche en figure~\ref{fig:representation}. 
+La figure~\ref{fig:weights} présente le tracé des poids externes et contextuels des deux cartes de l'exemple selon leur position sur la carte, soit le pendant en une dimension de l'exemple de gauche en figure~\ref{fig:representation}.
 La courbe orange correspond aux valeurs des poids externes de chaque carte.
 Ce tracé permet d'observer que les poids externes couvrent l'intervalle $[0,1]$, et sont organisés de façon monotone, ce qui est l'organisation habituelle d'une carte classique se dépliant entre 0~et~1.
-Les poids contextuels sont tracés en bleu. Ils ne présentent pas cette organisation monotone, mais font apparaitre une organisation spatiale~: deux prototypes proches ont des poids proches. 
+Les poids contextuels sont tracés en bleu. Ils ne présentent pas cette organisation monotone, mais font apparaître une organisation spatiale~: deux prototypes proches ont des poids proches. 
 Le tracé des deux couches de poids nous informe donc sur le caractère ordonné de l'organisation de chacune de couches de poids. 
 
 Notons que nous ne pouvons pas en tirer plus de conclusion~: la représentation des poids de la figure~\ref{fig:weights} ne différencie pas les n\oe{}uds qui seront effectivement BMUs, des n\oe{}uds dits \emph{morts}.
@@ -105,8 +103,8 @@ Au regard des insuffisances des représentations classiques, déjà révélées 
 
 Suite aux limites montrées par les méthodes de représentation classiques utilisées dans le domaine des SOMs, ce chapitre propose plusieurs façons de représenter une carte au sein d'une architecture.
 Nous présenterons en premier lieu une méthode expérimentale pour décrire les cartes et les entrées multimodales associées ainsi que la méthode expérimentale que nous utiliserons pour toutes les expériences présentées dans cette thèse. 
-\'A partir de cette méthode, nous proposerons plusieurs représentations encrichies par rapport aux méthodes de représentation classiques, permettant de comprendre et représenter ce que calcule une architecture CxSOM sur les données d'entrées. Ces représentations seront illustrées sur l'exemple minimal de deux cartes pour faciliter la compréhension. 
-Nous utiliserons ces méthodes dans les chapitres suivants pour analyser le comportement des cartes.
+\'A partir de cette méthode, nous proposerons plusieurs représentations enrichies par rapport aux méthodes de représentation classiques, permettant de comprendre et représenter ce que calcule une architecture CxSOM sur les données d'entrées. Ces représentations seront illustrées sur l'exemple minimal de deux cartes pour faciliter la compréhension des comportements. Nous comparerons dans ce chapitre le comportement d'une architecture de deux cartes à celui de cartes classiques afin d'avoir une première idée des dynamiques d'apprentissage occurant dans CxSOM.
+Nous utiliserons ensuite les méthodes de représentation dans les chapitres suivants pour analyser le comportement des cartes.
 
 \section{Formalisation statistique des entrées et sorties des cartes}
 
@@ -116,16 +114,16 @@ Ce formalisme possède à la fois l'avantage de clarifier les représentations e
 \subsection{Formalisation des entrées}
 
 Plaçons-nous dans le cas général d'une architecture de $n$ cartes pour formaliser davantage.
-Nous considérons des entrées multimodales tirées d'un ensemble d'espaces d'entrée $\mathcal{D}\m{1},\cdots,\mathcal{D}\m{n}$. Chaque espace $\mathcal{D}\m{i}$ est une modalité de l'espace multimodal.
-Les observations multimodales que l'on cherche à apprendre par l'architecture de cartes sont notées $(\inpx\m{i} \in \mathcal{D}\m{i}, i = 1 \cdots n)$.
+Nous considérons des entrées multimodales tirées d'un ensemble d'espaces d'entrée $\mathcal{D}\m{1},\cdots,\mathcal{D}\m{D}$. Chaque espace $\mathcal{D}\m{i}$ est une modalité de l'espace multimodal, avec $D$ le nombre de modalités considérées. Notons que comme une carte peut ne pas prendre d'entrée externe, $D \neq n$.
+Les observations multimodales que l'on cherche à apprendre par l'architecture de cartes sont notées $(\inpx\m{i} \in \mathcal{D}\m{i}, i = 1 \cdots D)$.
 
-Nous modélisons ces entrées $\inpx\m{i}$ comme des \emph{variables aléatoires} tirées selon un distribution $P\m{i}$ sur leur espace $\mathcal{D}\m{i}$.
-Nous notons $\mathbf{\inpx} = (\inpx\m{1}, \cdots, \inpx\m{n}) \in \mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$ la variable aléatoire jointe. 
+Nous modélisons ces entrées $\inpx\m{i}$ comme des \emph{variables aléatoires} tirées selon une distribution $P\m{i}$ sur leur espace $\mathcal{D}\m{i}$.
+$\mathbf{\inpx} = (\inpx\m{1}, \cdots, \inpx\m{n}) \in \mathcal{D}\m{1} \times \cdots \times \mathcal{D}\m{n}$ est la variable aléatoire jointe. 
 Lors de chaque itération d'apprentissage, un vecteur $\mathbf{\inpx} = (\inpx\m{1}_t, \cdots , \inpx\m{n}_t)$ est présenté à l'architecture~: il s'agit d'une réalisation de la variable jointe $\mathbf{\inpx}$. 
 
 En pratique, ces variables sont des observations, issues par exemple de capteurs d'un robot. Ces observations sont issues d'un environnement général et sont donc liées par des relations au sein de ce modèle d'environnement~: les variables $\inpx\m{i}$ ne sont pas des variables indépendantes.
 Nous introduisons la notion de \emph{modèle d'entrées} se rapportant à cette dépendance entre variables.
-Le modèle d'entrée fait référence au modèle d'environnement permettant de générer les entrées multimodales fournies en entrées. Dans l'exemple d'illustration, les modalités sont les abscisses $\inpx\m{1} = x$ et les ordonnées $\inpx\m{2} = y$~; le modèle d'entrées est le cercle, modélisé par une équation.
+Le modèle d'entrée fait référence au modèle d'environnement permettant de générer les entrées multimodales fournies en entrée de l'architecture. Dans l'exemple d'illustration, les modalités sont les abscisses $\inpx\m{1} = x$ et les ordonnées $\inpx\m{2} = y$~; le modèle d'entrées est le cercle sur lesquels sont situés les points, modélisé par exemple par l'équation $(x - 0.5)^2 + (y - 0.5)^2 = 0.5^2$.
 
 \subsection{Formalisation du modèle d'entrée par une variable cachée}
 
@@ -139,11 +137,10 @@ On peut considérer cette paramétrisation comme un cas particulier de réductio
 
 La variable $U$ s'interprète par l'existence d'une variété de dimension inférieure ou égale à la dimension des entrées, sur lesquelles les entrées multimodales se trouvent.
 Des travaux font l'hypothèse que des variables en grande dimension, telles que des images, sont positionnées en pratique sur des variétés de dimension plus faible \cite{Pless2009ASO}, dont un exemple est donné en figure~\ref{fig:U}.
-% Les algorithmes d'apprentissage de ces entrées font du \emph{manifold learning}, de l'apprentissage de variété, qui correspond à une réduction de dimension non-linéaire des entrées.
-% Des entrées multimodales en haute dimension seront ainsi positionnées sur une variété de dimension inférieure ou égale à la somme des dimension des entrées.
 L'utilisation de variables d'entrées multimodales placées sur une variété inférieure, en faible dimension dans notre étude, est ainsi un cadre d'expériences généralisable.
 Par ailleurs, les méthodes existantes de réduction de dimension non-linéaire permettent d'extraire des structures dans des données réelles. 
-Ainsi, bien que nos travaux se concentrent sur des données en faible dimension, la représentation paramétrique est généralisable à des données de plus grande dimension ainsi qu'à des jeux de données réelles.
+Ainsi, bien que nos travaux se concentrent sur des données en faible dimension, la représentation paramétrique est généralisable à des données de plus grande dimension ainsi qu'à des jeux de données réelles. 
+On peut voir la variable $U$ comme un cas particulier de réduction de dimension sans perte d'information~; cependant, les représentations proposées seront également adaptables à une variable $U$ obtenue par une réduction de dimension avec perte d'information (par exemple par une PCA). 
 
 \begin{figure}
     \begin{minipage}{0.4\textwidth}
@@ -160,7 +157,7 @@ Ainsi, bien que nos travaux se concentrent sur des données en faible dimension,
        \label{fig:U}}
 \end{figure}
 
-Ainsi, les points de l'espace d'entrée exemple, représentés à droite en figure~\ref{fig:U} sont paramétrisés par leur angle sur le cercle $U$ qui est une variable 1D représentant le modèle d'entrées~:
+Les points de l'espace d'entrée pris en exemple, représentés à droite en figure~\ref{fig:U} sont paramétrisés par leur angle sur le cercle $U$ qui est une variable 1D représentant le modèle d'entrées~:
 \begin{equation}
  \begin{cases}
      \inpx\m{1}= x_c + r  \cos(2\pi U)\\
@@ -172,7 +169,6 @@ $U$ est aussi une variable aléatoire. Sa valeur n'est pas fournie à l'architec
 Nous cherchons, par l'architecture de cartes, à apprendre les entrées et les relations entre entrées~: nous cherchons donc à extraire une structure dans le modèle latent. La relation entre $U$ et $\mathbf{X\m{i}}$ est bijective~; de ce fait, étudier comment l'architecture de cartes a appris $U$ est équivalent à étudier comment l'architecture a appris le modèle d'entrées.
 Cet exemple est scalaire mais la représentation sous forme de variable cachée est générale à n'importe quel dimension et nombre d'entrées. 
 En effet, toute configuration d'entrée multimodale dépend d'un environnement global. La variable $U$ correspond alors aux paramètres de cet environnement.
-
 
 \subsection{Formalisation des éléments des cartes}
 
