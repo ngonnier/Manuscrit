@@ -74,9 +74,10 @@ Nous utiliserons des représentations adaptées au cas d'une architecture à plu
 \centering
 \includegraphics[width=0.5\textwidth]{points2.png}
 \end{minipage}
-\caption{Représentations possibles des poids d'une carte de Kohonen classique, dans le cas d'entrées sous forme d'imagettes ou de points en deux dimensions \footnote{Images tirées du polycopié de machine learning de CentraleSupelec Metz, \url{https://frezza.pages.centralesupelec.fr/teachml2/Poly/Poly-ML-SDImetz.pdf}} \label{fig:representation}}
+\caption[Représentations classiques des poids d'une carte de Kohonen]{\label{fig:representation} Représentations possibles des poids d'une carte de Kohonen classique, dans le cas d'entrées sous forme d'imagettes ou de points en deux dimensions.\protect\footnote{Images tirées du \protect\href{polycopié d'apprentissage automatique}{https://frezza.pages.centralesupelec.fr/teachml2/Poly/Poly-ML-SDImetz.pdf} de CentraleSupelec Metz}}
 \end{figure}
-
+%\footnote{Images tirées du polycopié d'apprentissage automatique de CentraleSupelec Metz, 
+%\url{https://frezza.pages.centralesupelec.fr/teachml2/Poly/Poly-ML-SDImetz.pdf}}
 \subsection{Limites des représentations classiques dans le cas d'une architecture CxSOM}
 
 Nous pouvons d'abord utiliser les représentations classiques mentionnées ci-dessus pour tracer les différentes couches de poids de chacun des cartes d'une architecture CxSOM à la fin de l'apprentissage.
@@ -178,22 +179,22 @@ Les entrées utilisées lors du test sont un échantillon de la variable aléato
 La distribution des entrées test est identique à la distribution des entrées d'apprentissage ayant servi au dépliement de la carte.
 
 Nous avons représenté les entrées comme des variables aléatoires~; chaque élément de réponse des cartes d'une architecture sera également considéré comme une variable aléatoire.
-Nous choisissons en particulier de nous intéresser aux positions des BMUs $\bmu\m{1}, \cdots, \bmu\m{n}$ et à leurs poids $\w\ext\m{1}(\bmu\m{1})$ et $\w\ext\m{2}(\bmu\m{2})$, comme ce sont les éléments sur lesquels s'appuient l'apprentissage.
-Comme les poids ne sont pas mis à jour entre chaque itération de test, les valeurs obtenues lors d'une phase de test forment un échantillon de la variable aléatoire jointe :
+Nous choisissons en particulier de nous intéresser aux positions des BMUs $\bmu\m{1}, \cdots, \bmu\m{n}$ et à leurs poids $\w\ext\m{1}(\bmu\m{1})$ et $\w\ext\m{2}(\bmu\m{2})$.
+Comme les poids ne sont pas mis à jour entre chaque itération de test, toutes les valeurs obtenues lors d'une phase de test forment un échantillon de la variable aléatoire jointe suivante~:
 $$(\underbrace{\inpx\m{1}, \cdots, \inpx\m{n}, U,}_{\text{Entrées}} \underbrace{\bmu\m{1}, \cdots, \bmu\m{n}, \w_e\m{1}(\bmu\m{1}), \cdots, \w_e\m{n}(\bmu\m{n})}_{\text{Eléments de réponse}})$$
 
 Les composantes de cette variable jointe ne sont pas indépendantes et étudier l'apprentissage revient à étudier les dépendances se créant entre les composantes.
-Les représentations présentées par la suite constituent donc les tracés des dépendances au sein d'un échantillon de test entre composantes de la variable jointe définie ci-dessus.
+Les représentations présentées par la suite constituent les tracés des dépendances au sein d'un échantillon de test entre les composantes de la variable jointe définie ci-dessus.
 
 Les variables d'entrées sont à valeurs continues et $\bmu$ à valeurs discrètes, correspondant aux 500 n\oe{}uds d'une carte. 
-Nous pouvons cependant aussi prendre $\bmu$ comme une variable continue plutôt qu'une grandeur discrète. 
+Nous pouvons cependant aussi considérer $\bmu$ comme une variable continue plutôt qu'une grandeur discrète. 
 En effet, l'ensemble des positions du BMU correspondent à une discrétisation de l'espace continu $[0,1]$, et sont ordonnées. Le déplacement par relaxation n'est pas limité aux positions discrètes des BMUs.
 Ce cadre statistique permettra aussi d'utiliser des outils et métriques issus de la théorie de l'information pour qualifier l'organisation des cartes au sein de l'architecture, ce que nous ferons dans le chapitre~\ref{chap:indicateur}
 
 \begin{figure}
 \centering
 \includegraphics[width=0.85\textwidth]{tests_2maps.pdf}
-\caption{Schéma décrivant une étape de test. Un test consiste à présenter successivement des réalisations de $\mathbf{X}$, notées $(\inpx\m{1}_t,\inpx\m{2}_t)$. Nous laissons le processus de relaxation stabiliser les BMUs. Quand la stabilité est atteinte, la valeur des positions de BMU $\bmu\m{1}_t$ et $\bmu\m{2}$ est obtenue. Un échantillon de test complet est ainsi obtenu en présentant un ensemble de réalisations de $\mathbf{X}$. Les poids ne sont pas mis à jour entre chaque itération, ce qui permet de considérer une phase de test comme un échantillonnage de la variable aléatoire $()\inpx\m{1},\inpx\m{2}, U, \bmu\m{1}, \bmu\m{2}$) }
+\caption{Schéma décrivant une étape de test. Un test consiste à présenter successivement des réalisations de $\mathbf{X}$, notées $(\inpx\m{1}_t,\inpx\m{2}_t)$. Nous laissons le processus de relaxation stabiliser les BMUs. Quand la stabilité est atteinte, la valeur des positions de BMU $\bmu\m{1}_t$ et $\bmu\m{2}$ est obtenue. Les poids ne sont pas mis à jour entre chaque itération, ce qui permet de considérer une phase de test comme un échantillonnage de la variable aléatoire $(\inpx\m{1},\inpx\m{2}, U, \bmu\m{1}, \bmu\m{2}$) }
 \label{fig:flowchart}
 \end{figure}
 
@@ -208,14 +209,14 @@ La première fonction d'une carte de Kohonen est de réaliser une tâche de quan
 Afin de mesurer cette qualité de quantification vectorielle au sein d'une carte dans CxSOM, nous traçons le nuage de points correspondant au poids externe du BMU $\w_e(\bmu\m{i})$ en fonction de l'entrée externe présentée $\inpx\m{i}$. Une carte effectue une quantification vectorielle correcte si ce nuage de points est proche de la fonction identité.
 Ces tracés sont réalisés en figure~\ref{fig:erreur} pour l'expérience exemple. Ces tracés s'approchent de l'identité, ce qui montrent la quantification des entrées est correctement réalisée.
 On pourrait mesurer une erreur quadratique moyenne pour déterminer numériquement cette erreur de quantification mais la représentation en nuage de points est, à défaut d'être quantitative, plus qualitative. 
-En effet, ici, on observe que le nuage montre une structure \og filamenteuse \fg{}. Nous reviendrons sur ce point par la suite, nous contentant de souligner ici que la représentation graphique exprime une propriété que la simple mesure d'erreur n'aurait pas mis en évidence. 
+En effet, ici, on observe que le nuage montre une structure \og filamenteuse \fg{}. Nous reviendrons sur ce point par la suite, nous contentant de souligner ici que la représentation graphique exprime une propriété que la simple mesure d'erreur n'aurait pas mis en évidence.
 
 Cette représentation nous informe ainsi sur la qualité de quantification dans une seule carte relativement à une seule modalité. Cette seule représentation est insuffisante à elle seule pour comprendre plus en détail le comportement d'une architecture de cartes~: il nous faut également définir des méthodes de représentation permettant d'évaluer comment la structure globale du modèle d'entrées est apprise par l'architecture dans son ensemble.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{w_x.pdf}
-    \caption{Poids du BMU dans chaque carte en fonction de l'entrée présentée. On s'attend à des tracés proches de l'identité, montrant que le poids du BMU d'une carte est une bonne représentation de l'entrée. Ces tracés montrent que la quantification vectorielle est correctement réalisée, et que plusieurs poids de BMU correspondre à une même valeur d'entrée, d'où la structure filamenteuse. \label{fig:erreur}}
+    \caption{Poids du BMU dans chaque carte en fonction de l'entrée présentée. On s'attend à des tracés proches de l'identité, montrant que le poids du BMU d'une carte est une bonne représentation de l'entrée. Ces tracés montrent que la quantification vectorielle est correctement réalisée, et que plusieurs BMUs correspondent à une même valeur d'entrée, d'où la structure filamenteuse. \label{fig:erreur}}
 \end{figure}
 
 
@@ -225,40 +226,33 @@ En biologie, les aires du cortex cérébral sont cartographiées en faisant vari
 Par exemple, une carte corticale est tracée pour l'aire visuelle primaire du cortex cérébrale, l'aire v1, en figure~\ref{fig:v1_repr}.
 
 Un échantillon test donne un ensemble de valeurs de variable jointe $(\inpx\m{1}, \cdots, \inpx\m{n}, \bmu\m{1},\cdots, \bmu\m{n})$. Dans la même idée que les cartes corticales, nous tracerons à partir de l'échantillon de test le nuage de points correspondant à la valeur de l'entrée $\inpx\m{i}$ d'une carte par rapport à la position du BMU $\bmu\m{i}$.
-% Cette représentation permet d'analyser la quantification des entrées par la carte. 
-% On s'attend à ce que les points soient proches de la courbe des poids externes de la carte $M\m{i}$.
-% Ce tracé fait également apparaître les zones dans lesquelles les neurones ne sont jamais best matching unit, les \emph{zones mortes}.
-% En plus des couples $(\bmu\m{i},\inpx\m{i})$, nous traçons également les entrées externes des autres cartes en fonction de $\bmu\m{i}$ : $(\bmu\m{i},\inpx\m{j})$.
-% Enfin, sur le même graphique, nous mettons ces valeurs d'entrées externes en relation avec les poids de la carte $M\m{i}$ en traçant les poids externes et contextuels de la carte $M\m{i}$ en fonction de leur position.
-% Une représentation cartographique fait ainsi apparaître les poids externes et contextuels d'une carte de l'architecture. A ces poids s'ajoutent plusieurs nuages de points correspondant aux valeurs d'une entrée $\inpx\m{j}$ en fonction du BMU de la carte $M\m{i}$, $\bmu\m{i}$.
 
 En figure~\ref{fig:inputs}, nous avons tracé cette représentation cartographique pour l'exemple à deux cartes. Le cas de la 1D permet de mettre en relation plusieurs éléments sur un même graphique.
 Le tracé relatif à une des cartes $M\m{i}$ contient les éléments suivants~:
 \begin{itemize}
     \item Les courbes des poids externes et contextuels de la carte $w_e$ et $w_c$ en fonction des positions $p$ dans la carte.
     \item Les entrées externes $\inpx\m{i}$ en fonction de la position de leur BMUs $\bmu\m{i}$. On s'attend à ce que ces points soient proches de la courbe de poids externe si la quantification vectorielle est bien réalisée
-    \item Les entrées externes des autres cartes $\inpx\m{k}$ en fonction de $\bmu\m{i}$. Le tracé de ces entrées permet de faire apparaître les paires d'entrées.
+    \item Les entrées externes des autres cartes $\inpx\m{k}$ en fonction de $\bmu\m{i}$. Le tracé de ces entrées permet de faire apparaître les paires d'entrées présentées ensemble à l'architecture.
 \end{itemize} 
 
 Deux valeurs issues de l'échantillon de test sont mise en évidence en couleur rouge et bleue sur chaque graphique. Un point de même couleur correspond à un même élément test dans chaque graphique. Ces deux points partagent la même abscisse, c'est-à-dire que l'entrée $\inpx\m{1}$ est la même pour ces deux éléments. Par contre, leur ordonnée est différente~: $M\m{2}$ a reçu donc une entrée $\inpx\m{2}$ différente.
 
-Ce tracé nous permet d'abord d'observer que les points $(\bmu\m{1},\inpx\m{1})$ sont proches de la courbe de poids externes~: le poids d'un BMU est proche de l'entrée qui a été présentée, le poids du BMU est donc une bonne approximation de cette entrée. Cela permet de conclure que la quantification vectorielle est bien réalisée dans cette carte sur les entrées externes, comme le montrait déjà la figure~\ref{fig:erreur}.
+Ce tracé nous permet d'abord d'observer que les points $(\bmu\m{1},\inpx\m{1})$ sont proches de la courbe de poids externes~: le poids d'un BMU est proche de l'entrée qui a été présenté et est donc une bonne approximation de cette entrée. Cela permet de conclure que la quantification vectorielle est bien réalisée dans cette carte sur les entrées externes, comme le montrait déjà la figure~\ref{fig:erreur}.
 
 Tracer les échantillons de test permet ensuite d'observer la répartition des BMUs sur la carte. Les poids externes de la carte dans CxSOM (c) et de la carte indépendantes (b) sont organisés de façon monotone sur l'intervalle d'entrées $[0,1]$.
 La représentation cartographique fait apparaître des zones mortes, sans BMUs. 
 Nous observons que la carte au sein de CxSOM est découpée en plusieurs zones dans lesquelle les unités sont BMUs, séparées par des petites zones mortes. Ce tracé permet donc d'identifier un comportement qui est spécifique à une architecture de cartes CxSOM, par rapport à une carte classique. Nous reviendrons sur ce comportement dans les chapitres suivants.
 
-Enfin, les nuages de points $(\bmu\m{1},\inpx\m{1})$ et $(\bmu\m{1},\inpx\m{2})$ nous permettent d'observer quelles valeurs d'entrées sont encodées à quelles positions dans la carte. Ces positions ne correspondent pas directement aux valeurs des poids externes.
+Enfin, les nuages de points $(\bmu\m{1},\inpx\m{1})$ et $(\bmu\m{1},\inpx\m{2})$ nous permettent d'observer quelles valeurs d'entrées sont encodées à quelles positions dans la carte.
 Nous observons grâce à ces tracés que sur la carte $M\m{1}$, le choix du BMU permet d'ordonner les entrées selon la valeur de $\inpx\m{1}$ mais également selon la valeur de $\inpx\m{2}$. 
-Les points bleus et rouges apparaissent clairement à deux positions sur la figure, car leurs BMUs sont différents.
-Le comportement est similaire sur la carte $M\m{2}$.
-Nous étudierons dans les chapitres suivants, grâce à cette représentation, si ce comportement se généralise pour différentes architectures et distributions d'entrées.
-
+Les points bleus et rouges apparaissent à deux positions différentes sur la figure~: leurs deux BMUs sont différents, bien qu'ils aient la même valeur de $\inpx\m{1}$. Dans la carte simple, ces deux entrées ont le même BMU.
+Le comportement est similaire sur la carte $M\m{2}$. Le type de tracé montre ainsi une différence de répartition des BMUs qui n'est pas seulement liée aux poids externes et n'est pas mise en évidence par le tracé des seuls poids.
+Nous étudierons dans les chapitres suivants comment ce comportement se généralise pour différentes architectures et distributions d'entrées grâce à la représentation cartographique présenté ici.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{v1.jpg}
-    \caption{Carte corticale de l'aire cérébrale visuelle V1. Pour tracer cette représentation, un ensemble de traits de différentes orientation sont présentés en stimuli visuels au sujet, indiqués en bas de l'image. Le neurone réagissant à une entrée d'orientation particulière est coloré sur la carte de la couleur correspondante à l'entrée. Cette méthode permet de tracer des \emph{cartes corticales} d'une aire cérébrale \cite{Bosking1997OrientationSA}. \label{fig:v1_repr}}
+    \caption{Carte corticale de l'aire cérébrale visuelle V1. Pour tracer cette représentation, un ensemble de traits de différentes orientations sont présentés en stimuli visuels au sujet, indiqués en bas de l'image. Le neurone réagissant à une entrée d'orientation particulière est coloré sur la carte de la couleur correspondante à l'entrée. Cette méthode permet de tracer des \emph{cartes corticales} d'une aire cérébrale \cite{Bosking1997OrientationSA}. \label{fig:v1_repr}}
 \end{figure}
 
 \begin{figure}
@@ -272,30 +266,30 @@ Nous étudierons dans les chapitres suivants, grâce à cette représentation, s
 \includegraphics[width=\textwidth]{weights_2som.pdf}
 \end{minipage}
 
-\caption{Représentation des entrées $\inpx\m{1},\inpx\m{2}$ d'une architecture de deux cartes relativement au BMU de la carte $M\m{1}$ après apprentissage. Ces tracés mettent en valeur l'organisation des cartes, différentes dans le cas ou les cartes apprennent indépendamment leurs entrées~(b) ou sont connectées~(c). Les entrées correspondantes sont en figure~(a). Les points bleu et rouge reportés sur les tracés correspondent au même échantillon de test.\label{fig:inputs}}
+\caption{Représentation des entrées $\inpx\m{1},\inpx\m{2}$ d'une architecture de deux cartes relativement au BMU de la carte $M\m{1}$ après apprentissage. Ces tracés mettent en valeur l'organisation des cartes qui sont différentes dans le cas ou les cartes apprennent indépendamment leurs entrées~(b) ou sont connectées~(c). Les entrées correspondantes sont en figure~(a). Les points bleu et rouge reportés sur les tracés correspondent au même échantillon de test.\label{fig:inputs}}
 \end{figure}
 
 \subsection{Représentation de la variable cachée selon les positions des BMUs}
 
-La représentation cartographique permet de montrer que sur chaque carte $M\m{i}$, les entrées sont organisées selon les valeurs de l'entrées externe $\inpx\m{i}$ mais aussi selon les valeurs d'entrées des autres carte. Chaque carte s'organise donc en fonction du \emph{modèle d'entrée}, donc en fonction de $U$.
-Afin de mettre en valeur ce comportement, nous pouvons tracer $U$ en fonction de la position $\bmu\m{i}$ du BMU de chaque carte, tracés en~figure~\ref{fig:piu} sur le cas d'exemple.
+La représentation cartographique permet de montrer que sur chaque carte $M\m{i}$, les BMUs sont organisées selon les valeurs de l'entrée externe $\inpx\m{i}$ mais aussi selon les valeurs d'entrées des autres cartes. Chaque carte s'organise ainsi en fonction du \emph{modèle d'entrée}, donc en fonction de $U$.
+Afin de mettre en valeur ce comportement, nous pouvons tracer $U$ en fonction de la position $\bmu\m{i}$ du BMU de chaque carte, que nous représentons en~figure~\ref{fig:piu} sur le cas d'exemple.
 
 Ce tracé fait apparaître $U$ comme une fonction de la position du BMU dans chaque carte, contrairement au cas où les cartes ne sont pas connectées. 
-Cela traduit bien le fait que chaque carte a appris une représentation du modèle d'entrée et non seulement de son entrée externe.
+Cela traduit bien le fait que chaque carte a appris une représentation du modèle d'entrée et non seulement de la disposition des entrées externes.
 Ce type de représentation permet de réduire la dimension des entrées à tracer et sera ainsi adaptée pour des architectures de plus de cartes et des entrées de dimensions supérieures.
-Cette représentation fait apparaître $U$ comme une fonction de $\bmu$ dans chaque carte. Ce comportement traduit dans cet exemple le fait que les cartes s'organisent en fonction de tout le modèle d'entrée, non seulement de leur entrée externe.
+Cette représentation fait clairement apparaître $U$ comme une fonction de $\bmu$ dans chaque carte. Ce comportement traduit dans cet exemple le fait que les cartes s'organisent en fonction de tout le modèle d'entrée, non seulement de leur entrée externe.
 
 \begin{figure}
 \centering
 \includegraphics[width = \textwidth]{xu_yu_both.pdf}
 \caption{Valeur de $U$ en fonction des valeurs du BMU $\bmu\m{i}$ dans chacune des cartes dans l'exemple d'illustration. Sur la première ligne, nous traçons la réponse de chaque carte à son entrée dans le cas ou les deux cartes ne sont pas connectées. Sur la deuxième ligne, nous traçons la réponse de chaque carte lorsqu'elles ont appris de façon jointe au sein de CxSOM.
-$U$ apparaît alors comme une fonction de la position du BMU $\bmu\m{i}$ dans chaque carte, contrairement au cas ou les cartes apprendraient indépendamment sur les mêmes entrées. Cette relation fonctionnelle est symbolisée par les pointillés sur les tracés du bas. Les mêmes échantillons rouge et bleu mis en évidence en figure~\ref{fig:inputs} sont reportés sur les tracés.}
+$U$ apparaît alors comme une fonction de la position du BMU $\bmu\m{i}$ dans chaque carte, contrairement au cas où les cartes apprendraient indépendamment sur les mêmes entrées. Cette relation fonctionnelle est symbolisée par les pointillés sur les tracés du bas. Les mêmes échantillons rouge et bleu mis en évidence en figure~\ref{fig:inputs} sont reportés sur les tracés.}
 \label{fig:piu}
 \end{figure}
 
 \subsection{Dépliement d'une carte dans l'espace d'entrée multimodal}
 
-Une des représentations classiques des cartes de Kohonen est de tracer les poids du graphe qu'est la carte dans l'espace de ses entrées, telle qu'en figure de droite en~\ref{fig:representation}. Cette représentation permet de faire apparaître un dépliement des poids d'une carte sur ses entrées.
+Une des représentations classiques des cartes de Kohonen est de tracer les poids de la carte dans l'espace de ses entrées, telle qu'en figure de droite en~\ref{fig:representation}. Cette représentation permet de faire apparaître un dépliement des poids d'une carte sur ses entrées.
 De la même façon, nous voulons représenter comment chaque carte se déplie dans l'espace non seulement de ses entrées externes, mais dans l'espace multimodal, ce qui est possible à partir des échantillons de test.
 
 Nous définissons une façon de représenter le dépliement d'une seule carte de CxSOM dans l'espace global des entrées. Dans l'exemple, il s'agit de représenter le dépliement de $M\m{1}$ selon $(\inpx\m{1},\inpx\m{2})$.
@@ -303,9 +297,9 @@ Au lieu de s'appuyer sur les poids des cartes comme en~\ref{fig:representation},
 Nous traçons sur cette figure le nuage de poids correspondant au poids des BMUs selon leur position lors d'un test~: $\left( \w_e\m{1}(\bmu\m{1},\w_e\m{2}(\bmu\m{2}) \right)$. Nous relions ces points selon l'ordre de leurs positions dans la carte $M\m{1}$ pour tracer $M\m{1}$, de même pour $M\m{2}$. Nous obtenons ainsi une représentation des cartes $M\m{1}$ ou $M\m{2}$ dépliées dans l'espace global des entrées. 
 Notons que les unités mortes ne peuvent pas être représentées sur la carte de cette façon. Nous ne représentons que les BMUs. 
 
-Comment les poids externes représentent directement la valeur de l'entrée externe, on s'attend à ce que la forme du nuage de points corresponde à la structure globale des entrées.
+Comme les poids externes représentent directement la valeur de l'entrée externe, on s'attend à ce que la forme du nuage de points corresponde à la structure globale des entrées.
 Les tracés mettent en lumière les propriétés observées lors de la représentation cartographique des entrées, à savoir l'apparition de zones dans chaque carte. 
-Les poids suivent la structure circulaire des entrées en découpant l'espace en zones. Les potions du cercle effectivement représentées par les poids sont réduites.
+Les poids suivent la structure circulaire des entrées en découpant l'espace en zones et marquent les potions du cercle qui sont effectivement représentées par les poids.
 Ce dépliement met en valeur la façon dont est parcouru l'espace dans chaque carte~: en fonction de $\inpx\m{1}$ dans la carte $M\m{1}$, et en fonction de $\inpx\m{2}$ dans la carte $M\m{2}$.
 Cette représentation offre la possibilité  de visualiser comment une carte se déplie dans l'espace d'autres modalités. En particulier, nous pourrons visualiser le dépliement d'une carte de l'architecture qui ne prendrait pas d'entrée externe.
 
@@ -321,23 +315,23 @@ Cette représentation offre la possibilité  de visualiser comment une carte se 
 
 \section{Conclusion}
 
-Nous avons présenté dans ce chapitre une méthode expérimentale pour analyse d'une architecture de cartes, que nous suivrons dans les chapitres suivants.
+Nous avons présenté dans ce chapitre une méthode expérimentale et des représentations pour l'analyse d'une architecture de cartes, que nous utiliserons dans les chapitres suivants.
 Les représentations s'appuient sur des échantillons tests pouvant être réalisés tout au long de l'apprentissage.
-Nous modélisons les entrées ainsi que éléments des cartes comme des variables aléatoires et l'étape de test comme l'échantillonnage d'une variable jointe. 
+Nous modélisons les entrées ainsi que les éléments des cartes comme des variables aléatoires et l'étape de test comme l'échantillonnage d'une variable jointe. 
 La représentation des réponses aux tests permet de mieux comprendre les mécanismes des cartes, reposant sur un processus dynamique de recherche du BMU, que la simple observation de leurs poids.
 
 Nous utiliserons donc quatre représentations des cartes dans la suite de cette thèse, toutes définies à partir d'un échantillon de test~:
 \begin{itemize}
-    \item Le tracé du poids du BMU en fonction de l'entrée externe permet d'évaluer la quantification vectorielle d'une carte
+    \item Le tracé du poids du BMU en fonction de l'entrée externe permet d'évaluer la quantification vectorielle d'une carte.
     \item La représentation cartographique des entrées selon le BMU permet de faire apparaître quels positions encodent quelles valeurs d'entrées. Elle fait notamment apparaître des zones mortes dans la carte. Cette représentation met en lumière un comportement émergeant de l'exemple à deux cartes~: de façon auto-organisée, chaque carte ordonne ses BMUs selon le couple d'entrées $(\inpx\m{1},\inpx\m{2})$, et non seulement $\inpx\m{1}$.
-    \item Le tracé de $U$ selon les positions des BMUs $\bmu\m{i}$ résume la représentation cartographique des entrées. Nous observons en particulier que l'apprentissage du modèle d'entrée se traduit alors par l'observation d'une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte.
-    \item Enfin, nous proposons une représentation du dépliement de chaque carte dans l'espace de toutes les entrées en traçant les poids des BMUs de chaque carte, ordonnés selon les BMUs d'une des cartes. Cette représentation apporte une vision globale de la façon dont une carte encode le modèle d'entrées.
+    \item Le tracé de $U$ selon les positions des BMUs $\bmu\m{i}$ résume la représentation cartographique des entrées. Nous observons en particulier que l'apprentissage du modèle d'entrée se traduit par l'observation d'une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte.
+    \item Enfin, nous proposons une représentation du dépliement de chaque carte dans l'espace de toutes les entrées en traçant les poids externes des BMUs de l'architecture, ordonnés selon les valeurs des positions dans une des cartes. Cette représentation apporte une vision globale de la façon dont une carte encode le modèle d'entrées.
 \end{itemize}
 
 Nous reviendrons au chapitre~\ref{chap:analyse} sur les conclusions que nous pouvons tirer de l'expérience illustrative du cercle et compléterons cette analyse sur d'autres dispositions d'entrées et architectures.
-
-Même avec des représentations adaptées, l'analyse d'architectures comportant de nombreuses cartes ne peut pas simplement s'effectuer à l'aide de graphiques, qui deviendraient trop chargés. La comparaison d'un grand nombre d'expériences est également difficilement réalisable graphiquement.
-Cette difficulté de représentation et le besoin de comparer des expériences soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, que nous proposerons au le chapitre \ref{chap:indicateur}.
+Même avec des représentations adaptées, l'analyse d'architectures comportant de nombreuses cartes ne peut pas simplement s'effectuer à l'aide de graphiques, qui deviendraient trop chargés. 
+La comparaison d'un grand nombre d'expériences est également difficilement réalisable graphiquement.
+Cette difficulté de représentation et le besoin de comparer des expériences soulève la nécessité de définir des valeurs indicatrices du fonctionnement de la carte, que nous proposerons au chapitre \ref{chap:indicateur}.
  
 \ifSubfilesClassLoaded{
     \printbibliography
