@@ -13,6 +13,8 @@
 \chapter{Architectures de cartes auto-organisatrices}
 \minitoc
 
+\section{Introduction}
+
 Les travaux que nous présentons dans cette thèse se concentrent sur la création d'une architecture non hiérarchique modulaire de cartes auto-organisatrices (SOM).
 Les cartes auto-organisatrices et notamment le modèle de Kohonen sont largement utilisées en tant qu'algorithme d'apprentissage non supervisé appliqué à des tâches de réduction de dimension, de visualisation de données ou de classification.
 D'une part, de nombreux travaux étudient l'utilisation de plusieurs cartes collaborant entre elles sur différentes applications, en général afin d'améliorer les performances de classification ou de regroupement de données d'une carte auto-organisatrice classique. Ces travaux se retrouvent sous le terme de SOM hiérarchiques, SOM multi-couches, ou \emph{Deep SOM}.
@@ -20,7 +22,7 @@ Cependant, peu de travaux ont exploré l'aspect topologique et la simplicité de
 
 L'étude d'une architecture non hiérarchique de cartes est d'une part motivée par leur inspiration biologique. Leur organisation rappelle en effet celle qu'on peut observer dans des aires cérébrales. Le cortex faisant apparaître des aires interagissant entre elles avec des boucles de rétroaction, la création d'une architecture non hiérarchique de cartes s'inscrit dans la continuité de cette inspiration biologique.
 Ensuite, l'étude des systèmes biologiques et la robotique sont liées~: la biologie sert d'inspiration à la robotique, que ce soit pour le mouvement d'un bras ou la prise de décision, et la robotique permet de tester des théories cherchant à modéliser des comportements biologiques \cite{Oudeyer2010OnTI}.
-Aussi les architectures de cartes bio-inspirées que nous avons relevées dans la littérature se placent dans les domaines des neurosciences computationnelles ou de l'apprentissage incarné (\emph{Embodied intelligence}) en robotique \cite{Smith2005TheDO,cangelosi_embodied_2015}, à la frontière entre étude de la biologie et apprentissage automatique.
+Aussi les architectures de cartes bio-inspirées que nous avons relevées dans la littérature se placent aussi dans les domaines des neurosciences computationnelles ou de l'apprentissage incarné (\emph{Embodied intelligence}) en robotique \cite{Smith2005TheDO,cangelosi_embodied_2015}, à la frontière entre étude de la biologie et apprentissage automatique.
 
 Nous passerons en revue dans ce chapitre un ensemble de travaux définissant des architectures de cartes auto-organisatrices, en s'intéressant aux différences de conception existant au sein des architectures. Nous définirons ainsi la notion d'architecture non hiérarchique modulaire.
 Cette notion d'architecture modulaire de cartes est bien résumée par Kohonen dès 1995~:
@@ -31,23 +33,22 @@ Un objectif à long terme de l'auto-organisation est de créer des systèmes aut
 Ces éléments de contrôle sont les modules d'une architecture. 
 L'objectif de nos travaux est ainsi de proposer un modèle de carte qui puisse être utilisée en tant que module, de définir l'interface entre les modules afin de créer une architecture et de comprendre les comportements de calcul qui émergent de l'association des modules.
 Nous présentons dans ce chapitre le modèle général d'une carte de Kohonen et ses comportements fondamentaux, puis répertorions les différents types de structures se présentant comme des architectures de cartes.
-A l'issue de ce chapitre, nous aurons une vue d'ensemble des architectures des catégories d'architectures de cartes auto-organisatrices existant dans la littérature et de leurs principales propriétés d'apprentissage. Nous pourrons ainsi définir en pratique la notion d'architecture modulaire et comment se placent nos travaux dans cette taxonomie.
+\`A l'issue de ce chapitre, nous aurons une vue d'ensemble des catégories d'architectures de cartes auto-organisatrices existant dans la littérature et de leurs principales propriétés d'apprentissage. Nous pourrons ainsi définir en pratique la notion d'architecture modulaire et comment se placent nos travaux dans cette taxonomie.
 
 \section{Les cartes auto-organisatrices de Kohonen comme modules d'une architecture}\label{sec:som001}
 
 Le modèle de cartes auto-organisatrices a été initialement développé par Kohonen \cite{Kohonen1982}~; nous utiliserons les termes cartes de Kohonen et SOM de façon équivalente pour désigner ce modèle initial.
 De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle, sur diverses applications.
 Nous présentons dans cette section le modèle initial de carte de Kohonen et introduisons les notations que nous utiliserons dans cette partie de revue. 
-Nous réintroduirons ce modèle plus en détail au chapitre suivant.
 
 \subsection{Description du modèle de carte auto-organisatrice de Kohonen}
 
 Une carte de Kohonen est un algorithme de quantification vectorielle. 
 Les éléments principaux de ce modèle décrits ci-après sont représentés en figure~\ref{fig:SOM}.
-Le principe de quantification vectorielle cherche à représenter ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes.
-Dans une SOM, ces prototypes sont disposés sur les n\oe{}uds d'un graphe, en général une grille en deux dimensions.
-Les n\oe{}uds du graphe possèdent alors chacun un prototype $\w$ et sont \emph{indexés} par $p$, vecteur aux dimensions de la grille, soit un réel pour une carte 1D ou un vecteur en deux dimensions lorsque que la carte est une grille.
-Cette indexation et le format de graphe permettent de définir une distance $d$ dans la carte et donc une notion de \emph{voisinage} entre les n\oe{}uds. Nous appellerons carte de Kohonen le graphe assorti de ses prototypes $\w(p)$.
+Les algorithmes de quantification vectorielle cherchent à représenter un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes.
+Dans une SOM, ces prototypes sont disposés sur les n\oe{}uds d'un graphe, en général une ligne 1D ou une grille en deux dimensions.
+Les n\oe{}uds du graphe possèdent alors chacun un prototype $\w$ et sont \emph{indexés} par $p$, vecteur aux dimensions de la carte, soit un réel pour une carte 1D ou un vecteur en deux dimensions lorsque que la carte est une grille.
+Cette indexation et la connectivité du graphe permettent de définir une distance $d$ dans la carte et donc une notion de \emph{voisinage} entre les n\oe{}uds. Nous appellerons carte de Kohonen le graphe assorti de ses prototypes $\w(p)$.
 
 Avant apprentissage, les prototypes sont initialisés aléatoirement dans l'espace d'entrée.
 Une itération d'apprentissage comporte trois étapes~:
@@ -62,7 +63,7 @@ On peut interpréter cette étape comme le déplacement d'une zone de la carte c
 \begin{figure}
      \centering
      \includegraphics[width=0.6\textwidth]{voisinage.pdf}
-     \caption{Exemples de fonctions de voisinage (Rectangle, Triangle ou Gaussienne), centrées au BMU $\bmu$, couramment utilisées sur une carte, ici en une dimension.}
+     \caption{Exemples de fonctions de voisinage (Rectangle, Triangle ou Gaussienne), centrées sur le BMU $\bmu$, couramment utilisées sur une carte, ici en une dimension.}
 \end{figure}
 
 Ce voisinage est défini par la fonction de voisinage $H$ dans l'algorithme qui dépend de la distance d'un n\oe{}ud au BMU et associe à chaque n\oe{}ud un coefficient multiplicatif pour la mise à jour des poids. 
@@ -70,22 +71,22 @@ Cette fonction est maximale à la position du BMU et décroissante autour de cet
 L'algorithme de Kohonen repose donc à la fois sur un mécanisme de compétition par la sélection de la BMU de la carte et un processus de coopération avec le déplacement des unités voisines de la BMU.
 % Toutes les données d'entrées sont tirées dans un même espace $\mathcal{D}$. 
 
-La version originale de l'algorithme de Kohonen s'appuie sur le calcul de distances entre entrées et prototypes. Ce dernier est remplacé dans de nombreux modèles de cartes par le calcul d'une \emph{activation} $a(\inpx, \w(p))$ liant les poids des n\oe{}uds et les entrées. La BMU est alors l'unité située au maximum de l'activation, au lieu du mimimum des distances.
+La version originale de l'algorithme de Kohonen s'appuie sur le calcul de distances entre entrées et prototypes. Ce dernier est remplacé dans d'autres modèles de cartes par le calcul d'une \emph{activation} $a(\inpx, \w(p))$ liant les poids des n\oe{}uds et les entrées. La BMU est alors l'unité située au maximum de l'activation, au lieu du minimum des distances.
 
 
-Le processus de mise à jour des poids d'une carte de Kohonen se traduit visuellement par un dépliement de la carte dans l'espace d'entrée. On parlera donc de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions.
+Le processus de mise à jour des poids d'une carte de Kohonen se traduit visuellement par un dépliement de la carte dans l'espace d'entrée. On parlera donc aussi de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions.
 \`A la fin de l'apprentissage, la carte conserve la structure topologique des entrées~:
 \begin{itemize}
 \item Elle conserve les distances~: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une continuité des valeurs des poids au sein de la carte.
 \item Elle conserve les densités. Une zone dense de $\mathcal{D}$ aura plus d'unités correspondant à cette zone de valeurs dans la carte qu'une zone moins dense.
 \end{itemize}
 La figure \ref{fig:digits} représente le dépliement d'une carte sur des imagettes MNIST.
-Par son aspect ordonné, une carte est une représentation en faible dimension d'un espace d'entrée de grande dimension.
+Par son aspect ordonné, une carte est une représentation en dimension 2 d'un espace d'entrée de grande dimension.
 
 \begin{figure}
     \centering
     \includegraphics{SOM.pdf}
-    \caption{Elements principaux composant une carte de Kohonen: une carte possède un ensemble d'unités de poids $\omega$, indexées par une position $p$. En présence d'une entrée $X$, une activité $a$ ou une distance $d$ est calculée pour chaque unité par rapport à l'entrée. La Best Matching Unit, abrégée en BMU, est calculée comme l'unité d'activité maximale sur les positions (ou de distance minimale). Sa position est notée $\bmu$ et son poids est $\w(\bmu)$.\label{fig:SOM}}
+    \caption{\'Elements principaux composant une carte de Kohonen~: une carte possède un ensemble d'unités de poids $\omega$, indexées par une position $p$. En présence d'une entrée $X$, une activité $a$ ou une distance $d$ est calculée pour chaque unité par rapport à l'entrée. La \emph{Best Matching Unit}, abrégée en BMU, est calculée comme l'unité d'activité maximale sur les positions (ou de distance minimale). Sa position est notée $\bmu$ et son poids est $\w(\bmu)$.\label{fig:SOM}}
     \end{figure}
 
     \begin{figure}
@@ -93,12 +94,12 @@ Par son aspect ordonné, une carte est une représentation en faible dimension d
         \includegraphics[width=0.7\textwidth]{som2d}
         \caption{Dépliement d'une SOM 2D sur des données dans le plan $[0,1]^2$, \cite{Kohonen1995SelfOrganizingM} \label{fig:som2d}}
         \end{figure}
-        
-        \begin{figure}
-        \centering
-        \includegraphics[width=0.7\textwidth]{som1d}
-        \caption{Dépliement d'une SOM 1D sur des données dans un triangle 2D, \cite{Kohonen1995SelfOrganizingM}\label{fig:som1d}}
-        \end{figure}
+    
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{som1d}
+    \caption{Dépliement d'une SOM 1D sur des données dans un triangle 2D, \cite{Kohonen1995SelfOrganizingM}\label{fig:som1d}}
+    \end{figure}
 
 \begin{figure}
     \centering
@@ -155,24 +156,26 @@ Une carte de Kohonen ne doit cependant pas être considérée comme une modélis
 \end{figure}
 
 \subsection{Rétroactions dans le traitement de l'information multisensorielle du cortex}
+
 L'aspect multisensoriel du traitement de l'information par le cerveau vient des connexions entre aires corticales.
 Cette connectivité peut-être étudiée de plusieurs points de vue~: d'un point de vue structurel, en se basant sur des éléments anatomiques ou d'un point de vue fonctionnel.
 Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par éléctroencéphalographie ou IRM fonctionnelle. Il faut noter cependant que ces observations traduisent une relation statistique et pas forcément une relation de cause à effet. 
 La modélisation de la connectivité physique de ces aires à partir des observations reste donc l'objet de différentes théories cherchant à reproduire ces corrélations. 
 Dans tous les cas, la présence d'aires distinctes communicantes fait l'objet d'un consensus. 
 %La rétroaction de ces connexions entre aire est observée dans de nombreux travaux.
-Fonctionnellement, un traitement multisensoriel de l'information incluant des activations rétroactives entre aires corticales permettrait par exemple d'expliquer l'effet ventriloque \cite{Bonath2007NeuralBO}. Lors de cet effet, une activité apparaît dans le cortex visuel et auditif pour les neurones sensibles à l'emplacement exact de la source des stimuli dans chacune des modalités. Après quelques millisecondes, correspondant au temps de trajet de l'aire visuelle à l'aire auditive, on observe une activité auditive pour les neurones sensibles à l'emplacement spatial de la source du stimulus visuel.
+Fonctionnellement, un traitement multisensoriel de l'information incluant des activations rétroactives entre aires corticales peut être illustré par l'effet ventriloque \cite{Bonath2007NeuralBO}, qui correspond à l'illusion que la source sonore provient de la marionnette du ventriloque, dont la bouche s'agite de façon coordonnée aux paroles, alors qu'elle provient en réalité du ventriloque lui même. Dans le
+Lors de cet effet, une activité apparaît dans le cortex visuel et auditif pour les neurones sensibles à l'emplacement exact de la source des stimuli dans chacune des modalités. 
+Après quelques millisecondes, on observe une activité auditive pour les neurones sensibles à l'emplacement spatial de la source du stimulus visuel, conduisant à une perception auditive différente qu'initialement.
 Historiquement, le traitement de l'information multisensorielle dans le cortex cérébral apparaissait comme hiérarchique, des aires dites bas niveau alimentant des aires haut niveau permettant le traitement de l'information multimodale. 
-Si l'existence d'une hiérarchie du traitement de l'information par des aires haut-niveau et bas niveau reste vérifié, de nombreux travaux montrent également l'existence de connexions directes entre aires sensorielles, dites bas-niveau, illustrées en figure~\ref{fig:primate}
-Anatomiquement, de nombreuses connexions entre les aires corticales dédiées au traitement d'une modalité sensorielles ont été mises en évidence chez différentes espèces, par exemple en \cite{Calvert2004MultisensoryIM, Cappe2009MultisensoryAP,Foxe2005TheCF,Schroeder2005MultisensoryCT}
-De nombreux exemples de coactivations fonctionnelles entre aires corticales sont observées dans les travaux récents, par exemple entre aires tactile et visuelle \cite{Sathian2002FeelingWT}, ou entre aires visuelle et olfactive \cite{Gonzlez2006ReadingCA}.
+Si l'existence d'une hiérarchie du traitement de l'information par des aires haut niveau et bas niveau reste vérifiée, de nombreux travaux montrent également l'existence de connexions directes entre aires sensorielles, dites bas-niveau, illustrées en figure~\ref{fig:primate}
+De nombreuses connexions anatomiques entre les aires corticales dédiées au traitement d'une modalité sensorielle ont été mises en évidence chez différentes espèces, par exemple en \cite{Calvert2004MultisensoryIM, Cappe2009MultisensoryAP,Foxe2005TheCF,Schroeder2005MultisensoryCT}
+De nombreux exemples de coactivations fonctionnelles entre aires corticales sont par ailleurs observées par exemple entre aires tactile et visuelle \cite{Sathian2002FeelingWT}, ou entre aires visuelle et olfactive \cite{Gonzlez2006ReadingCA}.
 Ces connexions s'observent à différents niveaux de la hiérarchie du traitement de l'information~: \cite{Kiefer2008TheSO} met par exemple en évidence un lien existant entre le cortex auditif et l'aire dédiée à la représentation de concepts dans le cerveau humain.
 La structure du traitement de l'information dans les aires corticales ne se limite donc pas à un aspect hiérarchique, des connexions rétroactives entre aires existant à plusieurs niveaux du traitement de l'information.
 
-
-La théorie de zone de convergence divergence \cite{damasio_time-locked_1989} suggère que certaines aires corticales servent d'espaces uniquement associatifs agrégeant les signaux des zones corticales prenant des modalités sensorielles en entrée et les propageant vers d'autres zones sensorielles. 
+En termes de modélisation du cortex, la théorie de zone de convergence divergence \cite{damasio_time-locked_1989} suggère que certaines aires corticales servent d'espaces uniquement associatifs agrégeant les signaux des zones corticales prenant des modalités sensorielles en entrée et les propageant vers d'autres zones sensorielles. 
 La théorie de la réentrée \cite{Edelman1982GroupSA} postule quant à elle des connexions directes et réciproques entre les neurones de différentes zones sensorielles ou non. Les neurones d'une aire corticale peuvent alors être activés par à la fois un stimulus sensoriel et un stimulus provenant d'une autre aire corticale.
-\cite{Burnod1989AnAN} modélise le cortex en colonnes corticales et propose encore qu'en chaque point du cortex se croisent des flux de connexions venant de neurones d'autres aires sensorielles, organisées en bandes. Ces théories apparaissent comme inspirant les modèles de calcul des architectures présentées dans ce chapitre.
+\cite{Burnod1989AnAN} modélise le cortex en colonnes corticales et propose encore qu'en chaque point du cortex se croisent des flux de connexions venant de neurones d'autres aires sensorielles, organisées en bandes. Ces théories reviennent régulièrement comme inspirant les modèles de calcul des architectures présentées dans ce chapitre.
 
 La carte de Kohonen implémentant des concepts computationnels qu'on retrouve en biologie au niveau de l'aire cérébrale, nous pouvons chercher à pousser l'inspiration biologique d'une carte de Kohonen au niveau des connexions entre les aires cérébrales, se transcrivant par des connexions entre plusieurs cartes de Kohonen.
 De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plutôt de développer un modèle computationnel qui ne soit pas biologiquement plausible au niveau neuronal, mais dont la structure du traitement de l'information est inspirée de celle du cerveau, ici la présence de plusieurs aires connectées entre elles, modélisées par l'utilisation de plusieurs cartes de Kohonen en architecture.

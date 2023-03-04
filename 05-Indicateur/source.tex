@@ -137,17 +137,17 @@ Or, par construction de l'algorithme, une carte, par exemple $M\m{1}$ définit s
 
 \begin{figure}
     \centering\includegraphics[width=0.8\textwidth]{correlation_ratio_cercle0.pdf}
-    \caption{Tracé du ratio de corrélation et de $\varphi$ sur des entrées placées sur un cercle. Comparaison entre CxSOM et une carte simple \label{fig:cr_xp}}
+    \caption{Tracé du ratio de corrélation et de $\varphi$ sur des entrées placées sur un cercle, dans le cas de CxSOM et d'une carte simple. La fonction tracée en rouge est $\mathbb{E}(Y|X = x)$ approximant le nuage de points. Le ratio de corrélation mesure ensuite la variance de $Y$ pour chaque valeur de $X$. \label{fig:cr_xp}}
 \end{figure}
 
 \begin{figure}
    \centering \includegraphics[width=0.8\textwidth]{xu_yu_both_anneau.pdf}
-    \caption{Tracé du ratio de corrélation sur cartes CxSOM et cartes simples pour des entrées placées sur un anneau.\label{fig:cr_bruit}}
+    \caption{Tracé du ratio de corrélation sur cartes CxSOM et cartes simples pour des entrées placées sur un anneau. Les données d'entrées sont bruitées, ce qui conduit à une dispersion plus élevée des réponses des cartes autour de la valeur de $U$. Le ratio de corrélation traduit toujours bien que la relation entre $U$ et $\bmu$ s'approche d'une fonction. \label{fig:cr_bruit}}
 \end{figure}
 
 \begin{figure}
-    \includegraphics[width=0.8\textwidth]{correlation_ratio_evolution_totale.pdf}
-    \caption{\'Evolution du ratio de corrélation pendant l'apprentissage des cartes\label{fig:cr_evol}}
+    \includegraphics[width=\textwidth]{evol_cr.pdf}
+    \caption{\'Evolution du ratio de corrélation pendant l'apprentissage des cartes, moyenne et écart type sur 10 expériences. Le ratio de corrélation reste plus faible dans les cartes simples que dans les cartes CxSOM. Il garde une valeur élevée tout au long de l'apprentissage~: le ratio de corrélation ne traduit pas l'organisation des poids, mais simplement si la carte a un BMU différent pour chaque valeur de $U$. \label{fig:cr_evol}}
 \end{figure}
 
 \subsection{Discussion}
@@ -224,7 +224,7 @@ $$P(U = x_i) = \frac{n_{xi}}{N} $$ où $n_{xi}$ est le nombre d'échantillons de
 Pour des variables à valeur dans $[0,1]$, les centres sont définis par $x_k = \frac{k}{M}+\frac{1}{2M}$, avec $M$ le nombre de boîtes.
 Cette discrétisation permet d'estimer les trois termes d'entropie $\hat{H}(\bmu,U)$, $\hat{H}(U)$ et $\hat{H}(\bmu)$ et d'en tirer l'information mutuelle~:
 \begin{equation}
-    \hat{I_x}(U,\bmu) = \hat{H}(U) + \hat{H}(\bmu) - \hat{H}(U,\bmu)
+    \hat{I}(U,\bmu) = \hat{H}(U) + \hat{H}(\bmu) - \hat{H}(U,\bmu)
    \end{equation}
 
 La valeur de cet indicateur est très sensible à la résolution choisie pour le calcul des histogrammes.
@@ -232,9 +232,9 @@ Par ailleurs, plus la taille des boîtes est petite, plus le nombre de points di
 La méthode par histogrammes est difficilement exploitable lorsque la dimension des entrées augmente~:
 le nombre d'échantillons disponibles pour l'estimation doit augmenter exponentiellement avec la dimension des variables pour éviter le phénomène de "boîtes vides". \`A cause de la dispersion des données, de nombreux intervalles de discrétisation ne contiendront pas de points pour l'estimation alors qu'ils auraient dû en contenir d'après leur distribution théorique, ce qui fausse l'estimation.
 
-Une deuxième méthode régulièrement utilisée pour l'estimation de l'information mutuelle est l'estimateur par KNN (K-nearest neighbors) de Kraskov \cite{2004kraskov}.
+Une deuxième méthode régulièrement utilisée pour l'estimation de l'information mutuelle est l'estimateur par KNN (\emph{K-Nearest Neighbors}) de Kraskov \cite{2004kraskov}.
 Cet estimateur ne passe pas par l'estimation de la densité de probabilité, contrairement aux histogrammes, mais estime directement l'information mutuelle.
-Le découpage de l'espace se fait en recherchant, pour un couple $(X,Y)$, les k plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
+Le découpage de l'espace se fait en recherchant, pour $N$ valeurs d'échantillons d'un couple $(X,Y)$, les $k$ plus proches voisins. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
 $$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$
 Cette information mutuelle locale est ensuite moyennée sur l'ensemble des points~: 
 $$\hat{I}(X,Y) = \psi(k) - \langle\psi(n_{x_j} + 1) + \psi(n_{y_j} +1)\rangle + \psi(N)$$
@@ -291,7 +291,7 @@ L'information mutuelle continue obtenue dans le cas de gauche est faible, de $2.
 En effet, une valeur de $\bmu$ correspond à tout un intervalle de valeurs pour $U$. 
 Sur le cas de droite, sa valeur est plus élevée~: $4.5$ bits. En effet, une valeur de $X$ correspond à deux valeurs de $Y$. $X$ et $Y$ partagent donc plus d'information que le premier cas de figure.
 Ce n'est pas ce qu'on veut mesurer dans CxSOM~: une fonction bruitée doit être privilégiée par rapport à une relation qui n'est pas fonctionnelle.
-On cherche en effet à mesurer si une valeur de $\bmu$ correspond à \emph{un unique} intervalle de $U$, et non plusieurs invervalles comme dans le cas d'une carte simple, dans laquelle deux valeurs de $U$ éloignées sont codées par une même position de BMU, voir figure~\ref{fig:upi_chap4}.
+On cherche en effet à mesurer si une valeur de $\bmu$ correspond à \emph{un unique} intervalle de $U$, et non plusieurs intervalles comme dans le cas d'une carte simple, dans laquelle deux valeurs de $U$ éloignées sont codées par une même position de BMU, voir figure~\ref{fig:upi_chap4}.
 Pour que $U_c$ traduise cette propriété sur des cartes CxSOM, nous utiliserons un découpage large pour la discrétisation de $U$. Pour une carte de taille 500, nous avons découpé $\bmu$ en 500 intervalles et $U$ en 50 intervalles.
 Ces paramètres d'estimation permettent d'ignorer la dispersion locale sur la valeur de $U$ pour une même position $\bmu$.
 
@@ -303,7 +303,7 @@ La taille d'intervalle de discrétisation de $U$ devra par ailleurs être choisi
 \begin{figure}
     \centering
     \includegraphics[width=0.75\textwidth]{exemple_limite_2.pdf}
-    \caption{Comparaison du calcul de  $I$ sur deux distributions. A gauche, la relation entre $Y$ et $X$ se rapproche d'une fonction, mais bruitée. A droite, la relation n'est pas fonctionnelle, mais de telle sorte qu'une valeur de $X$ correspond au maximum à deux valeurs de $Y$}
+    \caption{Comparaison du calcul de $I(X,Y)$ sur deux distributions. \`A gauche, la relation entre $Y$ et $X$ se rapproche d'une fonction, mais bruitée. A droite, la relation n'est pas fonctionnelle, mais de telle sorte qu'une valeur de $X$ correspond au maximum à deux valeurs de $Y$.}
     \label{fig:exemple-limite}
     \end{figure}
 
