@@ -63,7 +63,7 @@ La relaxation définie dans le modèle est une recherche de maximum par déplace
 Nous notons $(\mathbf{\bmu})_\tau = (\bmu\m{0}_\tau,\cdots,\bmu\m{n}_\tau)$ la suite définie par l'évolution des BMUs des $n$ cartes d'une architecture lors de la relaxation.
 Détaillons ici l'évolution de cette suite.
 
-Pour clarifier les notations, nous définissons  pour chaque carte~$i$, une seconde suite $\hat{p}\m{i}_\tau$, correspondant à la position maximisant l'activité globale de la carte $i$ à l'instant $\tau$~:
+Nous définissons également pour chaque carte~$i$, une seconde suite $\hat{p}\m{i}_\tau$, correspondant à la position maximisant l'activité globale de la carte $i$ à l'instant $\tau$~:
 
 \begin{equation}
 \begin{gathered}
@@ -78,7 +78,7 @@ L'équation d'évolution de la suite $(\mathbf{\bmu})_\tau$ s'écrit à partir d
 \begin{equation}
 \bmu\m{i}_{\tau+1} = 
 \begin{cases}
-\bmu\m{i}_{\tau} + sgn(\hat{p}\m{i}_{\tau} - \bmu\m{i}_{\tau}) \times \delta \; & \text{si $\hat{p}\m{i}_{\tau} - \bmu\m{i}_{\tau} > \delta$ } \\
+\bmu\m{i}_{\tau} + sgn(\hat{p}\m{i}_{\tau} - \bmu\m{i}_{\tau}) \times \Delta \; & \text{si $\hat{p}\m{i}_{\tau} - \bmu\m{i}_{\tau} > \Delta$ } \\
 \hat{p}\m{i}_{\tau} \; \text{sinon}	
 \end{cases}
 \label{eq:evolution}
@@ -101,13 +101,13 @@ Soit, pour l'ensemble des composantes:
 \mathbf{\bmu}_{\tau+1} = \mathbf{f}(\mathbf{\bmu}_\tau)
 \end{equation}
 
-Si $(\bmu)_\tau$ converge, alors elle converge vers un point fixe de la fonction $f$, soit une position $\mathbf{\bmu}$ vérifiant~:
+Si $(\mathbf{\bmu})_\tau$ converge, alors elle converge vers un point fixe de la fonction $f$, soit une position $\mathbf{\bmu}$ vérifiant~:
 \begin{equation}
 \mathbf{\bmu} = \mathbf{f}(\mathbf{\bmu})
 \label{eq:suite}
 \end{equation}
 
-Cependant, rien ne garantit que ces point fixes existent ni que la suite converge.
+Cependant, rien ne garantit que des points fixes existent ni que la suite converge.
 Pour des poids $\w$ quelconques, il n'existe généralement pas de point fixe.
 
 Notons enfin que l'évolution de la suite $(\mathbf{\bmu})_{\tau}$ dépend de son initialisation.
@@ -138,7 +138,7 @@ Avec $\inpc_0, \cdots, \inpc_K$ les $K$ entrées contextuelles de la carte.
 
 L'activité contextuelle $a_c$ est définie, rappelons le, comme la moyenne des activités contextuelles sur chaque couche de poids contextuels~:
 \begin{equation}
-	a_c(p, \inpc_0, \cdots, \inpc_n = \frac{1}{K+1}\sum_{k=0}^{K}{a_{ck}(p, \inpc_k)}
+	a_c(p, \inpc_0, \cdots, \inpc_K) = \frac{1}{K+1}\sum_{k=0}^{K}{a_{ck}(p, \inpc_k)}
 \end{equation}
 
 Pour simplifier les notations, nous noterons que les entrées contextuelles d'une carte $i$ sont ${\inpc_k, k = 0 \cdots n , k \neq i}$.
@@ -166,11 +166,11 @@ Nous observerons expérimentalement dans la suite du chapitre que lorsque les po
 La notion de Best Matching Unit est définie au sein de l'algorithme d'apprentissage d'une carte de Kohonen, comme l'unité possédant l'activité maximale pour une entrée fixée. 
 Cette activité dépend de l'entrée et des poids de la carte.
 On attend d'un algorithme de recherche du BMU que la valeur trouvée en sortie soit uniquement relative aux poids de la carte et aux entrées~: elle ne doit pas dépendre de l'initialisation.
-Dans le cas de la recherche de BMU par relaxation, nous voulons d'abord vérifier la recherche du BMU converge. 
-Dans notre modèle, nous arrêtons la relaxation après un nombre fixe d'itération. Il est donc toujours possible de définir un BMU, mais dans le cas où la relaxation n'a pas convergé, ce BMU n'a pas de sens~: il ne s'agir pas d'un maximum. 
-Nous mesurerons pour cela la convergence de la relaxation sur un ensemble d'expériences.
-Nous observerons ensuite si la valeur trouvée à l'issue de la relaxation, à savoir le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation.
-Le BMU est alors relatif à seulement l'état des poids de la carte et non des conditions initiales. Pour cela, nous voulons vérifier que la fonction $\mathbf{f}$ générant la suite $\mathbf{\bmu}_\tau$ admet un unique point fixe sur un ensemble d'exemple. 
+Dans le cas de la recherche de BMU par relaxation, nous voulons d'abord vérifier que la recherche du BMU converge. 
+Dans notre modèle, nous arrêtons la relaxation soit lorsqu'elle a convergé, soit après un nombre fixé $\tau_{max}$ d'itérations. Il est donc toujours possible de définir un BMU, mais dans le cas où la relaxation n'a pas convergé, ce BMU n'a pas le sens de \og Best Matching Unit \fg{}. Pour vérifier cela, nous mesurerons la convergence de la relaxation sur un ensemble d'expériences.
+Nous observerons dans un second temps si la valeur trouvée à l'issue de la relaxation, à savoir le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation.
+Le BMU sera alors relatif à seulement l'entrée et l'état des poids de la carte et non aux conditions initiales.
+Pour cela, nous chercherons à vérifier que la fonction $\mathbf{f}$ générant la suite $\mathbf{\bmu}_\tau$ admet un unique point fixe sur un ensemble d'exemples. 
 
 Ce chapitre présente des points d'analyse empirique de ce processus de relaxation, réalisée sur des cartes 1D et 2D prenant en entrée un jeu de données 1D.
 L'évaluation de ces deux conditions sera réalisée sur des exemples d'apprentissage d'une architecture de deux et trois cartes. 
@@ -204,18 +204,19 @@ Plusieurs situations peuvent se traduire par une non-convergence de la relaxatio
 Le premier cas est évité car la limite de 1000 itérations est assez grande par rapport à la taille de la carte, les cartes sont de taille 500 et le pas d'évolution de la relaxation d'une dizaine d'unités. 
 La convergence, si elle existe, est rapide. Les cas de non-convergence concernent alors la deuxième et la troisième situation. Nous observerons plus précisément les trajectoires dans la section suivante; on s'intéresse ici seulement à la question de la convergence.
 
-Les figures~\ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} montrent qu'au début de l'apprentissage, lorsque les poids sot initialisés aléatoirement, la relaxation atteint rarement un point de convergence. Lorsque les cartes sont dépliées, la relaxation évolue vers un point de convergence dans plus de $95\%$ des cas pour des cartes 1D, et $90\%$ pour des cartes 2D. L'évolution de la convergence est similaire pour des architectures de deux et trois cartes.
+Les figures~\ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} montrent qu'au début de l'apprentissage, lorsque les poids sont initialisés aléatoirement, la relaxation atteint seulement un point de convergence dans 20\% des cas. Lorsque les cartes sont dépliées, la relaxation évolue vers un point de convergence dans plus de $95\%$ des cas pour des cartes 1D, et $90\%$ pour des cartes 2D. L'évolution de la convergence est similaire pour des architectures de deux et trois cartes.
 
 Nous en  concluons que la convergence de la relaxation dépend complètement de la disposition des poids. 
-Elle converge dans plus de 90 \% des cas lorsque les poids sont bien dépliés, mais seulement dans 20\% des cas au début de l'apprentissage lorsque les poids ne présentent aucune forme de continuité et d'organisation.
-Toutefois, le fait que la relaxation ne converge pas en début d'apprentissage ne perturbe pourtant pas l'organisation des poids. En effet, la relaxation reste dans une zone restreinte de la carte même lorsqu'elle ne converge pas, permettant une organisation.
+Elle converge dans plus de 90 \% des cas lorsque les poids sont bien dépliés, mais seulement rarement au début de l'apprentissage lorsque les poids ne présentent aucune forme de continuité et d'organisation.
+Toutefois, le fait que la relaxation ne converge pas en début d'apprentissage ne perturbe pas l'organisation des poids~: on observe que la carte se déplie correctement au long de l'apprentissage.
+% En effet, la relaxation reste dans une zone restreinte de la carte même lorsqu'elle ne converge pas, permettant une organisation.
 Ce comportement peut être expliqué. On observe que la relaxation converge bien à partir du moment où les poids externes sont organisés et présentent une continuité. 
 Au début de l'apprentissage, même si la relaxation mène à des positions quelconques de BMUs, ces BMUs auront quand même des poids externes restant proches de la valeur de l'entrée externe. 
 Le calcul de l'activité dépend en effet principalement de l'activité externe de la carte:
-$$ a_g = \sqrt{a_e ( \beta a_e + (1-\beta a_c))}, \;\; \beta=0.5$$ 
+$$ a_g = \sqrt{a_e \left( \frac{a_e + a_c}{2} \right) }$$ 
 De plus, la relaxation est initialisée à une position correspondant au maximum de l'activité externe.
 Bien que le BMU n'aie pas de sens topologique dans la plupart des cas au début de l'apprentissage, les poids externes vont se déplier correctement sur les entrées externes. Le grand rayon de voisinage externe permet aux poids externes de se déplier plus rapidement que les poids contextuels. 
-Une fois les poids externes dépliés, la relaxation semble converger. Le dépliement des poids contextuels, plus lent, s'effectue donc sur des BMUs ayant un \og sens \fg{}.
+Une fois les poids externes dépliés, la relaxation apparaît converger sur les exemples étudiés. Le dépliement des poids contextuels, plus lent, s'effectue donc sur des BMUs ayant un \og sens \fg{}.
 
 \begin{figure}
 	\centering
@@ -284,19 +285,19 @@ Sur ces tracés, nous observons un seul point d'attraction pour les 200 trajecto
 Ce point correspond à la position où les deux différences $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2}\rvert$ sont nulles.
 La figure \ref{fig:champ_9999} présente le champ de déplacement des BMUs en fonction de la position courante. Les trajectoires suivent les zones où l'une ou l'autre des différences est nulle, pour mener à la position stable. 
 Nous avons observé cette configuration pour plusieurs entrées.
-\`A la fin de l'apprentissage, nous observons donc que la fonction $f$ admet un unique point fixe, donc que la recherche de maximum de l'activité totale de l'architecture admet une solution unique. Dans ce cas, la relaxation converge quelles que soient les conditions initiales. Les BMUs trouvés sont donc relatifs à la disposition du poids des cartes et des entrées et non à des conditions internes aux cartes. Le BMU a donc un sens. 
+\'A la fin de l'apprentissage, nous observons sur ces exemples que la fonction $f$ admet un unique point fixe, donc que la recherche de maximum de l'activité totale de l'architecture admet une solution unique.
+ Dans ce cas, la relaxation converge quelles que soient les conditions initiales. Les BMUs trouvés sont alors relatifs à la disposition du poids des cartes et des entrées et non à des conditions internes aux cartes, donnant au BMU $(\bmu\m{1},\bmu\m{2})$ un sens~: il s'agit d'une position dépendant seulement de l'entrée $(\inpx\m{1},\inpx\m{2})$ et correspond au maximum de l'activation totale des cartes de l'architecture.
 
 Nous pensons que l'existence du point fixe vient de la disposition ordonnée des poids externes à la fin de l'apprentissage et de la formule du calcul d'activité.
 \'A la fin de l'apprentissage, les poids externes sont organisés et $a_e(\inpx,p)$ présente un seul pic d'activation.
 De plus, l'activité globale correspond à la modulation de l'activité contextuelle par les valeurs de l'activité externe. 
-Nous observons qu'à $\inpx\m{1}$ fixé ,$\hat{p}\m{1} = \argmax_p\m{1} a_g(p\m{1}, p\m{2})$ reste dans une zone restreinte lorsque $p\m{2}$ varie (de même pour $a_g\m{2}$). 
+Nous observons qu'à $\inpx\m{1}$ fixé, $\hat{p}\m{1} = \argmax_p\m{1} a_g(p\m{1}, p\m{2})$ reste dans une zone restreinte lorsque $p\m{2}$ varie (de même pour $a_g\m{2}$). 
 La relaxation évoluera forcément vers cette zone réduite de la carte.
-Cette propriété est illustrée en figure\ref{fig:w006}.
-Nous y faisons figurer les poids des deux cartes et les valeurs de $\hat{p}\m{1}$ et $\hat{p}\m{2}$ qu'on obtient à entrée externe fixée $\inpx$ et en faisant varier $p\m{1}, p\m{2}$ dans tout l'espace des positions possibles. Quelle que soit l'entrée contextuelle, $\hat{p\m{1}}$ sera forcément entre 0.26 et 0.34.
+Cette propriété est illustrée en figure~\ref{fig:w006}.
+Nous y faisons figurer les poids des deux cartes et les valeurs de $\hat{p}\m{1}$ et $\hat{p}\m{2}$ qu'on obtient à entrée externe fixée $\inpx$ et en faisant varier $p\m{1}, p\m{2}$ dans tout l'espace des positions possibles. Quelle que soit l'entrée contextuelle, $\hat{p\m{1}}$ sera ainsi forcément situé entre 0.26 et 0.34 pour une même entrée $\inpx\m{1}$ présentée et la configuration de poids courante de la carte.
 
-D'après cet exemple, que nous avons observé sur de nombreuses entrées, nous formulons l'hypothèse que le dépliement ordonné des poids externes dans une carte en 1D est une condition suffisante à l'existence d'un unique point fixe. 
+D'après cet exemple, que nous avons observé sur de nombreuses entrées, nous formulons l'hypothèse que le dépliement ordonné des poids externes dans une carte en 1D est une condition suffisante à l'existence d'un unique maximum d'activité. 
 Dans ce cas, la relaxation permet de trouver ce point fixe.
-
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}
@@ -343,7 +344,7 @@ ${\hat{p}}\m{1}$ ne dépend que de $p\m{2}$ : on peut donc tracer les quantités
 \end{figure}
 
 \begin{figure}
-	\includegraphics[width=\textwidth]{am_w_006}
+	\includegraphics[width=\textwidth]{am_w_006_noinp}
 	\caption{(a): $\hat{p}\m{1}$ et $\hat{p}\m{2}$ en fonction de l'entrée contextuelle de leur carte $\bmu\m{2}$ et $\bmu\m{1}$.(b): les poids externes et contextuels des cartes $1$ et $2$ sont représentés selon leur position dans la carte. On représente également les entrées test $\inpx\m{1}$ et $\inpx\m{2}$ en fonction de leur BMU. Les entrées utilisées pour tracer les figures de gauche sont colorées en rouge sur les figure de droite: $\inpx\m{1}=0.26,\inpx\m{2}=0.06$. Les intervalles dans lequel les valeurs de $\hat{p}$ varient sont reportés sur la figure (b).}
 	\label{fig:w006}
 	\end{figure}
@@ -359,12 +360,12 @@ L'évolution de la relaxation devient alors:
 \end{equation}
 
 On pourrait supposer que prendre un petit $\Delta$ permet une meilleure convergence; en fait, la valeur de $\Delta$ influence peu la capacité de convergence et l'organisation des cartes.
-En figure \ref{fig:diff_nopas}, Nous avons tracé plusieurs trajectoires de relaxation réalisées après apprentissage,pour une même entrée. 
-On représente sur cette même figure les différences ${\hat{p}}\m{1} - p\m{1}$ et ${\hat{p}}\m{2} - p\m{2}$. Le point fixé de la fonction génératrice de la suite $(\bmu)_\tau$ est un point pour lequel les deux valeurs sont nulles.
-La méthode de relaxation utilisée lors de l'apprentissage menant à la confitguration de poids utilisée n'a pas non plus utilisé de pas de relaxation $\delta$.
-A l'issue de l'apprentissage, le comportement de la relaxation ne change pas par rapport à celui observé en figure \ref{fig:diff_relax_notraj}.
-Cela se comprend au vu des résultats précédents. $\hat{p}\m{1}$ et $\hat{p}\m{2}$ sont dans un intervalle réduit de valeurs de la carte quelles que soient les positions $p\m{1}$ et $p\m{2}$. 
-Amener directement le BMU dans cet intervalle ou l'y amener pas à pas ne change rien en terme de comportement. 
+En figure \ref{fig:diff_nopas}, nous avons tracé plusieurs trajectoires de relaxation réalisées après apprentissage,pour une même entrée. 
+Nous représentosn sur cette même figure les différences $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2} \rvert$.
+La méthode de relaxation utilisée lors de l'apprentissage menant à la configuration de poids utilisée pour cette expérience n'a pas non plus utilisé de pas de relaxation $\Delta$.
+A l'issue de l'apprentissage, le comportement de la relaxation ne change pas par rapport à celui observé en figure \ref{fig:diff_relax_notraj}~: les trajectoires convergent vers le point fixe de $\mathbf{f}$.
+Cela se comprend au vu des résultats précédents. $\hat{p}\m{1}$ et $\hat{p}\m{2}$ sont dans un intervalle réduit de valeurs de la carte, quelles que soient les positions $p\m{1}$ et $p\m{2}$. 
+Amener directement le BMU dans cet intervalle ou l'y amener pas à pas change peu le comportement de la suite. 
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}
