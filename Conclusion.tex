@@ -1,6 +1,75 @@
 \chapter*{Conclusion}
 
-% Perspectives : 
+\section*{Résumé des contributions et discussion}
+
+La thèse que nous avons présentée se penche sur la problématique de développement d'un mécanisme d'apprentissage au sein d'une architecture de cartes non-hiérarchiques.
+Nous avons choisi de construire un modèle d'architectures prenant la position du BMU comme contexte transmis entre les cartes et avons construit un modèle s'appuyant sur une recherche de consensus entre cartes. 
+Ce choix de modèle repose sur les travaux conduits précédemment dans l'équipe, des architectures de SOM cellulaires calculant leurs activations grâce à des DNF couplés. 
+Le couplage de ces DNF induisait un mécanisme de relaxation au sein de cartes pour trouver un BMU satisfaisant toutes les cartes. L'architecture de SOM proposée remplace les DNF par un calcul d'argmax mais conserve l'aspect relaxation pour lier les cartes entre elle en architecture. La position du BMU apparaît par ailleurs comme un contexte transmis dans de nombreux modèles d'architecture de cartes hiérarchiques et récurrentes. Enfin, la position du BMU est une valeur exploitant totalement l'aspect organisé de la carte de Kohonen et est une valeur légère à transmettre entre les cartes, car il s'agit d'un réel ou d'une valeur 2D.
+
+Nos travaux sont ainsi partis d'un modèle, construit à partir de la littérature et des études précédentes~; les travaux présentés dans cette thèse cherchent à étudier le comportement du modèle en vue d'applications ou de développement futurs.
+Nous nous sommes concentrés sur une tâche particulière nous semblant intéressante à réaliser à base d'architectures multi-cartes~: l'apprentissage de représentations multimodales.
+
+Les travaux présentés dans ce manuscrit détaillent le comportement de l'architecture sur des structures comportant un faible nombre de cartes.
+Les contributions de ces travaux sont les suivantes~: 
+Nous avons détaillé le modèle et analysé comment la relaxation permet de trouver un BMU dans chaque carte. Nous avons souligné l'importance de garder l'activation externe des cartes prépondérante face à l'activité contextuelle, qui vient seulement moduler l'activité externe
+
+Nous avons ensuite défini un cadre d'application multimodal de l'architecture de cartes, l'apprentissage multimodal. Nous proposons de nous intéresser à des entrées ayant une dépendance et représentons cette dépendance comme une paramétrisation de dimension inférieure du modèle.
+Le chapitre \ref{chap:repr} présente la méthode d'analyse du comportement des cartes sur des applications multimodales jouets et des représentations. Nous avons vu que contrairement à l'analyse classique des cartes de Kohonen qui s'appuie sur l'organisation des poids des cartes, nous avons préféré nous intéresser au comportement de l'architecture de cartes lors de phases de tests. Cette méthode modélise les entrées et les éléments des cartes comme des variables aléatoires dont nous avons ensuite cherché à tracer les dépendances.
+Nous avons ensuite détaillé le comportement d'architectures de deux et trois cartes sur des données jouet pour en extraire les comportements d'apprentissage principaux et l'influence de certains paramètres d'apprentissage.
+Les comportements observé lors de cet étude sont les suivants~: 
+\begin{itemize}
+    \item Pour faire émerger un apprentissage du modèle d'entrée et non seulement de l'entrée externe, nous voulons prendre un grand rayon de voisinage externe $r_e$ face au rayon contextuel $r_c$. Cette différence d'échelle entre paramètres induit une organisation subordonnée des poids contextuels face aux poids externes lors de l'apprentissage, conduisant les cartes à s'organiser selon deux échelles d'indices. Une carte s'organise ainsi globalement selon la valeur de ses entrées externe mais sépare également la position des BMUs selon la valeur générale du modèle d'entrée.
+    \item Cette séparation des BMUs intervient dès qu'une carte doit différencier une même valeur de son entrée externe, correspondant à plusieurs points différents du modèle d'entrée. Dans ce cas, la carte forme plusieurs sous-cartes mappant un ensemble de valeurs de l'entrée externe à toutes les valeurs de $U$ correspondant à cet intervalle. Cette organisation en zones est un compromis entre encodage de $U$ et qualité de la quantification vectorielle sur $\inpx$, dont la qualité est réduite par rapport à une carte classique. Dans le cas ou le modèle d'entrée ne nécessite pas cette séparation, une carte se comporte comme une carte classique.
+    \item Grâce à ces deux échelles de quantification vectorielle, une architecture CxSOM est capable de générer une prédiction dans une des cartes de l'architecture à laquelle on n'a pas présenté d'entrée externe lors du test.
+    Cette prédiction est cohérente avec le modèle d'entrée, et n'est possible que grâce à l'organisation des cartes en "zones". Grâce aux rétroactions, une carte acquiert ainsi une capacité de prise de décision sans avoir besoin d'un algorithme supplémentaire analysant la sortie des cartes. Cette capacité n'est pas permise par des architectures feed-forward ou des cartes classiques. 
+    \item Nous avons mis en évidence que le comportement généré par les cartes en une dimension s'étend aux cartes en deux dimensions, généralement utilisées en pratique. Ce comportement est prometteur pour la mise en pratique des architectures de cartes sur des données de plus grande dimension.
+\end{itemize}
+
+Nous avons ensuite mis en pratique la capacité de prédiction sur un exemple d'application. Lors du déplacement d'un drone sur une trajectoire définie, la valeur de la commande à envoyer dépend des valeurs des capteurs, formant des entrées multimodales. Nous avons utilisé une architecture de quatre cartes pour apprendre les relations entre commande et entrées et utilisé la prédiction pour prédire la commande à envoyer au drone. Cette expérience nous a permis de tester une mise en situation réelle de l'architecture de carte et a montré une capacité de réaction en temps réel correcte. Du travail autour de la stabilisation des commandes, de choix de capteurs à considérer, serait nécessaire pour une véritable application robotique, mais cette expérience constitue un premier exemple de mise en situation réelle de l'architecture CxSOM.
+
+Nous avons enfin étudié plusieurs méthodes numériques cherchant à évaluer l'encodage du modèle d'entrée au sein de l'architecture de cartes, dans l'optique de disposer d'un indicateur permettant de comparer des expériences entre elles, se passer de représentations graphiques, limitées aux valeurs 1D et 2D, pour caractériser l'apprentissage sur des données de grande dimension, et par exemple permettre l'optimisation automatique des paramètres. Ces indicateurs s'appuient sur la modélisation statistique des entrées et sorties des cartes.
+Comme nous avons observé que l'apprentissage dans une architecture de deux cartes est marquée par une relation fonctionnelle entre $U$ et le BMU $\bmu$ dans chaque carte et avons ainsi utilisé le ratio de corrélation, qui permet de quantifier à quel point $U$ est une fonction du BMU dans chacune des cartes.
+Cette valeur mesure bien cette relation fonctionnelle mais doit être utilisée en comparaison avec le ratio de corrélation entre $U$ et $\inpx$ afin de vérifier la relation fonctionnelle d'origine entre le modèle et l'entrée présentée à la carte.
+Nous avons également étudié un indicateur s'appuyant sur l'information mutuelle normalisée dans chaque carte. Cependant, l'observation que $U$ est une fonction du BMU dans chaque carte n'est pas forcément générale à des architectures comportant plus de cartes, et surtout n'est pas souhaitable.
+Nous avons mesuré l'information mutuelle entre $U$ et $\bmu$ dans chaque carte de l'architecture.
+
+Ce modèle de représentation est intéressant pour :
+\begin{itemize}
+    \item 
+\end{itemize}
+
+Par contre, il montre certaines limites, déjà sur plusieurs cartes : 
+\begin{itemize}
+    \item Beaucoup de n\oe{}uds morts. La carte prend ici le rôle d'un mapping. On pourrait imaginer des modèles d'apprentissage simulant le coté + continu, par exemple avec des poids dans les arêtes des cartes qui permettraient d'utiliser tous les n\oe{}uds.
+    \item Rigidité qui limite l'apprentissage de $U$ en grande dimension.
+\end{itemize}
+
+
+% conclusion générale.
+
+\section*{Perspectives}
+
+Les perspectives à court terme de ces travaux sont de continuer le développement du modèle en s'intéressant aux connexions au sein d'une architecture comportant de plus nombreuses cartes.
+Le nombre de connexions possible au sein d'une architecture comportant un nombre fixé de cartes est exponentiel et chaque configuration peut complètement modifier la façon dont se comporte l'architecture. Par ailleurs, certaines cartes peuvent ou non prendre des entrées externes, ajoutant un grand nombre de configurations possibles à explorer. Grâce à nos travaux, nous avons une idée des paramètres à utiliser dans l'architecture et des sorties pertinentes à considérer pour étudier le comportement d'apprentissage. Nous disposons aussi d'une librairie performante pour construire les architectures de cartes, développée en parallèle de la thèse au sein de l'équipe de recherche.
+L'étude de plus grandes architectures devra se faire d'un point de vue plus global, en s'appuyant sur le comportement général de l'architecture et non seulement d'un point de vue d'une carte. Il reste à définir les cas d'études sur lesquels appliquer ces architectures à grande échelle.
+L'aspect modulaire de ces architectures pourrait par exemple nous faire envisager des modules d'interaction avec l'environnement, qui traitent les entrées sensorielles et des modules d'apprentissage, en s'inspirant des structures fonctionnelles observées en biologie.
+Pour cela, nous avons vu qu'il sera pertinent de s'intéresser à l'information au sein du système de cartes à partir du modèle d'entrée et des positions de BMU représentant l'état des cartes du système.
+
+Un des objectifs à long terme du développement d'architectures multi-cartes est également l'intégration de connexions récurrentes entre cartes, afin de traiter des données séquentielles. L'utilisation de la position du BMU comme interface a en effet été utilisée au sein de modèles de cartes récurrentes telles que SOMSD~; ce modèle ainsi que son adaptation sur deux cartes ont fait l'objet d'études précédentes dans notre équipe \cite{baheux_towards_2014, fix20}. 
+Dans ces modèles de cartes récurrentes, la carte prend en entrée externe un élément d'une séquence d'entrée et comme entrée contextuelle la position du BMU obtenu lors de l'itération précédente.
+Les propriétés d'organisation observées sur ce type de cartes récurrentes rejoignent celles observée dans l'architecture CxSOM~: une carte distingue son BMU en fonction de l'entrée externe mais également en fonction de sa place dans la séquence d'entrée.
+Une perspective d'étude sera ainsi d'associer des connexions temporelles et des connexions multimodales au sein d'une architecture de cartes afin de traiter des données séquentielles.
+Un inconvénient des cartes récurrentes simple est leur oubli de la séquence une fois que cette dernière n'a pas été présentée. 
+Une architecture de cartes pourrait par exemple apporter des modules de mémoire supplémentaire pour l'apprentissage d'un ensemble de séquences \cite{Ellefsen2015NeuralMH}.
+Une direction d'application d'architectures de cartes peut être la construction d'un système d'apprentissage \og sur le long terme \fg{} , apprenant au cours du temps des entrées et sorties et pouvant générer des prises de décision dans le système.
+
+Enfin, l'architecture que nous avons proposée s'appuie uniquement sur des cartes auto-organisatrices. Nous pouvons envisager de coupler les mécanismes induits par l'architecture de cartes à d'autres mécanismes d'apprentissage. L'inspiration biologique 
+
+% Résumé des contributions et synthèse : 
+
+
+% Perspectives des travaux : 
 
 % Mémoire associative pas forcément le cas d'étude le plus adapté à un contexte de modularité.
 % Mémoires temporelles, interactions avec environnement vs modules d'apprentissage, \cite{Ellefsen2015NeuralMH}
