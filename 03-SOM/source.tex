@@ -18,13 +18,16 @@ Nous proposons dans cette thèse un modèle d'architecture non-hiérarchique de 
 On souhaite que ce modèle soit générique, permettant de construire n'importe quel forme et taille d'architecture, et ayant la possibilité d'intégrer des connexions récurrentes. 
 Notre démarche est d'abord de proposer un modèle de calcul général à base de cartes auto-organisatrices~; des applications plus spécifiques pourront être développées à partir de cette méthode.
 
-Nous avons défini une \emph{architecture} de carte par un réseau composé de plusieurs modules qui sont chacun une carte de Kohonen et dans lequel des connexions sont définies entre ces modules. Ces connexions sont orientées: on parle d'une connexion d'une carte A vers une carte B. Le but de ces connexions est de coupler l'apprentissage de plusieurs cartes.
+Nous avons défini une architecture de cartes comme un réseau composé de plusieurs modules qui sont chacun une carte de Kohonen, et dans lequel des connexions sont présentes entre ces modules. 
+Ces connexions sont orientées: on parle d'une connexion d'une carte A vers une carte B. Le but de ces connexions est de coupler l'apprentissage de plusieurs cartes.
 Sur une telle architecture, on peut construire un graphe $G$ orienté, dont les n\oe{}uds sont des cartes. La connexion d'une carte A vers une carte B est indiquée par la présence d'une arête de A vers B. 
-On appelle architecture \emph{non-hiérarchique} une architecture pour laquelle le graphe $G$ n'est pas un arbre: il présente des boucles. Un exemple d'architecture non-hiérarchique est représenté en figure~\ref{fig:archi_non_hierarchique}. Certaines cartes sont connectées dans les deux directions, d'autres en boucle. Dans cette thèse, nous cherchons à utiliser de telles architectures non-hiérarchiques pour des tâches de mémoire associative.
-Chaque carte de l'architecture cherche d'une part à apprendre une représentation de l'entrée $A,B,C,D,E$ ou $F$ qui lui est fournie. 
-Lorsque ces entrées présentent des dépendances les unes aux autres, l'architecture dans sa globalité doit également, d'une façon ou d'une autre, extraire les relations, les dépendances, existant entre les distributions de données. Cet apprentissage des relations est au c\oe{}ur de cette thèse, sa partie expérimentale se concentrant sur les représentations et indicateurs mettant en valeur l'apprentissage de ces relations puis en les utilisant sur différents ensemble de données d'entrée.
+On appelle architecture \emph{non-hiérarchique} une architecture pour laquelle le graphe $G$ n'est pas un arbre: il présente des boucles. Un exemple d'architecture non-hiérarchique est représenté en figure~\ref{fig:archi_non_hierarchique}. Certaines cartes sont connectées dans les deux directions, d'autres en boucle. 
 
-Dans ce chapitre, nous détaillons d'abord le modèle CxSOM que nous avons développé et étudié durant cette thèse. Il permet de construire des architectures non-hiérarchiques de cartes auto-organisatrices. 
+Dans cette thèse, nous cherchons à utiliser de telles architectures non-hiérarchiques pour des tâches de mémoire associative.
+Chaque carte de l'architecture cherche d'une part à apprendre une représentation de l'entrée $A,B,C,D,E$ ou $F$ qui lui est fournie. 
+Lorsque ces entrées présentent des dépendances les unes aux autres, l'architecture dans sa globalité doit également extraire les relations, les dépendances, existant entre les distributions de données. Cet apprentissage des relations est au c\oe{}ur de cette thèse, sa partie expérimentale se concentrant sur les représentations et indicateurs mettant en valeur l'apprentissage de ces relations puis en les utilisant sur différents ensembles de données d'entrée.
+
+Dans ce chapitre, nous détaillons le modèle CxSOM que nous avons développé et étudié durant cette thèse. Il permet de construire des architectures non-hiérarchiques de cartes auto-organisatrices. 
 Nous présentons en premier lieu le formalisme et les notations d'une carte de Kohonen classique, dont sont dérivées les cartes auto-organisatrices utilisées dans les architectures CxSOM. 
 Nous expliquons ensuite les choix de développement sur lesquels nous nous sommes appuyée pour développer le modèle. Nous présentons le modèle sur un exemple d'architecture à deux cartes, puis nous le formalisons pour le cas général de $n$ cartes connectées au sein d'une architecture.
 
@@ -74,7 +77,7 @@ Ici, on prendra comme BMU l'unité ayant l'activité la plus élevée.
 \end{figure}
 
 
-\subsection{Paramètrage d'une carte de Kohonen}
+\subsection{Paramètrage d'une carte de Kohonen}\label{sec:parametres_carte}
 
 L'organisation d'une carte de Kohonen est gérée par plusieurs paramètres. 
 Nous détaillons ici les choix de paramètres effectués. 
@@ -143,11 +146,6 @@ La tâche de mémoire associative consiste à extraire des schémas de dépendan
 Lorsqu'on tire une entrée pour la présenter à une carte, on tire une entrée jointe $\mathbf{\inpx} =  (\inpx\m{1}_t, \cdots , \inpx\m{n}_t)$, dont chaque composante est présentée à la carte qui lui correspond. 
 Le but pour l'architecture de cartes est d'encoder une représentation de chaque espace d'entrée $\mathcal{D}\m{i}$ par quantification vectorielle et d'encoder le schéma de dépendances entre modalités au sein de l'architecture.
 
-% Pour respecter l'homogénéité des entrées nécessaires à l'apprentissage d'une carte auto-organisatrice, nous normaliserons les espaces $\mathcal{D}\m{i}$ pour que toutes les entrées soient à valeur dans $[0,1]$ sur chaque dimension.
-% Dans les exemples de cette thèse, nous tirerons des entrées jointes en deux ou trois dimensions, dont chaque composante 1D est présentée à une carte. Chaque modalité est la coordonnée sur un des axes du point 3D tiré. Nous utiliserons par exemple, en tant qu'espace dont les modalités sont dépendantes, un ensemble de points sur un cercle en une dimension dans un espace en trois dimensions. Chaque coordonnée $x$, $y$, $z$ dépend alors des deux autres coordonnées. Nous évaluerons comment l'architecture que nous présentons dans cette partie apprend les données ainsi que leurs relations. 
-
-% Les exemples porteront sur des modalités en une dimension, mais les dimensions de chaque modalité peuvent être quelconque.
-
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{inputs_3som}
@@ -158,7 +156,6 @@ Le but pour l'architecture de cartes est d'encoder une représentation de chaque
 
 Nous avons vu au chapitre précédent les possibilités d'interfaces entre cartes. 
 Dans CxSOM, on choisit de se placer dans le paradigme de transmission de la position du BMU entre cartes: on connecte une carte B à une carte A en donnant la position du BMU de B en entrée à la carte A. 
-% Ce paradigme de partage de positions rappelle à la fois le modèle hiérarchique HSOM~\cite{lampinen_clustering_1992}, et les modèles de cartes récurrentes s'appuyant sur SOMSD \cite{hammer_recursive_2004,hagenbuchner_self-organizing_2003,fix20}. 
 Contrairement aux cartes hiérarchiques comme HSOM~\cite{lampinen_clustering_1992} dans lesquelles la position du BMU est la seule entrée d'une carte de plus haut niveau, chaque carte de l'architecture peut posséder une entrée principale propre issue d'une modalité $\inpx\m{i}$ que nous appelons l'entrée \emph{externe}. 
 Une carte prendra ensuite un ensemble d'entrées secondaires qui sont les positions des BMUs des autres cartes de l'architecture. 
 Les cartes auto-organisatrices dans le modèle CxSOM prennent donc un nombre arbitraire d'entrées, dont certaines sont les BMUs d'autres cartes. On appelle ces entrées internes à l'architecture les entrées \emph{contextuelles} d'une carte.
@@ -179,7 +176,7 @@ Notre algorithme implémentera deux modifications principales par rapport à l'a
 \item La recherche du BMU est modifiée afin de gérer les rétroactions entre cartes.
 \end{itemize}
 
-L'architecture CxSOM couple ainsi l'apprentissage de plusieurs cartes. Elles apprennent à la fois sur leurs données $\inpx\m{i}$, mais contextualisées selon les informations issues des autres cartes. Notons que les cartes apprennent de façon jointe dès le début de leur apprentissage. 
+L'architecture CxSOM couple ainsi l'apprentissage de plusieurs cartes. Elles apprennent à la fois sur leurs données $\inpx\m{i}$, mais contextualisées selon les informations issues des autres cartes.
 
 Seule la position du BMU est utilisée comme information transmise entre carte. Cette valeur a l'avantage d'apporter une homogénéité dans l'architecture de cartes~: quelles que soient les entrées d'une carte et leurs dimensions, le BMU sera une position en 1 ou 2 dimensions. Si on prenait le poids du BMU comme valeur transmise, par exemple, comme peut le faire la carte récurrente MSOM~\cite{Strickert2005MergeSF}, l'information circulant entre les cartes dépendrait des dimensions des entrées.
 De plus, transmettre seulement la position du BMU est une avantage en terme de quantité d'information à transmettre: il s'agit d'un vecteur en une ou deux dimension.
@@ -326,7 +323,7 @@ L'algorithme est résumé en algorithme~\ref{algo:cxsom}.
 Dans une architecture composée de $n$ cartes, les cartes sont indexées par $i \in \{1,\cdots,n\}$. On indicera chaque élément d'une carte $M\m{i}$ par l'exposant $(i)$.
 Pour faciliter la lecture, nous omettrons l'exposant $(i)$ dans les équations, lorsqu'on se concentre sur une seule carte. $\inpx_t$ désigne donc $\inpx_t\m{i}$, $\w_e$ désigne $\w_e\m{i}$, etc.
 
-Lors d'un pas d'apprentissage $t$, une carte $M\m{i}$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles}. Notons-les pour le moment $\Gamma = (\inpc_1},\cdots,\inpc_K)$; elles seront les positions du BMU $\bmu\m{i_k}$ des cartes d'indice $k$ qui lui sont connectées~: $\bmu\m{i_k}_\tau$ lors de la relaxation puis $\bmu\m{i_k}_t$ lors de la mise à jour. La gestion des entrées contextuelles sera décrite avec le processus de relaxation en section suivante~; notons pour le moment que les entrées contextuelles sont des positions 1D ou 2D dans des cartes. 
+Lors d'un pas d'apprentissage $t$, une carte $M\m{i}$ reçoit en entrée une entrée \emph{externe} notée $\inpx_t$ et $K$ entrées \emph{contextuelles}. Notons-les pour le moment $\Gamma = (\inpc{i_1},\cdots,\inpc{i_K})$; elles seront les positions du BMU $\bmu\m{i_k}$ des cartes d'indice $i_k$ qui lui sont connectées~: $\bmu\m{i_k}_\tau$ lors de la relaxation puis $\bmu\m{i_k}_t$ lors de la mise à jour. La gestion des entrées contextuelles sera décrite avec le processus de relaxation en section suivante~; notons pour le moment que les entrées contextuelles sont des positions 1D ou 2D dans des cartes. 
 
 La carte possède donc $K+1$ couches de poids. On  note $\w_e(p)$ les poids externes et $\w_{ci_1}(p), \cdots, \w_{ci_K}(p)$ les poids correspondant aux entrées contextuelles, les \emph{poids contextuels}.
 $\w_{ci_k}$ correspond à la couche de poids relative à l'entrée contextuelle $\inpc_{i_k}$. Les poids externes sont à valeur dans $\mathcal{D}\m{i}$, la modalité associée à la carte $i$. Les poids contextuels sont à valeur dans l'espace des positions d'une cartes, soit $[0,1]$ en 1D ou $[0,1]^2$ en 2D.
@@ -423,7 +420,7 @@ Ainsi, la mise à jour des poids d'une carte est indépendante à chaque couche,
   }
  \end{algorithm}
  
-\subsection{\'Etapes de test et prédiction d'entrée}
+\subsection{\'Etapes de test et prédiction d'entrée}\label{sec:modele_test}
 
 Pendant l'apprentissage, nous effectuerons des étapes de test pendant lesquelles nous présenterons un ensemble d'entrées, mais les poids ne seront pas mis à jour. Lors d'une étape de test, on réalisera ainsi uniquement la recherche de BMU par relaxation à partir d'une configuration de poids figée. Cela nous permettra d'observer le comportement des cartes à un instant $t$ de l'apprentissage.
 
