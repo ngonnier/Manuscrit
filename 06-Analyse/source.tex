@@ -496,14 +496,14 @@ Les connexions d'une architecture sont rétroactives, aussi n'importe quelle car
 
 Nous avons observé que les zones de poids contextuels permettent cette capacité de prédiction. Ce comportement est donc bien un marqueur de l'apprentissage du modèle par une architecture de cartes. Le fait que l'entrée générée corresponde directement à la valeur de l'entrée manquante vient de la quantification vectorielle sur l'entrée externe qui est effectuée au sein de chaque carte.
 
-\section{Application de la prédiction d'entrée à la commande d'un drone}
-
-%\subsection{Introduction}
+\section{Exemple d'application de la prédiction d'entrée au contrôle d'un drone en vol}
 
 Nous avons observé qu'après apprentissage, une architecture de cartes est capable de générer une entrée manquante de façon autonome. Cette entrée est en adéquation avec le modèle d'entrées apprises par l'architecture~: il s'agit d'une prédiction.
-Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel. Cette expérience est un exemple simple d'application de l'architecture en robotique, et nous permet de tester les cartes sur des entrées bruitées, dont nous ne connaissons pas le modèle de relation.
+Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel. 
+Cette expérience est un exemple simple d'application de l'architecture en robotique, qui nous permet de tester les cartes sur des entrées bruitées, dont nous ne connaissons pas le modèle de relation.
 
-Nous disposons d'un drone contrôlé à distance par ordinateur. Ce drone possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun des capteurs du drone est une modalité d'un espace multimodal. Leurs valeurs dépendent les unes des autres~: elles dépendent par exemple de la position du drone à un instant.
+Nous disposons d'un drone contrôlé à distance par ordinateur. 
+Ce drone possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun des capteurs du drone est une modalité d'un espace multimodal. Leurs valeurs dépendent les unes des autres~: elles dépendent par exemple de la position du drone à un instant.
 La commande envoyée au drone à chaque instant peut également être considérée une modalité de l'environnement. 
 Lorsque le drone cherche à suivre une trajectoire donnée, la commande envoyée à chaque instant devient dépendante des valeurs des capteurs.
 
@@ -609,12 +609,11 @@ Enfin, les entrées d'une application en robotique sont en pratique en plus gran
 
 \section{Influence des connexions d'une architecture sur l'apprentissage du modèle d'entrée}
 
-Dans toutes les expériences précédentes, nous avons utilisé des architectures dans lesquelles les cartes sont toutes connectées.
-Nous avions une seule possibilité de graphe de connexions dans une architecture de deux cartes~; le nombre d'architectures de cartes possibles augmente ensuite exponentiellement avec le nombre de cartes considérées pour une architecture.
-L'influence des connexions sur l'apprentissage d'un modèle d'entrée est donc une orientation judicieuse pour les travaux d'études de CxSOM futurs.
+Dans toutes les expériences précédentes, nous avons utilisé des architectures dans lesquelles les cartes sont toutes connectées. Or, le nombre d'architectures de cartes différentes possibles augmente ensuite exponentiellement avec le nombre de cartes considérées pour une architecture.
+L'influence des connexions sur l'apprentissage d'un modèle d'entrée est donc une orientation judicieuse pour nos futurs travaux sur CxSOM. 
 Nous présentons dans cette dernière partie deux observations ouvrant des questions sur l'influence des connexions dans une architecture.
 Nous étudierons d'abord un exemple d'architecture dans laquelle chaque carte possède un grand nombre de connexions.
-Nous nous intéresserons ensuite au cas d'une architecture de trois cartes dans laquelle chaque carte est liée à une seule autre et non aux deux autres comme c'était le cas plus haut.
+Nous nous intéresserons ensuite à l'influence qu'ont sur une carte de l'architecture les cartes qui ne lui sont pas directement connectées.
 
 \subsection{Influence d'un grand nombre d'entrées contextuelles sur l'organisation d'une carte}
 
@@ -634,7 +633,7 @@ Dans chacune des cartes, nous pouvons noter que les poids contextuels qui corres
 L'architecture équivaut donc à 9 cartes indépendantes, ce qui est cohérent par rapport à la disposition des entrées. 
 Les couches de poids contextuels correspondant aux deux cartes dont les entrées sont identiques $\inpx\m{9}$ et $\inpx\m{10}$ sont représentées en rose dans $M\m{9}$ et $M\m{10}$. 
 Elles se déplient totalement, comme nous l'avions observé en figure~\ref{fig:id_results}. Cette couche de poids sera ainsi la seule à réellement intervenir dans le choix du BMU et l'architecture a encodé cette relation.
-En bas de la figure, nous tracons également observer la prédiction de l'entrée $\inpx\m{9}$. 
+En bas de la figure, nous traçons également observer la prédiction de l'entrée $\inpx\m{9}$. 
 Elle est correctement réalisée lorsque la carte $M\m{9}$ ne reçoit pas son entrée externe. Les connexions \og inutiles \fg{} perturbent donc peu l'apprentissage des relations entre entrées. 
 Finalement, les cartes $M\m{9}$ et $M\m{10}$ ont appris à effacer du calcul de l'activité les entrées indépendantes de leur entrée externe, et gardé les entrées contextuelles qui ont une relation avec leur entrée externe.
 
@@ -654,31 +653,34 @@ En particulier, on peut se demander si ce comportement peut permettre d'extraire
 \subsection{Influence des connexions distantes sur l'organisation d'une carte}
 
 Nous cherchons maintenant à observer comment une carte d'une architecture peut influencer une carte qui ne lui est pas directement connectée.
-Dans cette deuxième expérience, nous repassons sur une architecture de trois cartes 1D et reprenons comme modèle entrée le cercle tourné en trois dimensions (\textbf{G)}. 
+Dans cette deuxième expérience, nous repassons sur une architecture de trois cartes 1D et reprenons comme modèle entrée le cercle en trois dimensions (\textbf{G)}. 
 Nous comparons le comportement d'une architecture dans laquelle les cartes sont connectées réciproquement, présentée plus haut, à celui d'une architecture de trois cartes connectées en boucle, dans laquelle chaque carte est uniquement connectée à une seule autre carte. 
 Ce modèle d'architecture est illustré en figure~\ref{fig:archi_loop}~: $M\m{1}$ est connectée à $M\m{2}$, $M\m{2}$ connectée à $M\m{3}$ et $M\m{3}$ connectée à $M\m{1}$.
-Nous voulons observer si l'architecture en boucle est capable de prédire $\inpx\m{1}$. 
+
+En particulier, nous observerons si l'architecture en boucle est capable de prédire $\inpx\m{1}$. 
 Dans ce cas, la carte prédictive $M\m{1}$ ne reçoit en entrée que la position du BMU de $M\m{3}$~: la position du BMU de $M\m{2}$ intervient seulement de façon distante dans le calcul de l'activité de $M\m{1}$.
-Nous comparerons les résultats obtenus à une prédiction effectuée uniquement à partir des cartes $M\m{3}$ et $M\m{1}$, sur les mêmes entrées et les mêmes dispositions de poids que dans l'architecture~: nous ne relançons pas d'apprentissage pour cette phase de prédiction.
-$M\m{2}$ contribue à la prédiction dans le premier cas via $M\m{3}$, mais n'intervient pas dans le second cas.
-Cela nous permettra de dissocier la contribution de $M\m{3}$ de celle de $M\m{2}$ dans les représentations.
+Afin de dissocier l'influence de $M\m{2}$ et $M\m{3}$ dans la prédiction de $\inpx\m{1}$, nous réalisons également une phase de prédiction effectuée uniquement à partir des cartes $M\m{3}$ et $M\m{1}$, sur les mêmes entrées et les mêmes dispositions de poids que dans l'architecture en boucle.
+Dans le premier cas, $M\m{2}$ contribue à la prédiction via $M\m{3}$.
+Elle n'intervient pas dans le second cas.
 
 \begin{figure}[h!]
 	\centering\includegraphics[width=0.5\textwidth]{loop/archi.pdf}
 	\caption{Schéma de connexions d'une architecture en \og boucle\fg{}. \label{fig:archi_loop}}
 \end{figure}
 
-La disposition des poids est tracée  en figure~\ref{fig:3som_loop}.
+La disposition des poids est tracée en figure~\ref{fig:3som_loop}.
 Les poids des cartes montrent une organisation similaire au cas où les connexions sont réciproques~: les poids contextuels forment des zones et chaque carte différencie ses BMUs en fonction du modèle d'entrée $U$ et non seulement de son entrée externe.
 D'après la méthode d'étude présentée plus haut, nous pourrions dire que l'architecture a encodé le modèle d'entrées.
 
 En figure~\ref{fig:pred_loop}, nous représentons la valeur de la prédiction dans l'architecture de trois cartes en fonction de l'entrée théorique $\inpx\m{1}$. Nous comparons cette prédiction à une prédiction effectuée uniquement grâce à $M\m{3}$.
 Nous remarquons d'abord que la prédiction est moins bien réalisée dans l'architecture en boucle que dans l'architecture avec rétroaction~: les valeurs prédites ayant une erreur de moins de 0.1 par rapport à leur entrée théorique, marquées par les points rouges, représentent seulement 55 \% des 2000 entrées présentées lors du test.
-L'architecture en boucle n'a donc pas aussi bien appris le modèle d'entrée que dans le cas où les trois cartes sont connectées réciproquement.
-Cependant, la prédiction est mieux réalisée dans l'architecture en boucle à partir de $\inpx\m{3}$ et $\inpx\m{2}$ à distance, que lorsqu'on ne prend en compte que la valeur de $\inpx\m{3}$ pour la prédiction. Dans ce dernier cas, seules 40\% des entrées sont correctement prédites par le couple de cartes et l'erreur est globalement plus importante.
-Cela montre que $M\m{2}$ intervient malgré tout dans la prédiction de $\inpx\m{1}$, dans une faible mesure.
+L'architecture en boucle n'a donc pas aussi bien appris le modèle d'entrée que dans le cas où les trois cartes sont connectées réciproquement, dans laquelle plus de 99 \% des valeurs sont prédites avec une erreur de moins de 0.1 (cf. figure~\ref{fig:3som_pred}).
+Cependant, la prédiction est mieux réalisée dans l'architecture en boucle à partir de $\inpx\m{3}$ et $\inpx\m{2}$ à distance, que lorsqu'on ne prend en compte que la valeur de $\inpx\m{3}$ pour la prédiction. 
+Dans ce dernier cas, seules 40\% des entrées ont été correctement prédites par le couple de cartes~; l'erreur est globalement plus importante.
+Cela montre que $M\m{2}$ intervient dans la prédiction de $\inpx\m{1}$, dans une faible mesure.
 
-Cette observation montre qu'une carte a une influence à distance dans une architecture. Par contre, cette influence est minime par rapport à l'influence d'une connexion directe.
+Cette observation montre qu'une carte conserve une influence à distance dans une architecture. 
+Par contre, cette influence est minime par rapport à l'influence d'une connexion directe.
 L'influence de ces connexions distantes est ainsi une piste d'étude pour un passage sur une grande architecture, dans laquelle nous pourrons agir sur les connexions entre cartes.
 
 \begin{figure}[h!]
@@ -699,13 +701,15 @@ Ce chapitre de résultats présente l'analyse de l'organisation d'architectures 
 Nous avons d'abord observé que l'apprentissage du modèle d'entrée dans une architecture CxSOM est marqué par une organisation à deux échelles~: les poids externes se déplient sur l'espace d'entrée comme les poids d'une carte classique. Les poids contextuels se déplient sur des sous-régions de la carte définies par la valeur de l'entrée externe, formant une disposition en \og zones \fg{}.
 Ces zones de poids contextuels permettent d'encoder l'information sur tout le modèle d'entrée dans chacune des cartes~: 
 chaque carte choisit son BMU en fonction à la fois de son entrée externe et de ses entrées contextuelles. Une position de BMU encode donc en une seule valeur $\bmu$ l'ensemble du modèle d'entrée et non seulement l'entrée externe de la carte.
-Ces zones sont caractéristiques de l'apprentissage du modèle d'entrée par une architecture de cartes et sont observées sur de plusieurs jeux de données d'entrées jouet ou réelles, sur des architectures de deux et trois cartes, et quel que soit le nombre de connexions.
+Ces zones sont caractéristiques de l'apprentissage du modèle d'entrée par une architecture de cartes et sont observées sur de plusieurs jeux de données d'entrées jouets ou réelles, sur des architectures de deux et trois cartes, et quel que soit le nombre de connexions.
 
 Nous avons ensuite constaté que l'organisation en zones permet à l'architecture d'utiliser le modèle appris pour générer des valeurs d'entrées manquantes.
-Après apprentissage, une carte qui ne reçoit plus son entrée externe peut définir un BMU grâce à ses activités contextuelles et le poids externe du BMU est perçu comme une valeur générée de la modalité qui n'a pas été présentée.
-Dans ces tâches de prédiction, l'architecture CxSOM utilise de façon autonome le fait qu'elle ait encodé le modèle d'entrée. 
-Nous avons observé que cette capacité de prédiction est directement liée à la présence des zones de poids contextuels, ce qui valide le fait que l'encodage du modèle vient bien de cette organisation en zones.
-Cette capacité de prédiction est une application possible des architectures de cartes, mais permet également d'évaluer l'apprentissage d'un modèle d'entrée par l'architecture lorsque ce modèle n'est pas connu.
+Après apprentissage, une carte qui ne reçoit plus son entrée externe peut définir un BMU grâce à ses activités contextuelles.
+Le poids externe du BMU peut être utilisé comme une valeur générée de la modalité qui n'a pas été présentée.
+Dans ces tâches de prédiction, l'architecture CxSOM utilise le fait qu'elle ait encodé le modèle d'entrée. Une prédiction peut-être réalisée par n'importe quelle carte grâce aux connexions non-hiérarchique, et s'appuie sur le même algorithme que celui utilisé lors des tests.
+Nous avons observé que la capacité de prédiction est directement liée à la présence des zones de poids contextuels, ce qui valide le fait que l'encodage du modèle vient bien de cette organisation en zones.
+Cette capacité de prédiction est une application possible des architectures de cartes et permet également d'évaluer l'apprentissage d'un modèle d'entrée par l'architecture lorsque ce modèle n'est pas connu en théorie.
+% Ligne sur des perspectives de la capacité de prédiction
 
 
 Maintenant que nous avons observé les comportements d'apprentissage dans des architectures de 2 et 3 cartes, une perspective principale d'étude de CxSOM est la construction d'architectures comportant plus de cartes.
@@ -713,17 +717,16 @@ Dans ces architectures, le choix des connexions entre cartes constitue un degré
 Pour mener à bien cette construction, une étude plus générale de l'influence des connexions permettra d'ajouter cette dimension à la conception de systèmes CxSOM.
 Nous avons présenté dans ce chapitre deux perspectives d'influence des connexions entre les cartes.
 D'une part, nous avons vu que des connexions distantes permettent toujours à l'architecture de cartes d'apprendre un modèle d'entrée. Cependant, lors de la prédiction, les cartes distantes de la carte prédictive ont moins d'influence que les cartes qui lui sont directement connectées. Cette observation montre que la connectivité d'une architecture est bien un paramètre ayant une grande influence sur l'apprentissage. 
-Ensuite, nous avons observé que la présence de nombreuses entrées contextuelles amène les poids contextuels à s'organiser vers une valeur moyenne des entrées. Dans le cas ou ces entrées sont indépendantes au sein du modèle d'entrée, ce comportement de moyennage permet aux activités contextuelles d'effacer leur contribution dans le calcul de l'activité globale~; cette dernière ne prendra alors en compte que les entrées qui ont une dépendance réelle.
-Cependant, ce comportement de moyennage n'est pas souhaitable si les entrées ont toutes une relation entre elles mais que $U$ est en grande dimension.
+Ensuite, nous avons observé que la présence de nombreuses entrées contextuelles amène les poids contextuels à s'organiser vers une valeur moyenne des entrées. Dans le cas ou ces entrées sont indépendantes au sein du modèle d'entrée, ce comportement de moyennage permet aux activités contextuelles d'effacer leur contribution dans le calcul de l'activité globale~; cette dernière ne prendra alors en compte que les entrées qui ont une dépendance réelle. Cependant, ce comportement de moyennage n'est pas souhaitable si les entrées ont toutes une relation entre elles mais que $U$ est en grande dimension.
 
 
 Une perspective d'étude de CxSOM est maintenant d'évaluer la distribution de l'encodage du modèle d'entrée dans les cartes. 
 D'une part, la définition de valeurs indicatrices de cet encodage permettrait d'automatiser l'analyse des paramètres d'une architecture, de comparer des expériences entre elles et d'étudier des expériences dans lesquelles les tracés ne sont pas possibles à cause de la dimension des cartes et des entrées.
-Ensuite, dans les expériences présentées dans ce chapitre, le modèle $U$ est une variable 1D. 
+Ensuite, dans la plupart des expériences présentées dans ce chapitre, le modèle $U$ est une variable 1D. 
 Nous avons observé que l'apprentissage se traduit par le fait que $U$ est une fonction de $\bmu$ dans chaque carte.
 Dans une grande architecture apprenant sur des entrées multimodales de dimension totale supérieure, on ne peut pas attendre que chaque carte encode la totalité du modèle $U$~: le nombre de n\oe{}uds est limité et l'architecture se contenterait d'apprendre la valeur moyenne de $U$, comme dans l'architecture de 10 cartes de ce chapitre.
 On voudrait donc que $U$ ait une représentation distribuée au travers des cartes de l'architecture. 
-Cette distribution de la représentation de $U$ n'apparaît pas clairement dans les expériences sur deux et trois cartes car les architectures sont trop petites pour pouvoir étudier cette propriété.
+Cette distribution de la représentation de $U$ n'apparaît pas clairement dans les expériences sur deux et trois cartes, car les architectures sont trop petites pour pouvoir étudier cette propriété.
 Cet aspect distribué de l'apprentissage est un point à étudier sur des architectures de plus grande taille, et si besoin à corriger en adaptant les paramètres du modèle pour envisager un développement du modèle CxSOM à grande échelle. 
 Il sera par exemple possible de jouer sur les connexions, les paramètres des cartes ou le calcul d'activité.
 Nous étudierons des méthodes d'analyse de l'encodage de $U$ par l'architecture au chapitre~\ref{chap:indicateur}.
