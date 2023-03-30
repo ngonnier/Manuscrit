@@ -499,8 +499,8 @@ Nous avons observé que les zones de poids contextuels permettent cette capacit�
 \section{Exemple d'application de la prédiction d'entrée au contrôle d'un drone en vol}
 
 Nous avons observé qu'après apprentissage, une architecture de cartes est capable de générer une entrée manquante de façon autonome. Cette entrée est en adéquation avec le modèle d'entrées apprises par l'architecture~: il s'agit d'une prédiction.
-Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel. 
-Cette expérience est un exemple simple d'application de l'architecture en robotique, qui nous permet de tester les cartes sur des entrées bruitées, dont nous ne connaissons pas le modèle de relation.
+Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel.
+Cette expérience est un exemple simple d'application de l'architecture en robotique, qui nous permet de tester les cartes sur des entrées bruitées et dont nous ne connaissons pas le modèle de relation.
 
 Nous disposons d'un drone contrôlé à distance par ordinateur. 
 Ce drone possède une caméra frontale ainsi qu'un ensemble de capteurs internes. Chacun des capteurs du drone est une modalité d'un espace multimodal. Leurs valeurs dépendent les unes des autres~: elles dépendent par exemple de la position du drone à un instant.
@@ -514,21 +514,24 @@ Nous évaluerons la robustesse de l'algorithme à des données bruitées et la c
 
 \subsection{Méthode expérimentale}
 
-Le drone utilisé pour l'expérience est un quadricoptère. Il possède une caméra frontale non orientable.
-Nous le contrôlons à distance par un ordinateur.  Lors de cette expérience, le drone naviguera dans un couloir en ligne droite. L'objectif du contrôle est que le drone se déplace au centre du couloir, en ligne droite.
-
+Lors de cette expérience, le drone navigue dans un couloir en ligne droite. L'objectif du contrôle est que le drone se déplace en restant au centre du couloir, malgré les perturbations liées aux turbulences qu'il génère.
 
 La figure \ref{fig:drone} présente les capteurs et commandes disponibles.
-Le drone est commandé par la définition d'un angle de rotation autour de chaque axe. 
-L'angle autour de l'axe $z$, noté $\w$, contrôle la vitesse de rotation angulaire du drone autour de cet axe (lacet).
-L'angle autour de l'axe $y$ (tangage) contrôle la vitesse de rotation haut/bas. Enfin, l'angle autour de $x$, que nous notons $\rho$ (roulis), influence l'\emph{accélération} du drone selon $y$. Dans cette expérience, nous contrôlerons uniquement l'angle de roulis $\rho$ à l'aide de l'architecture de cartes.
-L'angle de lacet $\omega$ sera contrôlé à l'aide d'un PID de façon à ce que la caméra du drone reste dirigée vers le milieu du couloir. L'angle de tangage $y$ est maintenu à 0 à l'aide d'un PID, de façon à ce que le drone se déplace à une altitude constante.
-La commande $\rho$ constitue une première modalité des entrées que nous allons considérer pour l'apprentissage de l'architecture de cartes.
+$\w$ contrôle la vitesse de rotation autour de l'axe $z$ (lacet).
+La rotation haut/bas est commandée en fixant l'angle autour de l'axe $y$ (tangage). Cet angle influence l'accélération avant arrière.
+Enfin, l'angle autour de $x$ noté $\rho$ (roulis), permet de contrôler l'\emph{accélération} linéaire du drone selon $y$.
+Ces trois commandes constituent des modalités de l'environnement.
+% Lors du pilotage humain, ces valeurs sont asservies au sein du drone pour transformer les commandes linéaires en angles. 
+% Dans cette expérience, nous contrôlerons uniquement l'angle de roulis $\rho$ à l'aide de l'architecture de cartes.
+% L'angle de lacet $\omega$ sera contrôlé à l'aide d'un PID de façon à ce que la caméra du drone reste dirigée vers le milieu du couloir. L'angle de tangage $y$ est maintenu à 0 à l'aide d'un PID, de façon à ce que le drone se déplace à une altitude constante.
+% La commande $\rho$ constitue une première modalité des entrées que nous allons considérer pour l'apprentissage de l'architecture de cartes.
+Nous disposons d'une plateforme de pilotage du drone permettant de contrôler le robot a partir d'une 
+Dans notre expérience, nous voulons utiliser les capacités de prédiction de l'architecture de cartes pour générer la commande $\rho$.
 
 Nous considérons trois éléments extraits des capteurs du drone et qui sont relatifs à sa position par rapport au couloir. Une analyse de l'image issue de la caméra frontale nous permet de récupérer l'abscisse du point de fuite du couloir $x$ et la différence entre les angles des lignes du couloir, notée $\varphi$.
-Enfin, les capteurs internes du drone nous permettent de récupérer les vitesses linéaires $v_x,v_y,v_z$ à chaque instant selon chaque axe de déplacement. 
-Comme nous contrôlerons l'angle $\rho$, donc une l'accélération linéaire selon $y$, nous nous intéresserons particulièrement à la vitesse linéaire en $y$ en tant que modalité.
-Finalement, nous utiliserons quatre modalités lors du déplacement du drone~: l'abscisse du point de fuite $x$, l'angle duy couloir $\varphi$, la commande en angle de roulis $\rho$ et la vitesse linéaire courante en $y$ $v_y$.
+Enfin, les accéléromètres internes du drone nous permettent de récupérer les vitesses linéaires $v_x,v_y,v_z$ à chaque instant selon chaque axe de déplacement. 
+Nous contrôlerons l'angle $\rho$, donc une l'accélération linéaire selon $y$. nous nous intéresserons particulièrement à la vitesse linéaire en $y$ en tant que modalité.
+Finalement, nous utiliserons quatre modalités lors du déplacement du drone~: l'abscisse du point de fuite $x$, l'angle du couloir $\varphi$, la commande en angle de roulis $\rho$ et la vitesse linéaire courante en $y$ $v_y$.
 
 
 Nous construisons une architecture CxSOM sur ces quatre modalités, composée de quatre cartes 1D connectées chacune aux trois autres, tracée en figure~\ref{fig:archi_drone}. Chaque carte prend une des modalités comme entrée externe.
@@ -551,7 +554,8 @@ Les angles de tangage et de lacet sont quant à eux contrôlés par un PID afin 
 
 Afin de mieux visualiser les conditions de l'expérience, nous avons tracé les dépendances entre chaque modalité en figure~\ref{fig:drone_inp}.
 Nous nous intéressons ici aux dépendances entre la commande $\rho$ qui est celle que nous prédirons et des autres modalités.
-On remarque que $\rho$ dépend linéairement de l'angle du couloir $\varphi$, mais que cette dépendance est très bruitée. Elle dépend également de la vitesse interne du drone $v_y$. Par contre, les entrées correspondant à l'abscisse du point de fuite varient peu~; la commande $\rho$ dépend peu de $x$.
+On remarque que $\rho$ dépend linéairement de l'angle du couloir $\varphi$, mais que cette dépendance est très bruitée. Elle dépend également de la vitesse interne du drone $v_y$. 
+Les entrées ne dépendent pas du point de fuite $x$, comme on s'y attend.
 
 \begin{figure}
 	\begin{minipage}{0.5\textwidth}
