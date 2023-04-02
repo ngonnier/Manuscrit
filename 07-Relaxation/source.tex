@@ -9,7 +9,7 @@
 }{}
 
 \begin{document}
-\chapter{Analyse du mécanisme de relaxation}\label{chap:relaxation}
+\chapter{Exploration et représentation du mécanisme de relaxation}\label{chap:relaxation}
 \graphicspath{{./},{07-Relaxation/}}
 
 \minitoc
@@ -17,14 +17,14 @@
 \section{Introduction}
 
 Le processus de relaxation que nous avons défini au chapitre précédent est une méthode originale de l'algorithme CxSOM permettant de construire des connexions bidirectionnelles entre cartes.
-Dans ce chapitre, nous chercherons à observer le comportement de la relaxation et notamment sa convergence.
-Avant cela, nous nous intéressons à son inspiration biologique et pourquoi il reste proche des architectures de cartes cellulaires développées précédemment dans l'équipe \cite{khouzam_neural_2014,menard05}, qui ont inspiré le modèle CxSOM.
+Afin de valider son utilisation en tant que méthode de recherche de BMU et d'interface entre carte, nous cherchons dans ce chapitre à décrire son comportement.
 
-\subsection{Du calcul cellulaire au calcul à l'échelle d'une carte}
+\subsection{Origine du mécanisme de relaxation~: passage du calcul cellulaire au calcul à l'échelle d'une carte}
 
-Dans les modèles d'architectures développés chez \cite{khouzam_neural_2014,menard05} le processus dynamique d'apprentissage s'appuyait sur des champs neuronaux dynamiques couplés (DNF), qui remplacaient la recherche de BMU.
-Les DNF, introduits en \cite{Amari1977DynamicsOP} permettent de modéliser à gros grains l'activité spatiotemporelle d'une population de neurones impulsionnels. 
-Au lieu de s'intéresser à l'activité d'un seul neurone, tel que son taux de décharge, le modèle des DNF calcule un potentiel $u(x,t)$ en un ensemble de positions continues $x$ au cours du temps $t$, réagissant à un stimulus d'entrée $s(x,t)$. Les positions $x$ s'étendent sur l'espace des caractéristiques d'entrée et représentent une valeur dans cet espace. Ainsi, un DNF réagissant à un stimulus 1D est en une dimension, etc.
+Le mécanisme de relaxation que nous proposons, qui s'appuie sur le calcul d'activation et le déplacement de BMUs, hérite des architectures de cartes cellulaires développées précédemment dans l'équipe \cite{khouzam_neural_2014,menard05}, qui ont inspiré le modèle CxSOM.
+Dans ces travaux, le processus dynamique d'apprentissage s'appuyait sur des champs neuronaux dynamiques couplés (DNF) comme pendant cellulaire de la recherche de BMU.
+Les champs neuronaux dynamiques, introduits en \cite{Amari1977DynamicsOP} sont des systèmes dynamiques temporelles modélisant à gros grains l'activité spatiotemporelle d'une population de neurones impulsionnels. 
+Au lieu de s'intéresser à l'activité d'un seul neurone, tel que son taux de décharge, le modèle de DNF calcule un potentiel d'activation $u(x,t)$ sur un ensemble de positions continues $x$ au cours du temps $t$, réagissant à un stimulus d'entrée $s(x,t)$. Les positions $x$ s'étendent sur l'espace des caractéristiques du signal d'entrée et représentent une valeur dans cet espace. Ainsi, un DNF réagissant à un stimulus $s(x,t)$ 1D est en une dimension, etc.
 L'évolution du potentiel $u$, pour un exemple en temps continu sur un espace $x$ en une dimension, s'exprime par l'équation différentielle~:
 
 \begin{equation}\label{eq:DNF}
@@ -33,47 +33,51 @@ L'évolution du potentiel $u$, pour un exemple en temps continu sur un espace $x
 
 \begin{figure}
 	\centering\includegraphics[width=0.9\textwidth]{DNF.pdf}
-	\caption{Schéma des éléments intervenant dans le calcul du potentiel $u$ du DNF~\ref{eq:DNF}, ici pour un signal d'entrée $s(x)$ en une dimension, constant dans le temps.
-	Le potentiel $u$ du DNF évolue grâce aux interactions entre les positions $x$, grâce à l'intégration de l'activation de tout le DNF convolué à l'interaction latérale $\omega$ en chaque $x$.
+	\caption{Schéma des éléments intervenant dans le calcul du potentiel $u$ du DNF (équation~\ref{eq:DNF}), ici pour un signal d'entrée $s(x)$ en une dimension, constant dans le temps.
+	Le potentiel $u$ du DNF évolue grâce aux interactions entre les positions $x$, grâce à l'activation de tout le DNF convolué par l'interaction latérale $\omega$ en chaque $x$.
 	L'évolution du DNF amène toute l'activation $g(u(x))$ autour d'un seul point, qui se situe au maximum de $s(x)$~: le maximum local de gauche n'a pas de représentation dans l'activation totale, à cause des connexions inhibitrices.
-	Ce DNF implémente ainsi un mécanisme de Winner Take All. \label{fig:DNF}
+	Cet exemple de DNF implémente ainsi un mécanisme de Winner Take All. En fonction des paramètres, les DNF peuvent présenter d'autres réponses. \label{fig:DNF}
 	}
 \end{figure}
 
-L'évolution du potentiel en chaque point $x$ dépend ainsi de l'état d'activation de tout le DNF, grâce à l'intégration sur toutes les positions de l'activation. Les éléments principaux du calcul de $u$ sont illustrés en figure~\ref{fig:DNF}.
-Dans ce terme d'intégrale, $g(u(y))$ est une fonction sigmoïde centrée en zéro représentant l'activation à une position $y$. Elle s'applique sur le potentiel $u(y)$, de telle sorte qu'une position $y$ du champ n'est prise en compte dans l'interaction générale que si son potentiel dépasse un certain seuil d'activation. $g(u(x,t))$ correspondra également à la valeur utilisée comme sortie du DNF.
-$\omega(x-y)$ (en haut de la figure) est un terme d'interaction latérale, en général une différence de gaussiennes, rendant le voisinage proche de $x$ \emph{excitateur}~: son activation renforce le potentiel $u(x,t)$, tandis que le voisinage à plus longue distance est inhibiteur. 
-Ensuite, $s(x,t)$ est le signal d'entrée du DNF, et $h$ est un niveau de repos.
-Le calcul du potentiel $u(x,t)$ d'un DNF sur un stimulus d'entrée résulte en la formation de bulles d'activités évoluant dans les zones ou le signal d'entrée est élevé, implémentant un mécanisme de Winner Take All. Dans l'exemple présenté en figure~\ref{fig:DNF}, l'activation $g(u(x))$ du DNF évoluera pour former une seule bulle (en rouge) centrée en la valeur où $s(x)$ est maximal, sans traduire les maxima secondaires de $s$.
+Les éléments principaux du calcul de $u$ sont illustrés en figure~\ref{fig:DNF}.
+$s(x,t)$ est le signal d'entrée du DNF, et $h$ est un niveau de repos.
+Ensuite, l'évolution du potentiel en chaque point $x$ dépend de l'état d'activation de tout le DNF, grâce à l'intégration sur toutes les positions $y$ de l'activation.
+Dans ce terme d'intégrale, $g(u(y))$ est une fonction sigmoïde centrée en zéro représentant l'activation du champ neuronal en une position $y$. Elle s'applique sur le potentiel $u(y)$, de telle sorte qu'une position $y$ du champ ne sera prise en compte dans l'interaction générale que si son potentiel dépasse un certain seuil d'activation. $g(u(x,t))$ correspondra également à la valeur utilisée comme sortie du DNF.
+$\omega(x-y)$ (en haut de la figure) est un terme d'interaction latérale, en général une différence de gaussiennes, rendant le voisinage proche de $x$ \emph{excitateur}~: son activation renforce le potentiel $u(x,t)$, tandis que le voisinage à plus longue distance est inhibiteur.
+En résumé, le calcul du potentiel $u(x,t)$ en tout point $x$ dépend de l'activation de l'ensemble des positions du DNF, convoluée par le terme d'interaction latérale.
+
+Le calcul du potentiel $u(x,t)$ d'un DNF sur un stimulus d'entrée résulte en la formation de bulles d'activités évoluant dans les zones ou le signal d'entrée est élevé.
+Les comportement du DNF varient en fonction des paramètres choisis~; une des applications possibles est l'implémentation d'un mécanisme de Winner Take All. 
+Dans l'exemple présenté en figure~\ref{fig:DNF}, l'activation $g(u(x))$ du DNF évoluera pour former une seule bulle (en rouge) centrée en la valeur où $s(x)$ est maximal, sans représenter le maximum secondaires de $s$.
 Le calcul du potentiel $u(x,t)$ prend en compte en chaque point tout le champ d'activation, mais les positions qui ont vraiment une influence sont situés sur un voisinage de $x$ en chaque point, compte tenu de la forme du terme d'interaction latérale $w(x-y)$.
-Les calculs permettant le mécanisme Winner Take All implémenté par le DNF peuvent ainsi être considérés comme cellulaires~: ils ne dépendent que d'un voisinage de chaque position.
+Les calculs permettant le mécanisme Winner Take All implémenté par le DNF se rapprochent de calculs cellulaires~: ils ne dépendent que d'un voisinage de chaque position.
 
 Des DNF peuvent réagir à plusieurs signaux d'entrée $s_i(x)$ et être couplés en des architectures dynamiques, exhibant des mécaniques complexes, présentées par exemple en \cite{Fix2011ADN, Sandamirskaya2014DynamicNF}.
 Ces travaux montrent que le couplage de DNF permet de générer des comportements autonomes au sein de structures de DNF, au lieu de la seule réaction à l'entrée $s$ engendrée par le DNF simple.
-Grâce à cet aspect dynamique et cellulaire, la construction d'architectures de cartes auto-organisatrices couplées en~\cite{khouzam_neural_2014,menard05} utilise des DNF couplés associés aux différentes cartes. Leur évolution couplée, appelée relaxation dans ces travaux, amènent les DNF à créer des bulles d'activité stables définissant dans chaque carte les unités qui seront mise à jour.
+Grâce à cet aspect dynamique et cellulaire, la construction d'architectures de cartes auto-organisatrices couplées en~\cite{khouzam_neural_2014,menard05} utilise des DNF couplés associés aux différentes cartes. Leur évolution couplée, appelée relaxation dans ces travaux, amènent les DNF à se stabiliser sur des bulles d'activité, définissant dans chaque carte les unités qui seront mise à jour.
 Les architectures de cartes proposées dans ces travaux ajoutent finalement un mécanisme d'apprentissage aux DNF, qui sont à la base un processus dynamique réagissant aux entrées.
 Les DNF apportent quant à eux le calcul cellulaire manquant aux cartes auto-organisatrices classiques pour réaliser des calculs au niveau du neurone et non de la carte.
-Cependant, ces calculs de DNF pour l'apprentissage des cartes nécessitent beaucoup de paramètres et sont extrêmement gourmands en calculs.
+Cependant, l'optimisation des paramètres du DNF est lourde à réaliser \cite{fix:hal-00869726}, et le calcul du potentiels est extrêmement gourmands en calculs. 
 
-La recherche de BMU d'une carte de Kohonen implémente, comme les DNF un mécanisme de Winner Take All, mais dont le calcul est centralisé à l'échelle de la carte grâce au calcul de l'activation des neurones.
-Ce calcul centralisé nécessite moins de ressources de calcul que le calcul des DNF, qui s'appuie sur la résolution numérique d'une équation différentielle.
-Dans le même esprit que l'utilisation d'une activation chez Kohonen pour trouver le BMU au lieu d'un mécanisme cellulaire, l'algorithme de relaxation que nous avons proposé cherche à conserver un processus dynamique de recherche de BMU mais en plaçant les calculs à l'échelle d'une carte. 
+Les cartes de Kohonen classiques ont simplifié le processus de calcul de champs neuronaux par une recherche de BMU par activation. Ce calcul implémente, comme les DNF un mécanisme de Winner Take All, mais est centralisé à l'échelle de la carte.
+Dans le même esprit que l'utilisation d'une activation chez Kohonen pour trouver le BMU au lieu d'un mécanisme cellulaire, l'algorithme de relaxation que nous avons proposé pour CxSOM cherche à conserver un processus dynamique de recherche de BMU mais en plaçant les calculs à l'échelle d'une carte. 
 Le choix d'un BMU $\bmu$ dans une carte auto-organisatrice par un $\argmax$ équivaut à la génération d'une bulle d'activité centrée en $\bmu$ dans un DNF. 
-Le processus dynamique de relaxation que nous utilisons dans le modèle CxSOM suit le même principe, en passant des mécanismes cellulaires réalisés dans les DNF couplés vers des calculs d'activité et de BMU. Le couplage entre les activités des cartes reste par contre un processus dynamique.
+Le processus dynamique de relaxation que nous utilisons suit le même principe, en passant des mécanismes cellulaires réalisés dans les DNF couplés vers des calculs d'activité et de BMU. Le couplage entre les activités des cartes reste par contre un processus dynamique.
 Ce choix nous a permis de simplifier grandement les calculs réalisés au sein d'une carte afin d'envisager d'étudier facilement des grandes architectures de cartes, tout en conservant une proximité avec une vision cellulaire des cartes auto-organisatrices.
 
-Dans notre modèle, le mécanisme de relaxation cherche à la fois à trouver un BMU dans chaque carte, c'est-à-dire une position à laquelle l'activité est maximale, et joue le rôle d'interface entre cartes en utilisant la position du BMU dans les cartes voisines pour le calcul d'activité. 
+Dans notre modèle, le mécanisme de relaxation permet à la fois à trouver un BMU dans chaque carte, c'est-à-dire une position à laquelle une activité est maximale servant à la mise à jour, et joue le rôle d'interface entre cartes.
 
 \subsection{Problématique du chapitre}
 
-Dans ce chapitre, nous nous intéressons à la relaxation en tant que mécanisme d'interface entre cartes.
-Nous proposons d'abord une formalisation de l'algorithme de relaxation proposé dans le modèle CxSOM.
-Cette formalisation nous permet de mieux analyser et représenter sa dynamique. 
-Nous nous demanderons notamment si la relaxation est équivalente, comme dans une carte simple, à une recherche de maximum d'activation au niveau de l'architecture.
-Nous expliciterons ensuite les propriétés de convergence qu'on attend de l'algorithme de relaxation pour pouvoir le considérer comme une recherche de \og Best Matching Unit \fg{}.
-Le comportement de la relaxation dépend complètement des configurations des poids externes et contextuels des cartes de l'architecture, qui résultent d'un processus de mise à jour et n'ont pas de formulation analytique. Nous chercherons ici à visualiser et caractériser des trajectoires de relaxation sur des exemples.
-Ce chapitre n'a pas pour but d'apporter une preuve de convergence. 
-Les formalisations que nous présentons permettent par contre de mieux comprendre les mécanismes en jeu lors de la relaxation et de comprendre les tracés sur les exemples présentés en section~\ref{sec:relax_expe}.
+Dans ce chapitre, nous explorons la validité de la relaxation en tant que mécanisme d'interface entre cartes et de recherche de BMU.
+Nous proposons d'abord une formalisation plus détaillée qu'au chapitre \ref{chap:modele} de l'algorithme de relaxation, qui permettra de mettre en valeur les éléments intervenant dans la dynamique du système.
+Nous définirons notamment l'équivalent pour l'architecture CxSOM de la recherche d'argmax d'une carte simple.
+La formalisation de l'algorithme nous permettra finalement de proposer les conditions de convergence que la relaxation doit présenter afin de pouvoir être considérée comme une recherche de BMU.
+
+Nous verrons que comportement de la relaxation dépend complètement des configurations des poids externes et contextuels des cartes de l'architecture, qui résultent d'un processus de mise à jour et n'ont pas de formulation analytique. 
+Afin d'explorer les conditions de convergences formalisées, nous chercherons à visualiser et caractériser des trajectoires de relaxation sur des exemples de configuration de poids, à différents instants de l'apprentissage.
+Sans chercher à apporter une preuve de convergence, nous proposerons des hypothèses et intuitions à partir des exemples tracés dans ce chapitre.
 
 \section{Formalisation de l'algorithme de relaxation}
 
