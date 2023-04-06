@@ -1790,29 +1790,29 @@
 
 %bibliographie options
 
-\DeclareCiteCommand{\citetitle}[]
-{\usebibmacro{prenote}}
-{\usebibmacro{citeindex}%
-  \printtext[bibhyperref]{
-  \indexfield{indextitle}
-  \printfield[citetitle]{labeltitle}}
-  }
-{\multicitedelim}
-{\usebibmacro{postnote}}
+% \DeclareCiteCommand{\citetitle}[]
+% {\usebibmacro{prenote}}
+% {\usebibmacro{citeindex}%
+%   \printtext[bibhyperref]{
+%   \indexfield{indextitle}
+%   \printfield[citetitle]{labeltitle}}
+%   }
+% {\multicitedelim}
+% {\usebibmacro{postnote}}
 
-\DeclareCiteCommand{\cite}[\mkbibparens]
-{\usebibmacro{prenote}}
-{\usebibmacro{citeindex}%
-  \printtext[bibhyperref]{\usebibmacro{cite}}}
-{\multicitedelim}
-{\usebibmacro{postnote}}
+% \DeclareCiteCommand{\cite}[\mkbibparens]
+% {\usebibmacro{prenote}}
+% {\usebibmacro{citeindex}%
+%   \printtext[bibhyperref]{\usebibmacro{cite}}}
+% {\multicitedelim}
+% {\usebibmacro{postnote}}
 
-\DeclareCiteCommand*{\cite}[\mkbibparens]
-{\usebibmacro{prenote}}
-{\usebibmacro{citeindex}%
-  \printtext[bibhyperref]{\usebibmacro{citeyear}}}
-{\multicitedelim}
-{\usebibmacro{postnote}}
+% \DeclareCiteCommand*{\cite}[\mkbibparens]
+% {\usebibmacro{prenote}}
+% {\usebibmacro{citeindex}%
+%   \printtext[bibhyperref]{\usebibmacro{citeyear}}}
+% {\multicitedelim}
+% {\usebibmacro{postnote}}
 
 \DeclareOuterCiteDelims{cite}{\bibopenbracket}{\bibclosebracket}
 \DefineBibliographyExtras{french}{\restorecommand\mkbibnamefamily}

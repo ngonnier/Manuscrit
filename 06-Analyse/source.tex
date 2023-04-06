@@ -9,7 +9,7 @@
 }{}
 
 \begin{document}
-\chapter{Analyse des mécanismes d'apprentissage dans une architecture de cartes 1D}\label{chap:analyse}
+\chapter{Analyse des mécanismes d'apprentissage dans des architectures de cartes 1D}\label{chap:analyse}
 \graphicspath{{06-Analyse/figures},{./figures}}
 \minitoc
 
@@ -30,8 +30,7 @@ Chaque carte prend en entrée le BMU de sa voisine, introduisant une rétroactio
 De cette façon, nous cherchons à isoler des comportements relatifs à une seule interface entre cartes.
 Dans cette section, nous reviendrons sur les comportements identifiés au chapitre~\ref{chap:repr} en cherchant à les généraliser sur plusieurs modèles d'entrées.
 
-
-\begin{figure}[ht]
+\begin{figure}
 	\centering\includegraphics[width=\textwidth]{archi_2maps.pdf}
 	\caption{Schéma de l'architecture de deux cartes. Chaque carte possède une couche de poids externe $\w_e$ et une couche de poids contextuels $\w_c$. Les connexions sont rétroactives~: l'entrée contextuelle de $M\m{1}$ est la position du BMU de la carte $M\m{2}$ et inversement. 
 	Chaque carte prend une entrée externe $\inpx\m{i}$.\label{fig:archis}}
@@ -58,25 +57,25 @@ Nous comparerons ensuite les observations réalisées sur ce modèle sur d'autre
 	Une carte de Kohonen classique a comme propriété d'être résistante au bruit sur les données. Ainsi, une carte 1D se dépliant sur un anneau en 2D apprendra d'abord une représentation du cercle sous-jacent. Nous voulons vérifier comment cette propriété se traduit sur l'architecture de deux cartes.
 \end{itemize}
 
-\begin{figure}[h!]
+\begin{figure}
 	\includegraphics[width=\textwidth]{inputs/inputs.pdf}
 	\caption{Dispositions d'entrées en deux dimensions utilisées dans cette section. $M\m{1}$ prend en entrée les valeurs $\inpx\m{1}$ et $M\m{2}$ les valeurs $\inpx\m{2}$. \label{fig:input_list}}
 \end{figure}
 
 Pour générer ces entrées, $U$ est tiré uniformément dans $[0,1]$, et tout couple d'entrées $(\inpx\m{1},\inpx\m{2})$ présenté à l'architecture lors de la même itération est généré à partir de la même valeur de $U$.
 
-\subsection{Observation sur l'apprentissage d'un modèle d'entrées~: le cercle}\label{sec:2som_cercle}
+\subsection{Identification de mécanismes d'apprentissage sur un exemple}\label{sec:2som_cercle}
 
 Revenons d'abord sur l'expérience sur le cercle \textbf{A}, déjà présentée au chapitre \ref{chap:repr}. 
 Après avoir vérifié que les poids des cartes convergent au cours de l'apprentissage, nous détaillerons la disposition finale des poids externes et contextuels et l'organisation des BMU de la carte, afin d'identifier les mécanismes traduisant l'apprentissage des entrées et de leurs relations.
 
 \subsubsection{Convergence des poids}
 
-\begin{figure}[ht]
+\begin{figure}
 	\includegraphics[width=\textwidth]{convergence/cercle_moy_2.pdf}
 	\vspace{-0.5cm}
 	\caption{Pour chaque carte, nous représentons l'évolution en fonction du temps de la différence moyenne entre les poids d'une carte à l'instant $t$ et ceux à $t-100$, $\langle|\w_t(p) - \w_{t-100}|\rangle$.
-	L'évolution est moyennée sur 10 apprentissages dont les entrées sont tirées aléatoirement selon la même distribution d'entrées (\textbf{(A)}).
+	L'évolution est moyennée sur 10 apprentissages dont les entrées sont tirées aléatoirement selon la même distribution d'entrées (\textbf{A}).
 	Ces tracés montrent que les poids externes et contextuels évoluent rapidement vers une position dans laquelle ils ne varient plus que faiblement.\label{fig:conv}}
 \end{figure}
 
@@ -93,7 +92,7 @@ La convergence en l'absence de décroissance des paramètres pourrait cependant 
 
 \subsubsection{Organisation de la réponse des cartes après apprentissage}
 
-\begin{figure}[ht]
+\begin{figure}
 	\centering\includegraphics[width=\textwidth]{cercle/weights_500.pdf}
 	\caption{Représentation cartographique des poids et entrées lors d'une phase de test selon la position du BMU dans chacune des cartes. Nous remarquons que les poids d'une carte, par exemple la carte $M^{(1)}$, s'organisent selon deux échelles. Les poids externes se déplient sur tout l'intervalle $[0,1]$, tandis que les poids contextuels forment des motifs pseudo-périodiques. 
 	Les BMU s'organisent en zones, différenciant les valeurs de la paire $(\inpx\m{1}, \inpx\m{2})$ et non seulement la valeur de $\inpx\m{1}$. 
@@ -113,7 +112,7 @@ Les positions des BMU dans les deux cartes se répartissent en zones compactes, 
 Il s'agit d'une première différence avec une carte classique, pour laquelle toutes les positions seront BMU lorsque les entrées sont distribuées de façon continue. Les zones dans lesquelles les n\oe{}uds sont BMU correspondent aux extrema des poids contextuels et leurs alentours.
 
 
-\begin{figure}[ht]
+\begin{figure}
 	\centering\includegraphics[width=0.7\textwidth]{cercle/weights_zoom_500.pdf}
    \caption{Zoom sur la figure \ref{fig:w} entre les positions 0.35 et 0.55 de la carte $M\m{1}$. 
    Nous y faisons apparaître la position sur la courbe des n\oe{}uds de la carte.
@@ -131,8 +130,8 @@ Dans chaque carte, une position se spécialise en tant que BMU par rapport aux d
 
 \subsubsection{Apprentissage du modèle d'entrées par chaque carte}
 
-En section~\ref{sec:u_bmu}, nous avons observé que l'apprentissage des relations entre entrées se traduit par une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, tracée en figure~\ref{fig:U_BMU}.
-Cette propriété traduit l'observation qu'un BMU se spécialise en fonction de toutes les entrées du modèle, qui a également été mise en valeur par la représentation cartographique au paragraphe précédent. Nous reviendrons plus en détail sur cette représentation et la propriété de relation fonctionnelle entre la variable cachée et la position du BMU au chapitre~\ref{chap:indicateur}.
+En section~\ref{sec:u_bmu}, nous avons observé que l'apprentissage des relations entre entrées se traduit par une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, tracée en figure~\ref{fig:piu}.
+Cette propriété traduit l'observation que dans chaque carte, un BMU se spécialise en fonction de l'ensemble des modalités du modèle d'entrées, qui a également été mise en valeur par la représentation cartographique au paragraphe précédent. Nous reviendrons plus en détail sur cette représentation et la propriété de relation fonctionnelle entre la variable cachée et la position du BMU au chapitre~\ref{chap:indicateur}.
 
 \subsubsection{Erreur de quantification vectorielle}
 
@@ -158,8 +157,7 @@ Les résultats de cette expérience ainsi que les observations présentées au c
 \begin{itemize}
 	\item Les poids externes de chaque carte de l'architecture permettent à chacune d'effectuer une bonne quantification vectorielle de leurs entrées externes.
 	\item Les poids externes et contextuels de chaque carte s'organisent selon deux échelles d'organisation. L'organisation des poids contextuels forme des motifs pseudo-périodiques.
-	La réponse des cartes CxSOM est marquée par la présence de zones de BMU séparées par des zones mortes. Ces zones de BMU correspondent aux pseudo-périodes formées par les poids contextuels. Chaque zone réagit à un même intervalle de valeur du modèle d'entrées, donc de $U$.
-	Entre chaque zone de BMU, nous observons des zones mortes dans lesquelles les n\oe{}uds ne sont jamais BMU.
+	\item La réponse des cartes est marquée par la présence de zones de BMU, séparées par des zones mortes. Ces zones de BMU correspondent aux pseudo-périodes formées par les poids contextuels. Chaque zone se spécialise pour un même intervalle de valeurs du modèle d'entrées complet, donc de $U$.
 	\item L'apprentissage du modèle d'entrées par l'architecture se traduit par l'existence d'une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, montrant que chaque carte encode le modèle d'entrées et non seulement son entrée externe.
 \end{itemize}
 
@@ -167,7 +165,7 @@ Nous cherchons dans la suite de ce chapitre à vérifier ces hypothèses sur les
 Nous étudierons en particulier comment les deux échelles de quantification se forment et quelles propriétés d'apprentissage elles confèrent à l'architecture de cartes.
 Nous verrons ensuite en section \ref{sec:pred} que cette organisation à deux échelles, ainsi que la propriété de quantification vectorielle de l'entrée externe permet à l'architecture de cartes de prédire des entrées manquantes lors d'une phase de test.
 
-\subsection{Généralisation des observations sur les autres modèles d'entrées.}
+\subsection{Généralisation des mécanismes d'apprentissage sur les autres modèles d'entrées}
 
 Nous reprenons les modèles d'entrées \textbf{B},\textbf{C},\textbf{D},\textbf{E} de la figure~\ref{fig:inputs}.
 Pour tous ces modèles, nous avons vérifié que la quantification vectorielle est bien réalisée dans chaque carte sur ses entrées, que nous n'avons pas tracée ici.
@@ -285,7 +283,7 @@ Nous pouvons proposer une explication à ces deux échelles d'apprentissage par 
 D'une part, les poids externes se déplient plus vite que les poids contextuels, car le grand rayon de voisinage externe permet de mettre à jour plus de prototypes à chaque itération.
 D'autre part, les poids externes présentent une \og attraction \fg{} plus forte sur les unités voisines~· l'élasticité de la couche de poids externe est plus élevée.
 Les poids contextuels doivent donc composer avec cette force, l'organisation des poids contextuels est ainsi subordonnée à l'organisation des poids externes. 
-Les paramètres forcent finalement les couches de poids d'une carte à s'organiser selon deux modes différents de la carte, sur leur distribution d'entrées respectives. Les poids externes sont organisés selon la fréquence $f=0$, tandis que les poids contextuels se placent sur une harmonique.
+Les rayons de voisinage forcent finalement les couches de poids d'une carte à s'organiser selon deux modes différents de la carte, sur leur distribution d'entrées respectives. Les poids externes sont organisés selon la fréquence $f=0$, tandis que les poids contextuels se placent sur une harmonique.
 
 
 Dans nos expériences, nous avons pris des $r_c$ communs à toutes les couches de poids contextuels.
@@ -467,7 +465,7 @@ Lors de son déplacement dans le couloir, les valeurs des capteurs reçues et la
 
 La figure \ref{fig:drone} présente les capteurs et commandes que nous voulons utiliser pour la tâche de contrôle.
 Les commandes sont envoyées au drone en fixant les angles de rotation $\theta, \rho$ et la vitesse de rotation $\omega$.
-Nous disposons déjà d'une plateforme de pilotage du drone lui permettant de rester centré dans le couloir à partir de filtres correcteurs agissant sur les commandes $\omega$ et $\rho$, à partir des données extraites de la caméra.Il s'agit de $\varphi$, la différence entre les angles formés par les lignes de fuite du couloir, $x$, l'excentricité du point de fuite dans le repère de la caméra ainsi que la vitesse linéaire $v$ récupérées par l'accéléromètre selon $x$. La rotation $\omega$ est asservie proportionnellement à $x$, de façon à ce que $x$ reste centré autour de 0.
+Nous disposons déjà d'une plateforme de pilotage du drone lui permettant de rester centré dans le couloir à partir de filtres correcteurs agissant sur les commandes $\omega$ et $\rho$, à partir des données extraites de la caméra. Il s'agit de $\varphi$, la différence entre les angles formés par les lignes de fuite du couloir, $x$, l'excentricité du point de fuite dans le repère de la caméra ainsi que la vitesse linéaire $v$ récupérées par l'accéléromètre selon $x$. La rotation $\omega$ est asservie proportionnellement à $x$, de façon à ce que $x$ reste centré autour de 0.
 La commande $\rho$, qui influence l'accélération linéaire selon $x$, est contrôlée par un PID qui s'appuie sur $\varphi$ ainsi que $v$, la vitesse linéaire selon $x$.
 Dans notre expérience, nous voulons apprendre grâce à une architecture CxSOM les relations existant entre ces différentes commandes et capteurs à partir des trajectoires pilotées par ce PID, puis générer une prédiction de la commande lors d'une phase de prédiction.
 Nous présentons ici le résultat du contrôle de $\rho$ grâce à CxSOM, $\omega$ restant contrôlé grâce au correcteur proportionnel. L'architecture doit apprendre les relations entre $\varphi$, $v$ et $\rho$ pour remplacer le PID lors de la phase de prédiction. 
@@ -496,7 +494,7 @@ Ces poids des cartes sont représentés en figure \ref{fig:drone_w}.
 Nous observons d'abord que l'organisation des poids contextuels rappelle celle observée dans les dispositions d'entrées jouets~: nous observons des motifs pseudo-périodiques dans les valeurs des poids contextuels, formant une deuxième échelle d'organisation. Un exemple de calcul d'activité de la carte $\rho$ pendant la phase de prédiction est illustré en violet. Le BMU correspond au maximum de l'activité~: $\bmu\m{\rho} = 0.41$ et la valeur de prédiction est $\w_e(\bmu\m{\rho}) = 0.49$. Cette valeur, remise à l'échelle, est la commande que nous envoyons au drone à l'instant $t$.
 La relaxation doit être réalisée assez rapidement pour que le drone réagisse en temps réel.
 
-Lors des expériences que nous avons effectuées, le drone apparaît voler correctement dans le couloir sans toucher les murs. Nous observons cependant que cette trajectoire est assez imprécise~: elle ne lui permet pas de se centrer finement au centre du couloir. En figure~\ref{fig:pred_drone}, nous avons tracé l'erreur de prédiction de $\rho$, réalisée sur les données d'apprentissage. La figure fait apparaître que la prédiction est correcte, mais très bruitée. Elle est moins bonne que la quantification des entrées réalisée dans les autres cartes.
+Lors des expériences que nous avons effectuées, le drone apparaît voler correctement dans le couloir sans toucher les murs. Nous observons cependant que cette trajectoire est assez imprécise~: elle ne lui permet pas de se centrer finement au centre du couloir. Pour illustrer ce comportement, nous avons tracé en figure~\ref{fig:pred_drone} l'erreur de prédiction de $\rho$, réalisée sur les données d'apprentissage. La figure fait apparaître que la prédiction est correcte, mais très bruitée, ce qui correspondrait aux observations observées sur le test réel. Elle est moins bonne que la quantification des entrées réalisée dans les autres cartes. 
 La prédiction est donc correctement réalisée, toutefois très imprécise, ce que nous pouvions attendre au vu des relations initiales entre modalités, qui sont très bruitées.
 
 Cette application sur une architecture de quatre cartes nous permet d'abord d'étendre les observations réalisées sur deux et trois cartes~: les poids externes et contextuels forment deux échelles d'organisation, et les poids contextuels forment des motifs pseudo-périodiques dans la carte.
