@@ -20,44 +20,59 @@ Les cartes auto-organisatrices et notamment le modèle de Kohonen sont principal
 D'une part, de nombreux travaux étudient l'utilisation de plusieurs cartes collaborant entre elles sur différentes applications, en général afin d'améliorer les performances de classification ou de regroupement de données d'une carte auto-organisatrice classique. Ces travaux se retrouvent sous le terme de SOM hiérarchiques, SOM multi-couches, ou \emph{Deep SOM}.
 Cependant, peu de travaux ont exploré l'aspect topologiquement ordonné et la simplicité des règles de mise à jour d'une carte pour les assembler en architectures modulaires comportant des rétroactions, c'est-à-dire des architectures non-hiérarchiques.
 
-L'étude d'une architecture non hiérarchique de SOM est d'une part motivée par leur inspiration biologique. Le cortex faisant apparaître des aires interagissant entre elles avec des boucles de rétroaction, la création d'une architecture non hiérarchique de cartes s'inscrit dans la continuité de cette inspiration biologique.
-Ensuite, l'étude des systèmes biologiques et la robotique sont liées~: la biologie sert d'inspiration à la robotique, que ce soit pour le mouvement d'un bras ou la prise de décision, et la robotique permet de tester des théories cherchant à modéliser des comportements biologiques \parencite{Oudeyer2010OnTI}.
-Aussi, les architectures de cartes bio-inspirées que nous avons relevées dans la littérature se définissent comme relevant soit de l'apprentissage automatique, soit des domaines des neurosciences computationnelles ou de l'apprentissage incarné (\emph{Embodied intelligence}) en robotique \parencite{Smith2005TheDO,cangelosi_embodied_2015}, à la frontière entre étude de la biologie et apprentissage automatique.
+L'étude d'une architecture non hiérarchique de SOM est motivée par leur inspiration biologique. Le cortex faisant apparaître des aires interagissant entre elles avec des boucles de rétroaction, la création d'une architecture non hiérarchique de cartes s'inscrit dans la continuité de cette inspiration biologique.
+Ensuite, l'étude des systèmes biologiques et la robotique peuvent être liées~: la biologie sert d'inspiration à la robotique, que ce soit pour le mouvement d'un bras ou la prise de décision, et la robotique permet de tester des théories cherchant à modéliser des comportements biologiques \parencite{Oudeyer2010OnTI}.
+Aussi, les architectures de cartes bio-inspirées que nous avons relevées dans la littérature se définissent des domaines soit de l'apprentissage automatique, soit des neurosciences computationnelles ou de l'apprentissage incarné en robotique (\emph{Embodied intelligence}) \parencite{Smith2005TheDO,cangelosi_embodied_2015}, à la frontière entre étude de la biologie et apprentissage automatique.
 
-Nous passerons en revue dans ce chapitre un ensemble de travaux définissant des architectures de cartes auto-organisatrices, en s'intéressant aux différences de conception existant au sein des architectures et notamment à leur aspect modulaire.
-La notion d'architecture modulaire de cartes est bien résumée par Kohonen dès 1995~:
+Nous nous intéressons dans ce chapitre à un ensemble de travaux définissant des architectures de cartes auto-organisatrices, en s'intéressant aux différentes formes de modularité qu'elles implémentent.
+La notion d'architecture modulaire de cartes est d'ailleurs résumée par Kohonen dès 1995~:
 \begin{quote}
 Un objectif à long terme de l'auto-organisation est de créer des systèmes autonomes dont les éléments se contrôlent mutuellement et apprennent les uns des autres. De tels éléments de contrôle peuvent être implémentés par des SOMs spécifiques~; le problème principal est alors l'interface, en particulier la mise à l'échelle automatique des signaux d'interconnexion entre les modules et la collecte de signaux pertinents comme interface entre les modules. Nous laisserons cette idée aux recherches futures.
 Traduit de \cite{Kohonen1995SelfOrganizingM}
 \end{quote}
-Ces éléments de contrôle sont les modules d'une architecture. 
+
 L'objectif de nos travaux est ainsi de proposer un modèle de carte qui puisse être utilisée en tant que module, de définir l'interface entre les modules afin de créer une architecture, puis de comprendre les comportements de calcul qui émergent de l'association des modules.
-Nous présentons dans ce chapitre le modèle général d'une carte de Kohonen et ses comportements fondamentaux, puis répertorions les différents types de structures se présentant comme des architectures de cartes.
-\`A l'issue de ce chapitre, nous aurons une vue d'ensemble des catégories d'architectures de cartes auto-organisatrices existant dans la littérature et de leurs principales propriétés d'apprentissage. Nous pourrons ainsi définir en pratique la notion d'architecture modulaire et comment se placent nos travaux dans cette taxonomie.
+Nous présentons dans ce chapitre le modèle général d'une carte de Kohonen et ses comportements fondamentaux, puis répertorions les différents types de structures se présentant comme des architectures de cartes. Nous pourrons ainsi définir en pratique la notion d'architecture modulaire et comment se placent nos travaux dans cette taxonomie.
 
 \section{Les cartes auto-organisatrices de Kohonen comme modules d'une architecture}\label{sec:som001}
 
 Le modèle de cartes auto-organisatrices a été initialement développé par Kohonen \parencite{Kohonen1982}~; nous utiliserons les termes cartes de Kohonen et SOM de façon équivalente pour désigner ce modèle initial.
-De nombreux modèles dérivés ont ensuite été développés à partir de ce modèle, sur diverses applications.
-Nous présentons dans cette section le modèle initial de carte de Kohonen et introduisons les notations que nous utiliserons dans cette partie de revue. 
+De nombreux modèles ont ensuite été dérivés à partir de ce dernier, pour diverses applications.
+Nous présentons dans cette section le modèle initial de carte de Kohonen et introduisons les notations que nous utiliserons dans ce manuscrit.
 
 \subsection{Description du modèle de carte auto-organisatrice de Kohonen}
 
-Une carte de Kohonen est un algorithme de quantification vectorielle. 
-Les éléments principaux de ce modèle décrits ci-après sont représentés en figure~\ref{fig:SOM}.
-Les algorithmes de quantification vectorielle cherchent à représenter un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes.
-Dans une SOM, ces prototypes sont disposés sur les n\oe{}uds d'un graphe, en général une ligne 1D ou une grille en deux dimensions.
-Les n\oe{}uds du graphe possèdent alors chacun un prototype $\w$ et sont \emph{indexés} par $p$, vecteur aux dimensions de la carte, soit un réel pour une carte 1D ou un vecteur en deux dimensions lorsque que la carte est une grille.
-Cette indexation et la connectivité du graphe permettent de définir une distance $d$ dans la carte et donc une notion de \emph{voisinage} entre les n\oe{}uds. Nous appellerons carte de Kohonen le graphe assorti de ses prototypes $\w(p)$.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{soms_topologies}
+    \caption{Exemples de topologies utilisées pour des SOM. Les SOM en deux dimensions sont les plus communément utilisées dans la littérature, sous forme d'une grille ou d'une grille hexagonale. Les SOMs une dimension sont parfois utilisées. Cette topologie définit un voisinage entre les n\oe{}uds~: par exemple, le voisinage à une distance de une unité du n\oe{}uds coloré en rouge sont les n\oe{}uds colorés en orange~; les n\oe{}uds colorés en jaune sont à une distance de deux unités, etc.
+    \label{fig:topo}}
+    \end{figure}
 
-Avant apprentissage, les prototypes sont initialisés aléatoirement dans l'espace d'entrée.
-Une itération d'apprentissage comporte trois étapes~:
+\begin{figure}
+    \centering
+    \includegraphics{SOM.pdf}
+    \caption{\'Elements principaux composant une carte de Kohonen~: une carte possède un ensemble d'unités de poids $\omega$, indexées par une position $p$. En présence d'une entrée $X$, une activité $a$ ou une distance $d$ est calculée pour chaque unité par rapport à l'entrée. La \emph{Best Matching Unit}, abrégée en BMU, est calculée comme l'unité d'activité maximale sur les positions (ou de distance minimale). Sa position est notée $\bmu$ et son poids est $\w(\bmu)$.\label{fig:SOM}}
+    \end{figure}
+
+Une carte de Kohonen est un algorithme de quantification vectorielle. 
+Les algorithmes de quantification vectorielle cherchent à représenter un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes.
+Une carte auto-organisatrice ajoute une topologie sur laquelle s'appuie cette représentation. Les prototypes $\w$ sont alors positionnés sur les n\oe{}uds d'un graphe, et indexés par une position $p$. 
+Ce graphe se présente comme une grille de faible dimension, en général une grille 2D, définissant une correspondance directe entre la dimension de la carte les positions $p$ des n\oe{}uds.
+(\emph{mapping}). Des exemples de topologies de SOM 1D et 2D sont par exemple illustrées en figure~\ref{fig:topo}.
+
+Avant apprentissage, ces prototypes sont initialisés aléatoirement dans l'espace d'entrée.
+Une itération d'apprentissage comporte ensuite trois étapes~:
 \begin{enumerate}
-\item Une entrée $\inpx$ est présentée à la carte.
-\item Le n\oe{}ud ayant le prototype le plus proche de $\inpx$ selon une distance $d$ est choisi comme \emph{Best Matching Unit} (BMU) de la carte. Son indice est noté $\bmu$. La distance $d$ généralement utilisée est la distance euclidienne.
-\item Le prototype du BMU $\w(\bmu)$ ainsi que les prototypes des n\oe{}uds voisins sont déplacés vers l'entrée $\inpx$. Le déplacement est pondéré par leur degré de proximité au BMU, défini par la fonction de voisinage $H(p,\bmu)$
-$$ \w(p) \leftarrow \w(p) + \alpha H(\bmu,p) \left( \inpx - \w(p)\right)$$
-On peut interpréter cette étape comme le déplacement vers $\inpx$ d'une zone de la carte centrée en $\bmu$. 
+\item Une entrée $\inpx$ est présentée à toute la carte.
+\item Le n\oe{}ud ayant le prototype le plus proche de $\inpx$ selon une distance $d(\w, \inpx)$ est choisi comme \emph{Best Matching Unit} (BMU) de la carte. Son indice est noté $\bmu$. \begin{equation}
+    \bmu = \argmin d(\w,\inpx)
+\end{equation}
+Ce calcul de distances, utilisé dans la version originale de SOM, est remplacé dans d'autres modèles de cartes par le calcul d'une \emph{activation} $a(\inpx, \w(p))$ liant les poids des n\oe{}uds et les entrées. 
+La BMU est alors l'unité située au maximum de l'activation. Cette étape est résumée en figure~\ref{fig:SOM}.
+\item Le prototype du BMU $\w(\bmu)$ ainsi que les prototypes des n\oe{}uds voisins sont déplacés vers l'entrée $\inpx$. Le déplacement est pondéré par leur degré de proximité au BMU par une fonction de voisinage $H(p,\bmu)$
+\begin{equation} \forall p, \:\w(p) \leftarrow \w(p) + \alpha H(\bmu,p) \left( \inpx - \w(p)\right) \end{equation}
+$H$ définit l'amplitude de modification de chaque prototype $\w(p)$, en modulant le taux d'apprentissage $\alpha$ par $H(p,\bmu)$. $H$ est maximale à la position du BMU et décroissante autour de cette position, de sorte que les prototypes des n\oe{}uds les plus proches de $\bmu$ soient les plus influencés par le déplacement. Il s'agira par exemple d'une fonction rectangulaire, triangle ou gaussienne, illustrées en figure~\ref{fig:h}.
 \end{enumerate}
 
 \begin{figure}
@@ -66,27 +81,17 @@ On peut interpréter cette étape comme le déplacement vers $\inpx$ d'une zone 
      \caption{Exemples de fonctions de voisinage (Rectanglulaire, Triangle ou Gaussienne), centrées sur le BMU $\bmu$, couramment utilisées sur une carte, ici en une dimension.\label{fig:h}}
 \end{figure}
 
-Ce voisinage est défini par la fonction de voisinage $H$ dans l'algorithme qui dépend de la distance d'un n\oe{}ud au BMU et associe à chaque n\oe{}ud un coefficient multiplicatif pour la mise à jour des poids. 
-Cette fonction est maximale à la position du BMU et décroissante autour de cette position. Il s'agira par exemple d'une fonction rectangulaire, triangle ou gaussienne, illustrées en figure~\ref{fig:h}.
-L'algorithme de Kohonen repose donc à la fois sur un mécanisme de compétition par la sélection de la BMU de la carte et un processus de coopération avec le déplacement des unités voisines de la BMU.
+L'algorithme de Kohonen repose donc à la fois sur un mécanisme de compétition par la sélection de la BMU de la carte et un processus de coopération avec le déplacement des unités voisines de la BMU, aussi nommé \og Winner Take Most \fg{}.
 
-La version originale de l'algorithme de Kohonen s'appuie sur le calcul de distances entre entrées et prototypes. Ce dernier est remplacé dans d'autres modèles de cartes par le calcul d'une \emph{activation} $a(\inpx, \w(p))$ liant les poids des n\oe{}uds et les entrées. La BMU est alors l'unité située au maximum de l'activation, au lieu du minimum des distances.
-
-
-Le processus de mise à jour des poids d'une carte de Kohonen se traduit visuellement par un dépliement de la carte dans l'espace d'entrée. On parlera donc aussi de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions.
+Le processus de mise à jour des poids d'une carte de Kohonen se traduit par un dépliement de la carte dans l'espace d'entrée. On parlera donc aussi de \emph{dépliement} d'une carte lorsque qu'on parle d'apprentissage. Ce dépliement est représenté en figures \ref{fig:som2d} et \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions.
 \`A la fin de l'apprentissage, la carte conserve la structure topologique des entrées~:
 \begin{itemize}
 \item Elle conserve les distances~: deux prototypes ayant une distance proche dans la carte seront également proches selon la distance définie dans l'espace d'entrée. On observe donc une continuité des valeurs des poids au sein de la carte.
-\item Elle conserve les densités. Une zone dense de $\mathcal{D}$ aura plus d'unités correspondant à cette zone de valeurs dans la carte qu'une zone moins dense.
+\item Elle conserve les densités. Une zone dense de l'espace d'entrée $\mathcal{D}$ sera représentée par plus de prototypes au sein de la carte, qu'une zone de faible densité.
 \end{itemize}
-La figure \ref{fig:digits} représente le dépliement d'une carte sur des imagettes MNIST.
-Par son aspect ordonné, une carte est une représentation en dimension 2 d'un espace d'entrée de grande dimension.
 
-\begin{figure}
-    \centering
-    \includegraphics{SOM.pdf}
-    \caption{\'Elements principaux composant une carte de Kohonen~: une carte possède un ensemble d'unités de poids $\omega$, indexées par une position $p$. En présence d'une entrée $X$, une activité $a$ ou une distance $d$ est calculée pour chaque unité par rapport à l'entrée. La \emph{Best Matching Unit}, abrégée en BMU, est calculée comme l'unité d'activité maximale sur les positions (ou de distance minimale). Sa position est notée $\bmu$ et son poids est $\w(\bmu)$.\label{fig:SOM}}
-    \end{figure}
+Par exemple, la figure \ref{fig:digits} représente le dépliement d'une carte sur des imagettes MNIST.
+Par son aspect ordonné, une carte est une représentation en dimension 2 d'un espace d'entrée de grande dimension.
 
     \begin{figure}
         \centering
@@ -109,28 +114,21 @@ Par son aspect ordonné, une carte est une représentation en dimension 2 d'un e
     
 \subsection{La carte de Kohonen, un algorithme d'apprentissage de représentation non supervisé}
 
-La carte de Kohonen se distingue d'autres algorithmes de quantification vectorielle par la topologie introduite par la carte dans l'ensemble des prototypes. Cette topologie dépend du voisinage utilisé par l'algorithme et de la dimension de la carte. Des exemples de topologies de cartes en ligne et grilles sont présentées en figure~\ref{fig:topo}. 
+La carte de Kohonen se distingue d'autres algorithmes de quantification vectorielle par la topologie introduite par la carte dans l'ensemble des prototypes.
+Des exemples de topologies de cartes en ligne et grilles sont présentées en figure~\ref{fig:topo}.
+Par sa topologie, une carte de Kohonen permet d'extraire une \emph{représentation} de l'espace d'entrée en faible dimension, dans la répartition de ses poids.
+Chaque entrée peut alors être représentée par un vecteur 1D ou 2D, qui est la position du Best Matching Unit correspondant dans la carte.
 
-En théorie, les cartes peuvent être en une dimension (ligne), deux dimensions (grilles), ou de dimensions plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. La carte peut ainsi être indexée par des positions 1D, définissant un voisinage seulement sur une dimension, des positions 2D ou d'autres positions.
-En pratique, les grilles en deux dimensions sont les supports les plus couramment utilisés. Ces grilles permettent d'effectuer une réduction de dimension, tout en étant facile à visualiser. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. Le coût de l'algorithme d'apprentissage dépend en effet du nombre de n\oe{}uds, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen.
-Les cartes une dimension sont quant à elles limitées en termes de représentation des données et sont donc rarement utilisées en pratique ou sur des applications dérivées, par exemple pour de la planification de chemin en \cite{FrezzaBuet2020SelforganizingMI}.
+En théorie, les cartes peuvent être en une dimension (ligne), deux dimensions (grilles), ou de dimensions plus grandes. Les cartes peuvent aussi être des graphes de forme plus variable. 
+En pratique, les grilles en deux dimensions sont les supports les plus couramment utilisés. Les cartes de dimensions supérieures sont très rarement utilisées dans la littérature. 
+Le coût de l'algorithme d'apprentissage dépend en effet du nombre de n\oe{}uds, et celui-ci augmente exponentiellement lorsqu'on augmente la dimension d'une carte de Kohonen.
+
+Les cartes une dimension sont quant à elles plus limitées que les cartes 2D en termes de représentation des données et sont donc rarement utilisées en pratique ou sur des applications dérivées, par exemple pour de la planification de chemin \parencite{FrezzaBuet2020SelforganizingMI}.
 Cependant, elles se prêtent mieux à la représentation graphique et au développement de nouveaux modèles de SOM que les cartes 2D.
 Les travaux conduits en \cite{cottrell_theoretical_2016,fort_soms_2006} apportent par exemple une formalisation mathématique de l'algorithme de Kohonen et prouvent la convergence de cartes une dimension. Les auteurs se heurtent cependant à la preuve de convergence pour des cartes en deux dimensions. Les processus intervenant dans des cartes 1D sont mathématiquement difficiles à formaliser, et cette difficulté augmente avec les dimensions.
 L'étude des cartes 1D a ainsi l'intérêt d'envisager un modèle simplifié dans le cadre de développement d'un nouveau modèle de SOM, ce que nous chercherons à faire dans cette thèse, avant de proposer une extension aux cartes 2D.
 
-Si les cartes de forme autre que des grilles 1D ou 2D sont moins couramment utilisées, elles peuvent présenter des avantages. Ainsi, des cartes structurées en arbre telles que développées en~\cite{koikkalainen_self-organizing_1990} permettent une recherche de BMU plus rapide au sein de la carte, adaptées à des données d'entrée présentant une structure hiérarchique. Certains modèles construisent une carte de Kohonen incrémentale en ajoutant des n\oe{}uds au fur et à mesure de l'apprentissage, générant une carte de Kohonen sous forme d'un graphe construit par l'algorithme, par exemple en~\cite{alahakoon_dynamic_2000, yamaguchi_adaptive_2010}.
-
-Finalement, par sa topologie, une carte de Kohonen permet d'extraire une \emph{représentation} de l'espace d'entrée dans la répartition de ses poids sur son graphe. 
-Cet algorithme se différencie ainsi d'algorithmes de quantification vectorielle classiques tels que K-means.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.8\textwidth]{soms_topologies}
-\caption{Exemples de connexions dans le graphe support d'une SOM. Deux n\oe{}uds connectés sont ici à une distance de une unité dans la carte.
-Les SOM en deux dimensions sont les plus communément utilisées dans la littérature, sous forme d'une grille ou d'une grille hexagonale. Les SOMs une dimension sont parfois utilisées. La distance utilisée dans l'exemple de grille carrée est la distance euclidienne.
-\label{fig:topo}}
-\end{figure}
-
+Si les cartes de forme autre que des grilles 1D ou 2D sont moins couramment utilisées, elles peuvent présenter des avantages. Ainsi, des cartes structurées en arbre telles que développées en~\cite{koikkalainen_self-organizing_1990} permettent une recherche de BMU plus rapide au sein de la carte, adaptées à des données d'entrée présentant une structure hiérarchique. Certains modèles construisent une carte de Kohonen incrémentale en ajoutant des n\oe{}uds au fur et à mesure de l'apprentissage, générant une carte de Kohonen sous forme d'un graphe construit par l'algorithme, par exemple en~\cite{Fritzke1995GrowingG, alahakoon_dynamic_2000, yamaguchi_adaptive_2010}.
 
 \section{Inspiration biologique des architectures de cartes}
 
@@ -144,7 +142,7 @@ Enfin, des aires sont identifiées comme traitant des informations venant de plu
 De nombreux travaux montrent la présence de cartes topologiquement ordonnées dans différentes aires du cortex cérébral~: les neurones proches dans le substrat cortical réagissent à des stimuli proches. 
 Un exemple est ainsi celui du cortex visuel V1, représenté en figure~\ref{fig:v1}. 
 L'aire associée à l'audition présente aussi une organisation topographique \parencite{Reale1980TonotopicOI}. Cette organisation se retrouve également dans de nombreuses autres aires sensorielles ou de plus haut niveau de traitement de l'information~\parencite{Kohonen1995SelfOrganizingM}. 
-Une carte de Kohonen ne doit cependant pas être considérée comme une modélisation biologiquement plausible d'une aire du cortex cérébral, mais plutôt comme une adaptation au niveau computationnel d'un concept biologique, ici le concept d'organisation topologiquement correcte dans les cortex sensoriels, tels que les cortex visuel et auditif.
+Une carte de Kohonen ne doit cependant pas être considérée comme une modélisation biologiquement plausible d'une aire du cortex cérébral, mais plutôt comme une adaptation au niveau computationnel d'un concept biologique, ici le concept d'organisation topographique dans les cortex sensoriels.
 
 \begin{figure}
 \centering
@@ -155,16 +153,16 @@ Une carte de Kohonen ne doit cependant pas être considérée comme une modélis
 
 \subsection{Rétroactions dans le traitement de l'information multisensorielle du cortex}
 
-L'aspect multisensoriel du traitement de l'information par le cerveau vient des connexions entre aires corticales.
+L'aspect multisensoriel du traitement de l'information s'appuie sur des connexions entre aires corticales.
 Cette connectivité peut-être étudiée de plusieurs points de vue~: d'un point de vue structurel, en se basant sur des éléments anatomiques ou d'un point de vue fonctionnel.
 Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par électroencéphalographie ou IRM fonctionnelle. Il faut noter cependant que ces observations traduisent une relation statistique et pas forcément une relation de cause à effet. 
 La modélisation de la connectivité physique de ces aires à partir des observations reste donc l'objet de différentes théories cherchant à reproduire ces corrélations. 
-Un exemple fonctionnel de traitement multisensoriel de l'information est l'effet ventriloque \parencite{Bonath2007NeuralBO} qui crée l'illusion que la source sonore provient de la marionnette du ventriloque dont les mouvements de bouche sont coordonnés avec les paroles, alors qu'elle émane en réalité du ventriloque lui-même. Ce phénomène entraîne une activité dans le cortex visuel et auditif au niveau des neurones correspondant à l'emplacement exact de la source des stimuli de chacune des modalités.
+Un exemple fonctionnel de traitement multisensoriel de l'information est l'effet ventriloque \parencite{Bonath2007NeuralBO} qui crée l'illusion que la source sonore provient de la marionnette du ventriloque dont les mouvements de bouche sont coordonnés avec les paroles. 
+Ce phénomène entraîne une activité dans le cortex visuel et auditif au niveau des neurones correspondant à l'emplacement exact de la source des stimuli de chacune des modalités.
 Après quelques millisecondes, une activité émerge dans le cortex auditif au niveau des neurones sensibles à l'emplacement spatial de la source du stimulus visuel, témoignant d'une interaction entre les cortex visuels et auditifs.
 Un autre exemple est l'effet McGurk~\parencite{McGurk1976HearingLA}~: ces psychologues ont montré que la présentation du son \og ba \fg{} à un sujet associée à la présentation d'une vidéo d'une bouche prononçant \og ga \fg{} amènent ce sujet à indiquer qu'il a entendu le son \og da \fg{}.
 Historiquement, le traitement de l'information multisensorielle dans le cortex cérébral a été modélisé comme hiérarchique, des aires dites bas niveau alimentant des aires haut niveau permettant le traitement de l'information multimodale. 
-Si l'existence d'une hiérarchie du traitement de l'information par des aires haut niveau et bas niveau reste vérifiée, de nombreux travaux montrent également l'existence de connexions directes entre aires sensorielles, dites bas-niveau, illustrées en figure~\ref{fig:primate}.
-Anatomiquement, de nombreuses connexions entre les aires corticales dédiées au traitement d'une modalité sensorielle ont été mises en évidence chez différentes espèces, par exemple en \cite{primate_cortex_91,Calvert2004MultisensoryIM, Cappe2009MultisensoryAP,Foxe2005TheCF,Schroeder2005MultisensoryCT}.
+De nombreux travaux montrent également l'existence de connexions directes entre aires sensorielles qui s'ajouteraient à une hiérarchie du traitement de l'information, illustrées en figure~\ref{fig:primate}. Par exemple, de nombreuses connexions entre les aires corticales dédiées au traitement d'une modalité sensorielle ont ainsi été mises en évidence chez différentes espèces, par exemple en \cite{primate_cortex_91,Calvert2004MultisensoryIM, Cappe2009MultisensoryAP,Foxe2005TheCF,Schroeder2005MultisensoryCT}.
 Fonctionnellement, des coactivations entre aires corticales sont observées par exemple entre aires tactile et visuelle \parencite{Sathian2002FeelingWT}, ou entre aires visuelle et olfactive \parencite{Gonzlez2006ReadingCA}.
 Ces connexions s'observent à différents niveaux de la hiérarchie du traitement de l'information~: \cite{Kiefer2008TheSO} met par exemple en évidence un lien existant entre le cortex sensoriel auditif et l'aire dédiée à la représentation de concepts dans le cerveau humain.
 La structure du traitement de l'information dans les aires corticales ne se limite donc pas à un aspect hiérarchique, des connexions rétroactives entre aires existant à plusieurs niveaux du traitement de l'information.
@@ -174,7 +172,7 @@ La théorie de la réentrée \parencite{Edelman1982GroupSA} postule quant à ell
 \cite{Burnod1989AnAN} modélise le cortex en colonnes corticales et propose encore qu'en chaque point du cortex se croisent des flux de connexions venant de neurones d'autres aires sensorielles, organisées en bandes. Ces théories reviennent régulièrement comme inspirant les modèles de calcul des architectures présentées dans ce chapitre.
 
 La carte de Kohonen implémentant des concepts computationnels qu'on retrouve en biologie au niveau de l'aire cérébrale, nous pouvons chercher à pousser l'inspiration biologique au niveau des connexions entre les aires cérébrales, en construisant des connexions entre plusieurs cartes de Kohonen.
-De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plutôt de développer un modèle computationnel qui ne soit pas biologiquement plausible au niveau neuronal, mais dont la structure du traitement de l'information est inspirée de celle du cerveau, ici la présence de plusieurs aires connectées entre elles, modélisées par l'utilisation de plusieurs cartes de Kohonen en architecture.
+De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plutôt de développer un modèle computationnel qui ne soit pas biologiquement plausible au niveau neuronal, mais dont la structure du traitement de l'information est inspirée de celle du cerveau, ici la présence de plusieurs aires connectées entre elles, modélisées par l'utilisation de plusieurs cartes de Kohonen assemblées en une architecture.
 
 \begin{figure}
     \centering
@@ -185,29 +183,28 @@ De la même façon qu'une carte n'est pas un modèle biologique, il s'agit plut�
 
 \section{Architectures de cartes auto-organisatrices}
 
-Plusieurs travaux dans la littérature informatique autour des SOMs cherchent ainsi à construire des architectures de cartes auto-organisatrices, que nous passons en revue dans cette section.
-Nous abordons ces modèles d'un point de vue structurel en nous intéressant notamment à l'interface entre les cartes dans chacun des modèles.
+La construction d'une architecture de carte auto-organisatrices a été développée dès la création du modèle. Par contre, la structure des architectures est variées.
+Dans cette section, nous cherchons à comparer des modèles existants d'architectures de cartes d'un point de vue structurel, afin d'en tirer une taxonomie générale.
 
-Il s'agit d'abord de différencier les architectures appliquées au traitement d'un problème particulier et les architectures génériques de cartes de Kohonen.
+Il s'agit d'abord de différencier les architectures dédiées au traitement d'un problème particulier et les architectures génériques.
 Pour résoudre un problème compliqué, une démarche courante est de le décomposer en sous-problèmes puis de créer des structures pour résoudre ces sous-problèmes. L'assemblage des résultats de chaque structure donne alors une solution pour résoudre le problème général.
-Lorsque chaque structure est spécifiquement conçue pour résoudre un problème particulier, l'architecture est appliquée~: elle est uniquement conçue pour résoudre le problème en question.
-Nous différencions cette vision d'architecture appliquée de la notion de modèle d'architecture.
-Dans cette deuxième approche, on entend par modèle d'architecture le cadre de calcul sous-jacent au modèle, appliqué ou non, défini par ses règles de construction. Ce cadre se veut générique et utilisable sur n'importe quelles données d'application. 
-C'est cette deuxième approche que nous étudions dans cette thèse.
+Nous différencions cette vision d'architecture dédiée à une application, de la notion de modèle d'architecture.
+Dans cette deuxième approche, on entend par modèle d'architecture le cadre de calcul sous-jacent au modèle, appliqué ou non, défini par ses règles de construction. Ce cadre se veut générique et utilisable sur n'importe quelles données d'application. C'est cette deuxième approche que nous étudions dans cette thèse.
 
-Nous nous intéressons aux modèles d'architectures dits modulaires.
-Un module se définit comme un élément possédant des règles d'évolution temporelles à partir d'entrées, et une sortie. L'assemblage de ces modules par une interface définie constitue une architecture modulaire. D'après la définition de la modularité en informatique, des modules doivent pouvoir être ajoutés ou retirés à une architecture modulaire sans modifier la structure interne des autres modules de l'architecture.
-Le principe d'une architecture modulaire est alors d'assembler un nombre variable d'éléments de même type, des modules, dans une architecture. Ici les modules seront des cartes auto-organisatrices, dont le modèle a été adapté pour permettre la construction d'architectures. Un schéma d'une carte en tant que module est par exemple représenté en figure~\ref{fig:module}.
-Les éléments de l'architecture, les modules, n'ont pas de rôle défini a priori avant d'être insérés dans l'architecture, mais seulement des règles d'activation et de mise à jour.
-Les variables du module qui seront accessibles à d'autres modules de l'architecture sont les sorties du module. Dans le cas des SOMs, il s'agit par exemple de la position du BMU, des poids ou des valeurs d'activités.
-Les modules définissent par ailleurs leurs règles d'activation à partir d'entrées externes à l'architecture ou internes à l'architecture~: les entrées contextuelles.
-Cette notion d'entrée et sorties internes à l'architecture constitue les règles d'interface entre cartes.
+Nous nous intéressons à des modèles d'architectures modulaires.
+Par module, nous entendons comme un élément possédant des règles d'évolution temporelles à partir d'entrées et une sortie. Nous définissons comme architecture modulaire l'assemblage de modules de même type par une interface définie. Des modules doivent pouvoir être ajoutés ou retirés à une architecture modulaire sans modifier la structure interne des autres modules de l'architecture.
+Les architectures auxquelles nous nous intéressons sont celles dont les modules sont des cartes auto-organisatrices, dont le modèle a été adapté pour permettre la construction d'architectures. 
+Un schéma d'une carte considéré en tant que module d'une architecture est par exemple représenté en figure~\ref{fig:module}. 
+
+Les modules d'une architecture n'ont pas de rôle défini a priori avant d'être insérés dans l'architecture, mais seulement des règles d'activation et de mise à jour.
+Les variables du module qui sont accessibles à d'autres modules de l'architecture sont appelées les sorties du module. Dans le cas des SOMs, il peut s'agir de la position du BMU, des poids ou des valeurs d'activités.
+Ces variables constituent l'interface entre cartes.
 
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{module.pdf}
-    \caption{Description de la notion de module d'une architecture modulaire. Un module prend des entrées externes à l'architecture ou contextuelles, et possède des variables d'état dont l'évolution dans le temps est régie par des règles de mise à jour ou équations d'évolution. La sortie d'un module est un ensemble de variable d'états. La sortie d'un module et l'entrée contextuelle d'une autre constitue l'interface entre modules. Les modules étudiés dans ce chapitre sont des cartes de Kohonen. Leurs variables d'état sont, entre autres, leur poids et leur BMU.\label{fig:module}}
+    \caption{Description d'une carte de Kohonen en tant que module d'une architecture modulaire. Un module prend des entrées et possède des variables d'état, ici les poids $\w$, dont l'évolution dans le temps est régie par des règles de mise à jour ou équations d'évolution. La sortie d'un module est un ensemble de variable d'états, accessible par d'autres modules. Les variables d'état d'une carte sont, entre autres, le BMU ou l'activation. \label{fig:module}}
 \end{figure}
 
 \subsection{Méthode d'analyse}
