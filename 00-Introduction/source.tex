@@ -1,86 +1,83 @@
 \chapter*{Introduction}
 
-Les systèmes biologiques qui nous entourent présentent une incroyable diversité de structures leur permettant d'évoluer et de s'adapter à leur environnement, implémentant finalement des tâches de calcul.
+Les systèmes biologiques qui nous entourent présentent une incroyable diversité de structures leur permettant d'évoluer et de s'adapter à leur environnement, implémentant en fait des tâches de calcul. % a modifier 
 Un parangon de système biologique de calcul est sans conteste le cerveau humain ou animal, qui est capable d'exécuter des tâches de calcul et d'apprentissage incroyablement sophistiquées via une multitude de signaux électriques et chimiques circulant entre les neurones et au sein des vaisseaux sanguins.
-L'inspiration biologique occupe ainsi une place de premier rang dans les débuts de la recherche en intelligence artificielle. Face à des modèles d'intelligence artificiels plus symboliques, les modèles à base d'apprentissage ont été initialement développés en s'appuyant sur le modèle biologique du neurone, afin de chercher à imiter les capacités d'évolution et d'adaptation à l'origine de la notion d'apprentissage dans les réseaux de neurones biologiques. Le perceptron, modèle à l'origine des réseaux de Deep Learning les plus performants à l'heure actuelle, s'inspirait par exemple du modèle de neurone biologique~\cite{McCulloch1990ALC}.
+L'inspiration biologique occupe une place de premier rang dans les débuts de la recherche en intelligence artificielle. Face à des modèles d'intelligence artificiels plus symboliques, les modèles à base d'apprentissage ont été initialement développés en s'appuyant sur le modèle biologique du neurone, afin de chercher à imiter les capacités d'évolution et d'adaptation à l'origine de la notion d'apprentissage dans les réseaux de neurones biologiques. Le perceptron, modèle à l'origine des réseaux de Deep Learning les plus performants à l'heure actuelle, s'inspirait par exemple du modèle de neurone biologique~\parencite{McCulloch1990ALC}.
 La diversité des applications actuelles de l'apprentissage automatique et le développement de nombreux modèles très performants ont amené la recherche en apprentissage automatique à se concentrer principalement sur une approche algorithmique et computationnelle de ces réseaux, en particulier pour les architectures de Deep Learning. 
 Cet éloignement de la biologie permet de s'extraire des contraintes physiques liées au neurone pour envisager des règles de calcul adaptées à une tâche spécifique.
-Néanmoins, la biologie, par sa diversité de comportements encore incompris, reste une source d'inspiration abondante pour apporter des paradigmes alternatifs ou complémentaires aux modèles d'apprentissage existants dans l'état de l'art. De plus, le comportement du cerveau est loin d'être entièrement compris et modélisé, ce qui signifie que les possibilités d'inspiration biologique sont constamment en train d'évoluer.
+Néanmoins, la biologie, par sa diversité de comportements encore incompris, reste une source d'inspiration abondante pour apporter des paradigmes alternatifs ou complémentaires aux modèles d'apprentissage existants dans l'état de l'art. De plus, le comportement du cerveau est loin d'être entièrement compris et modélisé, ce qui signifie que les possibilités d'inspiration biologique sont constamment en train d'évoluer. % ca c'est bien
 
-Les cartes de Kohonen \parencite{Kohonen1982} sont un autre exemple de modèle initialement inspiré de considérations biologiques. Directement inspirées de l'organisation du cortex, leurs règles de calcul ont évolué vers 
+Les cartes auto-organisatrices de Kohonen \parencite{Kohonen1982} sont un autre exemple de modèle initialement inspiré de considérations biologiques. Directement inspirées de l'organisation du cortex, leurs règles de calcul se sont éloignées d'une modélisation biologiquement plausible du cortex, pour créer un algorithme de quantification vectorielle efficace.
+La force des cartes de Kohonen est qu'elles permettent d'extraire une représentation en faible dimension, en général 2D, d'un espace d'entrées, en conservant la topologie de cet espace.
+Très en vogue à leur création, leur utilisation est restée cantonnée à des tâches de visualisation et de clustering. Pourtant, leurs propriétés d'organisation et de représentation d'un espace % mmmm bof
+Les cartes de Kohonen sont initialement inspirées des cartes topographiques présentes dans les cortex sensoriels ou moteurs. Les mécanismes de choix du BMU et de mise à jour, d'abord calculés grâce à des champs neuronaux, ont ensuite évolué vers des règles plus computationnelles de calcul de distance entre les entrées et les poids des cartes. La thèse que nous présentons vise à proposer un modèle d'apprentissage élaboré à la fois dans une démarche d'inspiration biologique et utilisant des techniques plutôt calculatoires.
+% trouver des utilisations actuelles des cartes de Kohonen ?
 
-La thèse que nous présentons développe un modèle d'apprentissage élaboré à la fois dans une démarche d'inspiration biologique et utilisant des techniques plutôt calculatoires.
-Concernant l'inspiration biologique, de nombreuses modélisations générales du cortex cérébral, telle que~\cite{binzegger05, Meunier2009HierarchicalMI,sporns_structure_2013,betzel_multi-scale_2017} proposent que le cortex est une architecture composée de modules auto-organisés.
+De nombreuses modélisations générales du cortex cérébral, telle que~\cite{binzegger05, Meunier2009HierarchicalMI,sporns_structure_2013,betzel_multi-scale_2017} proposent que le cortex est une architecture composée de modules auto-organisés.
 Ces modules communiquent autour des informations sensorielles collectées par l'organisme. Cette communication est réalisée de façon interne, liant des informations sensorielles et abstraites provenant de différentes parties du cortex et à différentes échelles spatiotemporelles. Enfin, bien qu'une hiérarchie de traitement de l'information apparaisse entre ces modules, certains traitant des entrées sensorielles et d'autres des entrées plus abstraites, de nombreux circuits de rétroactions entre les modules semblent présents à différents niveaux de l'architecture.
 La recherche d'architectures cognitives s'inspirant de l'architecture du cortex cérébral est un enjeu de longue date dans la recherche en apprentissage automatique. Il s'agit de développer des réseaux de neurones autonomes, capables de mémoire et de prise de décision de façon non supervisée, qui s'inspirent des architectures modulaires présentes dans le cerveau humain et qui cherchent à imiter certains comportements~\cite{Kotseruba201840YO}.
 Le développement de la robotique appelle également à envisager des modèles d'apprentissage directement liés à la perception sensorielle, en s'inspirant des architectures modulaires existant dans le cortex et qui permettent le traitement de cette perception.
 
-Dans cette démarche de création d'architecture inspirée de l'architecture corticale, nous proposons dans cette thèse de construire un modèle d'architecture d'apprentissage modulaire non-hiérarchique.
-On entend ici par système modulaire un système composé d'une multiplicité de sous-structures interchangeables qui interagissent entre elles par le biais d'interfaces définies. 
-Dans une architecture modulaire, ces sous-structures communiquent de façon locale, sans être supervisées par un processus externe. Cette propriété de modularité est partagée par de nombreux systèmes biologiques et artificiels et présente des avantages en termes de réutilisation, de robustesse aux fautes, de redondance et de traitement local de l'information \cite{clune_evolutionary_2013}.
-Pour construire cette architecture modulaire, nous nous appuierons sur un modèle d'apprentissage existant inspiré de la biologie~: les cartes auto-organisatrices (SOM) \cite{Kohonen1982}.
-Une carte auto-organisatrice est un ensemble de poids, appartenant à un espace d'entrée, disposés sur une grille. Grâce aux règles d'apprentissage, les poids se disposent de façon à représenter l'espace des entrées qui ont été présentées.
-Les cartes de Kohonen sont initialement inspirées des cartes topographiques présentes dans les cortex sensoriels ou moteurs. Les mécanismes de choix du BMU et de mise à jour, d'abord calculés grâce à des champs neuronaux, ont ensuite évolué vers des règles plus computationnelles de calcul de distance entre les entrées et les poids des cartes.
+Dans cette démarche de création d'architecture inspirée de l'architecture corticale, nous proposons dans cette thèse de construire un modèle d'architecture d'apprentissage modulaire non-hiérarchique de cartes de Kohonen.
+On entend ici par système modulaire un système composé d'une multiplicité de sous-structures interchangeables qui interagissent entre elles par le biais d'interfaces définies. Dans une architecture modulaire, ces sous-structures communiquent de façon locale, sans être supervisées par un processus externe. Cette propriété de modularité est partagée par de nombreux systèmes biologiques et artificiels et présente des avantages en termes de réutilisation, de robustesse aux fautes, de redondance et de traitement local de l'information \cite{clune_evolutionary_2013}.
 De nombreux travaux ont cherché à associer les SOMs en architecture mais peu ont exploré l'aspect topographiquement ordonné et la simplicité des règles de calcul d'une carte pour les assembler en architectures modulaires comportant des rétroactions. C'est pourquoi nous nous intéressons à cet aspect dans cette thèse.
 
-Outre l'inspiration biologique que nous avons présentée, la construction de systèmes d'apprentissage modulaires a également une motivation computationnelle.
-Elle découle d'une part de l'observation que la combinaison de principes et d'algorithmes simples en architecture modulaire peut mener au développement de mécanismes de calcul complexes au sein du système. De ce fait cette approche est pertinente pour la conception de systèmes innovants, robustes, etc \cite{chen_modularity_2016}.
+Outre l'inspiration biologique que nous avons présentée, la construction de systèmes d'apprentissage modulaires découle également d'une motivation computationnelle.
+D'une part, la combinaison de principes et d'algorithmes simples en architecture modulaire peut mener au développement de mécanismes de calcul complexes au sein du système. De ce fait cette approche est pertinente pour la conception de systèmes innovants et robustes \cite{chen_modularity_2016}.
 Les structures modulaires ont notamment la particularité d'engendrer des comportements émergents dans leur dynamique, c'est-à-dire que le comportement global du système résulte bien de l'interaction entre les modules et non seulement de la somme des comportements des modules pris individuellement~: il s'agit de systèmes complexes.
 Dans le cas de systèmes modulaires, le comportement général qui émerge est une organisation des modules de l'architecture~: on parle d'auto-organisation du système. Il peut s'agir d'une synchronisation, d'une collaboration ...
 Cette auto-organisation est effectuée de façon décentralisée, via des règles et interactions locales au sein de l'architecture modulaire~: elle n'est pas supervisée par un processus extérieur à l'architecture.
-D'autre part, les systèmes modulaires présentent des propriétés de robustesse
-\cite{Tang2021ARO}
-% Cette démarche d'utilisation de systèmes modulaires décentralisés a été mise en \oe{}uvre dans les algorithmes d'intelligence d'essaim \cite{Bonabeau1999SwarmI}. Ces algorithmes nous motivent également à considérer des architectures modulaires pour l'apprentissage.
-Dans cette thèse, nous nous plaçons ainsi dans une démarche de construction d'un système d'apprentissage~: l'assemblage de modules ayant des règles simples d'évolution peut mener à des comportements collectifs plus complexes, dans notre cas en vue d'un apprentissage. Nous savons que chaque module, une carte de Kohonen, est capable d'apprendre une représentation de son espace d'entrée. Nous nous attendons à diversifier les comportements d'apprentissage.
-\cite{chen_modularity_2016}
+
+Cette notion d'architecture modulaire de cartes est d'ailleurs résumée par Kohonen dès 1995~:
+\begin{quote}
+Un objectif à long terme de l'auto-organisation est de créer des systèmes autonomes dont les éléments se contrôlent mutuellement et apprennent les uns des autres. De tels éléments de contrôle peuvent être implémentés par des SOMs spécifiques~; le problème principal est alors l'interface, en particulier la mise à l'échelle automatique des signaux d'interconnexion entre les modules et la collecte de signaux pertinents comme interface entre les modules. Nous laisserons cette idée aux recherches futures.
+Traduit de \cite{Kohonen1995SelfOrganizingM}
+\end{quote}
+De façon surprenante, peu de travaux se sont attachés à développer une réelle architecture modulaire à partir de cartes auto-organisatrices.
+L'objectif de nos travaux est alors de proposer un modèle de carte qui puisse être utilisée en tant que module, de définir l'interface entre les modules afin de créer une architecture, puis de comprendre les comportements de calcul qui émergent de l'association des modules.
 
 % Finalement, la conception d'une architecture modulaire d'apprentissage s'inspire d'une part des propriétés de modularité et d'émergence observées dans différents systèmes naturels en particulier dans le cerveau, et artificiels comme l'intelligence d'essaim ou les réseaux de neurones profonds.
 % La propriété de modularité permettrait à une architecture de réaliser des calculs complexes en exploitant la collaboration et l'interaction des modules de façon décentralisée.
 % Dans cette démarche, les SOMs sont de bonnes candidates pour être associés en architectures modulaires. Elles sont en effet inspirées de l'organisation des aires corticales, aires qui sont associées dans le cerveau en architecture modulaires. L'introduction de rétroactions dans ces architectures permettra de plus d'explorer de nouveaux comportements computationnels.
 
-La notion d'architecture modulaire de cartes est d'ailleurs résumée par Kohonen dès 1995~:
-\begin{quote}
-Un objectif à long terme de l'auto-organisation est de créer des systèmes autonomes dont les éléments se contrôlent mutuellement et apprennent les uns des autres. De tels éléments de contrôle peuvent être implémentés par des SOMs spécifiques~; le problème principal est alors l'interface, en particulier la mise à l'échelle automatique des signaux d'interconnexion entre les modules et la collecte de signaux pertinents comme interface entre les modules. Nous laisserons cette idée aux recherches futures.
-Traduit de \cite{Kohonen1995SelfOrganizingM}
-\end{quote}
-
-L'objectif de nos travaux est ainsi de proposer un modèle de carte qui puisse être utilisée en tant que module, de définir l'interface entre les modules afin de créer une architecture, puis de comprendre les comportements de calcul qui émergent de l'association des modules.
 
 \section*{Problématique de la thèse}
 
-- Construction d'une architecture modulaire de cartes auto-organisatrices. 
-Cette thèse propose de construire une architecture modulaire de cartes auto-organisatrices. Cette démarche s'appuie sur différents modèles d'architecture développés au sein de l'équipe de recherche.
-Cette approche est constructive~: nous définissons un modèle en s'appuyant sur l'état de l'art et les travaux précédents, puis nous cherchons à évaluer son comportement, afin de guider les améliorations ou applications qui en découlent.
+Cette thèse propose de construire une architecture non-hiérarchique de cartes auto-organisatrices, en s'appuyant sur différents modèles d'architecture développés au sein de l'équipe de recherche.
+Cette approche est synthétique~: nous définissons un modèle en s'appuyant sur l'état de l'art et les travaux précédents, puis nous cherchons à évaluer son comportement, afin de guider les améliorations ou applications qui en découlent. Nous proposons dans cette thèse un modèle d'architecture de cartes auto-organisatrices~: CxSOM.
+La thèse propose une méthode d'analyse 
+
+
 La notion d'architecture cognitive présentée plus haut cherche à explorer de grands principes liés à la cognition tels que l'apprentissage autonome, sans supervision, le traitement de données temporelles, l'apprentissage sur le long terme sans oubli catastrophique des données précédentes et la fusion de données multimodales, s'inspirant du traitement multisensoriel du cerveau humain.
 Nous voulons ainsi évaluer les mécanismes d'apprentissage de l'architecture que nous proposons sur ces principes de calculs. 
-Cette problématique est très vaste.
-Nous avons choisi dans cette thèse de nous concentrer sur la tâche particulière d'apprentissage associatif de données multimodales. 
+Cette problématique étant très vaste, nous avons choisi dans cette thèse de nous concentrer sur la tâche particulière d'apprentissage associatif de données multimodales. 
 Il s'agit d'apprendre les relations existant entre les entrées, en plaçant cet apprentissage de relations à un niveau interne à l'architecture.
 Cette mémoire associative apparaît comme un type d'apprentissage non supervisé. Le principe est d'apprendre une représentation des entrées, mais également de leurs relations.
 
-
-Ainsi cette thèse présente des travaux visant à identifier les mécanismes d'apprentissage associatifs à l'\oe{}uvre dans des architectures de quelques cartes.
+L'objectif de la thèse est alors de répondre 
 Nous cherchons à répondre aux questions suivantes :
-\begin{itemize}
-    \item Comment construire une architecture de cartes auto-organisatrices ?
-    \item Comment évaluer l'encodage des entrées et de leurs relations au sein d'une architecture de cartes auto-organisatrices ?
-    \item Comment l'architecture CxSOM permet un apprentissage associatif de données ?
-\end{itemize}
-
+% \begin{itemize}
+%     \item Comment construire une architecture de cartes auto-organisatrices ? Dans cette optique, nous proposerons 
+%     \item Comment évaluer l'encodage des entrées et de leurs relations au sein d'une architecture de cartes auto-organisatrices ?
+%     \item Comment l'architecture CxSOM permet un apprentissage associatif de données ?
+% \end{itemize}
 
 \section*{Contributions et plan}
 
 Le manuscrit est organisé de la façon suivante.
-Le chapitre~\ref{chap:archis} présente un état de l'art des architectures de cartes auto-organisatrices existantes dans la littérature, afin de définir ce qu'on entend par architecture modulaire décentralisée et positionner notre modèle dans l'ensemble des modèles existants. Nous nous intéresserons en particulier aux interfaces choisies entre les modules.
+Le chapitre~\ref{chap:archis} présente un état de l'art des architectures de cartes auto-organisatrices existantes dans la littérature.
+Ces modèles d'architectures sont issus de plusieurs domaines, de l'apprentissage automatique aux neurosciences computationnelles. 
+Le chapitre propose une revue des modèles principaux en s'attachant à unifier les notations et leurs désignations afin de définir ce qu'on entend par architecture non-hiérarchique, et présentera les choix de structures clés pour la conception de telles architectures.
+Cet état de l'art nous permettra de nous situer dans la littérature existante.
 
 Nous détaillerons ensuite le modèle d'architecture décentralisée de cartes auto-organisatrices que nous proposons dans cette thèse, CxSOM (\emph{Consensus-driven Multi-SOM}) au chapitre~\ref{chap:modele}.
-Ce modèle d'architecture permet d'associer des cartes en architecture non-hiérarchiques. Dans ce modèle, les activités des différentes cartes sont interdépendantes et l'apprentissage s'appuie sur une recherche de consensus entre les cartes pour la recherche d'un BMU.
-Si le modèle a pour but à long terme de concevoir une architecture comportant de nombreux modules ainsi que des connexions temporelles, nous avons concentré cette thèse sur l'analyse des comportements d'architecture de deux et trois cartes.
-Le but de cette thèse est de proposer une méthodologie d'analyse de ce modèle et d'en tirer des comportements élémentaires qui serviront à poser les jalons de la construction d'une architecture plus complexes.
-Les expériences présentées dans la suite du manuscrit étudient le comportement de ces architectures sous différents angles d'approche.
-Le chapitre~\ref{chap:relaxation} présente une analyse plus approfondie du mécanisme de relaxation entre les BMUs, constituant l'interface entre les cartes. 
-Ce chapitre cherche à répondre à la pertinence de ce mécanisme en tant qu'algorithme de choix de BMU pour l'apprentissage.
+Ce modèle d'architecture permet d'associer des cartes en architecture non-hiérarchiques. 
+Dans ce modèle, les activités des différentes cartes sont interdépendantes et l'apprentissage s'appuie sur une recherche de consensus entre les cartes pour la recherche d'un BMU.
+Le chapitre~\ref{chap:relaxation} présente une analyse plus approfondie du mécanisme de relaxation entre les BMU, constituant l'interface entre les cartes afin de valider ce mécanisme en tant qu'algorithme de choix de BMU pour l'apprentissage.
 
+Si le modèle a pour but à long terme de concevoir une architecture comportant de nombreux modules ainsi que des connexions temporelles, nous avons concentré cette thèse sur l'analyse des comportements d'architecture de deux et trois cartes.
+Nos travaux se sont en effet vite heurté à une difficulté de visualisation d'une architecture de cartes.
+Dans la suite de la thèse, nous proposons une méthodologie d'analyse du modèle d'architecture que nous développons, ce qui nous permettra d'en tirer des comportements élémentaires qui serviront à poser les jalons de la construction d'une architecture plus complexes.
 Nous introduisons au chapitre \ref{chap:repr} une méthode expérimentale et des représentations exprimant comment une architecture de cartes encode les entrées et leurs relations.
 Nous présentons ensuite au chapitre \ref{chap:analyse} les comportements élémentaires d'apprentissage associatif observés sur des architectures de deux et trois cartes en une dimension, qui sont plus facile à visualiser. 
 Nous présenterons en particulier un comportement de prédiction d'entrée rendu possible par le modèle.
@@ -88,12 +85,10 @@ Nous proposons au chapitre~\ref{chap:indicateur} des indicateurs numériques ori
 Le chapitre \ref{chap:analyse2D} étend enfin les observations aux architectures de cartes en deux dimensions, afin de saisir la scalabilité du modèle.
 
 
-
-
-Idées : plutôt se concentrer sur la SOM en elle-même. Champs d'application, performances, remarquer que les SOM ont des performances pour extraire des représentations, inspi biologique
-Voila ce qui n'a pas été réalisé, et voila ce que je propose : injecter de l'information de position 
-démarche synthétique
-caractériser le comportement émergent des cartes.
+% Idées : plutôt se concentrer sur la SOM en elle-même. Champs d'application, performances, remarquer que les SOM ont des performances pour extraire des représentations, inspi biologique
+% Voila ce qui n'a pas été réalisé, et voila ce que je propose : injecter de l'information de position 
+% démarche synthétique
+% caractériser le comportement émergent des cartes.
 
 
 
