@@ -51,9 +51,6 @@ Nous présentons dans cette section le modèle initial de carte de Kohonen et in
     \label{fig:topo}}
     \end{figure}
 
-
-
-
 % \begin{figure}
 %     \centering
 %     \includegraphics{SOM.pdf}
@@ -62,8 +59,7 @@ Nous présentons dans cette section le modèle initial de carte de Kohonen et in
 
 Une carte de Kohonen est un algorithme de quantification vectorielle. 
 Les algorithmes de quantification vectorielle cherchent à représenter un ensemble de données d'entrées issues d'un espace $\mathcal{D}$ en un nombre fini de vecteurs de l'espace d'entrée, les prototypes.
-Les cartes auto-organisatrices ajoutent une topologie sur laquelle s'appuie cette représentation de l'espace d'entrée. Les prototypes $\w$ sont alors positionnés sur les n\oe{}uds d'un graphe, et indexés par une position $p$. 
-Ce graphe se présente en général comme une grille de faible dimension, en général une grille 2D, définissant une correspondance directe entre la dimension de la carte et les positions $p$ des n\oe{}uds
+Les cartes auto-organisatrices y ajoutent une topologie sur laquelle s'appuie cette représentation de l'espace d'entrée. Les prototypes $\w$ sont alors positionnés sur les n\oe{}uds d'un graphe, et indexés par une position $p$. Ce graphe se présente en général comme une grille de faible dimension, en général une grille 2D, définissant une correspondance directe entre la dimension de la carte et les positions $p$ des n\oe{}uds
 (\emph{mapping}). Des exemples de topologies de SOM 1D et 2D sont par exemple illustrées en figure~\ref{fig:topo}.
 
 Avant apprentissage, ces prototypes sont initialisés aléatoirement dans l'espace d'entrée.
@@ -100,14 +96,13 @@ Le processus de mise à jour des poids d'une carte de Kohonen se traduit par un 
     }
 \end{figure}
 
-Le calcul de distances, utilisé dans la version originale de SOM, est remplacé dans d'autres modèles de cartes par le calcul d'une \emph{activation} $a(p, \inpx)$ liant les poids des n\oe{}uds et les entrées, généralement gaussienne~:
+Le calcul de distances, utilisé dans la version initiale des SOM, est remplacé dans d'autres modèles de cartes par le calcul d'une \emph{activation} $a(p, \inpx)$ liant les poids des n\oe{}uds et les entrées. Il s'agit généralement d'une activation gaussienne~:
 \begin{equation}\label{eq:activation}
     a(p, \inpx) = \exp{-\frac{\lVert \inpx - \w(p)\rVert^2}{2\sigma^2}}
 \end{equation}
 Ce calcul d'activation est représenté en figure~\ref{fig:activation}, et s'apparente à la définition de champs récepteurs gaussiens pour chaque neurone de poids $\w(p)$, inspirée de la biologie.
-L'activation est ainsi un champ 2D, dépendant de $\inpx$ (en ordonnée) et de $p$ (en abscisse). \`A $p$ fixé, $a(\inpx)$ serait l'équivalent d'un champ récepteur gaussien, pour le neurone situé en $p$, tracé sur la figure par la courbe bleue. Le paramètre $\sigma$ intervenant dans l'équation détermine la largeur de cette gaussienne.
-Les valeurs d'activation que nous considérons pour le choix du BMU sont quant à elles $a(p)$, calculées à $\inpx$ fixé, tracées sur la figure par la courbe en rouge. La position du maximum de cette activation est utilisée comme Best Matching Unit.
-% Par exemple, la figure \ref{fig:digits} représente le dépliement d'une carte sur des imagettes de taille $28\times 28$. Par son aspect ordonné, une carte est une représentation en dimension 2 d'un espace d'entrée de grande dimension.
+L'activation est un champ 2D, dépendant de $\inpx$ (en ordonnée) et de $p$ (en abscisse). \`A $p$ fixé, $a(\inpx)$ serait l'équivalent d'un champ récepteur gaussien, pour le neurone situé en $p$ et de valeur préférentielle $\w(p)$, tracé sur la figure par la courbe bleue. Le paramètre $\sigma$ intervenant dans l'équation détermine la largeur de cette gaussienne.
+Les valeurs d'activation que nous considérons pour le choix du BMU sont quant à elles $a(p)$, calculées à $\inpx$ fixé, tracées sur la figure par la courbe en rouge. Le Best Matching Unit est choisi comme l'argmax de cette activation.
 
 \begin{figure}
 \begin{minipage}{0.5\textwidth}

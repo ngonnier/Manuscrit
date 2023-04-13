@@ -41,7 +41,7 @@ Dans cette section, nous reviendrons sur les comportements identifiés au chapit
 Le modèle d'architecture étudié dans cette section est présenté en figure~\ref{fig:archis}.
 Chaque carte a une taille fixée de 500 n\oe{}uds, indexés entre 0 et 1, et possède deux couches de poids $\w_e$ et $\w_c$. Les rayons de voisinage sont fixés à $r_e = 0.2$ et $r_c = 0.02$, sauf si précisé autrement dans l'expérience. Les connexions sont réciproques~: $M\m{1}$ prend comme entrée contextuelle $\bmu\m{2}$ et inversement.
 
-Nous utiliserons comme modèle d'entrées des points en deux dimensions~: chaque modalité $\inpx\m{1}$ et $\inpx\m{2}$ correspond à l'une des deux coordonnées $x$ et $y$ de ces points. Nous comparerons la réponse de l'architecture à différents modèles d'entrées jouet générés artificiellement, qui nous permettent de maîtriser les dépendances entre les modalités.
+Nous utiliserons comme modèle d'entrées des points en deux dimensions~: chaque modalité $\inpx\m{1}$ et $\inpx\m{2}$ correspond à l'une des deux coordonnées $x_p$ et $y$ de ces points. Nous comparerons la réponse de l'architecture à différents modèles d'entrées jouet générés artificiellement, qui nous permettent de maîtriser les dépendances entre les modalités.
 Au chapitre~\ref{chap:repr}, nous avons représenté la dépendance entre les modalités par une variable latente $U$, en bijection avec les entrées, représentant les paramètres libres du modèle d'entrées. 
 Des points 2D situés sur une courbe sont représentés par une variable $U$ 1D, et des points sur une surface par une variable $U$ 2D. L'apprentissage associatif se traduit alors par l'encodage de $U$ au sein de l'architecture.
 
@@ -292,7 +292,7 @@ Enfin, nous pouvons aussi faire varier le taux d'apprentissage $\alpha$, ainsi q
 Pour pouvoir adapter ces paramètres automatiquement dans un objectif d'application et réaliser une étude paramétrique approfondie, il nous faudrait définir une fonction caractérisant l'organisation d'une carte ou relative à un objectif d'apprentissage. 
 Nous discuterons d'un tel indicateur au chapitre \ref{chap:indicateur}, mais soulignons ici que nous n'avons pas encore défini de valeur adéquate. C'est pourquoi nous nous sommes intéressée à la compréhension de l'effet des paramètres dans nos travaux, et n'avons pas cherché à optimiser ces valeurs.
 
-\subsubsection{Influence des deux échelles d'apprentissages sur la recherche de BMU par relaxation}
+\subsubsection{Influence des deux échelles d'apprentissage sur la recherche de BMU par relaxation}
 \begin{figure}
 	\centering\includegraphics[width=0.8\textwidth]{rceqre/convergence_relax.pdf}
 	\caption{\'Evolution du nombre moyen de pas de relaxation et du taux de convergence pour une organisation de cartes ayant formé des zones de poids contextuels ($\frac{r_e}{r_c} = 10$) et une organisation n'ayant pas formé de zones ($\frac{r_e}{r_c} = 1$). Dans les deux cas, la relaxation mène à un consensus en fin d'apprentissage. La formation de zones ne semble donc pas intervenir dans la qualité de la convergence de la relaxation. \label{fig:conv_rcre}}
@@ -448,34 +448,46 @@ L'organisation à deux échelles des cartes, formant des zones de BMU, permet do
 \subsection{Exemple d'application}
 
 Nous sortons du cadre des entrées simulées pour nous placer dans un cas de contrôle réel.
-Cette expérience propose un exemple simple d'application de l'architecture en robotique, qui nous permet de tester l'apprentissage d'une architecture de cartes sur des entrées bruitées et dont nous ne connaissons pas le modèle de relation.
+Dans le cadre de TP donnés à CentraleSupélec, nous disposons d'une plateforme expérimentale de contrôle automatique d'un drone quadricoptère à partir du traitement des images issues de sa caméra frontale et de ses capteurs de vitesse internes \footnote{\url{https://st5drone.metz.centralesupelec.fr/EI/visual_processing.html}}.
+Cette expérience propose un exemple simple d'application de l'architecture en robotique en s'appuyant sur cette plateforme.
+Cela nous permet de tester l'apprentissage d'une architecture de cartes sur des entrées bruitées et dont nous ne connaissons pas le modèle de relation.
 
 \subsubsection{Méthode expérimentale}
 
 \begin{figure}
-	\centering\includegraphics[width=\textwidth]{visudrone.pdf}
-	\caption{Disposition des capteurs utilisés pour le contrôle du drone. \`A gauche, vue de la caméra frontale. \`A droite, capteurs et commandes relatifs à la position du drone.}
+	\centering\includegraphics[width=\textwidth]{vp_drone.pdf}
+	\caption{Disposition des capteurs utilisés pour le contrôle du drone.
+	Les commandes sont $\w$, vitesse angulaire autour de $z$, $\rho$, angle autour de $x_p$, $\theta$, angle autour de $y$. Ces commandes à envoyer pour corriger la trajectoire dépendent de deux valeurs extraites de l'image de la caméra (en haut)~: $x_p$, abscisse du point de fuite dans le référentiel caméra, et $\varphi = \varphi^+ - \varphi^-$, différence entre les angles formés par les lignes de fuite du couloir.
+	Le drone vole en ligne droite lorsqu'il garde $x_p$ et $\varphi$ centrés en 0.
+	$x_p \neq 0$ implique une correction sur $\w$ (c). $\varphi \neq 0$ implique une correction sur $\rho$ (b).
+	L'accéléromètre permet de récupérer la vitesse linéaire du drone selon chaque axe à tout instant, $v_x,v_y,v_z$.
+	}
 	\label{fig:drone}
 	\end{figure}
 
-Nous nous plaçons dans le cadre du contrôle d'un quadricoptère volant dans un couloir en ligne droite.
-L'objectif de la tâche de contrôle est que le drone se déplace en avant en restant au centre du couloir, malgré les perturbations liées aux turbulences qu'il génère.
-Nous disposons d'une plateforme expérimentale de contrôle de ce drone. Il possède une caméra frontale ainsi qu'un ensemble de capteurs de position et vitesse interne et peut être contrôlé à distance par un opérateur.
-Lors de son déplacement dans le couloir, les valeurs des capteurs reçues et la commande envoyée à chaque instant sont interdépendantes~: il s'agit d'observations multimodales correspondant au cadre que nous avons défini.
+L'objectif de la tâche de contrôle est que le drone se déplace en avant en restant au centre du couloir, malgré les perturbations liées aux turbulences qu'il génère. Il possède une caméra frontale ainsi qu'un ensemble de capteurs de position et vitesse interne et peut être contrôlé à distance par un opérateur. 
+Dans le cadre du TP, la commande est asservie par des filtres proportionnel et proportionnel intégral dérivé à partir des différents capteurs et de la vitesse mesurée du robot. 
+Nous avons voulu remplacer cet asservissement par un apprentissage des relations entre vitesse, commande et capteurs par une architecture de SOM.
 
 La figure \ref{fig:drone} présente les capteurs et commandes que nous voulons utiliser pour la tâche de contrôle.
-Les commandes sont envoyées au drone en fixant les angles de rotation $\theta, \rho$ et la vitesse de rotation $\omega$.
-Nous disposons déjà d'une plateforme de pilotage du drone lui permettant de rester centré dans le couloir à partir de filtres correcteurs agissant sur les commandes $\omega$ et $\rho$, à partir des données extraites de la caméra. Il s'agit de $\varphi$, la différence entre les angles formés par les lignes de fuite du couloir, $x$, l'excentricité du point de fuite dans le repère de la caméra ainsi que la vitesse linéaire $v$ récupérées par l'accéléromètre selon $x$. La rotation $\omega$ est asservie proportionnellement à $x$, de façon à ce que $x$ reste centré autour de 0.
-La commande $\rho$, qui influence l'accélération linéaire selon $x$, est contrôlée par un PID qui s'appuie sur $\varphi$ ainsi que $v$, la vitesse linéaire selon $x$.
-Dans notre expérience, nous voulons apprendre grâce à une architecture CxSOM les relations existant entre ces différentes commandes et capteurs à partir des trajectoires pilotées par ce PID, puis générer une prédiction de la commande lors d'une phase de prédiction.
-Nous présentons ici le résultat du contrôle de $\rho$ grâce à CxSOM, $\omega$ restant contrôlé grâce au correcteur proportionnel. L'architecture doit apprendre les relations entre $\varphi$, $v$ et $\rho$ pour remplacer le PID lors de la phase de prédiction. 
+Les commandes sont envoyées au drone en fixant les angles de rotation $\theta, \rho$ et la vitesse de rotation $\omega$. \`A chaque instant, nous extrayons de l'image de la caméra l'abscisse du point de fuite du couloir dans le référentiel de l'image caméra, $x_p$, et la différence entre les deux angles du couloir $\varphi$.
+Pour que le drone vole en ligne droite au centre du couloir, on doit avoir $x_p = 0$ et $\varphi = 0$ (a).
+Le centrage de $x_p$ doit être ajusté en contrôlant $\w$ (c).
+\`A $x_p$ centré, le centrage de $\varphi$ doit être ajusté grâce à une commande sur $\rho$ (b). Cette commande influence l'accélération linéaire du drone selon $y$.
 
-L'architecture CxSOM est finalement construite sur quatre modalités~: $\varphi$, $v$, $\rho$ et $x$, $x$ n'étant a priori pas liée aux valeurs des autres capteurs. Les valeurs de ces modalités sont présentées en figure~\ref{fig:drone_inp}. Nous y voyons que $\rho$ dépend de $\varphi$ et $v$ de façon linéaire, mais très bruitée. Elle ne dépend pas de $x$.
+Nous disposons déjà d'une plateforme de pilotage du drone lui permettant de rester centré dans le couloir à partir de deux filtres correcteur, à altitude constante. La commande $\w$ est soumise à un filtre proportionnel à partir de $x_p$.
+La commande $\rho$ influence l'accélération linéaire selon $x_p$. Elle est donc contrôlée par un PID qui s'appuie sur $\varphi$, ainsi que $v_y$, la vitesse linéaire selon $x_p$ obtenue par les capteurs d'odométrie interne du drone.
+Ces deux correcteurs fournissent des relations, à tout instant, entre $x_p$ et $\w$ et entre $\rho$, $v_y$ et $\varphi$. Nous nous retrouvons dans un cas d'entrées multimodales similaires aux entrées jouet que nous avons utilisées.
+Dans notre expérience, nous voulons apprendre ces relations par une architecture CxSOM, par imitation des trajectoires contrôlées grâce aux filtres.
+Nous présentons ici le résultat du contrôle de $\rho$ grâce à CxSOM, $\omega$ restant contrôlé grâce au correcteur proportionnel.  L'architecture que nous avons construite cherche à apprendre les relations entre $\varphi$, $v_y$ et $\rho$ pour remplacer le PID lors de la phase de prédiction. 
+
+L'architecture CxSOM que nous avons utilisée est construite sur quatre modalités~: $\varphi$, $v_y$, $\rho$ et $x_p$, mais $x_p$ n'étant a priori pas liée aux valeurs des autres capteurs.
+Les valeurs de ces modalités sont présentées en figure~\ref{fig:drone_inp}. Nous y voyons que $\rho$ dépend de $\varphi$ et $v_y$ de façon linéaire, mais très bruitée. Elle ne dépend pas de $x_p$.
 Les cartes sont toutes connectées entre elles, et ont donc une couche de poids externe et trois couches de poids contextuels. Le but de l'architecture sera de capturer les relations entre les capteurs et la commande $\rho$ puis de générer la commande en temps réel lors de la phase de prédiction. 
 
 \begin{figure}
 	\centering\includegraphics[width=\textwidth]{drone_inputs}
-	\caption{Disposition et dépendances des entrées d'apprentissage. Nous chercherons à prédire $\rho$~: cette valeur dépend bien des autres modalités $v$, $\varphi$ et $x$. La dépendance est très simple (linéaire) mais très bruitée, et $\rho$ ne dépend pas de $x$. \label{fig:drone_inp}}
+	\caption{Disposition et dépendances des entrées d'apprentissage. Nous chercherons à prédire $\rho$~: cette valeur dépend bien des autres modalités $v_y$, $\varphi$ et $x_p$. La dépendance est très simple (linéaire) mais très bruitée, et $\rho$ ne dépend pas de $x_p$. \label{fig:drone_inp}}
 \end{figure}
 
 \subsubsection{Résultats}
@@ -490,16 +502,15 @@ Les cartes sont toutes connectées entre elles, et ont donc une couche de poids 
 		\caption{Prédiction de $\rho$ par CxSOM sur les données d'apprentissage. Nous observons que l'entrée a été correctement préduite, bien que très bruitée, ce qui correspond aux observations réalisées en pratique. \label{fig:pred_drone}}
 	\end{figure}
 
-Ces poids des cartes sont représentés en figure \ref{fig:drone_w}. 
-Nous observons d'abord que l'organisation des poids contextuels rappelle celle observée dans les dispositions d'entrées jouets~: nous observons des motifs pseudo-périodiques dans les valeurs des poids contextuels, formant une deuxième échelle d'organisation. Un exemple de calcul d'activité de la carte $\rho$ pendant la phase de prédiction est illustré en violet. Le BMU correspond au maximum de l'activité~: $\bmu\m{\rho} = 0.41$ et la valeur de prédiction est $\w_e(\bmu\m{\rho}) = 0.49$. Cette valeur, remise à l'échelle, est la commande que nous envoyons au drone à l'instant $t$.
+Ces poids des cartes obtenus après apprentissage sont représentés en figure \ref{fig:drone_w}. 
+Constatons d'abord que l'organisation des poids contextuels rappelle celle obtenue dans les dispositions d'entrées jouets~: les poids contextuels forment des motifs pseudo-périodiques sur la carte. 
+Un exemple de calcul d'activité de la carte $\rho$ pendant la phase de prédiction est illustré en violet. Le BMU correspond au maximum de l'activité~: $\bmu\m{\rho} = 0.41$ et la valeur de prédiction est $\w_e(\bmu\m{\rho}) = 0.49$. Cette valeur, remise à l'échelle, est la commande que nous envoyons au drone à l'instant $t$.
 La relaxation doit être réalisée assez rapidement pour que le drone réagisse en temps réel.
 
-Lors des expériences que nous avons effectuées, le drone apparaît voler correctement dans le couloir sans toucher les murs. Nous observons cependant que cette trajectoire est assez imprécise~: elle ne lui permet pas de se centrer finement au centre du couloir. Pour illustrer ce comportement, nous avons tracé en figure~\ref{fig:pred_drone} l'erreur de prédiction de $\rho$, réalisée sur les données d'apprentissage. La figure fait apparaître que la prédiction est correcte, mais très bruitée, ce qui correspondrait aux observations observées sur le test réel. Elle est moins bonne que la quantification des entrées réalisée dans les autres cartes. 
-La prédiction est donc correctement réalisée, toutefois très imprécise, ce que nous pouvions attendre au vu des relations initiales entre modalités, qui sont très bruitées.
+Lors des expériences que nous avons effectuées, le drone apparaît voler correctement dans le couloir sans toucher les murs. Nous observons cependant que cette trajectoire est très imprécise~: elle ne lui permet pas de se centrer finement au centre du couloir. Pour illustrer ce comportement, nous avons tracé en figure~\ref{fig:pred_drone} l'erreur de prédiction de $\rho$, réalisée sur les données d'apprentissage. La figure fait apparaître une prédiction, mais très bruitée, ce qui correspondrait aux observations observées sur le test réel. Elle est moins bonne que la quantification des entrées réalisée dans les autres cartes. 
+Une prédiction est donc réalisée, toutefois très imprécise, ce que nous pouvions attendre au vu des relations initiales entre modalités, qui sont très bruitées.
 
 Cette application sur une architecture de quatre cartes nous permet d'abord d'étendre les observations réalisées sur deux et trois cartes~: les poids externes et contextuels forment deux échelles d'organisation, et les poids contextuels forment des motifs pseudo-périodiques dans la carte.
-
-
 La capacité de prédiction observée sur le drone laisse envisager une possibilité future d'application des architectures de cartes sur des données réelles. 
 L'architecture de cartes a en effet détecté une relation entre entrées qui lui permet de prédire une commande à envoyer. De plus, la réactivité de l'envoi de la commande au drone suggère que malgré la relaxation, l'architecture réagit assez rapidement. Cependant, le dispositif expérimental réalisé ici reste à améliorer pour pouvoir envisager une réelle application de CxSOM au contrôle d'un robot. Dans ce sens, il serait intéressant d'étudier une application similaire sur des données moins bruitées et disponibles en simulation afin de mesurer l'erreur de prédiction relative à l'architecture, comme une étape intermédiaire entre les données géométriques et le cadre réel. 
 Nous pouvons également imaginer, à plus grande échelle, qu'une architecture de cartes permette à un robot une prise de décision par rapport à la disposition de ses capteurs. La capacité de prédiction laisse également envisager des applications relatives au remplacement d'un capteur cassé ou à l'utilisation de données dans lesquelles il manque parfois l'une ou l'autre des modalités.
