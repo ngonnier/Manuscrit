@@ -141,7 +141,7 @@
 
 \newtoks\@lab@tokii
 \@lab@tok={Laboratoire Lorrain de Recherche en Informatique et
-                             ses Applications \includegraphics[width=0.3\textwidth]{tulloria}}
+                             ses Applications \includegraphics[width=0.2\textwidth]{tulloria}}
 \newcommand{\SetLab}[1]{%
     \@lab@tok={#1}%
     }
@@ -165,10 +165,19 @@
 \newcommand{\@ThesisFirstPageHead}{\@ULhe@d}
 \newcommand\ThesisFirstPageHead[1]%
          {\renewcommand{\@ThesisFirstPageHead}{{#1}}}
+
 \newcommand{\@ThesisTitle}%
          {{\UseEntryFont{ThesisTitle}\fbox{\tt\char`\\ThesisTitle}\par}}
+
+\newcommand{\@ThesisSubtitle}%
+         {{\UseEntryFont{ThesisSubtitle}\fbox{\tt\char`\\ThesisSubtitle}\par}}        
+
 \newcommand\ThesisTitle[1]%
          {\renewcommand{\@ThesisTitle}{{\UseEntryFont{ThesisTitle}#1\par}}}
+
+\newcommand\ThesisSubtitle[1]%
+{\renewcommand{\@ThesisSubtitle}{{\UseEntryFont{ThesisSubtitle}#1\par}}}
+
 \newcommand{\@ThesisKind}{{\UseEntryFont{ThesisKind}TH\`ESE}}
 \newcommand\ThesisKind[1]%
          {\renewcommand{\@ThesisKind}{{\UseEntryFont{ThesisKind}#1}}}
@@ -264,7 +273,9 @@
 \SetTULFont{ThesisFirstPageHead}%
              {\TitlePageFontEncoding}{\TitlePageFontFamily}{bx}{n}{10}{14}%
 \SetTULFont{ThesisTitle}%
-             {\TitlePageFontEncoding}{\TitlePageFontFamily}{bx}{n}{25}{30}%
+             {\TitlePageFontEncoding}{\TitlePageFontFamily}{bx}{n}{20}{25}%
+\SetTULFont{ThesisSubtitle}%
+            {\TitlePageFontEncoding}{\TitlePageFontFamily}{bx}{n}{17}{20}%
 \SetTULFont{ThesisKind}%
              {\TitlePageFontEncoding}{\TitlePageFontFamily}{bx}{n}{20.74}{25}%
 \SetTULFont{ThesisPresentedThe}%
@@ -412,6 +423,8 @@
        \vskip10mm plus2fil
     \begin{center}
                                 \@ThesisTitle
+       \vskip3mm                         
+                                \@ThesisSubtitle
        \vskip10mm plus2fil
                                 \@ThesisKind
        \vskip5mm plus2fil
