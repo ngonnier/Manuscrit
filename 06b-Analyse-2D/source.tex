@@ -41,7 +41,7 @@ Ces exemples nous permettront d'identifier quelques limites et perspectives pour
 \end{figure}
 
 Nous utilisons des architectures de deux cartes 2D, connectées rétroactivement.
-Les n\oe{}uds d'une carte sont positionnées sur une grille carrée de taille $100 \times 100$ et indexés entre 0 et 1 sur chaque dimension. Nous notons cet index $\mathbf{p}\m{i} = (p\m{i}|_x, p\m{i}|_y)$.
+Les poids d'une carte sont positionnés sur une grille carrée de taille $100 \times 100$ et indexés entre 0 et 1 sur chaque dimension. Nous notons cet index $\mathbf{p}\m{i} = (p\m{i}|_x, p\m{i}|_y)$.
 Chaque carte possède une couche de poids externes $\w\ext$ et une couche de poids contextuels $\w_c$
 Les entrées contextuelles sont des positions 2D.
 Les activités $a_e$ et $a_c$ sont calculées par une activation gaussienne~:
@@ -50,8 +50,9 @@ de même pour $a_c$.
 La norme utilisée est ici la norme euclidienne, que ce soit dans l'espace d'entrée et dans l'espace des positions de la carte. Les paramètres d'apprentissage (rayons de voisinage et taux d'apprentissage) ne sont pas diminués au cours de l'apprentissage.
 
 La caractérisation de l'organisation dans une carte auto-organisatrice en deux dimensions est plus complexe que dans les cartes en une dimension. En effet, le processus de mise à jour des poids de la carte peut mener à la formation de points de torsion, comme illustré par la figure \ref{fig:torsion}, qui induisent une organisation des poids \og par morceaux \fg{}, en particulier en l'absence de décroissance des rayons de voisinage et du taux d'apprentissage.
-Cette organisation avec des points de torsion préserve bien la continuité des poids dans chaque morceau de la carte. Toutefois, les poids ne sont pas totalement ordonnés à l'échelle de la carte. Ces points de torsions se forment généralement lorsque le rayon de voisinage choisi est trop faible dès le début de l'apprentissage.
-La présence d'un tel point de torsion pourrait potentiellement affecter l'utilisation de la position du BMU en tant que représentation de l'entrée, car deux entrées proches peuvent avoir un BMU éloigné dans la carte~: la représentation spatiale formée par la position du BMU n'est plus complètement ordonnée. Nous ne disposons cependant pas d'éléments permettant de confirmer ou d'infirmer l'existence d'un tel problème.
+Cette organisation avec des points de torsion préserve bien la continuité des poids dans chaque morceau de la carte. Toutefois, les poids ne sont pas totalement ordonnés à l'échelle de la carte. Ces points de torsions se forment généralement lorsque le rayon de voisinage choisi est trop faible au début de l'apprentissage.
+La présence d'un tel point de torsion pourrait potentiellement affecter l'utilisation de la position du BMU en tant que représentation de l'entrée, car deux entrées proches peuvent avoir un BMU éloigné dans la carte~: la représentation spatiale formée par la position du BMU n'est plus complètement ordonnée. 
+Nous ne disposons cependant pas d'éléments permettant de savoir comment une telle cartographie morcelée affecte les capacités d'utilisation de la position du BMU pour l'apprentissage.
 
 Dans les expériences de ce chapitre, nous avons cherché à éviter la formation de tels points de torsion dans les poids externes pour faciliter la compréhension des mécanismes d'organisation.
 Pour cela, nous laissons les poids externes s'organiser de façon préalable sur 1000 itérations à partir des activités externes, sans prendre en compte les poids contextuels. Cette pré-organisation est réalisée en prenant un grand rayon de voisinage $r_e = 0.5$.
@@ -62,29 +63,29 @@ Après cette étape préalable, nous réduisons le rayon externe à $r_e = 0.2$ 
 \begin{figure}
 	\includegraphics[width=\textwidth]{sphere_inputs_colormap.png}
 	\caption{Transformation de la sphère 3D paramétrée par $U$ vers un espace 4D. La rotation permet de répartir les coordonnées des points sur les quatre dimensions sans modifier la structure des entrées. Les modalités sont des valeurs 2D $\inpx\m{1}$ et $\inpx\m{2}$.
-	La couleur de chaque point des figures fait référence à la valeur de $U$ correspondante, dont la disposition est présentée figure de gauche. Deux valeurs de $U$ différentes correspondent à même valeur de $\inpx\m{1}$. Par exemple, $\inpx\m{1} = (0.5, 0.7)$ correspond à $U$ autour de $(0.6,0.3)$ (vert) ou $U$ autour de $ (0.6,0.8)$ (violet).
+	La couleur de chaque point des figures fait référence à la valeur de $U$ correspondante, dont la disposition est présentée figure de gauche. \`A tout $\inpx\m{1}$ peut correspondre deux valeurs de $U$. Par exemple, $\inpx\m{1} = (0.5, 0.7)$ peut correspondre à $U$ autour de $(0.6,0.3)$ (vert) ou $U$ autour de $ (0.6,0.8)$ (violet).
 	\label{fig:sphere_inputs}}
 \end{figure}
 
-Nous avons jusqu'à présent utilisé des modèles d'entrées dont chaque modalité $\inpx\m{i}$ était en une dimension et $U$, la variable latente également une variable 1D. 
-Afin de complexifier la structure des entrées, nous choisissons d'utiliser des entrées dont chaque modalité est en deux dimensions, et dont le modèle latent $U$ est également 2D.
+Nous avons jusqu'à présent utilisé des modèles d'entrées dont chaque modalité $\inpx\m{i}$ comme la variable latente $U$ sont des valeurs 1D.
+Afin de complexifier la structure des entrées, nous choisissons d'utiliser des entrées dont chaque modalité est en deux dimensions, et dont que le modèle latent$U$ est également 2D.
 
-Nous choisissons comme premier modèle d'entrées des points tirés sur une sphère, plongée dans un espace en 4D. 
+Nous choisissons comme premier modèle d'entrées des points tirés sur une sphère plongée dans un espace en 4D. 
 La structure de ces entrées est illustrée en figure~\ref{fig:sphere_inputs}.
-Ces points sont déterminés par deux angles, $\theta$ et $\phi$, les coordonnées polaires du point, et qui sont normalisés entre $0$ et $1$, qui correspondent à la variable latente 2D $U$.
+Ces points sont paramétrés par leurs coordonnées polaires $\theta$ et $\phi$. Nous définissons la variable $U$ comme ces angles normalisés sur $[0,1]$.
 Pour générer les entrées, nous tirons $U = (\phi,\theta)$ dans $[0,1]^2$ selon la distribution indiquée à gauche de la figure, correspondant à un point sur une sphère en trois dimensions, de coordonnées $(x_1,x_2,x_3,0)$. 
-Nous changeons ensuite de repère par une rotation en 4D afin que les coordonnées du point soient distribuées sur les 4 axes de l'espace 4D. Cette rotation s'accompagne d'une translation et une mise à l'échelle sur chaque axe afin de normaliser toutes les coordonnées dans $[0,1]$, de façon a obtenir un nouvel ensemble de points 4D $(x_1^\prime,x_2^\prime,x_3^\prime,x_3^\prime)$, situés sur une sphère 3D légèrement déformée.
+Nous changeons ensuite de repère par une rotation en 4D afin que les coordonnées du point soient distribuées sur les 4 axes de l'espace 4D. Cette rotation s'accompagne d'une translation et d'une mise à l'échelle sur chaque axe afin de normaliser toutes les coordonnées dans $[0,1]$. Le nouvel ensemble de point obtenus $(x_1^\prime,x_2^\prime,x_3^\prime,x_3^\prime)$ sont situés sur une sphère 3D légèrement déformée.
 Ces points 4D forment les deux entrées externes en deux dimensions~: $\inpx\m{1} = (x_1^\prime, x_2^\prime)$ et $\inpx\m{2}= (x_3^\prime, x_4^\prime)$
 Sur la figure~\ref{fig:sphere_inputs}, les points sont colorés sur chaque étape par rapport à la valeur correspondante de $U$ représentée en figure de gauche.
-Une même valeur de $\inpx\m{1}$ correspond à deux valeurs de $U$, ce qui permet de nous placer dans un cas similaire aux entrées tirées sur le cercle, que nous avons utilisées au chapitre~\ref{chap:analyse}.
+Une même valeur de $\inpx\m{1}$ peut correspondre à deux valeurs de $U$, ce qui permet de nous placer dans un cas similaire aux entrées tirées sur le cercle, que nous avons utilisées au chapitre~\ref{chap:analyse}.
 
 Nous utiliserons comme second modèle d'entrées 4D des points placés dans l'hypercube $[0,1]^4$. Les deux modalités 2D $\inpx\m{1}$ et $\inpx\m{2}$ sont indépendantes, rappelant la configuration des entrées prises dans le patch $[0,1]^2$ pour des modalités 1D. L'étude de configuration d'entrées indépendantes permet d'évaluer les mécanismes d'organisation qui sont directement liés aux règles d'apprentissage des cartes.
 
-Nous étudierons enfin une architecture de trois cartes 2D. Les entrées sont tirées sur une sphère, cette fois plongée dans une espace en six dimensions, selon la méthode présentée en figure~\ref{fig:sphere_inputs}. Les modalités sont chacune en deux dimensions et $U$ est une variable 2D. Dans ce modèle d'entrées, la connaissance de deux modalités sur trois détermine la troisième valeur, nous permettant d'observer la capacité de prédiction de l'architecture.
+Nous étudierons enfin une architecture de trois cartes 2D. Les entrées sont tirées sur une sphère, cette fois plongée dans une espace en six dimensions, selon la méthode présentée en figure~\ref{fig:sphere_inputs}. Chaque modalité est en deux dimensions et $U$ est une variable 2D. Dans ce modèle d'entrées, la connaissance de deux modalités sur trois détermine la troisième valeur, nous permettant d'observer la capacité de prédiction de l'architecture.
 
 \subsection{Expériences}
 
-Ce chapitre constitue une série d'observations réalisées sur des architectures de cartes 2D, afin de proposer une première visualisation de comment les propriétés d'organisation observées sur des architectures de cartes 1D s'étendent à des cartes 2D.
+Ce chapitre expose plusieurs observations effectuées sur des architectures de cartes 2D afin de donner un premier aperçu de l'extension aux cartes 2D des propriétés d'organisation observées sur des architectures de cartes 1D.
 Les propriétés que nous voulons vérifier sont~:
 \begin{itemize}
 	\item Les poids externes de chaque carte de l'architecture permettent une bonne quantification vectorielle de leur entrée externe.
@@ -123,8 +124,8 @@ En haut, nous représentons les poids contextuels de la carte sous forme de cart
 	\begin{minipage}{\textwidth}
 		\includegraphics[width=0.7\textwidth]{we_rc002_afterbug_step10.pdf}
 		\caption{Tracé des poids externes contextuels d'une architecture de cartes, organisés sur une sphère dans un espace 4D, avec $r_e =0.2$ et $r_c = 0.02$.
-		En bas, les poids externes sont positionnés en fonction de leur valeur $\w_e|_x, \w_e|_y$ et reliés aux n\oe{}uds voisins. Pour une raison de lisibilité, nous avons représenté seulement une partie des connexions, les cartes étant de taille $100 \times 100$. Le coin de position $(0,0)$ de la carte est marqué par le point rouge. Cette représentation permet d'observer directement que les poids externes de chaque carte se déplient sur les entrées externes qui lui ont été présentées, dont on retrouve le tracé en figure ~\ref{fig:sphere_inputs}.
-		En haut, nous traçons la valeur des poids contextuels. Nous colorons le point situé en position $p|_x, p|_y$ de chaque carte en fonction de la valeur 2D de son poids externe. Cette représentation fait apparaître une organisation en motifs oscillants, rappelant le comportement observé en 1D.
+		En bas, les poids externes sont positionnés en fonction de leur valeur $\w_e|_x, \w_e|_y$ et reliés aux n\oe{}uds voisins. Pour une raison de lisibilité, nous avons représenté seulement une partie des connexions, les cartes étant de taille $100 \times 100$. Le coin de position $(0,0)$ de la carte est marqué par le point rouge. Cette représentation permet d'observer directement que les poids externes de chaque carte se déplient sur les entrées externes qui lui ont été présentées, dont on retrouve le tracé en figure~\ref{fig:sphere_inputs}.
+		En haut, nous traçons la valeur des poids contextuels. Nous colorons le point situé en position $p|_x, p|_y$ de chaque carte en fonction de la valeur 2D de son poids externe codé par la carte de coloration à droite. Cette représentation fait apparaître une organisation en motifs spatiaux pseudo-périodiques, rappelant le comportement observé en 1D.
 		\label{fig:2som_s_002_wc}}
 		\end{minipage}
 \end{figure}
@@ -147,12 +148,12 @@ Nous restons dans le cas des entrées tirées sur la sphère plongée en 4D, et 
 La figure~\ref{fig:U_BMU} représente la valeur de $U$, en couleur, selon la position du BMU $\bmu\m{1}$ et $\bmu\m{2}$ dans chaque carte, sur une étape de test après apprentissage.
 
 Nous constatons que les BMU se regroupent dans des zones distinctes sur la carte. Chaque zone de BMU se spécialise pour une même valeur de $U$. Ces zones semblent séparées par des zones mortes, de tailles variables.
-Nous y faisons figurer deux points en rouge et bleu, qui sont les réponses à deux entrées ayant une valeur de $\inpx\m{1}$ proche, mais une valeur différente de $\inpx\m{2}$ et donc de $U$.
-Les BMU de ces deux points sont placés dans deux zones distinctes, mais adjacentes dans la carte $M\m{1}$. Ce comportement est ainsi très similaire à celui observé en 1D. 
-L'organisation des valeurs de $U$ se rapproche également de celle observée en figure~\ref{fig:cr_xp} pour des valeurs de $U$ 1D~: nous retrouvons les deux échelles d'organisation, l'une selon la valeur de $\inpx\m{1}$ et l'autre, dans chaque zone, selon la valeur de $\inpx\m{2}$.
+Nous faisons figurer deux points en rouge et bleu sur la figure, qui sont les réponses à deux entrées ayant une valeur de $\inpx\m{1}$ proche, mais une valeur différente de $\inpx\m{2}$ et donc de $U$.
+Les BMU de ces deux points sont placés dans deux zones distinctes, mais adjacentes dans la carte $M\m{1}$. Ce comportement est ainsi très similaire à celui observé en 1D.
+L'organisation des valeurs de $U$ se rapproche également de celle observée en figure~\ref{fig:cr_xp} pour des valeurs de $U$ 1D~: nous retrouvons les deux échelles d'organisation, l'une selon la valeur de $\inpx\m{1}$ et l'autre, dans chaque zone, selon la valeur de $\inpx\m{2}$. Les valeurs de $U$ font apparaître deux ordres entremêlés.
 
 Graphiquement, $U$ semble apparaître comme une fonction de $\bmu$ dans chaque carte. Dans le but de vérifier cette relation fonctionnelle, nous avons utilisé le ratio de corrélation, dont les valeurs pour CxSOM et pour les entrées sont présentées dans le tableau \ref{tab:eta2D}. Le ratio de corrélation $\eta(U;\bmu\m{i})$ est de $0.98$ dans chaque carte, indiquant que $U$ est proche d'une fonction de $\bmu\m{1}$ et de $\bmu\m{2}$. Cette valeur est supérieure à la relation initiale entre $U$ et chaque modalité $\inpx\m{1}$ et $\inpx\m{2}$, respectivement de $0.81$ et $0.94$, suggérant que les cartes ont créé une relation fonctionnelle qui n'était pas présente dans le modèle d'entrées.
-Il est à noter que ces valeurs de ratio de corrélation pour le modèle d'entrées sont élevées, bien que $U$ ne soit pas une fonction de $\inpx\m{1}$ ou $\inpx\m{2}$. 
+Il est à noter que ces valeurs de ratio de corrélation pour ce modèle d'entrées sont élevées, bien que $U$ ne soit pas une fonction de $\inpx\m{1}$ ou $\inpx\m{2}$. 
 Cette observation souligne l'importance de la comparaison de $\eta(U;\bmu)$ à $\eta(U;X)$ pour interpréter correctement sa valeur.
 
 \begin{table}
@@ -160,7 +161,7 @@ Cette observation souligne l'importance de la comparaison de $\eta(U;\bmu)$ à $
 	\centering\begin{tabular}{lcc}
 						&$M\m{1}$ 					& $M\m{2}$ 						\\
 		Entrées 		& $\eta(U;\inpx\m{1}) = 0.81$ & $\eta(U;\inpx\m{2}) = 0.94$  \\
-		CxSOM  	 		& $\eta(U;\bmu\m{1}) = 0.98$ & $\eta(U;\bmu\m{1}) = 0.98$ 	\\
+		CxSOM  	 		& $\eta(U;\bmu\m{1}) = 0.98$ & $\eta(U;\bmu\m{2}) = 0.98$ 	\\
 	\end{tabular}
 \end{table}
 
