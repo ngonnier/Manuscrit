@@ -318,7 +318,8 @@
 \NewJuryCategory{Rapporteurs}{\textit{Rapporteur :}}{\textit{Rapporteurs :}}
 \NewJuryCategory{Examinateurs}{\textit{Examinateur :}}{\textit{Examinateurs :}}
 \NewJuryCategory{Invites}{\textit{Invit\'e :}}{\textit{Invit\'es :}}
-\NewJuryCategory{Encadrants}{\textit{Encadrant :}}{\textit{Encadrants :}}
+\NewJuryCategory{Directeur}{\textit{Directeur de thèse :}}{\textit{Directeur de thèse :}}
+\NewJuryCategory{CoDirecteur}{\textit{Co-directeur :}}{\textit{Co-directeur de thèse :}}
 \def\@selecti#1{\expandafter\@@selecti#1}
 \def\@@selecti#1#2{{#1}}
 \def\@selectii#1{\expandafter\@@selectii#1}
