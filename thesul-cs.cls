@@ -319,7 +319,7 @@
 \NewJuryCategory{Examinateurs}{\textit{Examinateur :}}{\textit{Examinateurs :}}
 \NewJuryCategory{Invites}{\textit{Invit\'e :}}{\textit{Invit\'es :}}
 \NewJuryCategory{Directeur}{\textit{Directeur de thèse :}}{\textit{Directeur de thèse :}}
-\NewJuryCategory{CoDirecteur}{\textit{Co-directeur :}}{\textit{Co-directeur de thèse :}}
+\NewJuryCategory{CoDirecteur}{\textit{Co-directeur de thèse :}}{\textit{Co-directeur de thèse :}}
 \def\@selecti#1{\expandafter\@@selecti#1}
 \def\@@selecti#1#2{{#1}}
 \def\@selectii#1{\expandafter\@@selectii#1}
@@ -357,7 +357,7 @@
          \@tokc@t\@jury@tokI\@jury@tokII\@jury@tokI
          \@@buildtable#2/%
       \fi
-      \@jury@tokII={[3mm]}%
+      \@jury@tokII={[1mm]}%
       \@tokc@t\@jury@tokI\@jury@tokII\@jury@tokI
     \fi
     }
@@ -421,25 +421,25 @@
 \newcommand\@thesis@titlep@gebody{%
     %---------------------------------------------------
                              \@ThesisFirstPageHead
-       \vskip10mm plus2fil
+       \vskip8mm plus2fil
     \begin{center}
                                 \@ThesisTitle
        \vskip3mm                         
                                 \@ThesisSubtitle
-       \vskip10mm plus2fil
+       \vskip8mm plus2fil
                                 \@ThesisKind
-       \vskip5mm plus2fil
+       \vskip4mm plus2fil
                              \@ThesisPresentedThe
-       \vskip3mm plus1fil
+       \vskip1mm plus1fil
                              \@ThesisInOrderToGet
-       \vskip5mm plus1fil
+       \vskip4mm plus1fil
                                 \@ThesisDiploma
        \vskip3mm plus1fil
                               \@ThesisPresentedBy
        \vskip3mm plus1fil
                                 \@ThesisAuthor
     \end{center}
-       \vskip5mm plus2fil
+       \vskip3mm plus2fil
                  \hskip1cm\@ThesisJuryTitle
     \begin{center}
                                 \@ThesisJury
