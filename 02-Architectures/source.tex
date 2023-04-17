@@ -109,8 +109,9 @@ L'activation considérée pour le choix du BMU est $a(p)$, calculée à $\inpx$ 
     \caption{En haut~: l'activation $a(p, \inpx)$ est représentée en niveau de vert selon les valeurs des entrées $\inpx \in [0,1]$ (en ordonnées) et des positions $p \in [0,1]$ (en abscisse).
     En bas~: courbe des poids $\w(p)$ d'une carte 1D selon les positions $p$. 
     \`A  $p$ fixé, $a(\inpx)$ correspond au champ récepteur gaussien du neurone situé en position $p$, de valeur préférentielle $\w(p)$. 
-    Un exemple de cette tranche d'activation pour $p = 0.3$ est tracée en bleu sur la figure du haut.
-    \`A $\inpx$ fixé, $a(p)$ correspond à l'activation de la carte réagissant à l'entrée $\inpx$. Un exemple est tracé en rouge pour $\inpx = 0.35$. Le BMU est choisi comme un n\oe{}ud situé à l'argmax de cette activation, c'est-à-dire une des positions marquées par un point rouge sur la courbe de poids. \label{fig:activation}
+    Un exemple de cette tranche d'activation pour $p = 0.3$ est tracée en bleu, en haut à droite.
+    \`A $\inpx$ fixé, $a(p)$ correspond à l'activation de la carte réagissant à l'entrée $\inpx$. Un exemple est tracé en rouge pour $\inpx = 0.35$, au centre.
+    Le BMU est choisi comme un n\oe{}ud situé à l'argmax de cette activation, c'est-à-dire une des positions marquées par un point rouge sur la courbe de poids. \label{fig:activation}
     }
 \end{figure}
 
@@ -154,24 +155,23 @@ Une carte de Kohonen ne doit cependant pas être considérée comme une modélis
 
 L'aspect multisensoriel du traitement de l'information s'appuie sur des connexions entre aires corticales.
 Cette connectivité peut-être étudiée de plusieurs points de vue~: d'un point de vue structurel, en se basant sur des éléments anatomiques ou d'un point de vue fonctionnel.
-Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par électroencéphalographie ou IRM fonctionnelle. Il faut noter cependant que ces observations traduisent une relation statistique et pas forcément une relation de cause à effet. 
-La modélisation de la connectivité physique de ces aires à partir des observations reste donc l'objet de différentes théories cherchant à reproduire ces corrélations. 
+Dans le cas fonctionnel, la connexion de deux aires est déduite de l'existence de dépendances statistiques entre l'activation des neurones des deux aires, observées par électroencéphalographie ou IRM fonctionnelle. Il faut noter cependant que ces observations traduisent une relation statistique et pas forcément une relation causale. 
 Un exemple fonctionnel de traitement multisensoriel de l'information est l'effet ventriloque \parencite{Bonath2007NeuralBO} qui crée l'illusion que la source sonore provient de la marionnette du ventriloque dont les mouvements de bouche sont coordonnés avec les paroles. 
 Ce phénomène entraîne une activité dans le cortex visuel et auditif au niveau des neurones correspondant à l'emplacement exact de la source des stimuli de chacune des modalités.
 Après quelques millisecondes, une activité émerge dans le cortex auditif au niveau des neurones sensibles à l'emplacement spatial de la source du stimulus visuel, témoignant d'une interaction entre les cortex visuels et auditifs.
 Un autre exemple est l'effet McGurk~\parencite{McGurk1976HearingLA}~: ces psychologues ont montré que la présentation du son \og ba \fg{} à un sujet associée à la présentation d'une vidéo d'une bouche prononçant \og ga \fg{} amènent ce sujet à indiquer qu'il a entendu le son \og da \fg{}.
 Historiquement, le traitement de l'information multisensorielle dans le cortex cérébral a été modélisé comme hiérarchique, des aires dites bas niveau alimentant des aires haut niveau permettant le traitement de l'information multimodale. 
-De nombreux travaux montrent également l'existence de connexions directes entre aires sensorielles qui s'ajouteraient à une hiérarchie du traitement de l'information. Par exemple, de nombreuses connexions entre les aires corticales dédiées au traitement d'une modalité sensorielle ont été mises en évidence chez différentes espèces, par exemple en \cite{primate_cortex_91,Calvert2004MultisensoryIM, Cappe2009MultisensoryAP,Foxe2005TheCF,Schroeder2005MultisensoryCT}. Un exemple d'une telle architecture corticale est illustré en figure~\ref{fig:primate}, faisant apparaitre un grand nombre de rétroactions entre aires.
+De nombreux travaux montrent également l'existence de connexions directes entre aires sensorielles qui s'ajouteraient à une hiérarchie du traitement de l'information. Par exemple, de nombreuses connexions entre les aires corticales dédiées au traitement d'une modalité sensorielle ont été mises en évidence chez différentes espèces \parencite{primate_cortex_91,Calvert2004MultisensoryIM, Cappe2009MultisensoryAP,Foxe2005TheCF,Schroeder2005MultisensoryCT}. Un exemple d'une telle architecture corticale est illustré en figure~\ref{fig:primate}, faisant apparaitre un grand nombre de rétroactions entre aires.
 Fonctionnellement, des coactivations entre aires corticales sont observées par exemple entre aires tactile et visuelle \parencite{Sathian2002FeelingWT}, ou entre aires visuelle et olfactive \parencite{Gonzlez2006ReadingCA}.
-Ces connexions s'observent à différents niveaux de la hiérarchie du traitement de l'information~: \cite{Kiefer2008TheSO} met par exemple en évidence un lien existant entre le cortex sensoriel auditif et l'aire dédiée à la représentation de concepts dans le cerveau humain.
+Ces connexions s'observent à différents niveaux de la hiérarchie du traitement de l'information~: \cite{Kiefer2008TheSO} met en évidence un lien existant entre le cortex sensoriel auditif et l'aire dédiée à la représentation de concepts dans le cerveau humain.
 La structure du traitement de l'information dans les aires corticales ne se limite donc pas à un aspect hiérarchique, des connexions rétroactives entre aires existant à plusieurs niveaux du traitement de l'information.
 
 En termes de modélisation du cortex, la théorie des zones de convergence divergence \parencite{damasio_time-locked_1989} suggère que certaines aires corticales servent d'espaces uniquement associatifs agrégeant les signaux des zones corticales sensorielles en entrée pour les propager vers d'autres zones sensorielles. 
 La théorie de la réentrée \parencite{Edelman1982GroupSA} postule quant à elle des connexions directes et réciproques entre les neurones de différentes zones sensorielles ou non. Les neurones d'une aire corticale peuvent alors être activés à la fois par un stimulus sensoriel et un stimulus provenant d'une autre aire corticale.
 Les travaux de \cite{Burnod1989AnAN} modélisent le cortex en colonnes corticales et proposent qu'en chaque point du cortex se croisent des flux de connexions venant de neurones d'autres aires sensorielles, organisées en bandes. Ces théories reviennent régulièrement comme inspirant les modèles de calcul des architectures présentées dans ce chapitre.
 
-La carte de Kohonen implémentant des concepts computationnels inspirée de l'aire cérébrale biologique, nous pouvons chercher à pousser l'inspiration biologique au niveau des connexions entre les aires cérébrales, en construisant des connexions entre plusieurs cartes de Kohonen.
-De la même façon qu'une carte n'est pas un modèle biologique, nous ne cherchons pas à développer un modèle computationnel biologiquement plausible, mais dont la structure du traitement de l'information est inspirée de celle du cerveau, ici la présence de plusieurs aires connectées entre elles, modélisées par l'utilisation de plusieurs cartes de Kohonen assemblées en une architecture.
+La carte de Kohonen implémentant des concepts computationnels inspirés de l'aire cérébrale biologique, nous pouvons chercher à pousser l'inspiration biologique au niveau des connexions entre les aires cérébrales, en construisant des connexions entre plusieurs cartes de Kohonen.
+De la même façon qu'une carte n'est pas un modèle biologique, nous ne cherchons pas à développer un modèle computationnel biologiquement plausible, mais un modèle dont la structure du traitement de l'information est inspirée de celle du cerveau, ici la présence de plusieurs aires connectées entre elles, modélisées par l'utilisation de plusieurs cartes de Kohonen assemblées en une architecture.
 
 \begin{figure}
     \centering
@@ -231,7 +231,8 @@ Présentons d'abord les architectures hiérarchiques de cartes, qui ne présente
 Nous avons relevé deux paradigmes de construction~: dans un premier cas, l'architecture s'appuie sur un processus extérieur aux cartes, qui sélectionne et attribue les entrées à présenter à une carte.
 Dans l'autre cas, l'architecture est composée de cartes dont certaines apprennent les entrées externes et d'autres apprennent sur des éléments de sortie d'autres cartes.
 Par facilité de représentation, les schémas des architectures seront présentés avec des cartes en une dimension. Cependant, toutes les architectures présentées utilisent des cartes en deux dimensions, parfois plus.
-% Une revue des méthodes de clustering basées sur des SOM hiérarchiques a également été effectuée en \cite{henriques_spatial_2012}.
+Nous nous sommes appuyée une analyse des SOM hiérarchiques présentée dans l'article de \cite{henriques_spatial_2012}, qui se concentre principalement sur l'utilisation de ces modèles.
+Nous avons enrichi cette analyse avec des travaux plus récents.
 
 \subsubsection{Architectures hiérarchiques par sélection}
 
@@ -372,7 +373,7 @@ Elles ont les mêmes types de réponses qu'une SOM simple.
 L'aspect uniquement ascendant en est la cause~: les cartes de l'architecture agissent comme des filtres intermédiaires de l'information fournie en entrée, mais seule la couche finale est considérée en sortie de l'architecture : cette couche finale reste une carte auto-organisatrice classique, apprenant simplement sur des entrées filtrées.
 Dans une volonté d'étudier une architecture proposant des comportements de calcul différents de ceux réalisés dans une SOM classique, notre attention se portera sur les architectures comportant des boucles de rétroaction~: les architectures non hiérarchiques.
 Ces architectures permettent de diversifier les comportements d'apprentissage qu'il est possible d'obtenir avec des SOM en apportant un aspect dynamique au système par les rétroactions. 
-Notons qu'une architecture hiérarchique est un cas particulier d'architecture non hiérarchique~: les modèles que nous allons étudier en partie suivante pourraient donc aussi bien être utilisés dans un cadre hiérarchique.
+Notons qu'une architecture hiérarchique est un cas particulier d'architecture non hiérarchique~: les modèles que nous allons étudier dans la partie suivante pourraient donc aussi bien être utilisés dans un cadre hiérarchique.
 
 
 \subsection{Architectures non hiérarchiques de cartes auto-organisatrices}
@@ -572,7 +573,7 @@ Des poids corticaux sont quant à eux relatifs aux connexions venant des neurone
 \end{figure}
 
 Dans ce modèle présenté en figure~\ref{fig:bijama}, chaque neurone d'une carte est connecté via sa couche corticale à une rangée de neurones d'une carte modale. Cela revient donc à la transmission de champs d'activation entre cartes.
-La mise à jour est asynchrone~: les connexions directes entre neurones génèrent la mise à jour des poids du neurone. Contrairement aux modèles précédemment présentés, l'activité prise en compte lors des connexions neuronales est l'activité globale du neurone. Le calcul de l'activité du neurone de la première carte dépend de l'activation des neurones de la deuxième, qui dépendent de l'activité de la première.
+La mise à jour est asynchrone~: les connexions directes entre neurones génèrent la mise à jour des poids du neurone. Contrairement aux modèles précédemment présentés, l'activité prise en compte par les connexions neuronales est l'activité globale du neurone. Le calcul de l'activité du neurone de la première carte dépend de l'activation des neurones de la deuxième, qui dépendent de l'activité de la première.
 Les activités étant calculées de façon asynchrone, la présentation d'une entrée induit un processus dynamique de calcul d'activité au sein des neurones, au cours duquel les entrées thalamiques restent inchangées et les activités des neurones évoluent vers un état limite stable. 
 Cette dynamique est appelée relaxation.
 Cette activité finale est celle prise en compte par les neurones pour la mise à jour de leurs prototypes.
@@ -586,13 +587,13 @@ L'information transmise entre cartes est ainsi également un champ d'activation.
 \begin{figure}
     \centering\includegraphics[width=0.9\textwidth]{SOMMA_002.pdf}
     \caption{
-        Le modèle SOMMA \parencite{lefort_unlearning_2011,lefort_apprentissage_2012} associe les activités de différentes cartes, mais en réduisant les champs d'activité transmis aux neurones entourant le neurone situé en position courante. A gauche sont représentées les connexions entre les neurones de deux cartes, dans l'architecture SOMMA. \`A droite, le schéma d'un neurone d'une carte, comportant un étage sensoriel, cortical et global.
+        Le modèle SOMMA \parencite{lefort_unlearning_2011,lefort_apprentissage_2012} associe les activités de différentes cartes, mais en réduisant les champs d'activité transmis aux neurones entourant le neurone situé en position courante. A gauche sont représentées les connexions entre les neurones de deux cartes, dans l'architecture SOMMA. \`A droite, le schéma d'un neurone d'une carte, comportant trois étages~: sensoriel, cortical et global.
         Comme dans l'architecture Bijama, les rétroactions sont gérées par la dynamique de relaxation, laissant les champs d'activité évoluer vers un état stable.
     \label{fig:somma}}
 \end{figure}
 
 Enfin, l'architecture proposée en \cite{baheux_towards_2014} cherche à transformer le modèle cellulaire de Bijama en s'appuyant sur des cartes auto-organisatrices classiques et l'applique au traitement de séquences. Cette architecture, décrite en figure~\ref{fig:baheux}, est composée de deux cartes. 
-Chacune des cartes est composées de deux couches de poids $\w_e$ et $\w_c$. Une des cartes prend une entrée $\inpx_t$ correspondant à l'observation courante et relative à la couche de poids $\w_e$, comme une SOM classique. 
+Chacune des cartes est composée de deux couches de poids $\w_e$ et $\w_c$. Une des cartes prend une entrée $\inpx_t$ correspondant à l'observation courante et relative à la couche de poids $\w_e$, comme une SOM classique. 
 La deuxième couche de poids est relative à l'information contextuelle descendant de la seconde carte, qui est sa position du BMU $\bmu\m{1}$.
 La seconde carte reçoit également deux entrées ~: l'entrée externe est la position du BMU $\bmu\m{1}(t-1)$ de l'état précédent et l'entrée contextuelle la position du BMU $\bmu\m{1}(t)$ de l'état courant. 
 Chaque carte a ainsi des activations externes et contextuelles~: $a_e\m{1} = a_e\m{1}(p, \w_e\m{1},\inpx)$, $a_c\m{1} =  a_c\m{1}(p, \w_c\m{1},\bmu\m{2}_t)$, et $a_e\m{2} = a_e\m{2}(p, \w_e\m{2},\bmu\m{1}_{t-1})$, $a_c\m{2}(p, \w_c\m{2}, \bmu\m{1}_t)$.
@@ -604,7 +605,7 @@ $$
 
 Comme chaque carte reçoit en entrée la position de l'état courant du BMU de l'autre carte dépendant des boucles de rétroactions, le modèle laisse relaxer les activités en déplaçant petit à petit les BMU de chaque carte, jusqu'à obtenir un état stable pour les activités. Cette relaxation est un parallèle dans une carte auto-organisatrice classique à la relaxation proposée en Bijama.
 Cette position stable est utilisée pour déterminer le BMU final servant à la mise à jour des poids.
-Ce modèle permet alors d'apprendre des séquences d'entrée. Alors qu'une carte simple différencierait les BMU en fonction de la valeur de l'entrée, ce modèle génère une différenciation des BMU en fonction de la position d'un élément dans la séquence.
+Ce modèle permet alors d'apprendre des séquences d'entrées. Alors qu'une carte simple différencierait les BMU en fonction de la valeur de l'entrée, ce modèle génère une différenciation des BMU en fonction de la position d'un élément dans la séquence.
 
 
 \begin{figure}
@@ -617,17 +618,17 @@ Ce modèle permet alors d'apprendre des séquences d'entrée. Alors qu'une carte
 \subsubsection{Discussion}
 
 Les architectures non hiérarchiques de cartes font donc apparaître deux grandes catégories~: les architectures centralisées, dans lesquelles une carte associative apprend à associer les activités de cartes sensorielles, et les architectures décentralisées.
-Les architectures décentralisées apparaissent comme la version la moins contrainte d'une architecture modulaire~: lorsque les modules sont assemblés en architecture, aucun rôle ne leur est attribué a priori, contrairement aux architectures centralisées faisant apparaître des cartes associatives sans entrées externes et des cartes modales. Dans ce cas, les interfaces de connexions entre cartes sont de plus différenciés.
+Les architectures décentralisées apparaissent comme la version la moins contrainte d'une architecture modulaire~: lorsque les modules sont assemblés en architecture, aucun rôle ne leur est attribué a priori, contrairement aux architectures centralisées faisant apparaître des cartes associatives sans entrées externes et des cartes modales.
 
 Nous avons relevé que la gestion des rétroactions entre cartes est un enjeu clé de la construction d'architectures décentralisées. Une première approche est de déconnecter, au sein d'une carte, l'apprentissage des poids liés aux entrées externes et des poids liés aux entrées contextuelles. Une carte a donc plusieurs BMU, relatifs à une ou plusieurs couches de poids, et la mise à jour s'effectue couche par couche. Cette approche est celle privilégiée dans la plupart des travaux que nous avons relevés.
 Les travaux menés dans notre équipe ont gardé la structure en couches, mais ont fait le choix de ne pas séparer les activités des couches lors de l'apprentissage et de chercher un BMU commun.
-La gestion des rétroactions est réalisée en introduisant un mécanisme de relaxation dans le calcul des activités. Dans les modèles cellulaires, l'architecture laisse les activités couplées évoluer, en tant que système dynamique, vers un état stable. Cette relaxation se traduit dans la version non-cellulaire par une boucle imbriquée au sein d'une itération, calculant le BMU par petits déplacements dans chaque carte, jusqu'à atteindre une position stable.
+La gestion des rétroactions est réalisée en introduisant un mécanisme de relaxation dans le calcul des activités. Dans les modèles cellulaires, l'architecture laisse les activités couplées évoluer en tant que système dynamique vers un état stable. Cette relaxation se traduit dans la version non-cellulaire par une boucle imbriquée au sein d'une itération, calculant le BMU par petits déplacements dans chaque carte, jusqu'à atteindre une position stable.
 Nous choisissons dans cette thèse de privilégier cette seconde approche, introduisant un aspect de recherche dynamique du BMU dans les cartes. Un module n'a alors pas besoin de connaître des éléments de structure des autres modules~: il ne perçoit pas de différence entre un autre module qui aurait des entrées externes et un module qui n'aurait que des entrées contextuelles.
 
 
 \subsection{Apprentissage de séquences et architectures de cartes auto-organisatrices}
 
-La capacité de traitement de séquences est une autre problématique d'utilisation des architectures de cartes. Nous avons d'ailleurs relevé des architectures permettant d'unir données spatiales et temporelles en un seul algorithme d'apprentissage. L'objectif d'un algorithme implémentant l'apprentissage de séquence est alors soit de prédire l'élément suivant d'une séquence de données, soit d'extraire des motifs temporels ou spatio-temporels se répétant dans les séquences de données d'entrée. 
+La capacité de traitement de séquences est une autre problématique d'utilisation des architectures de cartes. Nous avons d'ailleurs relevé des architectures permettant d'unir données spatiales et temporelles en un seul algorithme d'apprentissage. L'objectif d'un algorithme implémentant l'apprentissage de séquences est alors soit de prédire l'élément suivant d'une séquence de données, soit d'extraire des motifs temporels ou spatio-temporels se répétant dans les séquences de données d'entrée. 
 La figure~\ref{fig:mouvement} illustre par exemple ce qu'on attend de l'apprentissage de séquences d'images d'un sportif~: en s'appuyant sur la succession des images présentées à l'algorithme, le but est d'extraire des catégories de mouvements comme \og tirer \fg{} ou \og marcher \fg{}, ce qui correspond à de la classification des séquences, ou de pouvoir compléter la vidéo en prédisant l'image suivante dans la séquence.
 Ainsi, la création d'architectures pour le traitement de données multimodales se rapproche de la question du traitement de séquences. Rappelons également que l'enjeu de la multimodalité en robotique développementale inclue le traitement de données séquentielles.
 
@@ -635,10 +636,10 @@ Ainsi, la création d'architectures pour le traitement de données multimodales 
 Cette similarité entre données multimodales et séquentielles n'est pas seulement présente au niveau des objectifs d'application des architectures de cartes auto-organisatrices, mais bien dans la structure même du traitement des données. 
 Une solution pour faire de l'apprentissage de séquences peut être de fournir en entrée d'un réseau non plus une donnée instantanée mais une suite de données, sous forme par exemple de fenêtre temporelle ou d'une représentation de la séquence.
 Une autre solution est de prendre en compte l'état du réseau à l'instant précédent pour effectuer la mise à jour du réseau à l'état courant. 
-Cette solution , implémentée dans de nombreux modèles d'apprentissage, se rapproche de la notion de transmission d'information entre modules d'une architecture dans laquelle les modules seraient la même carte, mais à deux instants. Ces réseaux prenant en compte leur instant précédent pour calculer leur état actuel sont appelés réseaux récurrents ou récursifs.
+Cette solution implémentée dans de nombreux modèles d'apprentissage, se rapproche de la notion de transmission d'information entre modules d'une architecture dans laquelle les différents modules représenteraient la même carte, mais à deux instants différents. Ces réseaux prenant en compte leur instant précédent pour calculer leur état actuel sont appelés réseaux récurrents ou récursifs.
 Plusieurs modèles de cartes auto-organisatrices récurrentes, destinés à l'apprentissage de séquences, ont ainsi été proposés dans la littérature.
 
-L'analyse des cartes récurrentes apparaît à la fois comme un enjeu de création d'une architecture générale de cartes auto-organisatrices dans la mesure où il s'agit de créer un modèle qui permet d'associer des modules et se laisse la possibilité d'y intégrer des connexions récurrentes au même titre qu'une connexion intercartes, et comme une source supplémentaire sur laquelle s'appuyer pour catégoriser les modes de transmission d'information entre cartes. Dans cette section, nous passons en revue différents modèles de cartes récurrentes et nous intéresserons aux modèles multi-cartes implémentant des connexions récurrentes au même titre que des connexions inter-cartes.
+L'analyse des cartes récurrentes apparaît à la fois comme un enjeu de création d'une architecture générale de cartes auto-organisatrices dans la mesure où il s'agit de créer un modèle qui permet d'associer des modules et se laisse la possibilité d'y intégrer des connexions récurrentes au même titre que des connexions intercartes. Cette analyse donne également une source supplémentaire sur laquelle s'appuyer pour catégoriser les modes de transmission d'information entre cartes. Dans cette section, nous passons en revue différents modèles de cartes récurrentes et nous intéresserons aux modèles multi-cartes implémentant des connexions récurrentes au même titre que des connexions inter-cartes.
 
 \begin{figure}
     \centering\includegraphics[width=0.6\textwidth]{movment_002.pdf}
@@ -648,27 +649,25 @@ L'analyse des cartes récurrentes apparaît à la fois comme un enjeu de créati
 
 \subsubsection{Cartes auto-organisatrices récurrentes}
 
-Les modèles de cartes récurrentes existant dans la littérature s'appuient sur la transmission de représentation interne entre deux itérations. 
-L'information transmise entre ces itérations rejoint celles relevées dans les architectures multi-cartes~: transmission de la position du BMU, transmission d'une activité, transmission du poids du BMU.
+Les modèles de cartes récurrentes existant dans la littérature s'appuient sur la transmission d'une représentation d'éléments internes à carte entre deux itérations.
 
 Parmi les premiers travaux autour des cartes auto-organisatrices, les cartes de Kohonen Temporelles TKM, dérivées ensuite en \emph{recurrent SOM} \parencite{varsta_temporal_2001} utilisent l'activité $a$ d'une carte à l'instant précédent dans le calcul de l'activité à l'instant courant par un modèle d'intégrateur à fuite.
 
 $$a(p,t) = (1-\alpha)a(p,t-1) + \alpha \times (\inpx_t - \w_t(p))$$
 Avec $\w(p)$ les poids de la carte et $\alpha \in [0,1]$ un coefficient de fuite.
-$a$ correspond ici à une distance modifiée entre un prototype et l'entrée, et le BMU est alors calculé par $\Pi_t = \argmin_p(a(p,t)^2)$.
+$a$ correspond ici à une distance modifiée entre un prototype et l'entrée, et le BMU est calculé par $\Pi_t = \argmin\limits_p(a(p,t)^2)$.
 Au lieu de chercher la position dont le prototype $\w(p)$ est le plus proche de l'entrée $\inpx_t$, Le calcul de l'activité revient ici à chercher une position pour laquelle la distance entre le prototype et l'entrée est faible et pour laquelle la distance calculée par rapport aux entrées précédentes l'était aussi. Il s'agit d'un intégrateur à fuite dans la mesure ou l'influence de l'activité d'un instant sur les suivants décroit au cours du temps.
 
 D'autres travaux reposent plutôt sur la transmission du BMU ou du poids du BMU comme entrée cournante d'une carte.
 \`A chaque instant $t$, ces SOM fusionnent deux entrées~: l'entrée venant de la séquence à apprendre, $X_t$ et l'entrée de contexte $\inpc_t$ interne à la carte.
-Ainsi, les \emph{recursive SOM} de \cite{Voegtlin2002RecursiveSM} utilisent en tant qu'entrée de contexte un vecteur contenant l'ensemble des activations des neurones de la carte à l'état précédent $\inpc_t = [a(t-1,p), p \in [0,N]^k]$ avec $k = 1, 2$ la dimension de la carte.
-Les travaux de \cite{Buonamente2013SimulatingAW} proposent une version récurrente du modèle A-SOM présenté en section précédente. 
-Le contexte considéré est alors également un ensemble d'activités de neurones. 
-MSOM, proposée en \cite{Strickert2005MergeSF} s'appuie sur le poids du BMU. 
-\`A chaque instant, l'entrée de contexte à transmettre à l'état suivant est définie comme une combinaison linéaire entre le poids du BMU courant et le contexte courant~·
-$\inpc_t = \lambda \inpc_{t-1} + (1-\lambda)\w(\bmu_{t-1}) $.
-Enfin, le modèle SOMD, initialement proposé pour le traitement de données structurées \parencite{hagenbuchner_self-organizing_2003} puis étendu au traitement de séquences en \cite{hammer_recursive_2004,hammer_self-organizing_2005} réduit ce contexte à la position de la Best Matching Unit:
+Ainsi, les \emph{recursive SOM} de \cite{Voegtlin2002RecursiveSM} utilisent en tant qu'entrée de contexte un vecteur contenant l'ensemble des activations des neurones de la carte à l'état précédent~: $$\inpc_t = [a(t-1,p), p \in [0,N]^2]$$
+Les travaux de \cite{Buonamente2013SimulatingAW} proposent une version récurrente du modèle A-SOM présenté en section précédente. Le contexte considéré est également un ensemble d'activités de neurones. 
+Le modèle MSOM, proposé en \cite{Strickert2005MergeSF} s'appuie sur le poids du BMU. 
+\`A chaque instant, l'entrée de contexte à transmettre à l'état suivant est définie comme une combinaison linéaire entre le poids du BMU courant et le contexte courant~:
+$$\inpc_t = \lambda \inpc_{t-1} + (1-\lambda)\w(\bmu_{t-1}) $$.
+Enfin, le modèle SOMSD, initialement proposé pour le traitement de données structurées \parencite{hagenbuchner_self-organizing_2003} puis étendu au traitement de séquences en \cite{hammer_recursive_2004,hammer_self-organizing_2005} réduit ce contexte à la position de la Best Matching Unit:
 $$ \inpc_{t} = \bmu_{t-1}$$
-Les mécanismes de transmission de contexte entre instants dans les cartes récurrentes s'appuient donc sur les mêmes mécanismes que ceux proposés dans le cadre d'architectures de cartes~: sélection de région de la carte, transmission d'activation, et enfin transmission du BMU.
+Les mécanismes de transmission de contexte entre instants dans les cartes récurrentes s'appuient donc sur les mêmes mécanismes que ceux proposés dans le cadre d'architectures de cartes~: sélection de région de la carte, transmission d'activation ou transmission du BMU.
 
 \subsubsection{Architectures incluant des connexions temporelles}
 
@@ -683,15 +682,15 @@ On ne peut pas vraiment parler d'architecture modulaire dans ces travaux, les de
 Par contre, la motivation de ce modèle est intéressante~: il s'agit cette fois de voir les deux cartes comme des modules d'apprentissage à différentes échelles temporelles. Avec les bonnes règles de mise à jour, cette propriété pourrait émerger dans des architectures modulaires.
 
 
-Les travaux autour du modèle A-SOM mentionné précédemment ont également dérivé une version récurrente du modèle \parencite{Buonamente2015DiscriminatingAS} dans le but d'associer cartes récurrentes et multimodales en architecture.
+Les travaux autour du modèle A-SOM mentionné précédemment ont également dérivé une version récurrente du modèle dans le but d'associer cartes récurrentes et multimodales en architecture \parencite{Buonamente2015DiscriminatingAS}.
 Cette version récurrente est similaire à la version multi-cartes. Elle calcule alors son activité par rapport à son entrée et possède une seconde couche de poids qu'elle met à jour relativement au champ d'activation de l'instant précédent.
 Cette structure est appliquée à la prédiction de mouvement. De la même façon qu'une architecture est capable, à partir d'une modalité, de prédire les valeurs correspondant à l'autre modalité, l'architecture incluant une version récurrente peut prédire la fin d'une séquence à partir de son début.
 Nous n'avons cependant pas relevé de travaux les intégrant effectivement dans une architecture multi-cartes.
 
-Enfin, nous pouvons revenir sur les travaux menés précédemment dans notre équipe décrits plus haut, qui proposent des architectures multi-cartes appliquées au traitement de séquence.
-\cite{khouzam_neural_2014} utilise le modèle Bijama, permettant de construire des architectures de cartes auto-organisatrices cellulaires, dans un cadre de traitement de séquences.
-Les connexions corticales des neurones d'une carte proviennent alors des activités des neurones de cette même carte au pas de temps précédent.
-Le modèle à base de cartes auto-organisatrices classiques proposé en \cite{baheux_towards_2014} que nous avons décrit plus haut s'inscrit également dans un cadre de traitement de séquences. Le modèle montre qu'une carte de Kohonen au sein d'une architecture récurrente permet de différencier les BMU d'une carte non seulement en fonction de la valeur de l'entrée mais également en fonction de la position dans la séquence. Ces résultats sont similaires à ce qu'on obtient avec une carte récurrente s'appuyant sur la transmission du BMU, sans relaxation, décrite par exemple en \cite{fix20}. La transformation du modèle récurrent en modèle multi-cartes montre la similarité existant entre récurrence et multimodalité et la possibilité d'inclusion de connexions récurrentes au sein d'un modèle multi-cartes.
+Enfin, nous pouvons revenir sur les travaux de notre équipe décrits plus haut, qui ont appliqué les architectures multicartes aux traitement de séquence.
+\cite{khouzam_neural_2014} applique le modèle Bijama (cf figure~\ref{fig:bijama}) à du traitement de séquence. Les connexions corticales des neurones d'une carte proviennent alors des activités des neurones de cette même carte au pas de temps précédent.
+Le modèle à base de cartes auto-organisatrices classiques proposé en \cite{baheux_towards_2014} que nous avons décrit plus haut (cf. figure~\ref{fig:baheux} s'inscrit également dans un cadre de traitement de séquences. 
+Il montre qu'une carte de Kohonen au sein d'une architecture récurrente permet de différencier les BMU d'une carte non seulement en fonction de la valeur de l'entrée mais également en fonction de la position dans la séquence. Ces résultats sont similaires à ce qu'on obtient avec une carte récurrente s'appuyant sur la transmission du BMU, sans relaxation, décrite par exemple en \cite{fix20}. La transformation du modèle récurrent en modèle multi-cartes montre la similarité existant entre récurrence et multimodalité et la possibilité d'inclusion de connexions récurrentes au sein d'un modèle multi-cartes.
 
 
 \begin{figure}
@@ -710,12 +709,12 @@ D'une part, des travaux ont exploré des architectures hiérarchiques ou multico
 Dans certains travaux, l'assemblage des cartes est régi par une surcouche algorithmique globale, ce qui nous amène à ne pas les considérer comme modulaires. 
 D'autres travaux gèrent au contraire les connexions entre cartes à l'échelle d'une carte. Une carte prend alors le rôle de module d'une architecture. Chaque carte évolue alors uniquement grâce aux règles d'évolution internes qui ont été définies et grâce aux interfaces venant d'autres modules. Cependant, des conditions sur la structure hiérarchique de l'architecture sont préétablies.
 
-D'autre part, certains travaux portent sur la création d'architectures comportant des rétroactions, que nous appelons architectures non hiérarchiques. Ces architectures non~hiérarchiques apportent moins de précondition sur la structure de l'architecture et sont donc plus génériques.
+D'autre part, certains travaux portent sur la création d'architectures comportant des rétroactions, que nous appelons architectures non hiérarchiques. Ces architectures non~hiérarchiques apportent moins de préconditions sur la structure de l'architecture et sont donc plus génériques.
 Ces travaux se placent plutôt dans le domaine des neurosciences computationnelles ou de la robotique. La création de ces architectures est en effet motivée par des considérations biologiques, les neurosciences suggérant que les aires du cerveau présentent des connexions rétroactives. 
 Ces architectures à rétroactions permettent l'activation d'une carte par une autre et apportent aux SOM une capacité de prise de décision et de prédiction lorsqu'elles sont au sein d'une architecture. 
-Elles se présentent soit sous la forme d'une architecture centralisée, dans laquelle une carte associative permet d'associer des cartes sensorielles, ou sous la forme d'une architecture décentralisée. 
+Elles se présentent soit sous la forme d'une architecture centralisée, dans laquelle une carte associative permet d'associer des cartes sensorielles, soit sous la forme d'une architecture décentralisée. 
 Ce dernier cas est la forme la plus générique d'architecture modulaire de cartes de Kohonen~: chaque carte est un module autonome que l'on peut ajouter à une architecture existante sans différencier les modules a priori en fonction de leur position dans l'architecture.
-Les modèles de cartes récurrentes, adaptées au traitement de séquence, se rapprochent par ailleurs des architectures multi-cartes par leur structure s'appuyant sur une transmission d'information entre itérations d'apprentissage.
+Les modèles de cartes récurrentes, adaptées au traitement de séquences, se rapprochent par ailleurs des architectures multi-cartes par leur structure s'appuyant sur une transmission d'information entre itérations d'apprentissage.
 Une architecture modulaire générique de cartes devrait ainsi laisser la possibilité d'intégrer de façon indifférenciée des connexions classiques ou récurrentes au sein d'une architecture, dans une motivation d'apprentissage développemental.
 
 
@@ -771,25 +770,25 @@ Une architecture modulaire générique de cartes devrait ainsi laisser la possib
 Dans la démarche de construction d'une architecture non-hiérarchique, nous avons souligné les différences de conception existant dans les différentes architectures, notamment au niveau du choix d'interface entre cartes et dans la séquentialité de la mise à jour.
 Le tableau \ref{tab:bib} présente une comparaison des structures des principales architectures modulaires et récurrentes que nous avons relevées au cours de cette revue.
 Nous avons remarqué que seulement peu de travaux ont exploré l'idée d'associer des SOM en architectures non hiérarchiques. Parmi ces quelques travaux, les interfaces entre cartes considérées par leurs auteurs s'appuient principalement sur la transmission de champs d'activation neuronaux.
-La transmission de la position du BMU comme information entre cartes apparait au contraire comme un paradigme principalement utilisé dans le domaine des cartes hiérarchiques ainsi que certains modèles récurrents.
-Ce mode de transmission exploite pleinement l'aspect topologique de la carte de Kohonen, est indépendante du type d'entrée fourni à une carte et est une valeur de faible dimension, donc intéressante pour le calcul. Ce paradigme permet aux architectures s'y appuyant de réaliser de bonnes performances en terme d'apprentissage automatique.
+La transmission de la position du BMU comme information entre cartes apparait au contraire comme un paradigme principalement utilisé dans le domaine des cartes hiérarchiques ainsi que dans certains modèles récurrents.
+Ce mode de transmission exploite pleinement l'aspect topologique de la carte de Kohonen, est indépendant du type d'entrée fourni à une carte et est une valeur de faible dimension, donc intéressante pour le calcul. Ce paradigme permet aux architectures s'y appuyant de réaliser de bonnes performances en terme d'apprentissage automatique.
 Les architectures décentralisées sont principalement proposées sous le prisme d'une inspiration biologique, ce qui justifie l'utilisation privilégiée de transmission d'activité~: les neurones biologiques sont connectés par des connexions neurones à neurones et se transmettent une activation. 
 % Or, le concept de BMU et de processus \emph{Winner Take All} intervenant dans une carte auto-organisatrice permet en fait de remplacer les champs neuronaux, proches de la biologie mais difficiles à paramétrer~\parencite{fix:hal-00869726} par un mécanisme global à la carte. Ce mécanisme s'éloigne de la plausibilité biologique mais permet des calculs plus rapides dans une SOM, tout en conservant les propriétés d'auto-organisation d'une carte. La transmission du BMU entre cartes au lieu d'activités apparaît donc comme un pendant plus computationnel de la transmission d'activité. 
 Seuls les travaux de \cite{dominey13} s'appuient sur transmission de la position du BMU dans le cadre des SOM non hiérarchiques.
 Enfin, nous avons constaté des différences dans le traitement des rétroactions entre cartes. Les architectures SOIMA, MCMM et A-SOM découplent les poids externes et contextuels des cartes lors de l'apprentissage, en différenciant les BMU sur chaque couche de poids, pour ne combiner de fait les activités que lors de la phase de prédiction d'entrée. 
 Cette gestion des rétroactions ne va pas dans le sens d'une architecture autonome, car les règles de calcul changent entre la phase d'apprentissage et la phase de prédiction.
 
-Le travail de recherche proposé dans cette thèse consiste à construire et étudier un modèle non-hiérarchique d'architecture de cartes, en s'inspirant de l'architecture corticale. Nous cherchons à nous placer plutôt du côté du calcul informatique, laissant la biologie comme une inspiration et non en cherchant à la modéliser.
+Le travail de recherche proposé dans cette thèse consiste à construire et étudier un modèle non-hiérarchique d'architecture de cartes, en s'inspirant de l'architecture corticale. Nous cherchons à nous placer plutôt du côté du calcul informatique, laissant la biologie comme une inspiration, sans chercher à la modéliser.
 Pour ses avantages en termes de coût de transmission et d'homogénéité des calculs, nous nous tournerons vers la transmission de la position du BMU comme information entre modules.
 La plupart des architectures relevées dans la littérature s'appuient sur des mises à jour séquentielles. 
 Une architecture générale incluant le traitement de séquences doit nécessairement gérer ses mises à jour de façon synchrone~; aussi nous choisissons de diriger nos recherches dans ce sens.
 
-L'architecture CxSOM que nous proposons et étudions dans cette thèse est une architecture non hiérarchique décentralisée de cartes de Kohonen, dont les mises à jour sont réalisés de façon synchrone. Nous voulons également que les rétroactions soient prises en compte dès l'apprentissage, dans un objectif d'architecture autonome~: nous ne différencions pas les règles d'évolution des modules entre phases d'apprentissage et phase de test ou de prédiction.
+L'architecture CxSOM que nous proposons et étudions dans cette thèse est une architecture non hiérarchique décentralisée de cartes de Kohonen, dont les mises à jour sont réalisées de façon synchrone. Nous voulons également que les rétroactions soient prises en compte dès l'apprentissage, dans un objectif d'architecture autonome~: nous ne différencions pas les règles d'évolution des modules entre phases d'apprentissage et phase de test ou de prédiction.
 Ce modèle fait suite aux travaux amorcés en \cite{baheux_towards_2014}, qui définissent un modèle d'architecture récurrente utilisant la transmission de la position du BMU entre des cartes de Kohonen, et utilisent un mécanisme de relaxation pour gérer les rétroactions entre cartes. 
 Ces travaux exploitent des connexions intercartes mais restent appliqués au traitement de séquences.
 Par leur motivation, qui est le développement d'un système multi-cartes générique, nos travaux se rapprochent aussi des travaux conduits sur l'architecture A-SOM~\cite{johnsson_associating_2008, johnsson_associative_2009,gil_sarasom_2015, Buonamente2015DiscriminatingAS}~; les choix de modèle sont cependant différents.
 
-Nous dirigerons les travaux de cette thèse vers l'identification des mécanismes d'apprentissage associatifs dans de petites architectures de deux et trois cartes. Pour cela, nous élaborerons une méthode expérimentale et des représentations adaptées du modèle, dans une optique de création d'architecture comportant de nombreuses cartes.
+Nous dirigerons les travaux de cette thèse vers l'identification des mécanismes d'apprentissage associatifs dans de petites architectures de deux et trois cartes. Pour cela, nous élaborerons une méthode expérimentale et des représentations adaptées du modèle, dans une optique de création d'architectures comportant de nombreuses cartes.
 
 % \begin{figure*}[b]
 %     \centering\includegraphics[width=0.5\textwidth]{lego2.jpg}
