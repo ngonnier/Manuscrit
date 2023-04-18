@@ -17,7 +17,7 @@
 Dans les chapitres~\ref{chap:repr} et \ref{chap:analyse}, nous avons identifié des mécanismes caractérisant l'apprentissage d'un modèle d'entrées au sein de l'architecture de cartes en s'appuyant sur les représentations graphiques des poids et des BMU.
 Nous avons souligné l'importance de développer des indicateurs numériques pour mesurer cet apprentissage, afin de faciliter la comparaison entre différentes expériences et l'optimisation des paramètres d'apprentissage.
 
-Nous avons représenté les modèles d'entrées à apprendre grâce une variable latente $U$, qui traduit les paramètres libres du modèle d'entrées.
+Nous avons représenté les modèles d'entrées que nous voulons apprendre grâce une variable latente $U$, qui traduit les paramètres libres du modèle d'entrées.
 Les représentations graphiques nous ont permis de constater que l'apprentissage du modèle d'entrées se caractérise par une relation fonctionnelle entre $U$ et la position du BMU $\bmu$ dans chaque carte.
 Dans ce chapitre, nous étudions deux méthodes mesurant la qualité de cette relation fonctionnelle~: le coefficient d'incertitude, qui est une version normalisée de l'information mutuelle, et le ratio de corrélation.
 Ces méthodes s'appuient sur la représentation des entrées et réponses des cartes vues comme des variables aléatoires.
@@ -44,7 +44,7 @@ Une autre version de l'entropie est définie pour des variables continues, l'ent
     h(X) = - \int_{x \in \Omega_X}{p_X(x)\textrm{log}(p_X(x))dx}
 \end{equation}
 Avec $p_X$ la densité de probabilité de $X$.
-Notons que l'entropie différentielle n'est pas la limite de l'entropie de Shannon calculée par discrétisation de $X$ en $N$ intervalles, $N \rightarrow \infty$. L'entropie différentielle peut prendre des valeurs négatives.
+Notons que l'entropie différentielle n'est pas la limite de l'entropie de Shannon calculée par discrétisation de $X$ en $N$ intervalles, $N \rightarrow \infty$. L'entropie différentielle peut notamment prendre des valeurs négatives.
 
 L'existence d'une relation quelconque entre deux variables aléatoires $X$ et $Y$ à valeurs dans $\Omega_X$ et $\Omega_Y$ se mesure par leur information mutuelle.
 
@@ -64,14 +64,14 @@ L'information mutuelle possède notamment les propriétés suivantes~:
 \item\label{it:eq} Pour toute fonction $f$, $I(X,Y) \geq I(X,f(Y))$. L'égalité est atteinte si et seulement si $f$ est bijective.
 \end{enumerate}
 
-L'information mutuelle se calcule également à partir des densités de probabilité pour des variables à valeur continues de densités de probabilité $p_X$ et $p_Y$~:
+L'information mutuelle se calcule également à partir des densités de probabilité pour des variables à valeurs continues de densités de probabilité $p_X$ et $p_Y$~:
 \begin{equation}
     I(X,Y) = \int_{x \in \Omega_X}\int_{y \in \Omega_Y }{p_{XY}(x,y)\textrm{log}(\frac{p_{XY}(x,y)}{p_X(x)p_Y(y)})dx \: dy}
 \end{equation}
 
 Contrairement à l'entropie, la valeur de l'information mutuelle pour des variables continues correspond bien à une limite des valeurs de l'information mutuelle discrète lorsque le nombre de catégories tend vers l'infini \parencite{Cover2005ElementsOI}.
-Cependant, dans le cas continu, les propriétés \ref{it:h} et \ref{it:eq} ne sont pas vérifiées. 
-En particulier, $I(X,X) \neq h(x)$ comme c'est le cas pour des variables discrètes. En effet, $h(X|X) = - \infty$.
+Cependant, dans le cas de variables continues, les propriétés \ref{it:h} et \ref{it:eq} ne sont pas vérifiées. 
+En particulier, $I(X,X) \neq h(x)$ comme c'est le cas pour des variables discrètes.
 
 \subsection{Méthodes d'estimation}\label{sec:estimation}
 \begin{figure}
@@ -94,8 +94,8 @@ L'information mutuelle et l'entropie sont des grandeurs définies à partir de l
 Nous nous intéresserons en particulier à l'information mutuelle entre les variables $U$ et $\bmu$, qui sont des variables continues. Nous présentons deux méthodes classiques d'estimation de l'information mutuelle pour des variables continues.
 
 
-Une première méthode d'estimation classique est la méthode des histogrammes (\emph{binning}).
-Cette méthode s'appuie sur une estimation de la distribution des variables $X$, $Y$ et la distribution de la variable jointe $(X,Y)$ en discrétisant chacune des variables.
+Une première méthode d'estimation est la méthode des histogrammes (\emph{binning}).
+Elle s'appuie sur une estimation des distributions des variables $X$, $Y$ et la distribution de la variable jointe $(X,Y)$ en discrétisant chacune des variables.
 Cette méthode est représentée en figure~\ref{fig:binning}. Les variables $X$ et $Y$ sont discrétisées en \emph{bins} de centres $x_i$ et $y_j$ choisis.
 La distribution de chaque variable est alors estimée par~: 
 $$P(X = x_i) = \frac{n_{xi}}{N} $$ où $n_{xi}$ est le nombre d'échantillons de $X$ tombant dans le \emph{bin} de centre $x_i$ et $N$ le nombre de points. Le même procédé est réalisé pour $Y$ et $(X,Y)$. La précision de l'estimation peut être améliorée en choisissant des tailles de \emph{bins} variables~; nous utilisons ici la méthode simple avec des \emph{bins} de taille fixe.
@@ -107,7 +107,7 @@ le nombre d'échantillons disponibles pour l'estimation doit augmenter exponenti
 
 Une deuxième méthode communément utilisée pour l'estimation de l'information mutuelle est l'estimateur par \emph{K-Nearest Neighbors} \parencite{2004kraskov}, présenté en figure~\ref{fig:kraskov}.
 Cet estimateur ne passe pas par l'estimation de la densité de probabilité, contrairement aux histogrammes, mais estime directement l'information mutuelle.
-Le découpage de l'espace se fait en recherchant, pour $N$ valeurs d'échantillons d'un couple $(X,Y)$, les $k$ plus proches voisins, ce qui détermine une fenêtre. Une information mutuelle locale est calculée dans cette zone de l'espace, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
+Le découpage de l'espace se fait en recherchant, pour $N$ valeurs d'échantillons d'un couple $(X,Y)$, les $k$ plus proches voisins, ce qui détermine une fenêtre pour chaque point. Une information mutuelle locale est calculée dans chaque fenêtre, suivant une formule permettant d'approximer les différences de logarithme par la fonction digamma $\psi$ : 
 $$i_j(X,Y) = \psi(k) - \psi(n_{x_j} + 1) - \psi(n_{y_j} +1) + \psi(N)$$
 Cette information mutuelle locale est ensuite moyennée sur l'ensemble des points (en notant $\langle \rangle$ l'opérateur de moyenne) ~: 
 \begin{equation}\label{eq:knn}
@@ -144,12 +144,12 @@ Cette variante normalisée de l'information mutuelle correspond en fait au \emph
 
 $U_c$ vaut 1 lorsque $U$ est une fonction de $\bmu$, et $0$ lorsque les deux distributions sont indépendantes.
 Cependant, l'égalité $I(U,U) = H(U)$ est uniquement vraie dans le cas de variables aléatoires discrètes.
-Pour l'utilisation de $U_c$ comme indicateur de la relation fonctionnelle, il sera nécessaire de considérer $\bmu$ et $U$ comme des variables discrètes et d'estimer l'information mutuelle et l'entropie par la méthode des histogrammes. L'indicateur que nous envisageons sera donc très dépendant des paramètres d'estimation (nombre de \emph{bins}).
+Pour l'utilisation de $U_c$ comme indicateur de la relation fonctionnelle, il sera nécessaire de considérer $\bmu$ et $U$ comme des variables discrètes et d'estimer l'information mutuelle et l'entropie par la méthode des histogrammes. L'indicateur que nous envisageons sera donc complètement dépendant des paramètres d'estimation (nombre de \emph{bins}).
 
 \begin{figure}
     \centering
     \includegraphics[width=0.75\textwidth]{comparaison_binning.pdf}
-    \caption{Comparaison de la mesure du coefficient d'incertitude $U_c(Y|X)$ entre deux distributions. À gauche, la relation entre les variables $Y$ et $X$ est proche d'une fonction, bien qu'elle soit bruitée. À droite, la relation n'est pas fonctionnelle, mais telle qu'une valeur de $X$ correspond à exactement deux valeurs de $Y$. Dans les deux cas, $X$ est discrétisé en 500 \emph{bins}, et nous présentons les valeurs $U_c$ calculées pour des discrétisations de $Y$ en 10 et 100 \emph{bins}. Le choix de paramètre pour la discrétisation de $Y$ a un impact significatif sur la valeur du coefficient d'incertitude mesuré.}
+    \caption{Comparaison de la mesure du coefficient d'incertitude $U_c(Y|X)$ entre deux distributions. À gauche, la relation entre les variables $Y$ et $X$ est proche d'une fonction, bien qu'elle soit bruitée. À droite, la relation n'est pas fonctionnelle, mais telle qu'une valeur de $X$ correspond à exactement deux valeurs de $Y$. Dans les deux cas, $X$ est discrétisé en 500 \emph{bins}, et nous présentons les valeurs $U_c$ calculées pour des discrétisations de $Y$ en 10 et 100 \emph{bins}. Le choix de paramètre de discrétisation sur $Y$ a un impact significatif sur la valeur du coefficient d'incertitude mesuré.}
     \label{fig:exemple-limite}
     \end{figure}
 
@@ -160,7 +160,7 @@ Nous présentons en figure~\ref{fig:exemple-limite} deux exemples de relations e
 L'indicateur que nous voulons utiliser au sein de CxSOM doit privilégier la fonction bruitée (à gauche de la figure) par rapport à la relation qui n'est pas fonctionnelle (à droite).
 Dans le cadre de l'analyse de CxSOM, nous cherchons en effet à mesurer si une valeur de $\bmu$ correspond à un unique intervalle de $U$. 
 Dans le cas d'une carte simple, deux valeurs de $U$ éloignées sont en effet codées par une même position de BMU, voir figure~\ref{fig:cr_xp} plus bas.
-Lorsque nous utilisons une discrétisation fine, par exemple de $100$ bins sur la figure, le coefficient d'incertitude calculé dans le cas ou la relation est non fonctionnelle est inférieur à celui calculé dans le cas de la relation fonctionnelle bruitée.
+Lorsque nous utilisons une discrétisation fine, par exemple de $100$ bins sur la figure, le coefficient d'incertitude est inférieur le cas ou la relation est non fonctionnelle que dans le cas de la relation fonctionnelle bruitée.
 En effet, une valeur de $X$ correspond à seulement 2 valeurs de \emph{bins} pour $Y$ dans le cas du cercle, mais 10 dans le cas de la fonction bruitée. La proximité de ces points n'est pas représentée dans le calcul.
 Lorsque nous élargissons la taille de discrétisation de $Y$, $U_c(Y|X)$ s'améliore dans le cas de la relation bruitée. Cette discrétisation à gros grain pour $Y$ permet d'ignorer la dispersion locale des valeurs de $Y$.
 
@@ -172,28 +172,28 @@ L'indicateur $U_c$ défini ici doit plutôt être considéré comme un indicateu
 \begin{figure}
     \centering\includegraphics[width=0.8\textwidth]{evolution_MI_2}
     \caption{\'Evolution du coefficient d'incertitude $U_c(U|\bmu)$ dans chaque carte au long de l'apprentissage. L'intervalle de discrétisation choisi pour $U$ est de $0.02$ (50 \emph{bins}).
-    La courbe bleue correspond à $U_c(U|\bmu)$ dans l'architecture de cartes $M\m{1}$ et $M\m{2}$, que nous comparons à l'évolution de $U_c$ dans une carte simple apprenant sur les mêmes entrées $\inpx\m{1}$ ou $\inpx\m{2}$. Les courbes correspondent à la moyenne et l'écart-type de $U_c$, calculés sur 10 expériences indépendantes.}
+    La courbe bleue correspond à $U_c(U|\bmu)$ dans l'architecture de cartes $M\m{1}$ et $M\m{2}$, que nous comparons à l'évolution de $U_c$ dans une carte simple apprenant sur les mêmes entrées $\inpx\m{1}$ ou $\inpx\m{2}$. Les courbes correspondent à la moyenne et l'écart-type de $U_c$, calculés sur 10 expériences indépendantes. L'apprentissage est effectué sur le modèle d'entrées du cercle 2D.} 
     \label{fig:MI_evol}
     \end{figure}
 
 Nous traçons maintenant l'évolution de $U_c(U|\bmu)$ au cours de l'apprentissage dans un système de deux cartes apprenant sur le cercle en deux dimensions, afin de vérifier comment $U_c$ reflète la qualité de l'apprentissage du modèle dans une carte. 
-Le tracé de $U$ selon $\bmu$ est représenté plus bas en figure \ref{fig:cr_xp}.
+Le tracé de $U$ selon $\bmu$ correspondant à cet apprentissage est représenté plus bas en figure \ref{fig:cr_xp}.
 
-Pour cela, nous calculons $U_c(U|\bmu\m{1})$ et $U_c(U|\bmu\m{2})$ sur des phases de test réalisées tout au long de l'apprentissage d'une architecture de cartes. Nous effectuons en parallèle l'apprentissage de deux cartes simples apprenant l'une sur $\inpx\m{1}$ et l'autre sur $\inpx\m{2}$, sur laquelle nous calculons les mêmes indicateurs.
+Pour cela, nous calculons $U_c(U|\bmu\m{1})$ et $U_c(U|\bmu\m{2})$ sur des phases de test réalisées tout au long de l'apprentissage d'une architecture de cartes. Nous effectuons en parallèle l'apprentissage de deux cartes simples apprenant l'une sur $\inpx\m{1}$ et l'autre sur $\inpx\m{2}$, sur lesquelles nous calculons les mêmes indicateurs.
 Leur évolution est tracée en figure~\ref{fig:MI_evol}.
 Nous avons discrétisé $U$ en 50 \emph{bins}, et  $\bmu\m{i}$ en 500~: comme soulevé au paragraphe précédent, il est nécessaire d'utiliser un intervalle plus large pour les valeurs de $U$, afin de ne pas prendre en compte la dispersion des points au niveau local.
 
-Ces tracés montrent que les quantités $U_c(U|\bmu\m{1})$ et $U_c(U|\bmu\m{2})$ sont bien toutes deux plus élevées pour CxSOM, tout au long de l'apprentissage, que dans le cas ou les cartes sont séparées. Les valeurs pour CxSOM s'approchent de 1 à la fin de l'apprentissage, reflétant bien que $U$ est une fonction de $\bmu$ dans chaque carte.
+Ces tracés montrent que les quantités $U_c(U|\bmu\m{1})$ et $U_c(U|\bmu\m{2})$ sont toutes deux plus élevées pour CxSOM que dans le cas ou les cartes sont séparées, tout au long de l'apprentissage. Les valeurs pour CxSOM s'approchent de 1 à la fin de l'apprentissage, reflétant que $U$ est une fonction de $\bmu$ dans chaque carte.
 
 \subsection{Discussion}
 
 D'après nos observations, $U_c$ peut certes être utilisé comme indicateur d'une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, mais sous réserve de choisir correctement la taille de l'intervalle de discrétisation pour $U$ lors de l'estimation (nombre de \emph{bins})
-La taille de cet intervalle de discrétisation doit être assez élevée pour englober un bruit local sur les $U$, mais l'intervalle doit rester suffisamment faible pour détecter une séparation entre deux intervalles de $U$ codés par une même position de BMU.
+La taille de cet intervalle de discrétisation doit être assez élevée pour englober un bruit local sur les valeurs de $U$ correspondant à un même BMU, mais cet intervalle de discrétisation doit rester suffisamment faible pour détecter une séparation entre deux intervalles de $U$ qui seraient codés par une même position de BMU.
 Le choix de cet intervalle de discrétisation de $U$ a une grande influence sur la valeur de l'indicateur, rendant difficile son utilisation comme valeur quantitative permettant de comparer des expériences.
 Par ailleurs, la discrétisation de $U$ pour des variables de grande dimension nécessiterait un échantillon de grande taille, ce qui limite également son utilisation.
 Enfin, l'aspect originellement continu des variables $\bmu$ et $U$ n'est pas pris en compte par cet indicateur, qui nécessite la discrétisation des variables.
 
-Le coefficient d'incertitude n'est donc pas un indicateur adapté à la mesure de la relation fonctionnelle existant entre $U$ et $\bmu$. Bien qu'il s'appuie sur l'information mutuelle, qui mesure une relation quelconque entre des signaux, il ne traduit pas la relation fonctionnelle de la façon dont nous voulons la mesurer dans CxSOM. En particulier, nous voulons prendre en compte l'aspect continu des valeurs de $U$. Pour cela, nous étudions dans la suite le ratio de corrélation.
+Le coefficient d'incertitude n'est donc pas un indicateur adapté à la mesure de la relation fonctionnelle existant entre $U$ et $\bmu$. Il s'appuie sur l'information mutuelle, qui mesure une relation quelconque entre des signaux, mais il ne traduit pas la relation fonctionnelle de la façon dont nous voulons la mesurer dans CxSOM. En particulier, nous voulons prendre en compte l'aspect continu des valeurs de $U$. Pour cela, nous étudions dans la suite le ratio de corrélation.
 
 Cependant, l'utilisation de l'information mutuelle continue pour évaluer l'apprentissage nous paraît pertinente, mais afin d'évaluer une relation plus générale que la relation fonctionnelle.
 Nous explorerons ce calcul en section~\ref{sec:mi}.
@@ -292,7 +292,7 @@ Nous observons que $\eta(U;\bmu)$ garde une valeur élevée tout au long de l'ap
 Le ratio de corrélation ne traduit donc pas l'organisation des poids.
 En effet, il ne prend pas en compte la proximité des positions. Deux valeurs discrétisées de $\bmu$ ont la même influence dans le calcul, qu'elles soient proches ou distantes dans la carte.
 Or, chaque carte définit son BMU en fonction de $\inpx\m{1}$ et de son entrée contextuelle $\bmu\m{2}$, qui représente directement $\inpx\m{2}$, même au début de l'apprentissage. $U$ est donc une fonction du BMU dans chaque carte dès le début de l'apprentissage, ce qui est observé sur la courbe d'évolution.
-Nous pourrions par exemple remplacer la discrétisation de $\bmu$ par une fenêtre glissante afin de mieux représenter la continuité des positions.
+Nous pourrions par exemple remplacer la discrétisation de $\bmu$ par une fenêtre glissante afin de mieux prendre en compte la continuité des positions.
 
 \begin{figure}
     \includegraphics[width=\textwidth]{cr_evol.pdf}
@@ -302,7 +302,7 @@ Nous pourrions par exemple remplacer la discrétisation de $\bmu$ par une fenêt
 \subsection{Discussion}
 
 Nous cherchions un indicateur numérique permettant de quantifier l'encodage du modèle d'entrées dans chaque carte, afin de caractériser des expériences pour lesquelles $U$ est de grande dimension, et d'avoir une valeur numérique permettant de comparer plusieurs expériences et d'optimiser les paramètres de l'architecture.
-Le ratio de corrélation $\eta(U;\bmu)$ est une mesure statistique qui exprime par définition la relation fonctionnelle existant entre $U$ et $\bmu$.Cette mesure nécessite de discrétiser les valeurs de $\Pi$, mais pas celles de $U$~; l'aspect continu de $U$ est donc bien traduit par $\eta$, contrairement à $U_c$.
+Le ratio de corrélation $\eta(U;\bmu)$ est une mesure statistique qui exprime par définition la relation fonctionnelle existant entre $U$ et $\bmu$. Cette mesure nécessite de discrétiser les valeurs de $\Pi$, mais pas celles de $U$~; l'aspect continu de $U$ est donc bien traduit par $\eta$, contrairement à $U_c$.
 Il est adaptable pour des cartes en 2D, ainsi que des $U$ en grande dimension car il repose seulement sur le calcul de moyennes sur $U$.
 Il s'agit donc d'une mesure appropriée de la relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte.
 Cette relation fonctionnelle est caractéristique de l'apprentissage de la relation entre les entrées dans des architectures de deux et trois cartes.
@@ -313,7 +313,7 @@ Cependant, il faut noter que sa valeur devra être comparée à la valeur qu'il 
 Le ratio de corrélation et le coefficient d'incertitude ont proposé deux manières différentes de mesurer le fait que $U$ est une fonction du BMU dans chaque carte.
 Bien que le coefficient d'incertitude $U_c$ s'appuie sur l'information mutuelle, l'indicateur que nous avons présenté n'en est pas une véritable estimation, par la discrétisation à gros grains de $U$.
 
-Sur des architectures à plus de trois cartes, il n'est pas certain, ni même souhaitable, que $U$ soit une fonction de la position du BMU dans toutes les cartes d'une architecture. Nous attendrions plutôt que la représentation de $U$ soit distribuée entre les cartes, tout en présentant de la redondance en terme d'information.
+Sur des architectures à plus de trois cartes, il n'est pas certain, ni même souhaitable, que $U$ soit une fonction de la position du BMU dans toutes les cartes d'une architecture. Nous attendrions plutôt que la représentation de $U$ soit distribuée entre les cartes, tout en présentant une information redondante entre les cartes de l'architecture.
 Nous envisageons donc dans cette section des perspectives d'utilisation de l'information mutuelle entre $U$ et les positions des BMU $(\bmu\m{1}, \bmu\m{2})$ pour analyser l'apprentissage du modèle dans une architecture de cartes.
 
 \subsection{\'Evolution de l'information mutuelle entre $U$ et $\bmu$ au cours d'un apprentissage}\label{sec:mi}
@@ -333,7 +333,7 @@ En figure~\ref{fig:MI_evol_total}, nous traçons l'évolution de l'information m
 Nous observons que l'information mutuelle entre $U$ et $\bmu$ évolue vers une valeur qui est plus élevée dans une carte isolée que dans une architecture CxSOM.
 Ce résultat est étonnant~: cela signifie que chaque carte au sein de CxSOM encode en fait moins d'information sur le modèle d'entrées qu'une carte indépendante, qui ne reçoit pourtant que l'entrée $\inpx\m{1}$ ou $\inpx\m{2}$.
 Notre interprétation de ce résultat est que l'information apprise sur le modèle par une carte n'est pas répartie de la même façon dans les deux expériences.
-Dans une carte indépendante, le niveau de quantification vectorielle sur $\inpx$ est plus précis que celui que nous avions observé dans CxSOM.
+Dans une carte indépendante, le niveau de quantification vectorielle sur $\inpx$ est plus précis que celui que nous avons observé pour CxSOM.
 Or, l'encodage de la valeur $\inpx$ donne déjà beaucoup d'information sur le modèle $U$.
 Dans CxSOM, on perd ce niveau de quantification sur $\inpx$, ce qu'on a observé en figure~\ref{fig:erreur}. On perd donc de l'information sur $\inpx$.
 % Le fait que l'information mutuelle soit plus élevée dans une carte indépendante dans les deux expériences traduirait ainsi une perte d'information sur l'entrée $\inpx$ dans CxSOM par rapport à une carte simple, à cause de la perte de précision en quantification vectorielle. 
@@ -380,14 +380,14 @@ Le coefficient d'incertitude est une version normalisée de l'information mutuel
 Le ratio de corrélation permet de mesurer directement la relation fonctionnelle entre $U$ et $\bmu$, en passant par l'estimation de $\mathbb{E}(U|\bmu)$.
 Dans un but de mesure de la relation fonctionnelle entre $U$ et $\bmu$, nous avons observé que le ratio de corrélation est à privilégier, car il est estimable pour des valeurs de $U$ en toute dimension et ne dépend pas de la taille d'intervalle choisie pour $U$. Sa valeur devra cependant être comparée aux valeurs du ratio de corrélation sur les données d'entrée $\eta(U;\inpx)$.
 
-La relation fonctionnelle entre $U$ et $\bmu$ n'est toutefois pas une propriété souhaitable dans des plus grandes architectures ou pour des $U$ de plus grande dimension, car elle semble être accompagnée d'une forte perte d'information sur l'entrée externe au profit d'un grain d'information sur le modèle, ce que nous avons constaté par le calcul de l'information mutuelle entre $U$ et $\bmu$.
+La relation fonctionnelle entre $U$ et $\bmu$ n'est toutefois pas une propriété souhaitable dans des plus grandes architectures ou pour des $U$ de plus grande dimension, car elle semble induire une forte perte d'information sur l'entrée externe pour permettre un gain d'information sur le modèle, ce que nous avons constaté par le calcul de l'information mutuelle entre $U$ et $\bmu$.
 On voudrait plutôt que la représentation de $U$ soit distribuée entre les cartes.
 Pour étudier l'apprentissage associatif dans un cadre plus général, nous suggérons aux travaux futurs de s'intéresser à des mesures d'information mutuelle multivariée entre $U$ et toutes les valeurs des BMU $(\bmu\m{1}, \cdots, \bmu\m{n})$ au sein des architectures de cartes.
 Enfin, les indicateurs proposés ici calculent des valeurs locales à une carte. Il serait pertinent d'envisager des indicateurs mesurant l'apprentissage d'un point de vue global à l'architecture.
 
 Finalement, ce chapitre appuie que la représentation des éléments d'une carte et des entrées comme variables aléatoires, que nous avons proposée au chapitre \ref{chap:repr}, est une méthode pertinente pour la compréhension des comportements d'apprentissage du modèle CxSOM.
 Cette approche \og comportementale \fg{}, et non basée sur les poids des cartes, rapproche l'étude des cartes de Kohonen et de CxSOM des algorithmes d'apprentissage supervisés, dont les entrées et sorties sont bien définies.
-Les représentations proposées et les perspectives d'études par l'information mutuelle mentionnées ci-dessus sont donc générales aux SOMs et à d'autres types d'architectures d'apprentissage. 
+Les représentations proposées et les perspectives d'études par l'information mutuelle mentionnées ci-dessus sont donc générales aux SOMs et à d'autres types d'architectures d'apprentissage.
 
 \ifSubfilesClassLoaded{
     \printbibliography
