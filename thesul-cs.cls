@@ -197,7 +197,7 @@
 
 \newcommand\ThesisUL{\renewcommand{\@ThesisFirstPageHead}{\@ULhe@d}%
                          \ThesisDiploma{{\UseEntryFont{ThesisDiploma}%
-                Doctorat CentraleSupelec\\[3mm]
+                Doctorat CentraleSupélec\\[3mm]
             {\UseEntryFont{ThesisSpecialty}(\@ThesisDomain)}}}}
 \newcommand\HdrUL{\ThesisInOrderToGet{pour l'obtention d'une}%
                   \renewcommand{\@ThesisFirstPageHead}{\@ULhe@d}%
@@ -1821,7 +1821,7 @@
 {\multicitedelim}
 {\usebibmacro{postnote}}
 
-\DeclareCiteCommand{\parentcite}[\mkbibparens]
+\DeclareCiteCommand{\parencite}[\mkbibparens]
 {\usebibmacro{prenote}}
 {\usebibmacro{citeindex}%
   \printtext[bibhyperref]{\usebibmacro{cite}}}
