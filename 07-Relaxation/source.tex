@@ -16,7 +16,7 @@
 
 \section{Introduction}
 
-Le processus de relaxation que nous avons défini au chapitre précédent est une méthode originale de l'algorithme CxSOM permettant de construire des connexions bidirectionnelles entre cartes.
+Le processus de relaxation est une méthode originale de l'algorithme CxSOM permettant de construire des connexions bidirectionnelles entre cartes.
 Afin de valider son utilisation en tant que méthode de recherche de BMU et d'interface entre cartes, nous présentons dans ce chapitre une étude expérimentale de ses propriétés de convergence.
 
 \subsection{Origine du mécanisme de relaxation~: passage du calcul cellulaire au calcul à l'échelle d'une carte}
@@ -481,11 +481,13 @@ Nous avons proposé deux conditions pour que la relaxation puisse être considé
 	\item nous attendons que la valeur de convergence ne dépende pas de l'initialisation des trajectoires, rendant ainsi le BMU relatif aux entrées et poids des cartes et non au processus de recherche.
 \end{enumerate}
 
-Nous avons montré expérimentalement que la convergence de la relaxation dépend de la disposition des poids des cartes. Nous avons observé que lorsque les poids des cartes ne sont pas ordonnés, comme c'est le cas avant l'apprentissage, il n'existe pas forcément de solution au problème d'optimisation. 
+Nous avons montré expérimentalement que la convergence de la relaxation dépend de la disposition des poids des cartes. Lorsque les poids des cartes ne sont pas ordonnés, comme c'est le cas avant l'apprentissage, il n'existe pas forcément de solution au problème d'optimisation. 
 Dans ce cas, la relaxation converge dans moins de 20\% des cas lors des étapes de test.
-Pourtant, nous avons également observé que les cartes se déplient correctement, malgré l'instabilité de la relaxation en début d'apprentissage. Nous pensons que ce comportement est favorisé grâce à l'initialisation de la relaxation à des positions maximisant l'activité externe et grâce à la prépondérance de l'activité externe dans le calcul de l'activité globale. Nous avons par ailleurs observé sur les exemples que les cas de non-convergence semblent se traduire par des cycles limites sur des positions qui sont proches. 
+Pourtant, nous avons également observé que les cartes se déplient correctement, malgré l'instabilité de la relaxation en début d'apprentissage. Nous pensons que ce comportement est favorisé grâce à l'initialisation de la relaxation à des positions maximisant l'activité externe et grâce à la prépondérance de l'activité externe dans le calcul de l'activité globale. Nous avons par ailleurs remarqué sur des exemples que les cas de non-convergence semblent se traduire par des cycles limites sur des positions qui sont proches. 
 Pour ces deux raisons, bien que la valeur trouvée à l'issue de la relaxation ne soit pas une solution du problème de maximisation globale, il s'agirait d'un point qui possède une valeur forte d'activité externe dans chaque carte~: $\w_e(\bmu)$ est proche de l'entrée externe $\inpx$. Cela permet aux poids externes de s'organiser correctement. Une fois que les poids externes sont dépliés, la relaxation apparaît converger.
-Enfin, nous avons observé que lorsque tous les poids sont bien dépliés, il semble exister une solution unique maximisant les activités globales de chaque carte. L'algorithme de relaxation apparaît alors converger vers ce point quelles que soient les conditions initiales.
+
+
+Lorsque tous les poids sont bien dépliés, il semble exister une solution unique maximisant les activités globales de chaque carte. L'algorithme de relaxation apparaît alors converger vers ce point quelles que soient les conditions initiales.
 Lorsque les cartes sont organisées, le BMU obtenu à l'issue de la relaxation aurait donc bien un sens pour l'apprentissage~: il maximise la somme des activités des cartes, et ne dépend pas de l'initialisation de la relaxation.
 
 

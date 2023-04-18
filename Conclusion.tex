@@ -41,8 +41,10 @@ Notons que cette méthode d'analyse du modèle n'est pas spécifique à CxSOM. L
 Cette méthode d'analyse nous a fourni un cadre permettant de mieux analyser le comportement d'architectures CxSOM élémentaires de deux et trois cartes en une dimension, apprenant sur des entrées en une dimension.
 Ces expériences sont présentées aux chapitres \ref{chap:analyse} et \ref{chap:analyse2D}.
 Nous avons dégagé des comportements d'organisation à deux échelles, qui nous apparaissent comme inhérents aux règles de calculs définies dans CxSOM. Chaque carte est globalement organisée selon son entrée externe. Les BMU se répartissent dans un ensemble de zones de la carte en fonction de cette entrée externe, séparées par des zones mortes. Au sein de chaque région, les BMU sont définis en fonction de l'entrée contextuelle. 
-Cette organisation fait que chaque carte définit son BMU en fonction de toutes les entrées de l'architecture, et non seulement son entrée externe. Ce comportement marque l'apprentissage associatif des entrées au sein de l'architecture.
-Pour observer ce comportement, nous devons prendre le rayon de voisinage externe $h_e$ supérieur au rayon de voisinage contextuel. Ces deux élasticités permettent aux poids contextuels de s'organiser de façon subordonnée aux poids externes.
+Cette organisation permet à chaque carte de définir son BMU en fonction de toutes les entrées de l'architecture, et non seulement son entrée externe. Ce comportement marque un encodage du modèle d'entrée dans chacune des cartes, donc l'apprentissage des relations entre les entrées.
+Pour permettre cette encodage, nous devons prendre le rayon de voisinage externe $h_e$ supérieur au rayon de voisinage contextuel. Ces deux élasticités permettent aux poids contextuels de s'organiser de façon subordonnée aux poids externes.
+
+
 Nous avons ensuite montré qu'une architecture CxSOM est capable de générer une prédiction dans une des cartes de l'architecture à laquelle on n'a pas présenté d'entrée externe lors du test. 
 Grâce aux rétroactions, une carte acquiert une capacité de prise de décision sans avoir besoin d'un algorithme supplémentaire analysant la sortie des cartes. 
 La prédiction s'effectue localement, au niveau d'une carte~: les autres cartes de l'architecture n'ont pas besoin de savoir si les autres cartes prennent ou non leur entrée externe.
@@ -51,7 +53,7 @@ Enfin, nous avons mis en évidence au chapitre~\ref{chap:analyse2D} que le compo
 Ce comportement est prometteur pour la mise en pratique des architectures de cartes sur des données de plus grande dimension.
 
 
-\subsection*{CxSOM, un pari gagnant ?}
+\subsection*{Discussion}
 
 Le modèle CxSOM proposé dans cette thèse apporte un nouveau paradigme de construction d'architecture modulaire de cartes, exploitant pleinement la représentation topographiquement ordonnée d'une carte auto-organisatrice.
 Dans ce modèle, chaque carte encode une représentation de son entrée externe, extrayant une abstraction de chaque espace, et encode également les relations entre les entrées dans chaque carte de l'architecture. 
@@ -93,8 +95,7 @@ Par exemple, un inconvénient de cartes récurrentes simples est le fait qu'elle
 Nous pouvons également envisager la construction d'un système d'apprentissage \og sur le long terme \fg{}, en s'inspirant des modèles proposés en \cite{parisiLL,parisi17}. Un tel système apprend au cours du temps tout en étant capable de générer des prises de décision dans le système. Les modules de l'architecture peuvent apparaître comme des modules de mémoire épisodiques et sémantiques, en choisissant différentes échelles temporelles d'apprentissage pour chaque module.
 
 
-Quels que soient les applications et développements futurs du modèle CxSOM, nos travaux contribuent plus globalement à une vision originale des cartes auto-organisatrices comme des machines à état.
-Nous les avons utilisées comme un support pour la conception d'un système d'apprentissage incluant une dynamique, qui s'éloigne de la vision classique de la SOM comme un algorithme de quantification vectorielle.
+Quels que soient les applications et développements futurs du modèle CxSOM, nos travaux contribuent plus globalement à une vision originale des cartes auto-organisatrices. Nous les avons utilisées comme un support pour la conception d'un système d'apprentissage incluant une dynamique, qui s'éloigne de la vision classique de la SOM comme un algorithme de quantification vectorielle.
 La transmission de la seule position du BMU entre cartes est une façon élégante et simple de connecter des cartes, et les comportements d'organisation complexes observés sur des cartes 1D et 2D soulignent la force que porte une simple information positionnelle utilisée comme représentation d'un espace d'entrée.
 
 

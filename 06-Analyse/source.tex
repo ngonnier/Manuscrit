@@ -15,7 +15,7 @@
 
 \section{Introduction}
 
-Nous avons présenté au chapitre~\ref{chap:repr} des représentations qui permettent de mettre en évidence une organisation dans la réponse des cartes d'une architecture lors de phases de test, c'est-à-dire dans ses positions de BMU. Nous voulons évaluer l'apprentissage associatif d'un modèle d'entrées multimodales~: nous attendons de l'architecture qu'elle soit à la fois capable d'apprendre une représentation de chaque modalité et d'encoder les relations entre les modalités.
+Les représentations introduites au chapitre~\ref{chap:repr} permettent de mettre en évidence une organisation dans la réponse des cartes d'une architecture lors de phases de test, c'est-à-dire dans ses positions de BMU.
 Nous utilisons à présent ces représentations pour identifier quels comportements d'organisation sont caractéristiques d'un apprentissage associatif des entrées, dans des architectures élémentaires de deux et trois cartes.
 
 Nous comparons d'abord la réponse d'une même architecture de cartes à différents modèles d'entrées, afin de distinguer l'organisation qui est due au modèle d'entrées, de celle qui est commune aux différents modèles et donc une conséquence directe des règles d'apprentissage de la carte. 
@@ -633,19 +633,20 @@ Une possibilité d'étude de la connectivité serait également de construire de
 \section{Conclusion}
 
 Ce chapitre de résultats présente une étude de l'organisation d'architectures de 2 et 3 cartes en une dimension.
-Le but de ce chapitre est d'identifier les mécanismes d'organisation propres à CxSOM qui témoignent d'un apprentissage associatif du modèle d'entrées.
-Nous avons réalisé cette étude sur des données numériques afin de pouvoir en tracer une représentation claire.
+Le but de ce chapitre est d'identifier les mécanismes d'organisation propres à CxSOM qui témoignent d'un apprentissage associatif du modèle d'entrées. Nous avons réalisé cette étude sur des données 1D afin de pouvoir en tracer une représentation facilement interprétable.
 
 Nous avons d'abord observé que l'apprentissage du modèle d'entrées dans une architecture CxSOM est marqué par une organisation à deux échelles~: les poids externes se déplient sur l'espace d'entrée comme les poids d'une carte classique. Les poids contextuels se déplient sur des sous-régions de la carte, définies par la valeur de l'entrée externe, formant des motifs pseudo-périodiques~: la forme de ces périodes est similaire, mais varie en largeur spatiale et en amplitude. 
 Cette organisation à deux échelles spatiales se retrouve dans l'organisation des BMU de chaque carte.
 Ces derniers se disposent dans des zones distinctes, séparées par des zones mortes. 
-Cette organisation permet d'encoder l'information sur tout le modèle d'entrées dans chacune des cartes. Nous avons en effet constaté qu'une zone de BMU se spécialise pour un intervalle de valeur par rapport à tout le modèle d'entrées, représenté par $U$. 
+Cette organisation permet d'encoder l'information sur tout le modèle d'entrées dans chacune des cartes. Nous avons en effet constaté qu'une zone de BMU se spécialise pour un intervalle de valeur par rapport à tout le modèle d'entrées, représenté par $U$. L'apprentissage des relations entre entrées est alors marqué par le fait que $U$ est une position du BMU $\bmu$ dans chaque carte.
+
 La notion de réponse à deux échelles se rapproche par ailleurs de certains modèles biologiques du cortex.
 Cette organisation des cartes dépend des paramètres d'apprentissage, mais n'émerge que lorsque plusieurs points du modèle d'entrées partagent la même valeur sur une des modalités.
 L'organisation en zones est caractéristique de l'apprentissage du modèle d'entrées par une architecture de cartes et sont observées sur plusieurs jeux de données d'entrées jouets ainsi que réelles, sur des architectures de deux et trois cartes, et quel que soit le nombre de connexions entre cartes.
 
 
-Nous avons ensuite constaté que l'encodage du modèle d'entrées dans chacune des cartes grâce à l'organisation à deux échelles permet à l'architecture de générer des valeurs d'entrées manquantes. Après apprentissage, une carte qui ne reçoit plus son entrée externe peut définir un BMU uniquement grâce à ses activités contextuelles et le poids externe du BMU peut être utilisé comme une valeur générée de la modalité qui n'a pas été présentée.
+Nous avons ensuite constaté que l'encodage du modèle d'entrées dans chacune des cartes grâce à l'organisation à deux échelles permet à l'architecture de générer des valeurs d'entrées manquantes. Après apprentissage, une carte qui ne reçoit plus son entrée externe peut définir son BMU uniquement grâce à ses activités contextuelles.
+Le poids externe du BMU peut être utilisé comme une valeur générée de la modalité qui n'a pas été présentée.
 Dans ces tâches de prédiction, l'architecture CxSOM utilise le fait qu'elle ait encodé le modèle d'entrées de façon redondante entre les cartes. 
 Cette capacité de prédiction est une application possible des architectures de cartes et est une façon d'évaluer l'apprentissage d'un modèle d'entrées par l'architecture lorsque ce modèle n'est pas connu en théorie.
 La prédiction est un comportement qui différencie une carte simple ou une architecture hiérarchique de cartes d'une architecture non-hiérarchique~: les modèles non-hiérarchiques présentés au chapitre~\ref{chap:architectures} proposaient également cette capacité de prédiction. Nous voyons ici qu'il s'agit d'une capacité également permise par CxSOM~; en notant que dans notre cas, l'information n'est pas centralisée dans une carte associative. De plus, une prédiction peut-être réalisée par n'importe quelle carte grâce aux connexions non-hiérarchiques, et s'appuie sur le même algorithme que celui utilisé lors des tests.
@@ -657,7 +658,7 @@ D'une part, nous avons vu que des connexions distantes permettent toujours à l'
 Ensuite, nous avons observé que la présence de nombreuses entrées contextuelles amène les poids contextuels à s'organiser vers une valeur moyenne des entrées. Dans le cas où ces entrées seraient indépendantes au sein du modèle d'entrées, ce comportement de moyennage permettrait aux activités contextuelles de réduire leur contribution dans le calcul de l'activité globale~; le BMU ne prendrait alors en compte que les entrées qui présentent une dépendance.
 Cependant, si $U$ est de grande dimension, tout couple de modalité $(\inpx\m{i}, \inpx\m{j})$ ne présentera que peu de dépendance, ce qui pourrait également entraîner ce comportement de moyennage. Ce n'est pas souhaitable, car nous voulons pouvoir extraire une représentation de $U$. 
 
-Plus généralement, il est difficilement souhaitable que chaque carte d'une architecture encode tout le modèle d'entrées lorsque $U$ est de dimension supérieure à 2. 
+Plus généralement, il est difficilement souhaitable que chaque carte d'une architecture encode tout le modèle d'entrées lorsque $U$ est de dimension supérieure à 2.
 Déjà lorsque $U$ est 2D, comme dans le patch $[0,1]^2$, la qualité de quantification vectorielle des entrées externes est significativement plus faible que celle obtenue sur un modèle $U$ 1D.
 On attendrait plutôt de l'architecture qu'elle encode le modèle d'entrées de façon certes redondante, mais distribuée entre les cartes de l'architecture.
 Cette distribution de la représentation de $U$ n'apparaît pas clairement dans les expériences sur deux et trois cartes, car les architectures sont encore trop petites. 
@@ -665,12 +666,12 @@ Cet aspect distribué de l'apprentissage sera un point à étudier sur des archi
 Il sera par exemple possible de jouer sur les connexions, les paramètres des cartes ou le calcul d'activité.
 
 Ces constats soulèvent qu'il sera pertinent d'évaluer l'encodage du modèle d'entrées dans les cartes par des valeurs indicatrices.
-D'une part, la définition de valeurs indicatrices de cet encodage permettrait d'automatiser l'analyse des paramètres d'une architecture, de comparer des expériences entre elles et d'étudier des expériences dans lesquelles les tracés ne sont pas possibles à cause de la dimension des cartes et des entrées.
+La définition de valeurs indicatrices de cet encodage permettrait d'automatiser l'analyse des paramètres d'une architecture, de comparer des expériences entre elles et d'étudier des expériences dans lesquelles les tracés ne sont pas possibles à cause de la dimension des cartes et des entrées.
 Ces indicateurs permettraient aussi d'étudier la distribution de l'encodage du modèle d'entrées au sein d'une architecture.
 Nous étudierons quelques indicateurs d'analyse de l'encodage de $U$ par l'architecture au chapitre~\ref{chap:indicateur}.
 
 Enfin, toutes ces expériences ont été menées sur des cartes 1D apprenant à représenter des données en une dimension. Ce cas de figure est rarement rencontré en pratique et il serait intéressant d'évaluer l'apprentissage sur des dimensions d'entrées supérieures. Pour une tâche de quantification vectorielle classique par une SOM, il est plus usuel d'utiliser des cartes en deux dimensions qui forment un bon compromis entre la capacité de quantification vectorielle rendue possible et le coût des calculs pendant l'apprentissage. Nous chercherons donc à utiliser des cartes 2D dans une architecture CxSOM. Le passage de 1D à 2D n'est pas immédiat et pose de nombreuses questions quant à l'organisation des poids et la recherche de BMU par relaxation. 
-Nous présenterons à ce propos au chapitre \ref{chap:analyse2D} des expériences préliminaires étudiant l'organisation des poids dans une architecture de cartes en deux dimensions.
+Nous présenterons à ce propos au chapitre \ref{chap:analyse2D} des expériences préliminaires étudiant l'organisation d'une architecture de cartes en deux dimensions.
 
 \ifSubfilesClassLoaded{
     \printbibliography

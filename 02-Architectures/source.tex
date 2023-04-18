@@ -413,7 +413,7 @@ Dans le second type d'architecture, il existe des connexions directes entre cart
 
 \subsubsection{La mémoire associative et l'apprentissage développemental comme applications des architectures non hiérarchiques}
 
-Les architectures non hiérarchiques proposées dans la littérature ont en commun leur application à la mémoire associative de données multimodales.
+Les architectures non hiérarchiques proposées dans la littérature ont en commun leur application au traitement de données multimodales.
 La fusion de données multimodales est un enjeu actuel des algorithmes d'apprentissage en robotique développementale.
 Il s'agit d'intégrer les données issues de multiples capteurs au sein d'un même algorithme d'apprentissage.
 Il est en effet rare que l'information issue d'un seul capteur apporte toute l'information nécessaire à l'apprentissage et la prise de décision dans un environnement réel \parencite{lahat2015}. 
@@ -557,8 +557,7 @@ Le modèle A-SOM est ainsi un modèle d'architecture décentralisée, par transm
 
 
 Ensuite, les travaux menés précédemment dans notre équipe se sont attachés à la création d'architectures décentralisées de cartes auto-organisatrices.
-Ainsi, l'architecture Bijama développée en \cite{menard05} et l'architecture SOMMA développée en \cite{lefort_unlearning_2011} proposent des modèles d'architectures modulaires s'appuyant sur l'association des activités neuronales de cartes cellulaires.
-Les auteurs se sont appuyés sur des modèles de cartes auto-organisatrices cellulaires, les opérations s'effectuant à l'échelle même d'un n\oe{}ud d'une carte.
+Ainsi, l'architecture Bijama développée en \cite{menard05} et l'architecture SOMMA développée en \cite{lefort_unlearning_2011} proposent des modèles d'architectures modulaires s'appuyant sur l'association des activités neuronales de cartes cellulaires. La notion de BMU et de voisinage y est prise en charge par le calcul de champs neuronaux dynamiques couplés entre les cartes (voir chapitre~\ref{chap:relaxation}). Ce calcul dynamique d'activation permet un mécanisme de \emph{Winner Take All} proche de ce qui est réalisé dans une carte classique, tout en situant les calcul à l'échelle du neurone.
 Dans le modèle Bijama, un neurone d'une carte est composé de plusieurs étages d'activation comportant chacun un poids, rappelant les colonnes corticales. Ces activations contribuent au calcul d'une activation globale du neurone.
 Un poids dit thalamique est relatif à l'entrée sensorielle du neurone, c'est-à-dire l'entrée $\inpx$.
 Des poids corticaux sont quant à eux relatifs aux connexions venant des neurones des autres cartes de l'architecture.
@@ -575,7 +574,8 @@ Des poids corticaux sont quant à eux relatifs aux connexions venant des neurone
 \end{figure}
 
 Dans ce modèle présenté en figure~\ref{fig:bijama}, chaque neurone d'une carte est connecté via sa couche corticale à une rangée de neurones d'une carte modale. Cela revient donc à la transmission de champs d'activation entre cartes.
-La mise à jour est asynchrone~: les connexions directes entre neurones génèrent la mise à jour des poids du neurone. Contrairement aux modèles précédemment présentés, l'activité prise en compte par les connexions neuronales est l'activité globale du neurone. Le calcul de l'activité du neurone de la première carte dépend de l'activation des neurones de la deuxième, qui dépendent de l'activité de la première.
+La mise à jour est asynchrone~: les connexions directes entre neurones génèrent la mise à jour des poids du neurone. Contrairement aux modèles précédemment présentés, l'activité prise en compte par les connexions neuronales est une activité globale du neurone, combinant activités externes et contextuelles. 
+Le calcul de l'activité du neurone de la première carte dépend de l'activation des neurones de la deuxième, qui dépendent de l'activité de la première.
 Les activités étant calculées de façon asynchrone, la présentation d'une entrée induit un processus dynamique de calcul d'activité au sein des neurones, au cours duquel les entrées thalamiques restent inchangées et les activités des neurones évoluent vers un état limite stable. 
 Cette dynamique est appelée relaxation.
 Cette activité finale est celle prise en compte par les neurones pour la mise à jour de leurs prototypes.
@@ -607,7 +607,7 @@ $$
 
 Comme chaque carte reçoit en entrée la position de l'état courant du BMU de l'autre carte dépendant des boucles de rétroactions, le modèle laisse relaxer les activités en déplaçant petit à petit les BMU de chaque carte, jusqu'à obtenir un état stable pour les activités. Cette relaxation est un parallèle dans une carte auto-organisatrice classique à la relaxation proposée en Bijama.
 Cette position stable est utilisée pour déterminer le BMU final servant à la mise à jour des poids.
-Ce modèle permet alors d'apprendre des séquences d'entrées. Alors qu'une carte simple différencierait les BMU en fonction de la valeur de l'entrée, ce modèle génère une différenciation des BMU en fonction de la position d'un élément dans la séquence.
+Les auteurs appliquent le modèle sur  l'apprentissage de séquences d'entrées. Alors qu'une carte simple différencierait les BMU en fonction de la valeur de l'entrée, l'architecture génère une différenciation des BMU en fonction de la position d'un élément dans la séquence.
 
 
 \begin{figure}
@@ -775,10 +775,10 @@ Nous avons remarqué que seulement peu de travaux ont exploré l'idée d'associe
 La transmission de la position du BMU comme information entre cartes apparait au contraire comme un paradigme principalement utilisé dans le domaine des cartes hiérarchiques ainsi que dans certains modèles récurrents.
 Ce mode de transmission exploite pleinement l'aspect topologique de la carte de Kohonen, est indépendant du type d'entrée fourni à une carte et est une valeur de faible dimension, donc intéressante pour le calcul. Ce paradigme permet aux architectures s'y appuyant de réaliser de bonnes performances en terme d'apprentissage automatique.
 Les architectures décentralisées sont principalement proposées sous le prisme d'une inspiration biologique, ce qui justifie l'utilisation privilégiée de transmission d'activité~: les neurones biologiques sont connectés par des connexions neurones à neurones et se transmettent une activation. 
-% Or, le concept de BMU et de processus \emph{Winner Take All} intervenant dans une carte auto-organisatrice permet en fait de remplacer les champs neuronaux, proches de la biologie mais difficiles à paramétrer~\parencite{fix:hal-00869726} par un mécanisme global à la carte. Ce mécanisme s'éloigne de la plausibilité biologique mais permet des calculs plus rapides dans une SOM, tout en conservant les propriétés d'auto-organisation d'une carte. La transmission du BMU entre cartes au lieu d'activités apparaît donc comme un pendant plus computationnel de la transmission d'activité. 
-Seuls les travaux de \cite{dominey13} s'appuient sur transmission de la position du BMU dans le cadre des SOM non hiérarchiques.
+Or, le concept de BMU et de processus \emph{Winner Take All} intervenant dans une carte auto-organisatrice permet en fait de remplacer les champs neuronaux, proches de la biologie mais difficiles à paramétrer~\parencite{fix:hal-00869726} par un mécanisme global à la carte. Ce mécanisme s'éloigne de la plausibilité biologique mais permet des calculs plus rapides dans une SOM, tout en conservant les propriétés d'auto-organisation d'une carte. La transmission du BMU entre cartes apparaît donc comme un pendant plus computationnel de la transmission d'activité. 
 Enfin, nous avons constaté des différences dans le traitement des rétroactions entre cartes. Les architectures SOIMA, MCMM et A-SOM découplent les poids externes et contextuels des cartes lors de l'apprentissage, en différenciant les BMU sur chaque couche de poids, pour ne combiner de fait les activités que lors de la phase de prédiction d'entrée. 
 Cette gestion des rétroactions ne va pas dans le sens d'une architecture autonome, car les règles de calcul changent entre la phase d'apprentissage et la phase de prédiction.
+Seuls les travaux de \cite{dominey13} s'appuient sur la transmission de la position du BMU dans une architecture de SOM non hiérarchiques, mais il découplent les activations externes et contextuelles des neurones dans les rétroactions.
 
 Le travail de recherche proposé dans cette thèse consiste à construire et étudier un modèle non-hiérarchique d'architecture de cartes, en s'inspirant de l'architecture corticale. Nous cherchons à nous placer plutôt du côté du calcul informatique, laissant la biologie comme une inspiration, sans chercher à la modéliser.
 Pour ses avantages en termes de coût de transmission et d'homogénéité des calculs, nous nous tournerons vers la transmission de la position du BMU comme information entre modules.
@@ -786,8 +786,7 @@ La plupart des architectures relevées dans la littérature s'appuient sur des m
 Une architecture générale incluant le traitement de séquences doit nécessairement gérer ses mises à jour de façon synchrone~; aussi nous choisissons de diriger nos recherches dans ce sens.
 
 L'architecture CxSOM que nous proposons et étudions dans cette thèse est une architecture non hiérarchique décentralisée de cartes de Kohonen, dont les mises à jour sont réalisées de façon synchrone. Nous voulons également que les rétroactions soient prises en compte dès l'apprentissage, dans un objectif d'architecture autonome~: nous ne différencions pas les règles d'évolution des modules entre phases d'apprentissage et phase de test ou de prédiction.
-Ce modèle fait suite aux travaux amorcés en \cite{baheux_towards_2014}, qui définissent un modèle d'architecture récurrente utilisant la transmission de la position du BMU entre des cartes de Kohonen, et utilisent un mécanisme de relaxation pour gérer les rétroactions entre cartes. 
-Ces travaux exploitent des connexions intercartes mais restent appliqués au traitement de séquences.
+Ce modèle fait suite aux travaux amorcés en \cite{baheux_towards_2014}, qui définissent un modèle d'architecture récurrente utilisant la transmission de la position du BMU entre des cartes de Kohonen, et utilisent un mécanisme de relaxation pour gérer les rétroactions entre cartes.
 Par leur motivation, qui est le développement d'un système multi-cartes générique, nos travaux se rapprochent aussi des travaux conduits sur l'architecture A-SOM~\cite{johnsson_associating_2008, johnsson_associative_2009,gil_sarasom_2015, Buonamente2015DiscriminatingAS}~; les choix de modèle sont cependant différents.
 
 Nous dirigerons les travaux de cette thèse vers l'identification des mécanismes d'apprentissage associatifs dans de petites architectures de deux et trois cartes. Pour cela, nous élaborerons une méthode expérimentale et des représentations adaptées du modèle, dans une optique de création d'architectures comportant de nombreuses cartes.
