@@ -41,7 +41,7 @@ Dans cette section, nous reviendrons sur les comportements identifiés au chapit
 Le modèle d'architecture étudié dans cette section est présenté en figure~\ref{fig:archis}.
 Chaque carte a une taille fixée de 500 n\oe{}uds, indexés entre 0 et 1, et possède deux couches de poids $\w_e$ et $\w_c$. Les rayons de voisinage sont fixés à $r_e = 0.2$ et $r_c = 0.02$, sauf si précisé autrement dans l'expérience. Les connexions sont réciproques~: $M\m{1}$ prend comme entrée contextuelle $\bmu\m{2}$ et inversement.
 
-Nous utiliserons comme modèle d'entrées des points en deux dimensions~: chaque modalité $\inpx\m{1}$ et $\inpx\m{2}$ correspond à l'une des deux coordonnées $x_p$ et $y$ de ces points. Nous comparerons la réponse de l'architecture à différents modèles d'entrées jouets générés artificiellement, qui nous permettent de maîtriser les dépendances entre les modalités.
+Nous utiliserons comme modèle d'entrées des points en deux dimensions~: chaque modalité $\inpx\m{1}$ et $\inpx\m{2}$ correspond à l'une des deux coordonnées $x$ et $y$ de ces points. Nous comparerons la réponse de l'architecture à différents modèles d'entrées jouets générés artificiellement, qui nous permettent de maîtriser les dépendances entre les modalités.
 Au chapitre~\ref{chap:repr}, nous avons représenté la dépendance entre les modalités par une variable latente $U$, en bijection avec les entrées, représentant les paramètres libres du modèle d'entrées. 
 Des points 2D situés sur une courbe sont représentés par une variable $U$ 1D, et des points sur une surface par une variable $U$ 2D. L'apprentissage associatif se traduit alors par l'encodage de $U$ au sein de l'architecture.
 
@@ -121,15 +121,15 @@ Il s'agit d'une première différence avec une carte classique, pour laquelle to
    \label{fig:w_zoom}}
 \end{figure}
 
-La figure~\ref{fig:w_zoom} est un agrandissement du tracé ~\ref{fig:w}, faisant figurer quatre zones de la carte $M\m{1}$. Elle met en évidence le fait que chaque zone de BMU (en blanc) encode un intervalle pour le couple $(\inpx\m{1}, \inpx\m{2})$.
+La figure~\ref{fig:w_zoom} est un agrandissement du tracé~\ref{fig:w}, faisant figurer quatre zones de la carte $M\m{1}$. Elle met en évidence le fait que chaque zone de BMU (en blanc) encode un intervalle pour le couple $(\inpx\m{1}, \inpx\m{2})$.
 Pour illustrer cette propriété, deux points sont indiqués en rouge et bleu. Ils possédent la même valeur de $\inpx\m{1} = 0.7$, mais une valeur différente de $\inpx\m{2}$. 
 Ils ont ici un BMU différent dans la carte $M\m{1}$. Ces BMU sont situés dans deux zones adjacentes.
 Ces tracés montrent que la réponse des cartes présente une organisation à deux échelles, portée par la forme des poids externes et contextuels. 
 Dans chaque carte, le BMU est choisi selon $\inpx\m{1}$, puis localement selon $\inpx\m{2}$.
 Chaque position se spécialise ainsi en fonction des deux composantes du modèle d'entrées $(\inpx\m{1}, \inpx\m{2})$. 
-Autrement formulé, chaque zone se spécialise ainsi pour un petit intervalle de $U$.
-Nous avons ainsi observé, en section~\ref{sec:u_bmu}, que l'apprentissage des relations entre entrées se traduit par une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, tracée en figure~\ref{fig:piu}.
-Nous reviendrons plus en détail sur cette représentation et la propriété de relation fonctionnelle entre la variable cachée et la position du BMU au chapitre~\ref{chap:indicateur}. Dans l'architecture de deux cartes, cette relation fonctionnelle traduit l'apprentissage du modèle d'entrées au sein de l'architecture.
+Autrement formulé, chaque zone se spécialise pour un petit intervalle de $U$.
+Nous avons ainsi observé, en section~\ref{sec:u_bmu}, que l'apprentissage des relations entre entrées se traduit par une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, tracée en figure~\ref{fig:piu}. Dans une architecture de deux cartes, cette relation fonctionnelle traduirait l'apprentissage du modèle d'entrées au sein de l'architecture.
+Nous reviendrons plus en détail sur cette représentation et la propriété de relation fonctionnelle entre la variable cachée et la position du BMU au chapitre~\ref{chap:indicateur}. 
 
 \subsubsection{Erreur de quantification vectorielle}
 
@@ -172,6 +172,8 @@ Nous nous concentrons sur l'organisation des poids et des BMU des cartes, afin d
 Dans la disposition d'entrées \textbf{B}, les deux entrées $\inpx\m{1}$ et $\inpx\m{2}$ sont en bijection~: une valeur de $\inpx\m{1}$ correspond à une seule valeur de $\inpx\m{2}$ dans le modèle.
 La représentation cartographique correspondante est tracée en figure~\ref{fig:id_results}.
 Les poids externes et contextuels s'organisent tous les deux de la même façon, sur une même échelle spatiale. Ceci s'expliquerait par le fait que la carte $M\m{1}$ n'a pas besoin de distinguer plusieurs valeurs de $\inpx\m{2}$ pour une même entrée $\inpx\m{1}$, et inversement. Les deux cartes agissent alors comme des cartes classiques, indépendantes. Leurs BMU se répartissent sur toute la carte, sans former de zones.
+
+
 Dans la disposition d'entrées \textbf{C}, la dépendance entre les entrées n'est plus bijective~: $\inpx\m{2}$ est toujours une fonction de $\inpx\m{1}$, mais pas le contraire. Sa représentation est tracée en figure~\ref{fig:cos_results}.
 Les poids externes et contextuels de la carte $M\m{1}$ s'organisent sur la même échelle spatiale, ce qui est cohérent avec le comportement observé sur les entrées \textbf{B}~: une seule valeur de $\inpx\m{2}$ correspond à une même valeur de $\inpx\m{1}$.
 Au contraire, la carte $M\m{2}$ doit à présent distinguer deux valeurs de $\inpx\m{1}$ possibles correspondant à chaque valeur de $\inpx\m{2}$, ce qu'elle fait en formant une deuxième échelle de quantification, grâce aux poids contextuels. Ce comportement rejoint ainsi celui que nous avons observé sur le cercle. Chaque zone de la carte $M\m{2}$ est alors spécialisée pour un intervalle de valeurs de $(\inpx\m{1}, \inpx\m{2})$ et non seulement $\inpx\m{2}$.
