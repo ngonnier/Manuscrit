@@ -21,7 +21,7 @@ Nous utilisons à présent ces représentations pour identifier quels comporteme
 Nous comparons d'abord la réponse d'une même architecture de cartes à différents modèles d'entrées, afin de distinguer l'organisation qui est due au modèle d'entrées, de celle qui est commune aux différents modèles et donc une conséquence directe des règles d'apprentissage de la carte. 
 Nous évaluerons également l'influence des paramètres de l'architecture sur cette organisation.
 
-Nous observerons ensuite qu'une architecture peut non seulement encoder le modèle d'entrées, mais aussi l'utiliser pour prédire une entrée manquante, ce qui confère à l'architecture de cartes un comportement de prise de décision, et non seulement de réaction aux entrées.
+Nous observerons ensuite qu'une architecture peut encoder le modèle d'entrées et l'utiliser pour prédire une entrée manquante, ce qui confère à l'architecture de cartes un comportement de prise de décision, et non seulement de réaction aux entrées.
 
 \section{Identification des mécanismes d'apprentissage dans une architecture de deux cartes}
 
@@ -81,13 +81,13 @@ Après avoir vérifié que les poids des cartes convergent au cours de l'apprent
 
 Dans une carte de Kohonen classique, les paramètres d'apprentissage (rayon de voisinage et taux d'apprentissage) sont diminués au cours des itérations d'apprentissage. Cette diminution permet d'assurer une stabilisation des poids. Ces paramètres sont au contraire gardés constants au cours des itérations dans notre architecture, comme expliqué en section~\ref{sec:parametres_carte} p.~\pageref{sec:parametres_carte}.
 Comme nous nous intéressons à l'organisation des cartes après apprentissage, nous nous assurons ici que les poids des cartes convergent effectivement vers une position stable, permettant de définir une fin d'apprentissage.
-Pour illustrer cette évolution, en figure~\ref{fig:conv}, nous traçons la moyenne, sur toutes les positions $p$ d'une carte, de la différence entre $\w_t$ et $w_{t-100}(p)$~:$\langle | \w_t(p) - w_{t-100}(p)| \rangle $ à différents temps $t$ de l'apprentissage. Nous constatons que les poids évoluent rapidement au début de l'apprentissage, puis n'évoluent ensuite que très faiblement, ce qui suggère que les deux couches de poids ont atteint une position stable. Notons que ces tracés ne permettent pas de démontrer expérimentalement la convergence des poids, mais donnent une bonne idée de l'évolution générale des poids des cartes.
+Pour illustrer cette évolution, en figure~\ref{fig:conv}, nous traçons la moyenne, sur toutes les positions $p$ d'une carte, de la différence entre $\w_t$ et $w_{t-100}(p)$~: $\langle | \w_t(p) - w_{t-100}(p)| \rangle $ à différents instants $t$ de l'apprentissage. Nous constatons que les poids évoluent rapidement au début de l'apprentissage, puis n'évoluent ensuite que très faiblement, ce qui suggère que les deux couches de poids ont atteint une position stable. Notons que ces tracés ne permettent pas de montrer expérimentalement la convergence des poids, mais donnent une bonne idée de l'évolution générale des poids des cartes.
 Graphiquement, nous avons également observé que les poids évoluent vers une position stable.
 
 Nous pouvons proposer des éléments d'explication de cette convergence observée empiriquement, en remarquant qu'une carte se comporte principalement comme une carte de Kohonen classique se dépliant sur les entrées externes. En effet, l'activité externe domine dans le calcul de l'activité globale, cf. équation~\ref{eq:global_act}.
 L'activité contextuelle est utilisée ici comme un terme de modulation de l'activité externe.
 La convergence des poids d'une carte de Kohonen classique en 1D sur des données numériques a été démontrée, voir~\cite{Cottrell1998TheoreticalAO}. 
-La proximité du comportement de CxSOM avec une carte classique nous permet donc d'envisager que les poids des cartes CxSOM convergent également, dans le cas de cartes 1D.
+La proximité du comportement de CxSOM avec une carte classique nous permet donc d'envisager que les poids des cartes CxSOM convergent également dans le cas de cartes 1D.
 La convergence en l'absence de décroissance des paramètres pourrait cependant poser plus de problèmes sur des cartes en deux dimensions.
 
 \subsubsection{Organisation de la réponse des cartes après apprentissage}
@@ -103,9 +103,9 @@ La convergence en l'absence de décroissance des paramètres pourrait cependant 
 Maintenant que nous avons observé que les poids convergent vers une organisation stable, nous voulons identifier comment l'organisation des poids et des BMU de l'architecture traduisent un apprentissage du modèle d'entrées \textbf{A}.
 Nous avons présenté les méthodes de représentation et comparé la réponse de CxSOM à celle d'une carte simple au chapitre~\ref{chap:repr}. Nous revenons ici sur ces observations en les complétant.
 
-Nous reprenons la représentation cartographique des valeurs d'entrées, introduite en figure~\ref{fig:inputs}. Elle permet d'observer une organisation des poids, mais aussi des BMU.
+Nous reprenons la représentation cartographique des valeurs d'entrées, introduite en figure~\ref{fig:inputs}. Il s'agit d'une représentation comportementale de la carte, qui permet d'observer une organisation des poids et des BMU.
 Cette représentation est tracée pour les deux cartes de l'architecture en figures~\ref{fig:w} et \ref{fig:w_zoom}, après apprentissage.
-Nous constatons que les poids externes, en bleu, présentent une disposition similaire aux poids d'une carte classique~: ils sont classés de façon monotone entre 0 et 1. Les poids contextuels, en orange, présentent une disposition qu'on peut qualifier de pseudo-périodique~: ils présentent des oscillations régulières, mais les amplitudes et la largeur spatiale des oscillations varient.
+Nous constatons que les poids externes, en bleu, présentent une disposition similaire aux poids d'une carte classique~: ils sont classés de façon monotone entre 0 et 1. Les poids contextuels, en orange, présentent une disposition pseudo-périodique~: ils présentent des oscillations spatiales régulières, mais les amplitudes et la largeur spatiale des oscillations varient.
 
 La valeur des entrées $\inpx\m{1}$ et $\inpx\m{2}$ sont tracées en rouge et vert en fonction des positions de BMU obtenues lors de la phase de test.
 Les positions des BMU dans les deux cartes se répartissent en zones compactes, séparées par des zones mortes de la carte dont les n\oe{}uds n'ont jamais été BMU. 
@@ -121,14 +121,14 @@ Il s'agit d'une première différence avec une carte classique, pour laquelle to
    \label{fig:w_zoom}}
 \end{figure}
 
-La figure~\ref{fig:w_zoom} est un agrandissement du tracé~\ref{fig:w}, faisant figurer quatre zones de la carte $M\m{1}$. Elle met en évidence le fait que chaque zone de BMU (en blanc) encode un intervalle pour le couple $(\inpx\m{1}, \inpx\m{2})$.
+La figure~\ref{fig:w_zoom} est un agrandissement du tracé~\ref{fig:w}, faisant figurer quatre zones de la carte $M\m{1}$. Elle met en évidence le fait que chaque zone de BMU (en blanc) encode un intervalle du couple $(\inpx\m{1}, \inpx\m{2})$.
 Pour illustrer cette propriété, deux points sont indiqués en rouge et bleu. Ils possédent la même valeur de $\inpx\m{1} = 0.7$, mais une valeur différente de $\inpx\m{2}$. 
 Ils ont ici un BMU différent dans la carte $M\m{1}$. Ces BMU sont situés dans deux zones adjacentes.
 Ces tracés montrent que la réponse des cartes présente une organisation à deux échelles, portée par la forme des poids externes et contextuels. 
 Dans chaque carte, le BMU est choisi selon $\inpx\m{1}$, puis localement selon $\inpx\m{2}$.
 Chaque position se spécialise ainsi en fonction des deux composantes du modèle d'entrées $(\inpx\m{1}, \inpx\m{2})$. 
-Autrement formulé, chaque zone se spécialise pour un petit intervalle de $U$.
-Nous avons ainsi observé, en section~\ref{sec:u_bmu}, que l'apprentissage des relations entre entrées se traduit par une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, tracée en figure~\ref{fig:piu}. Dans une architecture de deux cartes, cette relation fonctionnelle traduirait l'apprentissage du modèle d'entrées au sein de l'architecture.
+Chaque zone se spécialise donc pour un petit intervalle de $U$.
+Nous avons ainsi observé, en section~\ref{sec:u_bmu}, que l'apprentissage des relations entre entrées se traduit par une relation fonctionnelle entre $U$ et $\bmu$ dans chaque carte, tracée en figure~\ref{fig:piu}. 
 Nous reviendrons plus en détail sur cette représentation et la propriété de relation fonctionnelle entre la variable cachée et la position du BMU au chapitre~\ref{chap:indicateur}. 
 
 \subsubsection{Erreur de quantification vectorielle}
@@ -171,24 +171,24 @@ Nous nous concentrons sur l'organisation des poids et des BMU des cartes, afin d
 
 Dans la disposition d'entrées \textbf{B}, les deux entrées $\inpx\m{1}$ et $\inpx\m{2}$ sont en bijection~: une valeur de $\inpx\m{1}$ correspond à une seule valeur de $\inpx\m{2}$ dans le modèle.
 La représentation cartographique correspondante est tracée en figure~\ref{fig:id_results}.
-Les poids externes et contextuels s'organisent tous les deux de la même façon, sur une même échelle spatiale. Ceci s'expliquerait par le fait que la carte $M\m{1}$ n'a pas besoin de distinguer plusieurs valeurs de $\inpx\m{2}$ pour une même entrée $\inpx\m{1}$, et inversement. Les deux cartes agissent alors comme des cartes classiques, indépendantes. Leurs BMU se répartissent sur toute la carte, sans former de zones.
+Les poids externes et contextuels s'organisent tous les deux de façon motonone entre 0 et 1. Ils sont donc sur une même échelle spatiale. Ceci s'expliquerait par le fait que la carte $M\m{1}$ n'a pas besoin de distinguer plusieurs valeurs de $\inpx\m{2}$ pour une même entrée $\inpx\m{1}$, et inversement. Les deux cartes agissent alors comme des cartes classiques, indépendantes. Leurs BMU se répartissent sur toute la carte, sans former de zones.
 
 
 Dans la disposition d'entrées \textbf{C}, la dépendance entre les entrées n'est plus bijective~: $\inpx\m{2}$ est toujours une fonction de $\inpx\m{1}$, mais pas le contraire. Sa représentation est tracée en figure~\ref{fig:cos_results}.
 Les poids externes et contextuels de la carte $M\m{1}$ s'organisent sur la même échelle spatiale, ce qui est cohérent avec le comportement observé sur les entrées \textbf{B}~: une seule valeur de $\inpx\m{2}$ correspond à une même valeur de $\inpx\m{1}$.
-Au contraire, la carte $M\m{2}$ doit à présent distinguer deux valeurs de $\inpx\m{1}$ possibles correspondant à chaque valeur de $\inpx\m{2}$, ce qu'elle fait en formant une deuxième échelle de quantification, grâce aux poids contextuels. Ce comportement rejoint ainsi celui que nous avons observé sur le cercle. Chaque zone de la carte $M\m{2}$ est alors spécialisée pour un intervalle de valeurs de $(\inpx\m{1}, \inpx\m{2})$ et non seulement $\inpx\m{2}$.
+Au contraire, la carte $M\m{2}$ doit à présent distinguer deux valeurs de $\inpx\m{1}$ possibles pour chaque valeur de $\inpx\m{2}$, ce qu'elle fait en formant une deuxième échelle de quantification, grâce aux poids contextuels. Ce comportement rejoint ainsi celui que nous avons observé sur le cercle. Chaque zone de la carte $M\m{2}$ est alors spécialisée pour un intervalle de valeurs de $(\inpx\m{1}, \inpx\m{2})$ et non seulement $\inpx\m{2}$.
 
 D'après ces deux expériences, nous supposons que la formation de deux échelles de quantification permet à une carte de distinguer plusieurs valeurs dans le modèle d'entrées qui correspondent à une même valeur pour son entrée externe. Dans ce cas, une position se spécialise en tant que BMU sur une seule valeur du modèle d'entrées.
 Lorsqu'une telle division n'est pas nécessaire d'après le modèle d'entrées, les cartes s'organiseront selon leur entrée externe, de façon similaire à une carte de Kohonen classique.
 
 
-Nous observons ensuite l'organisation des cartes obtenue lorsqu'une valeur de $\inpx\m{1}$ correspond à plus de deux valeurs de $\inpx\m{2}$~: 4 valeurs dans le cas de la courbe de Lissajous (Entrées \textbf{D}), tout l'intervalle $[0,1]$ dans le cas du patch $[0,1]^2$ (Entrées \textbf{E}) ou deux intervalles dans le cas de l'anneau (Entrées \textbf{F})
+Nous observons ensuite l'organisation des cartes obtenue lorsqu'une valeur de $\inpx\m{1}$ correspond à plus de deux valeurs de $\inpx\m{2}$~: 4 valeurs dans le cas de la courbe de Lissajous (Entrées \textbf{D}), tout l'intervalle $[0,1]$ dans le cas du patch $[0,1]^2$ (Entrées \textbf{E}) ou deux intervalles dans le cas de l'anneau (Entrées \textbf{F}).
 La représentation cartographique est tracée pour ces trois cas en figures~\ref{fig:lissa}, \ref{fig:ind} et \ref{fig:anneau_w}.
 Dans ces trois cas, les poids externes et contextuels présentent encore deux échelles d'organisation spatiale, les poids contextuels formant des pseudo-périodes.
 La disposition des BMU de ces cartes forment des zones distinctes, dont chacune encode des intervalles différents du modèle d'entrées. 
-Chaque zone de BMU sur $M\m{1}$ agit ici comme une sous-carte de toutes les valeurs possible de l'entrée $\inpx\m{2}$ correspondant à la valeur de $\inpx\m{1}$ dans cette zone.
+Chaque zone de BMU sur $M\m{1}$ agit ici comme une sous-carte de toutes les valeurs possible de l'entrée $\inpx\m{2}$ qui correspondent aux valeurs de $\inpx\m{1}$ dans cette zone.
 Par exemple, en figure~\ref{fig:ind}, chaque zone de BMU forme une carte de tout l'intervalle $[0,1]$, ce qui correspond à la distribution de $\inpx\m{2}$ lorsque $\inpx\m{1}$ est fixé.
-Il est intéressant de noter que la forme des poids contextuels diffère entre toutes les dispositions d'entrées, mais que le nombre de pseudo-périodes formées par les poids contextuels reste similaire. Cette observation laisse penser que l'encodage à deux échelles est régulé par des paramètres de l'architecture, tandis que la disposition au sein des zones dépend ensuite des valeurs des entrées.
+Il est intéressant de noter que la forme des poids contextuels diffère entre toutes les dispositions d'entrées, mais que le nombre de pseudo-périodes formées par les poids contextuels reste similaire. Cette observation laisse penser que l'encodage à deux échelles est régulé par des paramètres de l'architecture, tandis que la disposition au sein des zones dépend ensuite des distributions d'entrées.
 
 \begin{figure}
 \begin{minipage}{\textwidth}
@@ -210,8 +210,8 @@ Il est intéressant de noter que la forme des poids contextuels diffère entre t
 \end{figure}
 
 Nous voulons enfin observer comment est réalisée la quantification vectorielle de l'espace 2D $(\inpx\m{1}, \inpx\m{2})$ par les deux cartes. Nous prenons ici comme exemple la disposition d'entrées \textbf{E}.
-En figure~\ref{fig:2som_p_d}, nous traçons la distorsion des poids externes des cartes. Il s'agit des valeurs $\omega_e(\bmu\m{1})$ en fonction de $\omega_e(\bmu\m{2}))$, reliées selon l'ordre des connexions de $M\m{1}$ (à gauche) ou de $M\m{2}$ (à droite).
-Nous y observons que les cartes quantifient tout l'espace $[0,1]^2$, mais que seulement 90 valeurs de vecteurs codes sont en fait définies~: le patch est donc seulement quantifié en 90 valeurs, ce qui est plus faible que ce que nous pourrions attendre de deux cartes ayant 500 n\oe{}uds. 
+En figure~\ref{fig:2som_p_d}, nous traçons la distorsion des poids externes des cartes. Il s'agit des valeurs $\omega_e(\bmu\m{1})$ en fonction de $\omega_e(\bmu\m{2})$, reliées selon l'ordre des connexions de $M\m{1}$ (à gauche) ou de $M\m{2}$ (à droite).
+Nous y observons que les cartes quantifient tout l'espace $[0,1]^2$, mais par seulement 90 valeurs de ces vecteurs codes. le patch est donc seulement quantifié en 90 valeurs, ce qui est plus faible que ce que nous pourrions attendre de deux cartes ayant chacune 500 n\oe{}uds. 
 Ces valeurs sont définies par les zones de poids contextuels des cartes. L'apprentissage du modèle d'entrées dans chaque carte semble ainsi réduire la capacité de quantification vectorielle sur les entrées externes.
 
 
@@ -245,9 +245,9 @@ Nous reviendrons plus en détail sur l'utilisation de $U$ dans l'analyse des ré
 
 
 Grâce à ces expériences, nous postulons que l'organisation de la carte en deux échelles spatiales est un comportement systématique de l'architecture CxSOM. 
-Ces deux échelles sont marquées par une organisation pseudo-périodique des poids contextuels, qui forment une échelle spatiale plus réduite que celle formée par les poids externes. Les BMU des cartes se répartissent alors en zones distinctes, séparées par des zones mortes.
+Ces deux échelles sont marquées par une organisation pseudo-périodique des poids contextuels, qui s'organisent selon une échelle spatiale plus réduite que celle formée par les poids externes. Les BMU des cartes se répartissent alors en zones distinctes, séparées par des zones mortes.
 Une position de BMU se spécialise en fonction des deux entrées de l'architecture, encodant finalement une valeur du modèle d'entrées $U$. 
-Une zone agit comme une sous-carte organisée, à $\inpx$ fixé, des valeurs de l'autre entrée du modèle.
+Une zone agit comme une sous-carte organisée, à $\inpx\m{i}$ fixé, des valeurs possible de l'autre entrée du modèle dans cette zone.
 
 Ces deux niveaux d'indexation se forment de façon auto-organisée, mais émergent de l'organisation seulement lorsqu'il est nécessaire de pouvoir distinguer plusieurs valeurs du modèle $U$ correspondant à la même entrée externe d'une carte dans le modèle d'entrées.
 Le nombre de zones reste similaire entre les expériences présentées, ce qui suggère que cette organisation est liée aux paramètres de l'architecture. La forme des zones et la réponse des cartes dépend ensuite de la relation entre les entrées.
@@ -258,7 +258,7 @@ Ce comportement était prévisible, du fait que l'architecture possède un nombr
 
 \subsection{\'Etude des mécanismes de formation des deux échelles d'organisation spatiale}
 
-Nous nous intéressons maintenant aux paramètres des cartes influençant la formation des deux échelles d'organisation spatiales et aux zones de BMU.
+Nous nous intéressons maintenant aux paramètres des cartes influençant la formation des deux échelles d'organisation spatiales et des zones de BMU.
 Nous avons observé que la présence de zones est liée en particulier au rapport entre les rayons de voisinage externe et contextuel.
 Ces paramètres contrôlent l'élasticité de chaque couche de poids.
 Nous comparons dans cette section l'organisation obtenue sur plusieurs architectures ayant des couples de rayons de voisinage contextuels et externes différents, sur une même disposition d'entrée.
@@ -272,7 +272,7 @@ Nous comparons dans cette section l'organisation obtenue sur plusieurs architect
 	}
 \end{figure}
 
-Nous reprenons les entrées \textbf{A}, en cercle et réalisons l'apprentissage de ce modèle sur plusieurs architectures dans lesquelles le rapport $\frac{r_e}{r_c}$ est différent.
+Nous reprenons les entrées \textbf{A}, en cercle et réalisons l'apprentissage de ce modèle par plusieurs architectures dans lesquelles le rapport $\frac{r_e}{r_c}$ est différent.
 Nous fixons  pour cela $r_e$ à $0.2$ et faisons varier $r_c$ de $0.2$ à $0.005$.
 
 En figure \ref{fig:rcre}, nous traçons la représentation cartographique de $M\m{1}$ après apprentissage pour ces différents rayons de voisinages. 
@@ -281,21 +281,21 @@ Nous constatons que la disposition des BMU en zones intervient ici pour une vale
 
 Le nombre de zones de BMU augmente ensuite avec le rapport des rayons de voisinage. Plus il y a de zones, plus la quantification réalisée sur l'entrée externe est précise.
 La taille du rayon de voisinage contextuel est  limité par la taille de la carte. Si celui-ci est trop faible, la notion de zone n'a plus vraiment de sens. C'est ce qu'on observe pour $\frac{r_e}{r_c} = 40$. $r_c$ est alors de 0.005, soit $2$ n\oe{}uds, les cartes ayant chacune 500 n\oe{}uds. 
-Chaque zone de BMU ne contient plus que quelques unités, on ne peut donc plus vraiment parler de sous-carte. Néanmoins, cette disposition sépare toujours les BMU en fonction de l'entrée externe et contextuelle.
+Chaque zone de BMU ne contient plus que quelques unités, on ne peut donc plus vraiment parler de sous-carte. Néanmoins, les BMU sont toujours spécialisés en fonction des deux entrées du modèle, donc l'apprentissage associatif est toujours réalisé.
 
 Nous verrons dans la suite du chapitre que la disposition en zones de BMU est nécessaire pour permettre l'apprentissage des relations entre entrées. Les rayons de voisinage doivent donc être choisis de façon à permettre la formation de zones. Le choix des paramètres les plus adaptés à une application restera ensuite à déterminer dans les travaux futurs~: vaut-il mieux privilégier un grand nombre de petites zones, ou peu de zones contenant de nombreux n\oe{}uds~?
 
 Nous pouvons proposer une explication à ces deux échelles d'apprentissage par le fait que le rapport entre rayons de voisinage introduit deux échelles d'élasticités dans les poids, ainsi que deux échelles temporelles de mise à jour.
 D'une part, les poids externes se déplient plus vite que les poids contextuels, car le grand rayon de voisinage externe permet de mettre à jour plus de prototypes à chaque itération.
 D'autre part, les poids externes présentent une \og attraction \fg{} plus forte sur les unités voisines~: l'élasticité de la couche de poids externe est plus élevée.
-Les poids contextuels doivent donc composer avec cette force, leur est ainsi subordonnée à l'organisation des poids externes. 
+Les poids contextuels doivent donc composer avec cette force. Leur organisation est ainsi subordonnée à l'organisation des poids externes. 
 % Les rayons de voisinage forcent finalement les couches de poids d'une carte à s'organiser selon deux modes différents de la carte, sur leur distribution d'entrées respectives. Les poids externes sont organisés selon la fréquence $f=0$, tandis que les poids contextuels se placent sur une harmonique.
 
 
 Dans nos expériences, nous avons pris des $r_c$ communs à toutes les couches de poids contextuels.
 Nous pourrions cependant associer à chaque couche de poids d'une carte un rayon de voisinage différent. 
-Enfin, nous pouvons aussi faire varier le taux d'apprentissage $\alpha$, ainsi que les paramètres de la fonction d'activation $\beta$, $\sigma$, etc.
-Pour pouvoir adapter ces paramètres automatiquement dans un objectif d'application et réaliser une étude paramétrique approfondie, il nous faudrait définir une fonction caractérisant l'organisation d'une carte ou relative à un objectif d'apprentissage. 
+Enfin, nous pouvons aussi faire varier le taux d'apprentissage $\alpha$, ainsi que les paramètres de la fonction d'activation~: la pondération de chaque couche d'activité dans l'activation globale ou les largeurs des activations gaussiennes $\sigma$.
+Pour pouvoir adapter ces paramètres automatiquement dans un objectif d'application et réaliser une étude paramétrique approfondie, il nous faudrait définir une fonction caractérisant l'organisation d'une carte, ou une fonction de coût relative à un objectif d'apprentissage. 
 Nous discuterons d'un tel indicateur au chapitre \ref{chap:indicateur}, mais soulignons ici que nous n'avons pas encore défini de valeur adéquate. C'est pourquoi nous nous sommes intéressée à la compréhension de l'effet des paramètres dans nos travaux, et n'avons pas cherché à optimiser ces valeurs.
 
 \subsubsection{Influence des deux échelles d'apprentissage sur la recherche de BMU par relaxation}
@@ -307,22 +307,20 @@ Nous discuterons d'un tel indicateur au chapitre \ref{chap:indicateur}, mais sou
 Nous nous interrogeons sur l'influence de la disposition à deux échelles des poids externes et contextuels dans le processus de relaxation.
 Nous pouvons en effet penser que les périodes formées par les poids contextuels favorisent la recherche de consensus lors de la relaxation et la convergence des poids, ce que nous voulons vérifier ici.
 Pour cela, nous comparons les indicateurs d'évolution de la convergence de la relaxation, introduits au chapitre~\ref{chap:relaxation} sur deux expériences.
-Nous reprenons d'une part l'organisation obtenue en section~\ref{sec:2som_cercle}, dans laquelle les poids contextuels sont organisés en pseudo-périodes. Nous la comparons à un apprentissage réalisé sur les mêmes entrées, mais dans laquelle les poids contextuels n'ont pas formé cette organisation périodique~: $\frac{r_e}{r_c} = 1$. 
+Nous reprenons d'une part l'organisation obtenue en section~\ref{sec:2som_cercle}, dans laquelle les poids contextuels sont organisés en pseudo-périodes. Nous la comparons à un apprentissage réalisé sur les mêmes entrées, mais dans lequel les poids contextuels n'ont pas formé cette organisation périodique~: $\frac{r_e}{r_c} = 1$. 
 Nous traçons en figure~\ref{fig:conv_rcre} les indicateurs de la convergence de la relaxation~: en haut, nous représentons l'évolution du nombre de pas moyens nécessaires à la relaxation sur une phase de test, pour des tests réalisés régulièrement au cours des 1000 premiers pas d'apprentissage.
 En bas, nous traçons le pourcentage d'entrées ayant mené à une convergence de la relaxation au cours de ces mêmes phases de test, chaque phase de test contenant 1000 points.
-Dans les deux cas, les phases de test en fin d'apprentissage convergent dans plus de 95 \% des cas, convergence qui s'effectue en moyenne en une dizaine de pas de relaxation. Les deux échelles d'organisation des poids n'apparaissent donc pas favoriser la relaxation.
-
-
+Dans les deux cas, les phases de test en fin d'apprentissage convergent dans plus de 95 \% des cas. Cette convergence s'effectue en moyenne en une dizaine de pas de relaxation. Les deux échelles d'organisation des poids ne semblent donc pas  avoir d'influence sur la relaxation.
 
 \subsection{Discussion}
 
 L'observation des cartes sur ces exemples fait apparaître des motifs pseudo-périodiques formés par les poids contextuels. Ils forment une deuxième échelle d'organisation, s'ajoutant aux poids externes dont l'organisation est similaire à celle d'une carte auto-organisatrice classique qui aurait appris sur les mêmes entrées externes.
 Ces deux échelles d'organisation sont un mécanisme qui émerge du processus d'évolution des cartes.
-L'observation de la réponse des cartes montrent que les BMU se répartissent en zones distinctes, formées à partir des motifs de poids contextuels. Ces zones sont séparées par des zones mortes faisant office de transition et introduisant des discontinuités dans la réponse des cartes.
+Les tracés des réponses des cartes montrent que les BMU se répartissent en zones distinctes, formées à partir des motifs de poids contextuels. Ces zones sont séparées par des zones mortes faisant office de transition et introduisant des discontinuités dans la réponse des cartes.
 
 La formation de ces zones dépend des paramètres de l'architecture $r_c$ et $r_e$~: $r_c$ doit être inférieur à $r_e$ pour que la carte permette la formation de telles zones. 
 Ensuite, leur nombre dépend surtout du rapport entre ces deux rayons de voisinage, et peu de l'organisation des entrées~: il s'agit d'une propriété induite par les paramètres de l'architecture, qui force les poids de la carte à s'organiser sur deux échelles.
-Une zone correspond à un intervalle d'entrée externe~; les poids contextuels s'organisent de manière à former une sous-carte des valeurs possibles de l'entrée contextuelle pour cet intervalle.
+Une zone correspond à un intervalle d'entrée externe~; les poids contextuels s'organisent de manière à former une sous-carte des valeurs possibles que prend l'entrée contextuelle pour cet intervalle d'entrée externe.
 Finalement, chaque zone de la carte se spécialise pour un intervalle de valeur du modèle d'entrées $U$, et non seulement de son entrée externe.
 
 \begin{figure}
@@ -348,7 +346,6 @@ L'alternance des valeurs hautes et basses dans cette activité contextuelle perm
 
 \section{Génération de modalité dans des architectures de trois cartes}\label{sec:pred}
 
-
 Nous avons vu que dans une architecture de deux cartes, chaque carte encode la totalité du modèle d'entrées $U$ et non seulement son entrée externe. $U$ est donc encodé dans les deux cartes de l'architecture, apportant une redondance dans l'information apprise par l'architecture sur le modèle d'entrées.
 
 Nous voulons maintenant qu'une architecture de cartes soit directement capable d'utiliser cet encodage du modèle d'entrées dans une tâche de génération de modalité manquante après apprentissage.
@@ -359,7 +356,7 @@ Son poids externe $\w_e(\bmu\m{2})$ appartient à l'espace de la modalité $\inp
 Nous nous plaçons dans un cadre de prédiction d'une modalité manquante~: comme l'architecture a appris de l'information redondante sur le modèle d'entrées $U$, nous nous attendons à ce qu'elle soit capable de prédire une modalité qui n'a pas été présentée, à partir des autres modalités.
 
 Dans le cas du cercle en 2D, il y a deux valeurs possibles $\inpx\m{2}$ pour une même valeur de $\inpx\m{1}$, donc il manque de l'information pour faire de la prédiction. Nous nous intéressons dans cette partie à des modèles d'entrées en trois dimensions dans lesquels la connaissance de $\inpx\m{1}$ et $\inpx\m{2}$ détermine la valeur de la troisième entrée $\inpx\m{3}$. 
-Nous construirons des architectures de trois cartes sur ces modèles d'entrées et vérifierons la capacité de prédiction d'une modalité.
+Nous construirons des architectures de trois cartes sur ces deux modèles d'entrées et vérifierons la capacité de prédiction d'une modalité.
 L'étude d'architectures de trois cartes nous permettra également de vérifier comment les propriétés d'organisation observées sur deux cartes s'appliquent sur une architecture de trois cartes.
 
 Cette capacité de génération d'entrée peut constituer un cadre applicatif, par exemple lorsqu'un capteur serait manquant en robotique, ou pour donner à une carte de l'architecture un rôle de prise de décision et non seulement de réaction à une entrée. Elle permet également de valider l'encodage du modèle appris par une architecture de cartes sans avoir à connaître le modèle $U$.
@@ -373,7 +370,8 @@ Cette capacité de génération d'entrée peut constituer un cadre applicatif, p
 \subsection{Méthode expérimentale}
 \begin{figure}
 	\includegraphics[width=\textwidth]{inputs/inputs_3D.pdf}
-	\caption{Dispositions d'entrées en trois dimensions utilisées dans cette partie. Chaque carte $M\m{1}$, $M\m{2}$, $M\m{3}$ prend en entrée une coordonnée $\inpx\m{1}, \inpx\m{2}, \inpx\m{3}$. \label{fig:inputs_3D}}
+	\caption{Dispositions d'entrées en trois dimensions utilisées dans cette partie. Les entrées \textbf{G} sont sur un cercle qui a été pivoté dans l'espace en trois dimensions. Les entrées \textbf{H} sont sur un plan pivoté dans l'espace 3D.
+	Chaque carte $M\m{1}$, $M\m{2}$, $M\m{3}$ prend en entrée une coordonnée $\inpx\m{1}, \inpx\m{2}, \inpx\m{3}$. \label{fig:inputs_3D}}
 \end{figure}
 \begin{figure}
 	\includegraphics[width=\textwidth]{learning_tests.pdf}
@@ -383,13 +381,13 @@ Cette capacité de génération d'entrée peut constituer un cadre applicatif, p
 
 Les tâches de prédiction de ce chapitre seront réalisées sur une architecture de trois cartes 1D, toutes connectées entre elles~; cette architecture est représentée en figure~\ref{fig:archi_3maps}.
 Chacune des trois cartes prend une entrée externe en une dimension et deux entrées contextuelles qui sont les positions des BMU des deux autres cartes. Elle possède donc deux couches contextuelles $\w_{c_0}$ et $\w_{c_1}$.
-Nous construisons deux modèles d'entrées jouets à partir du cercle 2D et du patch $[0,1]^2$ en leur ajoutant une troisième dimension, de telle sorte à ce que la connaissance de deux entrées sur trois détermine la valeur de la troisième entrée. Pour cela, nous pivotons le plan 2D dans lequel se situent ces entrées dans un espace en trois dimensions.
+Nous construisons deux modèles d'entrées jouets à partir du cercle 2D et du patch $[0,1]^2$ en leur ajoutant une troisième dimension. Pour cela, nous pivotons le plan 2D dans lequel se situent ces entrées dans un espace en trois dimensions, de telle sorte à ce que la connaissance de deux entrées sur trois détermine la valeur de la troisième entrée. 
 Ces modèles, référencés par \textbf{G} et \textbf{H}, sont tracés en figure~\ref{fig:inputs_3D}.
 Chaque carte de l'architecture prend en entrée une des coordonnées des points 3D du modèle.
 
 
 L'algorithme de prédiction d'entrée est schématisé en figure~\ref{fig:schema_pred}.
-La phase d'apprentissage du modèle est la même que dans les expériences précédentes~: les trois cartes reçoivent leurs entrées externes $\inpx\m{1},\inpx\m{2}, \inpx\m{3}$.
+Lors de la phase d'apprentissage, les trois cartes reçoivent leurs entrées externes $\inpx\m{1},\inpx\m{2}, \inpx\m{3}$.
 La phase de prédiction est une phase de test, durant laquelle les poids de toutes les cartes ne sont pas mis à jour.
 Pour cette phase de prédiction, nous choisissons une carte, ici $M\m{1}$, comme carte prédictive, qui ne reçoit plus son entrée externe, mais seulement ses entrées contextuelles.
 Les autres cartes reçoivent quant à elles leurs entrées externes $\inpx\m{2}$ et $\inpx\m{3}$.
@@ -402,7 +400,7 @@ Nous effectuerons ensuite une phase de prédiction de l'entrée $\inpx\m{1}$ et 
 
 \subsection{Résultats}
 
-Nous traçons en figures \ref{fig:w_cercle} et \ref{fig:w_plan3} la représentation cartographique des trois cartes après apprentissage pour les deux modèles d'entrées.
+Nous traçons en figures \ref{fig:w_cercle} et \ref{fig:w_plan3} la représentation cartographique des trois cartes après apprentissage, pour chacun des deux modèles d'entrées.
 Nous observons d'abord que, comme pour deux cartes, les poids contextuels présentent des motifs pseudo-périodiques qui définissent une seconde échelle d'organisation au sein de la carte.
 Les BMU se répartissent dans des zones distinctes. 
 Les zones observées sur la représentation cartographique de $M\m{1}$ montrent que la carte choisit un BMU réagissant à $\inpx\m{1}$ de façon à différencier les deux valeurs correspondantes possibles dans le modèle d'entrées  ce qui étend le comportement observé sur deux cartes.
@@ -412,7 +410,7 @@ Dans ces deux exemples, chaque carte a encodé l'ensemble du modèle d'entrées 
 
 \begin{figure}[h!]
 	\centering\includegraphics[width=\textwidth]{cercle3D/weights.pdf}
-	\caption{Représentation cartographique des poids et entrées dans l'architecture de trois cartes apprenant sur un cercle en trois dimensions. Les motifs pseudo-périodiques des poids contextuels et les zones de BMU sont similaires à celles observées sur l'architecture de deux cartes. Une zone encode un intervalle de valeur de l'angle $U$. \label{fig:w_cercle}}
+	\caption{Représentation cartographique des poids et entrées dans l'architecture de trois cartes apprenant sur le cercle en trois dimensions \textbf{G}. Les motifs pseudo-périodiques des poids contextuels et les zones de BMU sont similaires à celles observées sur l'architecture de deux cartes. Une zone encode un intervalle de valeur de $(\inpx\m{1}, \inpx\m{2}, \inpx\{3})$. \label{fig:w_cercle}}
 \end{figure}
 
 \begin{figure}[h!]
@@ -463,8 +461,8 @@ Cette section propose un exemple simple d'application de l'architecture en robot
 \begin{figure}
 	\centering\includegraphics[width=\textwidth]{vp_drone.pdf}
 	\caption{\`A gauche, représentation des situations nécessitant une correction sur la trajectoire du drone. Les images de la caméra frontale correspondant à chaque situation sont représentées en haut.
-	Les commandes du drone sont représentées à droite. Il s'agit de $\w$, vitesse angulaire autour de $z$, $\rho$, angle autour de $x_p$, $\theta$, angle autour de $y$. 
-	Pour centrer le drone dans le couloir, ces commandes dépendent de deux valeurs extraites de l'image de la caméra (en haut)~: $x_p$, abscisse du point de fuite dans le référentiel caméra, et $\varphi = \varphi^+ - \varphi^-$, différence entre les angles formés par les lignes de fuite du couloir.
+	Les commandes du drone sont représentées à droite. Il s'agit de $\w$, la vitesse angulaire autour de $z$, $\rho$, l'angle autour de l'axe $x$ (roulis) et $\theta$, l'angle autour de $y$ (tangage). 
+	Pour centrer le drone dans le couloir, ces commandes dépendent de deux valeurs extraites de l'image de la caméra (en haut)~: $x_p$, abscisse du point de fuite dans le référentiel de la caméra, et $\varphi = \varphi^+ - \varphi^-$, la différence entre les angles formés par les lignes de fuite du couloir.
 	Le drone vole en ligne droite lorsqu'il garde $x_p$ et $\varphi$ centrés en 0 (a).
 	$x_p \neq 0$ nécessite une correction sur $\w$ (c). 
 	$\varphi \neq 0$ nécessite une correction sur $\rho$ (b).
@@ -485,7 +483,7 @@ Le centrage de $x_p$ doit être ajusté en contrôlant $\w$, par exemple dans le
 \`A $x_p$ centré, le centrage de $\varphi$ doit être ajusté grâce à une commande sur $\rho$, ce qui correspond au cas~(b). Notons que la commande sur $\rho$ influence en fait l'accélération linéaire du drone selon $y$ à cause de la structure des hélices~: lorsque l'angle est maintenu constant, le drone accélère.
 
 
-Dans le cadre du TP, nous  disposons déjà d'un programme de pilotage automatique du drone lui permettant de rester centré dans le couloir à partir de deux filtres correcteurs sur $w$ et $\rho$.
+Dans le cadre du TP, nous  disposons déjà d'un programme de pilotage automatique du drone lui permettant de rester centré dans le couloir à partir de deux filtres correcteurs sur $\w$ et $\rho$.
 La commande $\w$ est soumise à un filtre proportionnel à partir de $x_p$, afin de le garder centré en 0.
 La commande $\rho$ influence l'accélération linéaire selon $y$.
 Elle est donc contrôlée par un filtre proportionnel intégral dérivé qui permet de centrer $\varphi$ en 0, en prenant également en compte $v_y$, la vitesse linéaire selon $y$ obtenue par les capteurs d'odométrie interne du drone.
@@ -535,8 +533,8 @@ Nous pouvons également imaginer, à plus grande échelle, qu'une architecture d
 Cette section présente un comportement induit par les rétroactions dans l'architecture, à savoir la prédiction d'entrée par une carte.
 Nous avons d'abord montré sur deux expériences jouets qu'une architecture de cartes est capable de générer une modalité manquante dans le modèle grâce aux connexions entre cartes. En effet, chaque carte a encodé la valeur du modèle d'entrées $U$, apportant une redondance dans l'information sur $U$ au sein de l'architecture. 
 Lors d'une telle phase de prédiction, le poids externe du BMU de la carte correspondant à la modalité manquante est utilisé en tant que valeur de prédiction.
-Nous avons observé sur les deux exemples que cette valeur prédite correspond bien à l'entrée qui n'a pas été présentée. L'erreur de prédiction est du même ordre que l'erreur réalisée par la quantification vectorielle dans les cartes qui ont reçu une entrée externe.
-Cette capacité de prédiction est permise par l'organisation à deux échelles émergeant des cartes. L'apparition de motifs pseudo-périodiques de poids contextuels et l'organisation en zones de BMU est ainsi bien un marqueur de l'apprentissage du modèle par une architecture de cartes. 
+Sur les deux expériences, cette valeur est bien prédite. L'erreur de prédiction est du même ordre que l'erreur réalisée par la quantification vectorielle dans les cartes qui ont reçu leur entrée externe.
+Cette capacité de prédiction est permise par l'organisation à deux échelles émergeant des cartes. L'apparition de motifs pseudo-périodiques de poids contextuels et l'organisation en zones de BMU est donc bien un marqueur de l'apprentissage du modèle par une architecture de cartes. 
 Le fait que l'entrée générée corresponde directement à la valeur de l'entrée manquante vient de la quantification vectorielle sur l'entrée externe au sein de chaque carte.
 
 Ce comportement montre que grâce à l'organisation des poids et à la recherche de BMU couplée, une architecture de cartes est non seulement capable d'encoder un modèle d'entrées, mais également de le réutiliser de façon autonome~: la génération d'entrée est réalisée par le même algorithme que celui utilisé lors des phases de tests.
@@ -576,13 +574,13 @@ Nous voulons observer deux comportements~:
 \end{itemize}
 
 La figure \ref{fig:bigdim} présente la forme des poids de quatre des cartes dans l'architecture de 10 cartes~: les cartes $M\m{9}$ et $M\m{10}$, dont les entrées externes sont identiques, et les cartes $M\m{1}$ et $M\m{2}$, dont les entrées sont indépendantes de toutes les autres entrées.
-Nous pouvons noter que les poids contextuels de chaque carte présentent des motifs périodiques rappelant ceux observé sur le plan 2D en figure~\ref{fig:ind}. L'organisation à deux échelles entre les poids externes et contextuels est donc toujours observée sur une architecture de 10 cartes.
+Nous pouvons noter que les poids contextuels de chaque carte présentent des motifs périodiques, rappelant ceux observés sur le plan 2D en figure~\ref{fig:ind}. L'organisation à deux échelles entre les poids externes et contextuels est donc toujours observée sur une architecture de 10 cartes.
 Cependant, ces motifs sont de faible amplitude et se rapprochent tous d'une valeur moyenne constante dans chaque carte. Ces couches de poids contextuels interviennent donc peu dans le calcul de l'activité globale, et donc dans le choix du BMU. On peut supposer qu'en augmentant le nombre de connexions, les poids contextuels tendront vers une valeur constante autour de $0.5$. Dans ce cas, ils n'interviendraient donc plus du tout dans le choix du BMU.
 
 Les couches de poids contextuels correspondant aux deux cartes dont les entrées sont identiques $\inpx\m{9}$ et $\inpx\m{10}$ sont représentées en rose dans $M\m{9}$ et $M\m{10}$. 
 Elles se déplient totalement, comme nous l'avions observé en figure~\ref{fig:id_results} sur les entrées identiques. Cette couche de poids sera ainsi la seule à réellement intervenir dans le choix du BMU. L'architecture de 10 cartes a donc encodé la relation existant entre $\inpx\m{9}$ et $\inpx\m{10}$ malgré les autres connexions contextuelles inutiles.
 En bas de la figure, nous traçons également la prédiction de l'entrée $\inpx\m{9}$.
-Cette prédiction est correctement réalisée, bien que plus bruitée que dans le cas d'une seule connexion~: les connexions inutiles  perturbent peu l'apprentissage des relations entre entrées. 
+Cette prédiction est correctement réalisée, bien que plus bruitée que dans le cas d'une seule connexion~: les connexions inutiles perturbent peu l'apprentissage des relations entre entrées. 
 Finalement, les cartes $M\m{9}$ et $M\m{10}$ ont appris à effacer du calcul de l'activité les entrées indépendantes de leur entrée externe, et gardé les entrées contextuelles qui ont une relation avec leur entrée externe.
 
 Cette expérience propose une idée de comportement à grande échelle à explorer plus en détail.
@@ -597,15 +595,15 @@ En particulier, on peut se demander si ce comportement peut permettre d'extraire
 Nous cherchons maintenant à observer comment une carte d'une architecture peut influencer une carte qui ne lui est pas directement connectée.
 Dans cette deuxième expérience, nous repassons sur une architecture de trois cartes 1D et reprenons comme modèle d'entrées le cercle en trois dimensions (\textbf{G}). 
 Nous voulons comparer le comportement d'une architecture dans laquelle les cartes sont connectées réciproquement, présentée plus haut, à celui d'une architecture de trois cartes connectées en boucle, dans laquelle chaque carte est uniquement connectée à une seule autre carte. 
-Ce modèle d'architecture est illustré en figure~\ref{fig:archi_loop}~: $M\m{1}$ nourrit $M\m{2}$, $M\m{2}$ nourrit $M\m{3}$ et $M\m{3}$ nourrit à $M\m{1}$.
+Ce modèle d'architecture est illustré en figure~\ref{fig:archi_loop}~: $M\m{1}$ nourrit $M\m{2}$, $M\m{2}$ nourrit $M\m{3}$ et $M\m{3}$ nourrit $M\m{1}$.
 
 La disposition des poids de cette architecture après apprentissage est tracée en figure~\ref{fig:3som_loop}.
 Les poids des cartes montrent une organisation similaire au cas où les connexions sont réciproques, cf. figure~\ref{fig:w_cercle}. Les poids contextuels forment des motifs pseudo-périodiques, et chaque carte différencie ses BMU en fonction du modèle d'entrées $U$ et non seulement de son entrée externe.
-D'après les éléments d'étude que nous avons établi, nous pourrions dire que l'architecture a encodé le modèle d'entrées dans chaque carte.
+D'après les éléments d'étude que nous avons établis précédemment, nous pourrions donc dire que l'architecture a encodé le modèle d'entrées dans chaque carte.
 
-Nous nous demandons donc si cette architecture en boucle est capable de prédire $\inpx\m{1}$. 
-La carte prédictive $M\m{1}$ ne reçoit que l'entrée venant de $M\m{3}$~: $M\m{2}$ intervient seulement de façon distante dans le calcul de l'activité de $M\m{1}$.
-Afin de dissocier l'influence de $M\m{2}$ et $M\m{3}$ dans la prédiction de $\inpx\m{1}$, nous réalisons également une phase de prédiction effectuée uniquement à partir des cartes $M\m{3}$ et $M\m{1}$, sur les mêmes dispositions de poids que dans l'architecture en boucle. 
+Nous nous demandons si cette architecture en boucle est capable de prédire $\inpx\m{1}$. 
+La carte prédictive $M\m{1}$ ne reçoit alors que l'entrée venant de $M\m{3}$~: $M\m{2}$ intervient seulement de façon distante dans le calcul de l'activité de $M\m{1}$.
+Afin de dissocier l'influence de $M\m{2}$ et $M\m{3}$ dans la prédiction de $\inpx\m{1}$, nous réalisons également une phase de prédiction effectuée uniquement à partir des cartes $M\m{3}$ et $M\m{1}$, sur les mêmes dispositions de poids que dans l'architecture en boucle.
 Dans le premier cas, $M\m{2}$ contribue à la prédiction via $M\m{3}$~; elle n'intervient pas dans le second cas.
 
 \begin{figure}
@@ -627,8 +625,8 @@ Cependant, la prédiction est mieux réalisée dans l'architecture en boucle que
 Dans ce dernier cas, seules 40\% des entrées ont été correctement prédites par le couple de cartes~; l'erreur est globalement plus importante.
 Cette observation montre qu'une carte conserve une influence à distance dans une architecture. Par contre, cette influence est très réduite par rapport à l'influence d'une connexion directe.
 
-Nous pouvons conclure de ces deux observations que la disposition des connexions est un point important pour la construction d'architecture.
-Les cartes ont peu d'influence à distance. Il faudra donc s'assurer lors de la construction d'une architecture que les modalités en relation soient directement connectées. Cette observation est également prometteuse~: on peut ainsi envisager de traiter plusieurs flux d'information dans différentes parties d'une architecture, sans que le comportement d'une de ces parties affecte complètement les autres cartes.
+Nous pouvons conclure de ces deux observations que la disposition des connexions est un point important pour la construction d'architectures.
+Les cartes ont peu d'influence à distance. Il faudra donc s'assurer que les modalités dont nous voulons apprendre les relations soient directement connectées. Cette observation est également prometteuse~: on peut ainsi envisager de traiter plusieurs flux d'information dans différentes parties d'une architecture, sans que le comportement d'une de ces parties n'affecte complètement les autres cartes.
 A contrario, la présence de nombreuses connexions entre cartes semble moins limitante, l'architecture semblant être capable, grâce aux règles d'organisation, de moins prendre en compte les connexions venant d'une carte qui n'a pas de relation avec son entrée externe. 
 Une possibilité d'étude de la connectivité serait également de construire des architectures adaptant leurs connexions au cours de l'apprentissage.
 
@@ -640,25 +638,25 @@ Le but de ce chapitre est d'identifier les mécanismes d'organisation propres à
 Nous avons d'abord observé que l'apprentissage du modèle d'entrées dans une architecture CxSOM est marqué par une organisation à deux échelles~: les poids externes se déplient sur l'espace d'entrée comme les poids d'une carte classique. Les poids contextuels se déplient sur des sous-régions de la carte, définies par la valeur de l'entrée externe, formant des motifs pseudo-périodiques~: la forme de ces périodes est similaire, mais varie en largeur spatiale et en amplitude. 
 Cette organisation à deux échelles spatiales se retrouve dans l'organisation des BMU de chaque carte.
 Ces derniers se disposent dans des zones distinctes, séparées par des zones mortes. 
-Cette organisation permet d'encoder l'information sur tout le modèle d'entrées dans chacune des cartes. Nous avons en effet constaté qu'une zone de BMU se spécialise pour un intervalle de valeur par rapport à tout le modèle d'entrées, représenté par $U$. L'apprentissage des relations entre entrées est alors marqué par le fait que $U$ est une position du BMU $\bmu$ dans chaque carte.
+Cette organisation permet d'encoder l'information sur tout le modèle d'entrées dans chacune des cartes. Nous avons en effet constaté qu'une zone de BMU se spécialise pour un intervalle de valeur du couple $(\inpx\m{1}, \inpx\m{2})$ ou $(\inpx\m{1}, \inpx\m{2}, \inpx\m{3})$ en 3D, représenté par $U$. L'apprentissage des relations entre entrées est alors marqué par le fait que $U$ est une position du BMU $\bmu$ dans chaque carte.
 
 La notion de réponse à deux échelles se rapproche par ailleurs de certains modèles biologiques du cortex.
 Cette organisation des cartes dépend des paramètres d'apprentissage, mais n'émerge que lorsque plusieurs points du modèle d'entrées partagent la même valeur sur une des modalités.
-L'organisation en zones est caractéristique de l'apprentissage du modèle d'entrées par une architecture de cartes et sont observées sur plusieurs jeux de données d'entrées jouets ainsi que réelles, sur des architectures de deux et trois cartes, et quel que soit le nombre de connexions entre cartes.
+L'organisation en zones est caractéristique de l'apprentissage du modèle d'entrées par une architecture de cartes. Ce comportement est observé sur plusieurs jeux de données d'entrées jouets ainsi que réelles, sur des architectures de deux et trois cartes, et quel que soit le nombre de connexions entre cartes.
 
 
-Nous avons ensuite constaté que l'encodage du modèle d'entrées dans chacune des cartes grâce à l'organisation à deux échelles permet à l'architecture de générer des valeurs d'entrées manquantes. Après apprentissage, une carte qui ne reçoit plus son entrée externe peut définir son BMU uniquement grâce à ses activités contextuelles.
+Nous avons ensuite constaté que l'encodage du modèle d'entrées complet dans chacune des cartes, effectué grâce à l'organisation à deux échelles, permet à l'architecture de prédire des valeurs d'entrées manquantes. Après apprentissage, une carte qui ne reçoit plus son entrée externe peut définir son BMU uniquement grâce à ses activités contextuelles.
 Le poids externe du BMU peut être utilisé comme une valeur générée de la modalité qui n'a pas été présentée.
 Dans ces tâches de prédiction, l'architecture CxSOM utilise le fait qu'elle ait encodé le modèle d'entrées de façon redondante entre les cartes. 
-Cette capacité de prédiction est une application possible des architectures de cartes et est une façon d'évaluer l'apprentissage d'un modèle d'entrées par l'architecture lorsque ce modèle n'est pas connu en théorie.
-La prédiction est un comportement qui différencie une carte simple ou une architecture hiérarchique de cartes d'une architecture non-hiérarchique~: les modèles non-hiérarchiques présentés au chapitre~\ref{chap:architectures} proposaient également cette capacité de prédiction. Nous voyons ici qu'il s'agit d'une capacité également permise par CxSOM~; en notant que dans notre cas, l'information n'est pas centralisée dans une carte associative. De plus, une prédiction peut-être réalisée par n'importe quelle carte grâce aux connexions non-hiérarchiques, et s'appuie sur le même algorithme que celui utilisé lors des tests.
+Cette capacité de prédiction est une application possible des architectures de cartes. Il s'agit également d'une façon d'évaluer l'apprentissage d'un modèle d'entrées par l'architecture lorsque ce modèle n'est pas connu en théorie.
+La prédiction est un comportement qui différencie une carte simple ou une architecture hiérarchique de cartes d'une architecture non-hiérarchique~: les modèles non-hiérarchiques présentés au chapitre~\ref{chap:architectures} proposaient également cette capacité de prédiction. Nous voyons ici qu'il s'agit d'une capacité également permise par CxSOM. Dans notre cas, l'information n'est pas centralisée dans une carte associative. De plus, une prédiction peut-être réalisée par n'importe quelle carte grâce aux connexions non-hiérarchiques, et s'appuie sur le même algorithme que celui utilisé lors des tests.
 
 Maintenant que nous avons observé les comportements d'apprentissage dans des petites architectures de 2 et 3 cartes, une perspective principale d'étude de CxSOM est la construction d'architectures comportant plus de cartes.
 Dans ces architectures, le choix des connexions entre cartes constitue un degré de liberté supplémentaire.
-Nous avons présenté pour cela dans ce chapitre deux expériences questionnant l'influence des connexions entre les cartes.
-D'une part, nous avons vu que des connexions distantes permettent toujours à l'architecture de cartes d'apprendre un modèle d'entrées. Cependant, lors de la prédiction, les cartes distantes de la carte prédictive ont moins d'influence que les cartes qui lui sont directement connectées.
+Nous avons présenté pour cela deux expériences questionnant l'influence des connexions entre les cartes.
+Nous avons vu que des connexions distantes permettent toujours à l'architecture de cartes d'apprendre un modèle d'entrées. Cependant, lors de la prédiction, les cartes distantes de la carte prédictive ont moins d'influence que les cartes qui lui sont directement connectées.
 Ensuite, nous avons observé que la présence de nombreuses entrées contextuelles amène les poids contextuels à s'organiser vers une valeur moyenne des entrées. Dans le cas où ces entrées seraient indépendantes au sein du modèle d'entrées, ce comportement de moyennage permettrait aux activités contextuelles de réduire leur contribution dans le calcul de l'activité globale~; le BMU ne prendrait alors en compte que les entrées qui présentent une dépendance.
-Cependant, si $U$ est de grande dimension, tout couple de modalité $(\inpx\m{i}, \inpx\m{j})$ ne présentera que peu de dépendance, ce qui pourrait également entraîner ce comportement de moyennage. Ce n'est pas souhaitable, car nous voulons pouvoir extraire une représentation de $U$. 
+Cependant, si $U$ est de grande dimension, tout couple de modalité $(\inpx\m{i}, \inpx\m{j})$ ne présentera que peu de dépendance, ce qui pourrait également entraîner ce comportement de moyennage. Ce n'est pas souhaitable, car nous voulons pouvoir extraire une représentation de $U$, même de grande dimension.
 
 Plus généralement, il est difficilement souhaitable que chaque carte d'une architecture encode tout le modèle d'entrées lorsque $U$ est de dimension supérieure à 2.
 Déjà lorsque $U$ est 2D, comme dans le patch $[0,1]^2$, la qualité de quantification vectorielle des entrées externes est significativement plus faible que celle obtenue sur un modèle $U$ 1D.
@@ -672,7 +670,7 @@ La définition de valeurs indicatrices de cet encodage permettrait d'automatiser
 Ces indicateurs permettraient aussi d'étudier la distribution de l'encodage du modèle d'entrées au sein d'une architecture.
 Nous étudierons quelques indicateurs d'analyse de l'encodage de $U$ par l'architecture au chapitre~\ref{chap:indicateur}.
 
-Enfin, toutes ces expériences ont été menées sur des cartes 1D apprenant à représenter des données en une dimension. Ce cas de figure est rarement rencontré en pratique et il serait intéressant d'évaluer l'apprentissage sur des dimensions d'entrées supérieures. Pour une tâche de quantification vectorielle classique par une SOM, il est plus usuel d'utiliser des cartes en deux dimensions qui forment un bon compromis entre la capacité de quantification vectorielle rendue possible et le coût des calculs pendant l'apprentissage. Nous chercherons donc à utiliser des cartes 2D dans une architecture CxSOM. Le passage de 1D à 2D n'est pas immédiat et pose de nombreuses questions quant à l'organisation des poids et la recherche de BMU par relaxation. 
+Enfin, toutes ces expériences ont été menées sur des cartes 1D apprenant à représenter des données en une dimension. Ce cas de figure est rarement rencontré en pratique et il serait intéressant d'évaluer l'apprentissage sur des dimensions d'entrées supérieures. Pour une tâche de quantification vectorielle classique par une SOM, il est plus usuel d'utiliser des cartes en deux dimensions qui forment un bon compromis entre la capacité de quantification vectorielle rendue possible et le coût des calculs pendant l'apprentissage. Le passage de 1D à 2D n'est pas immédiat et pose de nombreuses questions quant à l'organisation des poids et la recherche de BMU par relaxation. 
 Nous présenterons à ce propos au chapitre \ref{chap:analyse2D} des expériences préliminaires étudiant l'organisation d'une architecture de cartes en deux dimensions.
 
 \ifSubfilesClassLoaded{
