@@ -48,7 +48,7 @@ Dans ce terme d'intégrale, $g(u(y))$ est une fonction sigmoïde centrée en zé
 $\omega(x-y)$ (en haut de la figure) est un terme d'interaction latérale, en général une différence de gaussiennes, rendant le voisinage proche de $x$ \emph{excitateur}~: son activation renforce le potentiel $u(x,t)$, tandis que le voisinage à plus longue distance est inhibiteur.
 En résumé, le calcul du potentiel $u(x,t)$ en tout point $x$ dépend de l'activation de l'ensemble des positions du DNF, convoluée par le terme d'interaction latérale.
 
-Le calcul du potentiel $u(x,t)$ d'un DNF sur un stimulus d'entrée résulte en la formation de bulles d'activités évoluant dans les zones ou le signal d'entrée est élevé.
+Le calcul du potentiel $u(x,t)$ d'un DNF sur un stimulus d'entrée conduit à la formation de bulles d'activité évoluant dans les zones ou le signal d'entrée est élevé.
 Les comportements du DNF varient en fonction des paramètres choisis~; une des applications possibles est l'implémentation d'un mécanisme de Winner-Take-All. 
 Dans l'exemple présenté en figure~\ref{fig:DNF}, l'activation $g(u(x))$ du DNF évoluera pour former une seule bulle (en rouge) centrée en la valeur où $s(x)$ est maximal, sans représenter le maximum secondaire de $s$.
 Par ailleurs, les calculs permettant le mécanisme Winner-Take-All implémenté par le DNF se rapprochent de calculs cellulaires~:~ils ne dépendent que d'un voisinage de chaque position.
@@ -91,8 +91,8 @@ La relaxation est une suite de positions dans l'espace des positions des $n$ car
 Définissons d'abord la suite $(\mathbf{\hat{p}})_\tau = (\hat{p}\m{1}_\tau, \cdots, \hat{p}\m{n})$, qui correspond à la position maximisant l'activité globale de chaque carte $i$ à l'instant $\tau$~:
 \begin{equation}
 \begin{gathered}
-\forall i, \: \hat{p}\m{i}_{\tau} = \argmax\limits_p(a_g\m{i}(p, \inpx\m{i}, \bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau))\\
- i_0, \cdots i_K \: \text{indices des cartes nourrissant la carte $i$}.
+\forall i, \: \hat{p}\m{i}_{\tau} = \argmax\limits_p(a_g\m{i}(p, \inpx\m{i}, \bmu\m{i_1}_\tau, \cdots \bmu\m{i_K}_\tau))\\
+ i_1, \cdots i_K \: \text{indices des cartes nourrissant la carte $i$}.
 \end{gathered}
 \label{eq:pstar}
 \end{equation}
@@ -113,7 +113,7 @@ $a_g\m{i}$ est une fonction des poids $\w\ext\m{i}, \w\cont\m{i}$ de la carte, d
 Lors du processus de relaxation, les poids et l'entrée $\inpx\m{i}$ restent constants. 
 Le calcul de $a_g\m{i}$ à l'instant $\tau$ ne dépend donc pas de $\tau$.
 
-Finalement, pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ dépend uniquement de $(\bmu\m{i_0}_\tau, \cdots \bmu\m{i_K}_\tau)$ lors du processus de relaxation.
+Finalement, pour toute carte $i$, $\hat{p}\m{i}_{\tau}$ dépend uniquement de $(\bmu\m{i_1}_\tau, \cdots \bmu\m{i_K}_\tau)$ lors du processus de relaxation.
 En posant $f\m{i}$ toute la partie droite de l'équation \ref{eq:evolution}, on peut donc écrire~:
 
 \begin{equation}
@@ -165,22 +165,22 @@ dans chaque carte $i$, l'activité globale est définie par~:
 \begin{equation}\label{eq:ag}
 	a_g\m{i}(p, \inpx\m{i}, \inpc\m{i}_0, \cdots, \inpc\m{i}_K) = \sqrt{a_e\m{i}(p,\inpx\m{i})(\frac{1}{2}a_e\m{i}(p,\inpx\m{i}) + \frac{1}{2}a_c\m{i}(p,\inpc\m{i}_0, \cdots, \inpc\m{i}_K))}
 \end{equation}
-Avec $(\inpc\m{i}_0, \cdots, \inpc\m{i}_K)$ les $K$ entrées contextuelles de la carte. Lors de la relaxation, elles correspondent aux valeurs $\bmu\m{i_k}_\tau$.
+Avec $(\inpc\m{i}_1, \cdots, \inpc\m{i}_K)$ les $K$ entrées contextuelles de la carte. Lors de la relaxation, elles correspondent aux valeurs $\bmu\m{i_k}_\tau$.
 
 L'activité contextuelle $a_c\m{i}$ d'une carte est définie comme la moyenne des activités contextuelles sur chaque couche de poids contextuels~:
 \begin{equation}
-	a_c\m{i}(p,  \inpx\m{i}, \inpc\m{i}_0, \cdots, \inpc\m{i}_K) = \frac{1}{K+1}\sum_{k=0}^{K}{a_{ck}\m{i}(p, \inpc\m{i}_k)}
+	a_c\m{i}(p,  \inpx\m{i}, \inpc\m{i}_0, \cdots, \inpc\m{i}_K) = \frac{1}{K}\sum_{k=1}^{K}{a_{ck}\m{i}(p, \inpc\m{i}_k)}
 \end{equation}
 
-Pour simplifier les notations, nous noterons que les entrées contextuelles d'une carte $i$ sont $\{ \inpc\m{i}_k, k = 0 \cdots n , k \neq i  \}$.
-Par la relaxation, nous cherchons une position $(\bmu\m{1}, \cdots, \bmu\m{n})$ telle que pour tout $i$, $a_g\m{i}(p,  \inpx\m{i}, \inpc\m{i}_0, \cdots, \inpc\m{i}_n)$ soit maximale. 
+Pour simplifier les notations, notons les entrées contextuelles d'une carte $i$ $\{ \inpc\m{i}_k, k = 0 \cdots n , k \neq i  \}$, même si certaines n'interviennent pas dans le calcul si les cartes ne sont pas toutes connectées.
+Par la relaxation, nous cherchons une position $(\bmu\m{1}, \cdots, \bmu\m{n})$ telle que pour tout $i$, $a_g\m{i}(p,  \inpx\m{i}, \inpc\m{i}_1, \cdots, \inpc\m{i}_n)$ soit maximale. 
 $a_g\m{i}$ est à valeurs positives pour tout $i$~; maximiser individuellement $a_g\m{i}$ revient à maximiser leur somme.
 
 Nous proposons d'exprimer la relaxation comme une heuristique de recherche d'une solution du problème d'optimisation suivant~:
 \begin{equation}\label{eq:opti}
 	\begin{cases}
-	\maximise\limits_{\bmu\m{1}, \cdots, \bmu\m{n}}\;& \sum_{i = 1}^n a_g\m{i}(\bmu\m{i},\inpx\m{i},\inpc_0\m{i}, \cdots, \inpc_n\m{i}) \\
-	\text{Sous Contrainte}\; &\forall i,\:\forall k \neq i, \; \inpc_k\m{i} = \argmax\limits_p a_g\m{k}(p, \inpx\m{k}, \inpc_0\m{k}, \cdots, \inpc_n\m{k})
+	\maximise\limits_{\bmu\m{1}, \cdots, \bmu\m{n}}\;& \sum_{i = 1}^n a_g\m{i}(\bmu\m{i},\inpx\m{i},\inpc_1\m{i}, \cdots, \inpc_n\m{i}) \\
+	\text{Sous Contrainte}\; &\forall i,\:\forall k \neq i, \; \inpc_k\m{i} = \argmax\limits_p a_g\m{k}(p, \inpx\m{k}, \inpc_1\m{k}, \cdots, \inpc_n\m{k})
 	\end{cases}
 \end{equation}
 
@@ -199,26 +199,27 @@ Nous nous interrogeons maintenant sur la nécessité de remplir les deux conditi
 
 \`A partir de l'équation~\ref{eq:opti}, nous nous interrogeons sur les conditions qui nous permettent de définir la valeur finale du processus de relaxation comme une \og Best Matching Unit \fg{} ayant un sens pour les règles de mise à jour des cartes.
 
-Nous avons exprimé la valeur de convergence de la relaxation comme un point maximisant l'activité globale dans chacune des cartes. Nous attendons donc de la relaxation qu'elle converge pour pouvoir l'interpréter comme une recherche de BMU. 
-Bien que nous ayons fixé une limite maximale d'itérations $\tau_{max}$, la valeur trouvée à l'issue de $\tau_{max}$ itérations sans convergence ne peut être interprétée comme un maximum d'activité, même local, et donc n'a pas de sens pour l'apprentissage. Nous avons également vu, en formalisant les équations d'évolution de la relaxation, que la convergence n'est pas assurée par les règles d'évolution, et qu'elle dépend au contraire des configurations de poids et des entrées.
-Pour y répondre, nous présentons une évaluation expérimentale de la convergence du processus de relaxation, réalisée sur des cartes 1D et 2D prenant des entrées externes 1D.
-Cette évaluation  sera réalisée en section~\ref{sec:relax_conv} sur des exemples d'apprentissage d'une architecture de deux et trois cartes, qui sont les architectures auxquelles nous nous sommes principalement intéressée lors de cette thèse.
+Nous avons exprimé la valeur de convergence de la relaxation comme un point maximisant l'activité globale dans chacune des cartes. 
+Nous attendons donc d'abord de la relaxation qu'elle converge pour pouvoir l'interpréter comme une recherche de BMU. 
+Bien que nous ayons fixé une limite maximale d'itérations $\tau_{max}$, la valeur trouvée à l'issue de $\tau_{max}$ itérations sans convergence ne peut pas être interprétée comme un maximum d'activité, même local, et donc n'a pas de sens pour l'apprentissage. Nous avons également vu, en formalisant les équations d'évolution de la relaxation, que la convergence n'est pas assurée par les règles d'évolution, et qu'elle dépend au contraire des configurations de poids et des entrées.
+Pour vérifier que le BMU correspond au maximum de l'activité dans chaque carte, nous présentons une évaluation expérimentale de la convergence du processus de relaxation, réalisée sur des cartes 1D et 2D prenant des entrées externes 1D.
+Cette évaluation sera réalisée en section~\ref{sec:relax_conv} sur des exemples d'apprentissage d'une architecture de deux et trois cartes, qui sont les architectures auxquelles nous nous sommes principalement intéressée lors de cette thèse.
 
 
 Ensuite, la notion de Best Matching Unit est définie au sein d'une carte de Kohonen classique comme l'unité possédant l'activité maximale pour une entrée fixée. Cette activité dépend de l'entrée et des poids de la carte.
 Pour parler d'un algorithme de recherche du BMU, on attend donc que la position trouvée soit relative uniquement aux poids de la carte et aux entrées externes de l'architecture~: elle ne doit pas dépendre de l'initialisation du processus de relaxation.
-Dans ce sens, nous chercherons en second lieu à observer si la valeur trouvée à l'issue de la relaxation, soit le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation.
-Cette propriété marquera le fait que le BMU est relatif à seulement l'entrée et l'état des poids de la carte et aura donc un sens pour l'apprentissage.
+Dans ce sens, nous chercherons à observer si la valeur trouvée à l'issue de la relaxation, soit le point de convergence s'il existe, ne dépend pas des conditions initiales de la relaxation.
+Cette propriété marquera le fait que le BMU est seulement relatif à l'entrée et l'état des poids de la carte et aura donc un sens pour l'apprentissage.
 En section~\ref{sec:relax_expe} nous étudierons empiriquement si la fonction $\mathbf{f}$ générant la suite $\mathbf{\bmu}_\tau$ admet un point fixe, et si la suite converge vers ce point indépendamment des valeurs d'initialisation.
 
 \section{\'Etude expérimentale de la convergence de la relaxation}\label{sec:relax_conv}
 
 Nous nous intéressons à la convergence de la relaxation au cours d'un processus d'apprentissage complet d'architectures de deux et trois cartes. 
-Les entrées $\inpx\m{1}$ et $\inpx\m{2}$ que nous présentons à chaque carte sont les coordonnées $x$ et $y$ de points situés sur un cercle de centre 0.5 et de rayon 0.5, cf. figure~\ref{fig:input_3som} p.~\pageref{fig:input_3som}. La disposition des entrées a peu d'importance ici, et nous détaillerons ce choix de disposition dans les chapitres suivants~; notons simplement que les entrées de chaque carte sont normalisées, et chacune s'étend sur toutes les valeurs entre 0 et 1.
-Pendant l'apprentissage, nous effectuons des phases de test à des temps réguliers $t$, à poids figés, sur 5000 points tirés selon la mêmes distribution d'entrée. 
+Les entrées $\inpx\m{1}$ et $\inpx\m{2}$ que nous présentons à chaque carte sont les coordonnées $x$ et $y$ de points situés sur un cercle de centre 0.5 et de rayon 0.5, cf. figure~\ref{fig:input_3som} p.~\pageref{fig:input_3som}. La disposition des entrées a peu d'importance ici, et nous détaillerons ce choix de disposition dans les chapitres suivants~; notons simplement que les entrées de chaque carte sont normalisées, et chacune peut prendre toutes les valeurs entre 0 et 1.
+Pendant l'apprentissage, nous effectuons des phases de test à des temps réguliers $t$, à poids figés, sur 5000 points tirés selon la même distribution d'entrées. 
 Nous comptons ensuite, pour chaque entrée de test réalisé au temps $t$, le nombre de pas nécessaires avant la convergence de la relaxation. Lors de ces tests, nous avons initialisé la relaxation à la position $\mathbf{\bmu}_0$ maximisant l'activité externe de chaque carte.
 
-En pratique, l'algorithme de relaxation s'arrête si la relaxation dépasse $\tau_{max}$ ici fixé à $1000$ itérations~; nous considérerons que la relaxation n'a pas atteint un point de convergence lors d'une itération de test si le nombre de pas de relaxation a atteint $\tau_{max}$.
+En pratique, l'algorithme de relaxation s'arrête si la relaxation dépasse $\tau_{max}$, ici fixé à $1000$ itérations~; nous considérerons que la relaxation n'a pas atteint un point de convergence lors d'une itération de test si le nombre de pas de relaxation a atteint $\tau_{max}$.
 \`A partir de ces valeurs, nous traçons l'évolution du nombre de pas moyens nécessaires à la convergence au cours de chaque phase de test $t$.
 Nous traçons également le taux de convergence~: il s'agit de la proportion d'entrées, sur les 5000 entrées d'un même test au temps $t$, pour lesquelles la relaxation a convergé.
 Ces deux valeurs sont tracées en figure~\ref{fig:conv_evolution}. Il s'agit de la moyenne et de l'écart type du nombre moyen de pas de relaxation et du taux de convergence, obtenus sur 10 répétions d'une même expérience, sur des architectures de deux cartes (en bleu) et trois cartes (en orange).
@@ -234,7 +235,7 @@ La figure~\ref{fig:conv_evolution2D} présente ces valeurs sur des expériences 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\textwidth]{2D_conv_evolution_total_french.pdf}
-	\caption{En haut: évolution de la moyenne et l'écart-type sur 10 apprentissages du taux de convergence de la relaxation, sur deux et trois cartes 2D. 
+	\caption{En haut: évolution de la moyenne et l'écart-type du taux de convergence de la relaxation, sur 10 apprentissages, pour des architectures de deux et trois cartes 2D. 
 	Comme pour des cartes 1D, la relaxation converge bien en fin d'apprentissage, indiquant que le BMU trouvé par la relaxation a un sens. La relaxation converge rarement au début de l'apprentissage.}
 	\label{fig:conv_evolution2D}
 	\end{figure}
@@ -252,7 +253,7 @@ Nous observerons plus précisément les trajectoires dans la section suivante~; 
 
 Les figures~\ref{fig:conv_evolution} et \ref{fig:conv_evolution2D} montrent qu'au début de l'apprentissage, lorsque les poids sont initialisés aléatoirement, la relaxation atteint un point de convergence dans seulement 20\% des cas. Lorsque les cartes sont bien dépliées en fin d'apprentissage, la relaxation évolue vers un point de convergence dans plus de $95\%$ des cas pour des cartes 1D, et $90\%$ pour des cartes 2D. L'évolution de la convergence est similaire pour des architectures de deux et trois cartes.
 
-D'une part, ces observations montrent que le BMU a un sens en fin d'apprentissage~: lorsque la relaxation a convergé, $\mathbf{\bmu}$ représente bien une position correspondant au maximum de l'activité de chaque carte.
+D'une part, ces observations montrent que le BMU a un sens en fin d'apprentissage~: lorsque la relaxation a convergé, $\mathbf{\bmu}$ est bien une position correspondant au maximum de l'activité de chaque carte.
 D'autre part, nous avions remarqué d'après la formulation de la relaxation section~\ref{sec:formulation_suite} que la convergence est loin d'être assurée lorsque les dispositions de poids sont quelconques, ce qui est  le cas en début d'apprentissage. 
 Les observations confirment cette hypothèse~: la relaxation converge seulement dans 20 \% des cas au début de l'apprentissage, lorsque les poids ne présentent aucune forme de continuité ou d'organisation.
 Toutefois, le fait que la relaxation converge peu en début d'apprentissage ne perturbe pas l'organisation des poids, car nous avons pu observer dans la suite de nos expériences que les poids des cartes évoluent vers des états organisés et stables.
@@ -265,7 +266,7 @@ Une fois les poids externes dépliés, la relaxation semble converger. Le dépli
 \section{Représentations des trajectoires de relaxation dans une architecture de deux cartes}
 
 Nous avons observé que la relaxation converge en fin d'apprentissage dans la plupart des cas, mais ne converge que rarement en début d'apprentissage.
-Nous étudions dans cette partie l'évolution de plusieurs processus de relaxation lancés sur des poids de cartes dans une même disposition, à présent en fixant l'entrée externe et en prenant des valeurs d'initialisation de relaxation $\mathbf{\bmu}_0$ différentes.
+Nous étudions dans cette partie l'évolution de plusieurs processus de relaxation, réalisés sur des poids de cartes dans une même disposition, à présent en fixant l'entrée externe et en prenant des valeurs d'initialisation de relaxation $\mathbf{\bmu}_0$ différentes.
 Dans le cas où la relaxation converge, nous voulons vérifier que le point de convergence ne dépend pas de l'initialisation de $\mathbf{\bmu}$.
 Dans le cas où la relaxation ne converge pas, nous cherchons à observer les trajectoires menant à ces cas de non-convergence. Cette étude concerne des architectures de deux cartes 1D.
 
@@ -321,12 +322,12 @@ En fin d'apprentissage, nous avons observé que la relaxation converge dans la m
 	\end{minipage}
 	\caption{Valeur de $\lvert {\hat{p}}\m{1} - p\m{1} \rvert $, resp. $\lvert {\hat{p}}\m{2} - p\m{2} \rvert$ avant apprentissage, lorsque les poids sont disposés aléatoirement dans chaque carte.
 	Les zones où ces valeurs sont nulles sont en violet sur le graphique. Les points fixes, s'il existent, sont aux positions de différence nulle pour $M\m{1}$ et $M\m{2}$, par exemple ici en $(0.1, 0.75)$.
-	Les points noirs représentent les points d'arrivée de 200 trajectoires de relaxation, lancées pour différents $(\bmu_0\m{1}, \bmu_0\m{2})$.
+	Les points noirs représentent les points d'arrivée de 200 trajectoires de relaxation, initialisées à différents $(\bmu_0\m{1}, \bmu_0\m{2})$.
 	Ces tracés montrent que la valeur finale de la relaxation dépend ici des valeurs d'initialisation de la relaxation. Le BMU n'a donc pas de sens au début de l'apprentissage. \label{fig:diff_relax_t1_notraj}}
 	\end{figure}
 
-En figure \ref{fig:diff_relax_t1_notraj}, nous traçons les deux quantités $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2}\rvert$ pour une configuration de poids prise avant l'apprentissage. Les poids sont alors disposés aléatoirement.
-Les positions annulant chacune des quantités sont les zones en violet sur chaque graphique.
+En figure \ref{fig:diff_relax_t1_notraj}, nous traçons les valeur de $\lvert \hat{p}\m{1} - p\m{1} \rvert$ et $\lvert \hat{p}\m{2} - p\m{2}\rvert$ en fonction des positions $p\m{1}$ et $p\m{2}$ de chaque carte, calculés pour une configuration de poids aléatoire, avant apprentissage.
+Les positions pour lesquelles ces champs sont nuls figurent en violet sur chaque graphique.
 Nous y faisons figurer uniquement les positions de fin de relaxation des trajectoires $(\bmu\m{1},\bmu\m{2})$ pour plus de lisibilité. Ces valeurs finales sont marquées par les points noirs.
 
 Nous remarquons une position située en $(0.1, 0.75)$, pour laquelle les deux champs s'annulent. Ce point fixe apparaît comme un hasard du choix des poids.
@@ -334,14 +335,14 @@ Nous observons des points noirs à cet emplacement, montrant que certaines traje
 Cependant, d'autres trajectoires ont égalemement amené la suite $\mathbf{\bmu}_\tau$ vers d'autres positions finales.
 Nous observons en particulier la présence de plusieurs cycles limites, par exemple autour des positions $(0.5, 0.8)$~: certaines trajectoires ne convergent pas et évoluent sur ce cycle de positions. Les points noirs observés sur le graphique correspondent dans ce cas aux dernières positions atteintes au temps $\tau_{max}$ de la relaxation.
 
-Afin de représenter autrement les trajectoires, nous nous intéressons également en \ref{fig:champ_0} au champ des déplacements de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ lors de la relaxation, en fonction de la position courante. 
+Afin de représenter autrement les trajectoires, nous nous intéressons également en figure~\ref{fig:champ_0} au champ des déplacements de $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ lors de la relaxation, en fonction de la position courante. 
 Nous y superposons les trajectoires complètes aboutissants aux points présentés en figure \ref{fig:diff_relax_t1_notraj}.
 Ces champs de déplacement mettent en évidence les trajectoires de $(\mathbf{\bmu})_\tau$ qui mènent à un point fixe et celles qui mènent à des cycles limites.
 Nous observons notamment que les cas de non-convergence sont uniquement des cycles limites~: nous n'observons pas de trajectoire ayant une évolution chaotique.
 
 Cette observation montre qu'en début d'apprentissage, la relaxation n'a pas de sens en tant que recherche de BMU~: il existe certes un point fixe vers lequel certaines trajectoires ont convergé, mais les trajectoires restent dépendantes de l'initialisation de la relaxation. 
 Elles ne sont donc pas relatives uniquement à la configuration des poids des cartes et à l'entrée externe.
-Il est important de noter que malgré ces cas de non-convergence, les cartes évoluent quand-même vers un état organisé en fin d'apprentissage. Par ailleurs, ces cas de non-convergence sont ici seulement des cycles limites.
+Il est important de noter que malgré ces cas de non-convergence, les cartes évoluent vers un état organisé en fin d'apprentissage. Par ailleurs, ces cas de non-convergence sont ici seulement des cycles limites.
 
 Cette observation renforce également l'intérêt d'initialiser la relaxation au maximum de l'activité externe et non aléatoirement dans l'espace des positions, afin de mieux contraindre l'évolution de la relaxation.
 
@@ -362,8 +363,8 @@ Cette observation renforce également l'intérêt d'initialiser la relaxation au
 	\centering
 	\includegraphics[width=\textwidth]{champ_Y_006.pdf}
 	\end{minipage}
-	\caption{Valeur de $\lvert{\hat{p}}\m{1} - p\m{1}\rvert$, resp. $\lvert{\hat{p}}\m{2} - p\m{2}\rvert$, lorsque les cartes sont organisées telles que représentées en figure \ref{fig:w006}. 
-	Les points noirs représentent les points d'arrivée de la relaxation pour 200 trajectoires de relaxation, dont 10 d'entre elles sont tracées sur le graphique, lancées pour différents $(\bmu_0\m{1}, \bmu_0\m{2})$. Toutes ces trajectoires de relaxation convergent vers le même point, qui est l'unique point fixe de la fonction générant la suite $\mathbf{\bmu}_\tau$. Le BMU a donc un sens, car la relaxation ne dépend pas de l'initialisation du BMU.
+	\caption{Valeur de $\lvert{\hat{p}}\m{1} - p\m{1}\rvert$, resp. $\lvert{\hat{p}}\m{2} - p\m{2}\rvert$ après apprentissage. Les cartes sont organisées telles que représentées en figure \ref{fig:w006}. 
+	Les points noirs représentent les points d'arrivée de la relaxation pour 200 trajectoires de relaxation, dont 10 d'entre elles sont tracées sur le graphique, initialisées pour différents $(\bmu_0\m{1}, \bmu_0\m{2})$. Toutes ces trajectoires de relaxation convergent vers le même point, qui est l'unique point fixe de la fonction générant la suite $\mathbf{\bmu}_\tau$. Le BMU a donc un sens, car la relaxation ne dépend pas de l'initialisation du BMU.
 	\label{fig:diff_relax_notraj}}
 	\end{figure}
 
@@ -373,12 +374,12 @@ Les poids externes sont dépliés sur tout $[0,1]$, et les poids contextuels pr�
 
 En figure~\ref{fig:diff_relax_notraj}, nous représentons les champs $\mathbf{g}$. 
 Les tracés font apparaître une structure dans les valeurs des champs.
-Un point unique où les deux différences sont nulles existe à l'intersection des deux zones violettes. Ce point est le seul point d'attraction toutes pour les trajectoires~: nous observons un seul point noir sur les tracés.
+Un point unique où les deux différences sont nulles existe à l'intersection des deux zones violettes. Ce point est le seul point d'attraction de pour les trajectoires simulées~: nous observons un seul point noir sur les tracés.
 La figure \ref{fig:champ_9999} présente le champ de déplacement des BMUs en fonction de la position courante. 
 Nous retrouvons l'évolution des trajectoires de relaxation vers cet unique point d'attraction. Nous remarquons que les trajectoires semblent suivre les régions où $\mathbf{g}$ est nul dans l'une ou l'autre des cartes, pour mener à la position stable. 
 
 Sur cet exemple, la relaxation ne dépend donc plus des conditions initiales. La fonction $\mathbf{f}$ admet un unique point fixe. 
-Le BMU a donc ici un sens pour l'apprentissage~: il ne dépend que des entrées externes et de l'état de la carte, et non du processus de relaxation. D'après l'équation $\ref{eq:opti}$, il s'agit d'une position maximisant l'activité totale des cartes de l'architecture.
+Le BMU a donc ici un sens pour l'apprentissage~: il ne dépend que des entrées externes et de l'état de la carte, et ne dépend pas du processus de relaxation. D'après l'équation $\ref{eq:opti}$, il s'agit d'une position maximisant l'activité totale des cartes de l'architecture.
 Nous avons retrouvé ce même comportement sur des expériences sur plusieurs valeurs d'entrées et configurations de poids, que nous n'avons pas tracées ici.
 
 
@@ -391,7 +392,7 @@ Nous avons retrouvé ce même comportement sur des expériences sur plusieurs va
 
 \subsection{Discussion}
 La structure observée dans les champs $\mathbf{g}$ nous invite à supposer que l'existence de cet unique point de convergence vient de la disposition ordonnée des cartes en fin d'apprentissage. 
-\`A la fin de l'apprentissage, les poids externes sont organisés de façon montone~: dans chaque carte, $a_e(\inpx,p)$ présente un seul pic d'activation.
+\`A la fin de l'apprentissage, les poids externes sont organisés de façon monotone~: dans chaque carte, $a_e(\inpx,p)$ présente un seul pic d'activation.
 De plus, l'activité contextuelle vient seulement moduler les valeurs de l'entrée externe, rendant l'influence de l'entrée contextuelle $\inpc$ sur la position du maximum d'activation moindre par rapport à l'influence de $\inpx$.
 Nous illustrons cette influence en figure \ref{fig:w006}. 
 Nous faisons figurer les poids des deux cartes après apprentissage à droite. 
@@ -401,9 +402,9 @@ Cette zone restreinte de la carte est indiquée en gris sur la figure de droite.
 Ainsi, même si la relaxation ne convergeait pas, elle évoluerait forcément vers cette zone de la carte, dont les poids externes sont proches de l'entrée externe.
 
 D'après cet exemple et les autres observations réalisées dans nos travaux, nous formulons l'hypothèse que le dépliement ordonné des poids externes dans une carte en 1D est une condition suffisante à l'existence d'un unique point fixe pour la suite $(\mathbf{\bmu})_\tau$, ou du moins à l'existence d'une région très réduite de la carte, autour du maximum de l'activité externe, fixant les limites d'évolution de $(\mathbf{\bmu})_\tau$.
-Dans ce cas, la relaxation permettrait de se diriger vers cet unique point fixe ou cette zone.
+Dans ce cas, la relaxation permettrait de se diriger vers cet unique point fixe ou vers cette région.
 Les BMUs trouvés par relaxation ont alors un sens pour l'apprentissage~: il correspondent à un point maximisant la somme des activités des cartes de l'architecture.
-Une perspective d'étude de la relaxation pourrait donc être de démontrer expérimentalement ou analytiquement cette propriété. 
+Une perspective d'étude de la relaxation pourrait être de démontrer expérimentalement ou analytiquement cette propriété. 
 Toutefois, cette démonstration n'est pas un point clé de la construction de l'architecture CxSOM, dans la mesure où les observations que nous réaliserons dans la suite de cette thèse montrent qu'une architecture de cartes effectue un apprentissage des entrées, et ce malgré la non-convergence en début d'apprentissage. 
 Le fait qu'un tel apprentissage soit rendu possible, malgré des cas de non-convergence de la relaxation, appuient expérimentalement l'utilisation de la relaxation comme méthode de connexions entre les cartes. 
 De plus, nous avons présenté en section~\ref{sec:relax_conv} des indicateurs permettant de mesurer expérimentalement la convergence de la relaxation. Nous prendrons le soin de tracer ces indicateurs de convergence pour les différentes architectures que nous présenterons dans la suite de la thèse.
@@ -411,7 +412,7 @@ De plus, nous avons présenté en section~\ref{sec:relax_conv} des indicateurs p
 
 \begin{figure}
 	\includegraphics[width=\textwidth]{am_w_006_noinp}
-	\caption{(a): $\hat{p}\m{1}$ et $\hat{p}\m{2}$ en fonction de l'entrée contextuelle de leur carte $\inpc\m{1}$ et $\inpc\m{2}$.(b): les poids externes et contextuels des cartes $1$ et $2$ sont représentés selon leur position dans la carte. On représente également les entrées test $\inpx\m{1}$ et $\inpx\m{2}$ en fonction de leur BMU. Les entrées utilisées pour tracer les figures de gauche sont colorées en rouge sur les figure de droite: $\inpx\m{1}=0.26,\inpx\m{2}=0.06$. Les intervalles dans lequel les valeurs de $\hat{p}$ varient sont grisés sur la figure (b)~ on observe que $\hat{p}$ reste dans une portion réduite de la carte, quelle que soit son entrée contextuelle.}
+	\caption{(a): $\hat{p}\m{1}$ et $\hat{p}\m{2}$ en fonction de l'entrée contextuelle de leur carte $\inpc\m{1}$ et $\inpc\m{2}$.(b): les poids externes et contextuels des cartes $1$ et $2$ sont représentés selon leur position dans la carte. Nous représentons également les entrées test $\inpx\m{1}$ et $\inpx\m{2}$ en fonction de leur BMU. Les entrées utilisées pour tracer les figures de gauche sont colorées en rouge sur les figure de droite: $\inpx\m{1}=0.26,\inpx\m{2}=0.06$. Les intervalles dans lequel les valeurs de $\hat{p}$ varient sont grisés sur la figure (b). Nous constatons que $\hat{p}$ reste dans une portion réduite de la carte, quelle que soit son entrée contextuelle.}
 	\label{fig:w006}
 	\end{figure}
 
@@ -469,7 +470,7 @@ De plus, nous avons présenté en section~\ref{sec:relax_conv} des indicateurs p
 
 \section{Conclusion}
 
-Ce chapitre a présenté des points d'analyse expérimentale de mécanisme de relaxation. 
+Ce chapitre présente des points d'analyse expérimentale du mécanisme de relaxation. 
 Nous avons détaillé un formalisme décrivant l'algorithme de relaxation comme le déplacement des valeurs $\mathbf{\bmu}_\tau$ selon un champ $\mathbf{f}$ constant, qui dépend des configurations de poids de toutes les cartes ainsi que des entrées externes. 
 Si la relaxation converge, elle converge vers les points fixes de ce champ. 
 Ces points fixes s'expriment comme des solutions d'un problème d'optimisation global à l'architecture.
@@ -484,16 +485,17 @@ Nous avons proposé deux conditions pour que la relaxation puisse être considé
 
 Nous avons montré expérimentalement que la convergence de la relaxation dépend de la disposition des poids des cartes. Lorsque les poids des cartes ne sont pas ordonnés, comme c'est le cas avant l'apprentissage, il n'existe pas forcément de solution au problème d'optimisation. 
 Dans ce cas, la relaxation converge dans moins de 20\% des cas lors des étapes de test.
-Pourtant, nous avons également observé que les cartes se déplient correctement, malgré l'instabilité de la relaxation en début d'apprentissage. Nous pensons que ce comportement est favorisé grâce à l'initialisation de la relaxation à des positions maximisant l'activité externe et grâce à la prépondérance de l'activité externe dans le calcul de l'activité globale. Nous avons par ailleurs remarqué sur des exemples que les cas de non-convergence semblent se traduire par des cycles limites sur des positions qui sont proches. 
-Pour ces deux raisons, bien que la valeur trouvée à l'issue de la relaxation ne soit pas une solution du problème de maximisation globale, il s'agirait d'un point qui possède une valeur forte d'activité externe dans chaque carte~: $\w_e(\bmu)$ est proche de l'entrée externe $\inpx$. Cela permet aux poids externes de s'organiser correctement. Une fois que les poids externes sont dépliés, la relaxation apparaît converger.
+Pourtant, nous avons observé que les cartes se déplient correctement malgré l'instabilité de la relaxation en début d'apprentissage. Nous pensons que ce comportement est favorisé grâce à l'initialisation de la relaxation à des positions maximisant l'activité externe et grâce à la prépondérance de l'activité externe dans le calcul de l'activité globale. Nous avons par ailleurs remarqué sur des exemples que les cas de non-convergence semblent se traduire par des cycles limites sur des positions qui restent proches dans la carte.
+Pour ces deux raisons, bien que la valeur trouvée à l'issue de la relaxation ne soit pas une solution du problème de maximisation globale, il s'agirait d'un point qui possède une valeur forte d'activité externe dans chaque carte~: $\w_e(\bmu)$ est proche de l'entrée externe $\inpx$. Cela permet aux poids externes de s'organiser correctement. Une fois que les poids externes sont dépliés, la relaxation semble converger.
 
 
-Lorsque tous les poids sont bien dépliés, il semble exister une solution unique maximisant les activités globales de chaque carte. L'algorithme de relaxation apparaît alors converger vers ce point quelles que soient les conditions initiales.
+Par ailleurs, lorsque tous les poids sont bien dépliés, il semble exister une solution unique maximisant les activités globales de chaque carte. 
+L'algorithme de relaxation apparaît alors converger vers ce point quelles que soient les conditions initiales.
 Lorsque les cartes sont organisées, le BMU obtenu à l'issue de la relaxation aurait donc bien un sens pour l'apprentissage~: il maximise la somme des activités des cartes, et ne dépend pas de l'initialisation de la relaxation.
 
 
 Ces tracés de relaxation ont été effectués pour des cartes 1D prenant des entrées 1D, avec des cartes ayant un jeu de paramètres spécifique $r_e = 0.2$ et $r_c = 0.02$. Nous avons également observé que la relaxation converge sur des cartes 2D prenant des entrées 1D.
-Dans les chapitre suivants, nous détaillerons le comportement des cartes 1D et 2D sur différentes données d'entrées et différents paramètres. Nous prendrons le soin de tracer dans ces chapitres l'évolution de la convergence de la relaxation, d'après la méthode proposée en figure~\ref{fig:conv_evolution}~; nous observerons que la relaxation semble converger dès que les poids présentent un dépliement ordonné, ceci sur des cartes 1D prenant des entrées 1D (chapitre~\ref{chap:analyse}), mais également sur des cartes 2D prenant des entrées 2D au chapitre~\ref{chap:analyse2D}.
+Dans les chapitres suivants, nous détaillerons le comportement des cartes 1D et 2D sur différentes données d'entrées et différents paramètres. Nous prendrons le soin de tracer dans ces chapitres l'évolution de la convergence de la relaxation, d'après la méthode proposée en figure~\ref{fig:conv_evolution}~; nous observerons que la relaxation semble converger dès que les poids présentent un dépliement ordonné, ceci sur des cartes 1D prenant des entrées 1D (chapitre~\ref{chap:analyse}), mais également sur des cartes 2D prenant des entrées 2D au chapitre~\ref{chap:analyse2D}.
 
 \ifSubfilesClassLoaded{
     \printbibliography
