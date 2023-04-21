@@ -65,7 +65,7 @@ Notons que les travaux d'analyse de CxSOM dont nous avons présenté les résult
 Cette librairie \footnote{\url{https://github.com/HerveFrezza-Buet/cxsom}}, aujourd'hui plus aboutie qu'au moment où nous avons commencé nos expérimentations, facilitera grandement l'étude et la conception d'architectures comportant de nombreuses cartes.
 
 
-Cette étude de grandes architectures pourra s'appuyer sur les méthodes de représentation et d'analyse que nous avons proposé au cours de ce manuscrit. 
+Cette étude de grandes architectures pourra s'appuyer sur les méthodes de représentation et d'analyse que nous avons proposées au cours de ce manuscrit. 
 Notons que les indicateurs et représentations que nous avons proposées concernent l'organisation à l'échelle d'une carte. Une perspective d'amélioration de cette méthode de représentation est de chercher à évaluer une organisation d'un point de vue global à l'architecture.
 
 
@@ -97,6 +97,15 @@ Les propriétés d'organisation observées sur ce type de cartes récurrentes re
 Une perspective d'étude sera ainsi d'associer des connexions temporelles et des connexions multimodales au sein d'une architecture de cartes afin de traiter des données séquentielles.
 Par exemple, un inconvénient de cartes récurrentes simples est le fait qu'elles oublient une séquence une fois que cette dernière n'est plus présentée. Une architecture de cartes pourrait par exemple apporter des modules de mémoire supplémentaire pour l'apprentissage d'un ensemble de séquences et non d'une seule.
 Nous pouvons également envisager la construction d'un système d'apprentissage \og sur le long terme \fg{}, en s'inspirant des modèles proposés en \cite{parisiLL,parisi17}. Un tel système apprend au cours du temps tout en étant capable de générer des prises de décision dans le système. Les modules de l'architecture peuvent apparaître comme des modules de mémoire épisodiques et sémantiques, en choisissant différentes échelles temporelles d'apprentissage pour chaque module.
+
+Nous pouvons également envisager des perspectives d'applications en robotique autonome.
+Une première application serait d'utiliser la capacité de prédiction d'une ou plusieurs cartes de l'architecture en tant que modules de décision à partir des capteurs et commandes d'un robot, dans l'esprit de l'expérience réalisée sur le drone au chapitre~\ref{chap:analyse}.
+Après une phase d'apprentissage par imitation, ces modules de décision ne prennent plus leur entrée. Leur sortie est utilisée comme commande du robot. Il peut s'agir d'un suivi de trajectoire, ou de décisions plus complexes d'exploration de l'environnement.
+Une deuxième possibilité d'application de l'architecture vient de sa robustesse aux données manquantes, suggérée par la capacité de prédiction observée dans nos travaux.
+Ce cas de figure est rencontré fréquemment en robotique~: les capteurs n'ont pas tous la même fréquence d'acquisition ou peuvent être défaillants. 
+Dans l'algorithme CxSOM, une modalité qui manque n'induit pas de modification globale de l'algorithme de mise à jour~: seule la carte qui est concernée par la modalité définit si elle utilise son activité globale ou seulement son activité contextuelle pour calculer le BMU à envoyer aux autres cartes.
+Si lors d'une itération, il manque une modalité, l'apprentissage effectué par les autres cartes pourrait ainsi ne pas être perturbé.
+
 
 Quels que soient les applications et développements futurs du modèle CxSOM, nos travaux contribuent plus globalement à une vision originale des cartes auto-organisatrices. Nous les avons utilisées comme un support pour la conception d'un système d'apprentissage incluant une dynamique, qui s'éloigne de la vision classique de la SOM comme un algorithme de quantification vectorielle.
 La transmission de la seule position du BMU entre cartes est une façon élégante et simple de connecter des cartes, et les comportements d'organisation complexes observés sur des cartes 1D et 2D soulignent la force que porte une simple information positionnelle utilisée comme représentation d'un espace d'entrée.

@@ -25,7 +25,7 @@ Nous observerons ensuite qu'une architecture peut encoder le modèle d'entrées 
 
 \section{Identification des mécanismes d'apprentissage dans une architecture de deux cartes}
 
-Nous étudions d'abord les mécanismes d'apprentissage dans une architecture non-hiérarchique de deux cartes. 
+Nous étudions d'abord les mécanismes d'apprentissage dans une architecture non hiérarchique de deux cartes. 
 Chaque carte prend en entrée le BMU de sa voisine, introduisant une rétroaction entre les deux cartes.
 De cette façon, nous cherchons à isoler des comportements relatifs à une seule interface entre cartes.
 Dans cette section, nous reviendrons sur les comportements identifiés au chapitre~\ref{chap:repr} en cherchant à les généraliser sur plusieurs modèles d'entrées.
@@ -121,7 +121,7 @@ Il s'agit d'une première différence avec une carte classique, pour laquelle to
    \label{fig:w_zoom}}
 \end{figure}
 
-La figure~\ref{fig:w_zoom} est un agrandissement du tracé~\ref{fig:w}, faisant figurer quatre zones de la carte $M\m{1}$. Elle met en évidence le fait que chaque zone de BMU (en blanc) encode un intervalle du couple $(\inpx\m{1}, \inpx\m{2})$.
+La figure~\ref{fig:w_zoom} est un agrandissement de la figure~\ref{fig:w}, faisant figurer quatre zones de la carte $M\m{1}$. Elle met en évidence le fait que chaque zone de BMU (en blanc) encode un intervalle du couple $(\inpx\m{1}, \inpx\m{2})$.
 Pour illustrer cette propriété, deux points sont indiqués en rouge et bleu. Ils possédent la même valeur de $\inpx\m{1} = 0.7$, mais une valeur différente de $\inpx\m{2}$. 
 Ils ont ici un BMU différent dans la carte $M\m{1}$. Ces BMU sont situés dans deux zones adjacentes.
 Ces tracés montrent que la réponse des cartes présente une organisation à deux échelles, portée par la forme des poids externes et contextuels. 
@@ -136,7 +136,8 @@ Nous reviendrons plus en détail sur cette représentation et la propriété de 
 \begin{figure}
 	\centering\includegraphics[width=\textwidth]{cercle/frz-error-500.pdf}
 	\caption{Représentation de l'erreur de quantification sur les valeurs de $\inpx\m{1}$ et $\inpx\m{2}$. Le poids externe du BMU est proche de la valeur de l'entrée~; chaque carte réalise une bonne quantification vectorielle sur ses entrées. 
-	Les poids rouges et bleus représentés en figure \ref{fig:w_zoom} sont reportés sur le graphique. Bien qu'ils aient la même valeur d'entrée $\inpx\m{1}$, leurs BMU sont placés dans deux zones de la carte. La valeur quantifiée de ces deux entrées est alors légèrement différente. Ce comportement entraîne la disposition en étages observée sur ces nuages de points. \label{fig:qv}}
+	Les mêmes points rouges et bleus représentés en figure~\ref{fig:w_zoom} sont reportés sur le graphique. Bien qu'ils aient la même valeur d'entrée $\inpx\m{1}$, leurs BMU sont placés dans deux zones de la carte. La valeur quantifiée de ces deux entrées est alors légèrement différente. 
+	Ce comportement entraîne la disposition en étages observée sur le nuage de points. \label{fig:qv}}
 \end{figure}
 
 Nous nous intéressons enfin à la quantification vectorielle réalisée par la couche de poids externe sur l'entrée externe dans chaque carte. Nous souhaitons que le poids externe du BMU soit une approximation de l'entrée externe, ce qui apporte une possibilité de reconstruction de l'entrée à partir du BMU.
@@ -224,6 +225,9 @@ Nous reviendrons plus en détail sur l'utilisation de $U$ dans l'analyse des ré
  \begin{minipage}{\textwidth}
 	\centering\includegraphics[width=0.8\textwidth]{square/weights.pdf}
 	\caption{Représentation cartographique des poids et entrées dans le patch $[0,1]^2$, \textbf{E}. Les poids contextuels s'organisent de façon pseudo-périodique. Chaque zone de BMU définie par ces motifs forme une carte organisée des sous-régions de l'espace d'entrée externe. \label{fig:ind}}
+	
+	\centering\includegraphics[width=0.8\textwidth]{anneau/weights_001.pdf}
+	\caption{Représentation cartographique des poids et entrées pour des entrées sur un anneau, \textbf{F}. La disposition des poids et la réponse des cartes est similaire à celle de l'architecture apprenant sur le cercle. Une architecture de cartes est robuste au bruit sur les entrées externes, ce qui étend les propriétés de robustesse au bruit d'une carte de Kohonen classique à CxSOM. \label{fig:anneau_w}}
 
 	\hfill\begin{minipage}{0.4\textwidth}
 		\includegraphics[width=\textwidth]{2som_square_d}
@@ -232,9 +236,6 @@ Nous reviendrons plus en détail sur l'utilisation de $U$ dans l'analyse des ré
 		\includegraphics[width=\textwidth]{2som_square_d2}
 	\end{minipage}\hfill
 	\caption{Représentation de la distorsion des poids des deux cartes sur le modèle d'entrées \textbf{E}. Les cartes s'organisent de façon à représenter tout le patch $[0,1]^2$, l'une selon les $\inpx\m{1}$, l'autre selon les $\inpx\m{2}$. Bien que chaque carte ait 500 n\oe{}uds, on observe seulement environ 90 valeurs possibles des paires $\w_e(\bmu\m{1}),\w_e(\bmu\m{2})$ \label{fig:2som_p_d}}
-	
-	\centering\includegraphics[width=0.8\textwidth]{anneau/weights_001.pdf}
-	\caption{Représentation cartographique des poids et entrées pour des entrées sur un anneau. La disposition des poids et la réponse des cartes est similaire à celle de l'architecture apprenant sur le cercle. Une architecture de cartes est robuste au bruit sur les entrées externes, ce qui étend les propriétés de robustesse au bruit d'une carte de Kohonen classique à CxSOM. \label{fig:anneau_w}}
 \end{minipage}
 \end{figure}
 
@@ -252,7 +253,7 @@ Une zone agit comme une sous-carte organisée, à $\inpx\m{i}$ fixé, des valeur
 Ces deux niveaux d'indexation se forment de façon auto-organisée, mais émergent de l'organisation seulement lorsqu'il est nécessaire de pouvoir distinguer plusieurs valeurs du modèle $U$ correspondant à la même entrée externe d'une carte dans le modèle d'entrées.
 Le nombre de zones reste similaire entre les expériences présentées, ce qui suggère que cette organisation est liée aux paramètres de l'architecture. La forme des zones et la réponse des cartes dépend ensuite de la relation entre les entrées.
 
-Nous observons enfin que la quantification vectorielle de l'espace d'entrée globale choisit peu de valeurs de quantification, par rapport à ce qu'on pourrait attendre de cartes de taille 500.
+Nous observons enfin que la quantification vectorielle globale de l'espace d'entrée choisit peu de valeurs de quantification, par rapport à ce qu'on pourrait attendre de cartes de taille 500.
 Chaque carte encode donc tout le modèle d'entrées et non seulement l'entrée externe, mais au détriment de la précision de la quantification vectorielle générale des entrées. 
 Ce comportement était prévisible, du fait que l'architecture possède un nombre d'unités de calcul fixé correspondant au nombre de n\oe{}uds dans les cartes.
 
@@ -326,7 +327,7 @@ Finalement, chaque zone de la carte se spécialise pour un intervalle de valeur 
 \begin{figure}
 	\centering\includegraphics[width=0.3\textwidth]{ballard_primary_secondary.png}
 	\vspace{-0.5cm}
-	\caption{Schématisation d'une répartition en indices primaires et secondaire des neurones d'une aire corticale, tirée de~\cite{ballard_cortical_1986}. 
+	\caption{Schématisation d'une répartition en indices primaires et secondaires des neurones d'une aire corticale, tirée de~\cite{ballard_cortical_1986}. 
 	Les auteurs observent que la réponse des neurones du cortex est organisée en zones selon leur position, formant des indices primaires. Les carrés de la figure représentent cette première indexation.
 	Ces zones reçoivent différentes portions de l'espace d'entrée~: les zones situées à gauche du cortex traitent les signaux venant du champ visuel de gauche et ainsi de suite pour couvrir tout le champ visuel.
 	Au sein d'une zone, les neurones cartographient toutes les valeurs possibles de l'entrée sous forme de carte topologiquement ordonnée, formant une indexation secondaire. \label{fig:ballard}}
@@ -512,7 +513,7 @@ Nous connectons toutes les cartes entre elles.
 
 	\begin{figure}
 		\centering\includegraphics[width=\textwidth]{prediction_drone}
-		\caption{Prédiction de $\rho$ par CxSOM sur les données d'apprentissage. Nous observons que l'entrée a été correctement préduite, bien que très bruitée, ce qui correspond aux observations réalisées en pratique. \label{fig:pred_drone}}
+		\caption{Prédiction de $\rho$ par CxSOM sur les données d'apprentissage. Nous observons que l'entrée a été correctement prédite, bien que très bruitée, ce qui correspond aux observations réalisées en pratique. \label{fig:pred_drone}}
 	\end{figure}
 
 Les poids des cartes obtenus après apprentissage sont représentés en figure \ref{fig:drone_w}. 
@@ -525,8 +526,8 @@ Au vu des relations initiales bruitées entre les modalités, nous pouvions nous
 
 Cette application sur une architecture de quatre cartes nous permet d'abord d'étendre les observations réalisées sur deux et trois cartes~: les poids externes et contextuels forment deux échelles d'organisation, et les poids contextuels forment des motifs pseudo-périodiques dans la carte.
 La capacité de prédiction laisse envisager une possibilité future d'application des architectures de cartes sur des données réelles. 
-L'architecture de cartes a en effet détecté une relation entre entrées qui lui permet de prédire une commande à envoyer. De plus, la réactivité de l'envoi de la commande au drone suggère que malgré la relaxation, l'architecture réagit assez rapidement. Cependant, le dispositif expérimental réalisé ici reste à améliorer pour pouvoir envisager une réelle application de CxSOM au contrôle d'un robot. Dans ce sens, il serait intéressant d'étudier une application similaire sur des données moins bruitées et disponibles en simulation afin de mesurer l'erreur de prédiction relative à l'architecture, comme une étape intermédiaire entre les données géométriques et le cadre réel. Une telle application nécessiterait également une adaptation fine des paramètres de l'architecture.
-Nous pouvons également imaginer, à plus grande échelle, qu'une architecture de cartes permette à un robot de réaliser une prise de décision par rapport aux valeurs reçues par ses capteurs. La capacité de prédiction laisse également envisager des applications relatives au remplacement d'un capteur cassé ou à l'utilisation de données dans lesquelles il manque parfois l'une ou l'autre des modalités.
+L'architecture de cartes a en effet détecté une relation entre entrées qui lui permet de prédire une commande à envoyer. De plus, la réactivité de l'envoi de la commande au drone suggère que malgré la relaxation, l'architecture réagit assez rapidement. Cependant, le dispositif expérimental réalisé ici reste à améliorer pour pouvoir envisager une réelle application de CxSOM au contrôle d'un robot. Dans ce sens, il serait intéressant d'étudier une application similaire sur des données moins bruitées et disponibles en simulation afin de mesurer l'erreur de prédiction relative à l'architecture, comme une étape intermédiaire entre les données géométriques et le cadre réel. Une telle application nécessiterait une adaptation fine des paramètres de l'architecture.
+Nous pouvons imaginer, à plus grande échelle, qu'une architecture de cartes permette à un robot de réaliser une prise de décision par rapport aux valeurs reçues par ses capteurs. La capacité de prédiction laisse aussi envisager des applications relatives au remplacement d'un capteur défaillant ou à l'utilisation de données dans lesquelles il manque parfois l'une ou l'autre des modalités.
 
 \subsection{Conclusion}
 
@@ -538,7 +539,7 @@ Cette capacité de prédiction est permise par l'organisation à deux échelles 
 Le fait que l'entrée générée corresponde directement à la valeur de l'entrée manquante vient de la quantification vectorielle sur l'entrée externe au sein de chaque carte.
 
 Ce comportement montre que grâce à l'organisation des poids et à la recherche de BMU couplée, une architecture de cartes est non seulement capable d'encoder un modèle d'entrées, mais également de le réutiliser de façon autonome~: la génération d'entrée est réalisée par le même algorithme que celui utilisé lors des phases de tests.
-Par ailleurs, les connexions d'une architecture sont rétroactives, aussi n'importe quelle carte de l'architecture peut être utilisée comme carte prédictive, ce qui constitue un avantage d'une architecture non-hiérarchique.
+Par ailleurs, les connexions d'une architecture sont rétroactives, aussi n'importe quelle carte de l'architecture peut être utilisée comme carte prédictive, ce qui constitue un avantage d'une architecture non hiérarchique.
 
 
 \section{Influence des connexions sur l'apprentissage du modèle d'entrées}
@@ -649,7 +650,7 @@ Nous avons ensuite constaté que l'encodage du modèle d'entrées complet dans c
 Le poids externe du BMU peut être utilisé comme une valeur générée de la modalité qui n'a pas été présentée.
 Dans ces tâches de prédiction, l'architecture CxSOM utilise le fait qu'elle ait encodé le modèle d'entrées de façon redondante entre les cartes. 
 Cette capacité de prédiction est une application possible des architectures de cartes. Il s'agit également d'une façon d'évaluer l'apprentissage d'un modèle d'entrées par l'architecture lorsque ce modèle n'est pas connu en théorie.
-La prédiction est un comportement qui différencie une carte simple ou une architecture hiérarchique de cartes d'une architecture non-hiérarchique~: les modèles non-hiérarchiques présentés au chapitre~\ref{chap:architectures} proposaient également cette capacité de prédiction. Nous voyons ici qu'il s'agit d'une capacité également permise par CxSOM. Dans notre cas, l'information n'est pas centralisée dans une carte associative. De plus, une prédiction peut-être réalisée par n'importe quelle carte grâce aux connexions non-hiérarchiques, et s'appuie sur le même algorithme que celui utilisé lors des tests.
+La prédiction est un comportement qui différencie une carte simple ou une architecture hiérarchique de cartes d'une architecture non hiérarchique~: les modèles non hiérarchiques présentés au chapitre~\ref{chap:architectures} proposaient également cette capacité de prédiction. Nous voyons ici qu'il s'agit d'une capacité également permise par CxSOM. Dans notre cas, l'information n'est pas centralisée dans une carte associative. De plus, une prédiction peut-être réalisée par n'importe quelle carte grâce aux connexions non hiérarchiques, et s'appuie sur le même algorithme que celui utilisé lors des tests.
 
 Maintenant que nous avons observé les comportements d'apprentissage dans des petites architectures de 2 et 3 cartes, une perspective principale d'étude de CxSOM est la construction d'architectures comportant plus de cartes.
 Dans ces architectures, le choix des connexions entre cartes constitue un degré de liberté supplémentaire.
