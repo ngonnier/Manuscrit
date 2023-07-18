@@ -5,6 +5,8 @@
     \dominitoc
     \tableofcontentsfile
     \pagenumbering{arabic}
+    %\setcounter{page}{1}
+    \externaldocument[main-]{../main}
     \setcounter{page}{1}
 }{}
 
@@ -74,6 +76,7 @@ $H$ définit l'amplitude de modification de chaque prototype $\w(p)$, en modulan
      \includegraphics[width=0.6\textwidth]{voisinage.pdf}
      \caption{Exemples de fonctions de voisinage (Rectanglulaire, Triangle ou Gaussienne), centrées sur le BMU $\bmu$, couramment utilisées sur une carte, ici en une dimension.\label{fig:h}}
 \end{figure}
+Il s'agit ici de la version en ligne de l'algorithme d'apprentissage. Notons qu'il en existe également une version par \emph{batch}, dans laquelle les entrées sont présentées de façon groupées à une cart avant mise à jour des poids. L'algorithme de \emph{Batch SOM} est décrit en \cite{Kohonen1995SelfOrganizingM}.
 
 L'algorithme de mise à jour des cartes de Kohonen repose à la fois sur un mécanisme de compétition par la sélection du BMU de la carte et un processus de coopération avec le déplacement des unités voisines du BMU, aussi nommé \og Winner Take Most \fg{}.
 Le processus de mise à jour des poids d'une carte de Kohonen se traduit par un dépliement de la carte dans l'espace d'entrée. Nous parlerons donc aussi de \emph{dépliement} d'une carte pour désigner l'apprentissage. Ce dépliement est représenté en figure \ref{fig:som1d} pour des exemples de cartes en une et deux dimensions, se dépliant sur des données en deux dimensions.
@@ -93,7 +96,7 @@ Le processus de mise à jour des poids d'une carte de Kohonen se traduit par un 
     \centering
     \includegraphics[width=\textwidth]{som1d}
     \end{minipage}
-    \caption{Exemples de dépliement d'une SOM 2D sur des données dans un carré (à gauche) et d'une SOM 1D sur des données dans un triangle 2D (à droite) au cours des itérations d'apprentissage \parencite{Kohonen1995SelfOrganizingM}\label{fig:som1d}}
+    \caption{Exemples de dépliement d'une SOM 2D sur des données distribuées uniformément dans un carré (à gauche) et d'une SOM 1D sur des données dans un triangle 2D (à droite) au cours des itérations d'apprentissage \parencite{Kohonen1995SelfOrganizingM}\label{fig:som1d}}
     \end{figure}
 
 Le calcul de distances, utilisé dans la version initiale des SOM, est remplacé dans d'autres modèles de cartes par le calcul d'une \emph{activation} $a(p, \inpx)$ liant les poids des n\oe{}uds et les entrées. Il s'agit généralement d'une activation gaussienne~:
@@ -655,12 +658,15 @@ Cette analyse donne également une source supplémentaire sur laquelle s'appuyer
 
 Les modèles de cartes récurrentes existant dans la littérature s'appuient sur la transmission d'une représentation d'éléments internes à une carte entre deux itérations.
 
-Parmi les premiers travaux autour des cartes auto-organisatrices, les cartes de Kohonen Temporelles TKM, dérivées ensuite en \emph{recurrent SOM} \parencite{varsta_temporal_2001} utilisent l'activité $a$ d'une carte à l'instant précédent dans le calcul de l'activité à l'instant courant par un modèle d'intégrateur à fuite.
+Parmi les premiers travaux autour des cartes auto-organisatrices, les cartes de Kohonen Temporelles TKM, dérivées ensuite en \emph{recurrent SOM} \parencite{varsta_temporal_2001} modifient le calcul de distance entre l'entrée et les prototypes pour prendre en compte un terme de distance intégrée sur les instants précédent noté $y(p,t)$.
 
-$$a(p,t) = (1-\alpha)a(p,t-1) + \alpha \times (\inpx_t - \w_t(p))$$
+\begin{equation}
+    y(p,t) = (1-\alpha)y(p,t-1) + \alpha \times (\inpx_t - \w_t(p))
+\end{equation}
+
 Avec $\w(p)$ les poids de la carte et $\alpha \in [0,1]$ un coefficient de fuite.
-$a$ correspond ici à une distance modifiée entre un prototype et l'entrée, et le BMU est calculé par $\Pi_t = \argmin\limits_p(a(p,t)^2)$.
-Au lieu de chercher la position dont le prototype $\w(p)$ est le plus proche de l'entrée $\inpx_t$, ce calcul d'activité cherche une position pour laquelle la distance entre le prototype et l'entrée est faible et pour laquelle la distance calculée par rapport aux entrées précédentes l'était aussi. Il s'agit d'un intégrateur à fuite dans la mesure ou l'influence de l'activité d'un instant sur les suivants décroit au cours du temps.
+Le BMU est ensuite calculé par $\Pi_t = \argmin\limits_p(y(p,t)^2)$, comme dans une carte de Kohonen classique.
+Au lieu de chercher la position dont le prototype $\w(p)$ est le plus proche de l'entrée courante $\inpx_t$, ce calcul d'activité cherche une position pour laquelle la distance entre le prototype et l'entrée est faible et pour laquelle la distance calculée par rapport aux entrées précédentes l'était aussi. Il s'agit d'un intégrateur à fuite dans la mesure ou l'influence de l'activité d'un instant sur les suivants décroit au cours du temps.
 
 D'autres travaux reposent plutôt sur la transmission du BMU ou du poids du BMU comme entrée cournante d'une carte.
 \`A chaque instant $t$, ces SOM fusionnent deux entrées~: l'entrée venant de la séquence à apprendre, $X_t$, et l'entrée de contexte $\inpc_t$ interne à la carte.

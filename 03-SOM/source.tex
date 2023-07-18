@@ -3,8 +3,11 @@
 \ifSubfilesClassLoaded{
     \dominitoc
     \tableofcontentsfile
-    \setcounter{page}{1} 
-    \setcounter{chapter}{1}
+    %\setcounter{page}{1} 
+    %\setcounter{chapter}{1}
+    \externaldocument[main-]{mainMWE}
+    \setcounter{page}{\getpagerefnumber{chap:architectures}}
+    %\setcounter{chapter}{\getpagerefnumber{chap:architectures}}
 }{}
 \begin{document}
 \chapter{Modèle d'architecture CxSOM}{\label{chap:modele}}
@@ -51,7 +54,7 @@ Chaque carte de Kohonen d'une architecture CxSOM est directement dérivée de l'
 Une carte de Kohonen est une grille de $N$ n\oe{}uds qui forme un \emph{mapping} d'un espace de faible dimension. 
 Nous utiliserons dans cette thèse des cartes en une et deux dimensions, c'est-à-dire des lignes, cartographiant un espace 1D, et des grilles 2D. Les notations et le modèle présentés ici sont toutefois applicables à des cartes de dimensions quelconques.
 
-L'algorithme et les notations sont résumés en figure~\ref{fig:one_map_not}. Une entrée fournie à une carte de Kohonen est notée $\inpx_t$, tirée dans un espace d'entrée $\mathcal{D}$. \`A chaque n\oe{}ud de la carte est associé un poids $\w_e \in D$, appelé aussi prototype. Sa \emph{position} dans la carte est indexée par $p$. Nous choisissons d'indexer les positions dans $[0,1]$~: l'ensemble des positions $p$ est donc un ensemble de points discrets entre $0$ et $1$. L'ensemble des poids est noté $\w_e(p)$. On peut faire la même discrétisation de l'espace $[0,1]^2$ pour une carte en 2D.
+L'algorithme et les notations sont résumés en figure~\ref{fig:one_map_not}. Une entrée fournie à une carte de Kohonen est notée $\inpx_t$, tirée dans un espace d'entrée $\mathcal{D}$. \`A chaque n\oe{}ud de la carte est associé un poids $\w_e \in \mathcal{D}$, appelé aussi prototype. Sa \emph{position} dans la carte est indexée par $p$. Nous choisissons d'indexer les positions dans $[0,1]$~: l'ensemble des positions $p$ est donc un ensemble de points discrets entre $0$ et $1$. L'ensemble des poids est noté $\w_e(p)$. On peut faire la même discrétisation de l'espace $[0,1]^2$ pour une carte en 2D.
 
 Chaque itération $t$ de l'algorithme de mise à jour d'une carte de Kohonen contient les étapes suivantes:
 \begin{enumerate}
@@ -252,7 +255,7 @@ Le processus de relaxation est le suivant~:
 \item Tant que la suite de positions $(\bmu\m{1}_\tau,\bmu\m{2}_\tau)$ n'a pas convergé:
 	\begin{enumerate}
 	\item Dans chaque carte, nous calculons les activités contextuelles et globales, définissant ainsi $\hat{p}\m{1}_\tau = \argmax\limits_p(a_g\m{1}(p,\inpx\m{1}, \bmu\m{2}_\tau)$, de même pour $\hat{p}\m{2}$.
-	\item Nous déplaçons $\bmu\m{1}$ vers $\hat{p}\m{1}$ et $\bmu\m{2}_\tau$ vers $\hat{p}\m{2}$ d'un pas $\Delta$: $\bmu\m{1}_{\tau+1} = \bmu\m{1}_{\tau} \pm \Delta$.
+	\item Nous déplaçons $\bmu\m{1}$ vers $\hat{p}\m{1}$ et $\bmu\m{2}_\tau$ vers de $\hat{p}\m{2}$ d'un pas $\Delta$: $\bmu\m{1}_{\tau+1} = \bmu\m{1}_{\tau} + \Delta \frac{\hat{p}\m{1}_\tau - \bmu\m{1}_\tau}{\lVert \hat{p}\m{1}_\tau - \bmu\m{1}_\tau \rVert}$ .
 	Si une des valeurs est plus proche de $\hat{p}$ que $\Delta$, on déplacera $\bmu_\tau$ directement sur $\hat{p}$ pour éviter les oscillations autour du point. Cette étape est illustrée en figure~\ref{fig:relax}.
 	\end{enumerate}
 \item Le BMU de chaque carte est pris comme la valeur finale stable de ce processus dynamique. On note cette position finale $\bmu\m{i}_t$.

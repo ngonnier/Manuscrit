@@ -318,7 +318,7 @@
 \NewJuryCategory{Rapporteurs}{\textit{Rapporteur :}}{\textit{Rapporteurs :}}
 \NewJuryCategory{Examinateurs}{\textit{Examinateur :}}{\textit{Examinateurs :}}
 \NewJuryCategory{Invites}{\textit{Invit\'e :}}{\textit{Invit\'es :}}
-\NewJuryCategory{Directeur}{\textit{Directeur de thèse :}}{\textit{Directeur de thèse :}}
+\NewJuryCategory{Directeur}{\textit{Encadrants :}}{\textit{Encadrants :}}
 \NewJuryCategory{CoDirecteur}{\textit{Co-directeur de thèse :}}{\textit{Co-directeur de thèse :}}
 \def\@selecti#1{\expandafter\@@selecti#1}
 \def\@@selecti#1#2{{#1}}
@@ -430,13 +430,13 @@
                                 \@ThesisKind
        \vskip4mm plus2fil
                              \@ThesisPresentedThe
-       \vskip1mm plus1fil
+       \vskip0.5mm plus1fil
                              \@ThesisInOrderToGet
        \vskip4mm plus1fil
                                 \@ThesisDiploma
-       \vskip3mm plus1fil
+       \vskip2mm plus1fil
                               \@ThesisPresentedBy
-       \vskip3mm plus1fil
+       \vskip2mm plus1fil
                                 \@ThesisAuthor
     \end{center}
        \vskip3mm plus2fil
